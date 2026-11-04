@@ -5,7 +5,7 @@ Official client for the OpenRoam Partner API: eSIMs, airtime, utility payments, 
 ## Install
 
 ```bash
-go get github.com/OpenRoamHQ/openroam-go@v0.1.0-rc.1
+go get github.com/OpenRoamHQ/openroam-go@v0.1.0-rc.2
 ```
 
 > This is a **release candidate**: install it by its exact version, as above; a plain install does not pick it up. Before 1.0 the API can change between minor versions; every change is listed in the [changelog](https://github.com/OpenRoamHQ/openroam-sdks/blob/main/CHANGELOG.md).
