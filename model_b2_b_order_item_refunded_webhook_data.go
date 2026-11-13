@@ -26,7 +26,7 @@ type B2BOrderItemRefundedWebhookData struct {
 	RefundId *string `json:"refundId,omitempty"`
 	RefundAmount *float32 `json:"refundAmount,omitempty"`
 	CurrencyCode *string `json:"currencyCode,omitempty"`
-	// How a payment was made, in the words of the partner API: `balance` from a wallet, or `card`. It is the wire name of `PaymentMethodEnum` for partners. That enum names the card processor, which a partner must not see, so the B2B contract exposes this one and the dashboard keeps its own.
+	// How a payment was made, in the words of the partner API: `balance` from a wallet, or `card`. It is the wire name of `PaymentMethodEnum` for partners. That enum names the card processor, which a partner must not see, so the B2B API and the partner dashboard both expose this one.
 	PaymentMethod *string `json:"paymentMethod,omitempty"`
 	Status *string `json:"status,omitempty"`
 	Reason NullableString `json:"reason,omitempty"`

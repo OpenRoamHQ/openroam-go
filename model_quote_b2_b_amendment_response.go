@@ -16,38 +16,40 @@ import (
 	"time"
 )
 
-// checks if the RequestB2BAmendmentResponse type satisfies the MappedNullable interface at compile time
-var _ MappedNullable = &RequestB2BAmendmentResponse{}
+// checks if the QuoteB2BAmendmentResponse type satisfies the MappedNullable interface at compile time
+var _ MappedNullable = &QuoteB2BAmendmentResponse{}
 
-// RequestB2BAmendmentResponse A priced amendment quote. Commit it within 24 hours.
-type RequestB2BAmendmentResponse struct {
-	// The quote id to send when committing.
+// QuoteB2BAmendmentResponse A priced amendment quote. Confirm it before `expiresAt`.
+type QuoteB2BAmendmentResponse struct {
+	// The quote id to send when confirming.
 	AmendmentRequestId *string `json:"amendmentRequestId,omitempty"`
 	// When the quote was made (UTC).
 	ProcessedAt *time.Time `json:"processedAt,omitempty"`
-	// The priced options; commit one by its `id`.
+	// When the quote expires (UTC); confirm it before then.
+	ExpiresAt *time.Time `json:"expiresAt,omitempty"`
+	// The priced options; confirm one by its `id`.
 	Options []B2BAmendmentQuoteOption `json:"options,omitempty"`
 }
 
-// NewRequestB2BAmendmentResponse instantiates a new RequestB2BAmendmentResponse object
+// NewQuoteB2BAmendmentResponse instantiates a new QuoteB2BAmendmentResponse object
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewRequestB2BAmendmentResponse() *RequestB2BAmendmentResponse {
-	this := RequestB2BAmendmentResponse{}
+func NewQuoteB2BAmendmentResponse() *QuoteB2BAmendmentResponse {
+	this := QuoteB2BAmendmentResponse{}
 	return &this
 }
 
-// NewRequestB2BAmendmentResponseWithDefaults instantiates a new RequestB2BAmendmentResponse object
+// NewQuoteB2BAmendmentResponseWithDefaults instantiates a new QuoteB2BAmendmentResponse object
 // This constructor will only assign default values to properties that have it defined,
 // but it doesn't guarantee that properties required by API are set
-func NewRequestB2BAmendmentResponseWithDefaults() *RequestB2BAmendmentResponse {
-	this := RequestB2BAmendmentResponse{}
+func NewQuoteB2BAmendmentResponseWithDefaults() *QuoteB2BAmendmentResponse {
+	this := QuoteB2BAmendmentResponse{}
 	return &this
 }
 
 // GetAmendmentRequestId returns the AmendmentRequestId field value if set, zero value otherwise.
-func (o *RequestB2BAmendmentResponse) GetAmendmentRequestId() string {
+func (o *QuoteB2BAmendmentResponse) GetAmendmentRequestId() string {
 	if o == nil || IsNil(o.AmendmentRequestId) {
 		var ret string
 		return ret
@@ -57,7 +59,7 @@ func (o *RequestB2BAmendmentResponse) GetAmendmentRequestId() string {
 
 // GetAmendmentRequestIdOk returns a tuple with the AmendmentRequestId field value if set, nil otherwise
 // and a boolean to check if the value has been set.
-func (o *RequestB2BAmendmentResponse) GetAmendmentRequestIdOk() (*string, bool) {
+func (o *QuoteB2BAmendmentResponse) GetAmendmentRequestIdOk() (*string, bool) {
 	if o == nil || IsNil(o.AmendmentRequestId) {
 		return nil, false
 	}
@@ -65,7 +67,7 @@ func (o *RequestB2BAmendmentResponse) GetAmendmentRequestIdOk() (*string, bool) 
 }
 
 // HasAmendmentRequestId returns a boolean if a field has been set.
-func (o *RequestB2BAmendmentResponse) HasAmendmentRequestId() bool {
+func (o *QuoteB2BAmendmentResponse) HasAmendmentRequestId() bool {
 	if o != nil && !IsNil(o.AmendmentRequestId) {
 		return true
 	}
@@ -74,12 +76,12 @@ func (o *RequestB2BAmendmentResponse) HasAmendmentRequestId() bool {
 }
 
 // SetAmendmentRequestId gets a reference to the given string and assigns it to the AmendmentRequestId field.
-func (o *RequestB2BAmendmentResponse) SetAmendmentRequestId(v string) {
+func (o *QuoteB2BAmendmentResponse) SetAmendmentRequestId(v string) {
 	o.AmendmentRequestId = &v
 }
 
 // GetProcessedAt returns the ProcessedAt field value if set, zero value otherwise.
-func (o *RequestB2BAmendmentResponse) GetProcessedAt() time.Time {
+func (o *QuoteB2BAmendmentResponse) GetProcessedAt() time.Time {
 	if o == nil || IsNil(o.ProcessedAt) {
 		var ret time.Time
 		return ret
@@ -89,7 +91,7 @@ func (o *RequestB2BAmendmentResponse) GetProcessedAt() time.Time {
 
 // GetProcessedAtOk returns a tuple with the ProcessedAt field value if set, nil otherwise
 // and a boolean to check if the value has been set.
-func (o *RequestB2BAmendmentResponse) GetProcessedAtOk() (*time.Time, bool) {
+func (o *QuoteB2BAmendmentResponse) GetProcessedAtOk() (*time.Time, bool) {
 	if o == nil || IsNil(o.ProcessedAt) {
 		return nil, false
 	}
@@ -97,7 +99,7 @@ func (o *RequestB2BAmendmentResponse) GetProcessedAtOk() (*time.Time, bool) {
 }
 
 // HasProcessedAt returns a boolean if a field has been set.
-func (o *RequestB2BAmendmentResponse) HasProcessedAt() bool {
+func (o *QuoteB2BAmendmentResponse) HasProcessedAt() bool {
 	if o != nil && !IsNil(o.ProcessedAt) {
 		return true
 	}
@@ -106,12 +108,44 @@ func (o *RequestB2BAmendmentResponse) HasProcessedAt() bool {
 }
 
 // SetProcessedAt gets a reference to the given time.Time and assigns it to the ProcessedAt field.
-func (o *RequestB2BAmendmentResponse) SetProcessedAt(v time.Time) {
+func (o *QuoteB2BAmendmentResponse) SetProcessedAt(v time.Time) {
 	o.ProcessedAt = &v
 }
 
+// GetExpiresAt returns the ExpiresAt field value if set, zero value otherwise.
+func (o *QuoteB2BAmendmentResponse) GetExpiresAt() time.Time {
+	if o == nil || IsNil(o.ExpiresAt) {
+		var ret time.Time
+		return ret
+	}
+	return *o.ExpiresAt
+}
+
+// GetExpiresAtOk returns a tuple with the ExpiresAt field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+func (o *QuoteB2BAmendmentResponse) GetExpiresAtOk() (*time.Time, bool) {
+	if o == nil || IsNil(o.ExpiresAt) {
+		return nil, false
+	}
+	return o.ExpiresAt, true
+}
+
+// HasExpiresAt returns a boolean if a field has been set.
+func (o *QuoteB2BAmendmentResponse) HasExpiresAt() bool {
+	if o != nil && !IsNil(o.ExpiresAt) {
+		return true
+	}
+
+	return false
+}
+
+// SetExpiresAt gets a reference to the given time.Time and assigns it to the ExpiresAt field.
+func (o *QuoteB2BAmendmentResponse) SetExpiresAt(v time.Time) {
+	o.ExpiresAt = &v
+}
+
 // GetOptions returns the Options field value if set, zero value otherwise.
-func (o *RequestB2BAmendmentResponse) GetOptions() []B2BAmendmentQuoteOption {
+func (o *QuoteB2BAmendmentResponse) GetOptions() []B2BAmendmentQuoteOption {
 	if o == nil || IsNil(o.Options) {
 		var ret []B2BAmendmentQuoteOption
 		return ret
@@ -121,7 +155,7 @@ func (o *RequestB2BAmendmentResponse) GetOptions() []B2BAmendmentQuoteOption {
 
 // GetOptionsOk returns a tuple with the Options field value if set, nil otherwise
 // and a boolean to check if the value has been set.
-func (o *RequestB2BAmendmentResponse) GetOptionsOk() ([]B2BAmendmentQuoteOption, bool) {
+func (o *QuoteB2BAmendmentResponse) GetOptionsOk() ([]B2BAmendmentQuoteOption, bool) {
 	if o == nil || IsNil(o.Options) {
 		return nil, false
 	}
@@ -129,7 +163,7 @@ func (o *RequestB2BAmendmentResponse) GetOptionsOk() ([]B2BAmendmentQuoteOption,
 }
 
 // HasOptions returns a boolean if a field has been set.
-func (o *RequestB2BAmendmentResponse) HasOptions() bool {
+func (o *QuoteB2BAmendmentResponse) HasOptions() bool {
 	if o != nil && !IsNil(o.Options) {
 		return true
 	}
@@ -138,11 +172,11 @@ func (o *RequestB2BAmendmentResponse) HasOptions() bool {
 }
 
 // SetOptions gets a reference to the given []B2BAmendmentQuoteOption and assigns it to the Options field.
-func (o *RequestB2BAmendmentResponse) SetOptions(v []B2BAmendmentQuoteOption) {
+func (o *QuoteB2BAmendmentResponse) SetOptions(v []B2BAmendmentQuoteOption) {
 	o.Options = v
 }
 
-func (o RequestB2BAmendmentResponse) MarshalJSON() ([]byte, error) {
+func (o QuoteB2BAmendmentResponse) MarshalJSON() ([]byte, error) {
 	toSerialize,err := o.ToMap()
 	if err != nil {
 		return []byte{}, err
@@ -150,7 +184,7 @@ func (o RequestB2BAmendmentResponse) MarshalJSON() ([]byte, error) {
 	return json.Marshal(toSerialize)
 }
 
-func (o RequestB2BAmendmentResponse) ToMap() (map[string]interface{}, error) {
+func (o QuoteB2BAmendmentResponse) ToMap() (map[string]interface{}, error) {
 	toSerialize := map[string]interface{}{}
 	if !IsNil(o.AmendmentRequestId) {
 		toSerialize["amendmentRequestId"] = o.AmendmentRequestId
@@ -158,44 +192,47 @@ func (o RequestB2BAmendmentResponse) ToMap() (map[string]interface{}, error) {
 	if !IsNil(o.ProcessedAt) {
 		toSerialize["processedAt"] = o.ProcessedAt
 	}
+	if !IsNil(o.ExpiresAt) {
+		toSerialize["expiresAt"] = o.ExpiresAt
+	}
 	if !IsNil(o.Options) {
 		toSerialize["options"] = o.Options
 	}
 	return toSerialize, nil
 }
 
-type NullableRequestB2BAmendmentResponse struct {
-	value *RequestB2BAmendmentResponse
+type NullableQuoteB2BAmendmentResponse struct {
+	value *QuoteB2BAmendmentResponse
 	isSet bool
 }
 
-func (v NullableRequestB2BAmendmentResponse) Get() *RequestB2BAmendmentResponse {
+func (v NullableQuoteB2BAmendmentResponse) Get() *QuoteB2BAmendmentResponse {
 	return v.value
 }
 
-func (v *NullableRequestB2BAmendmentResponse) Set(val *RequestB2BAmendmentResponse) {
+func (v *NullableQuoteB2BAmendmentResponse) Set(val *QuoteB2BAmendmentResponse) {
 	v.value = val
 	v.isSet = true
 }
 
-func (v NullableRequestB2BAmendmentResponse) IsSet() bool {
+func (v NullableQuoteB2BAmendmentResponse) IsSet() bool {
 	return v.isSet
 }
 
-func (v *NullableRequestB2BAmendmentResponse) Unset() {
+func (v *NullableQuoteB2BAmendmentResponse) Unset() {
 	v.value = nil
 	v.isSet = false
 }
 
-func NewNullableRequestB2BAmendmentResponse(val *RequestB2BAmendmentResponse) *NullableRequestB2BAmendmentResponse {
-	return &NullableRequestB2BAmendmentResponse{value: val, isSet: true}
+func NewNullableQuoteB2BAmendmentResponse(val *QuoteB2BAmendmentResponse) *NullableQuoteB2BAmendmentResponse {
+	return &NullableQuoteB2BAmendmentResponse{value: val, isSet: true}
 }
 
-func (v NullableRequestB2BAmendmentResponse) MarshalJSON() ([]byte, error) {
+func (v NullableQuoteB2BAmendmentResponse) MarshalJSON() ([]byte, error) {
 	return json.Marshal(v.value)
 }
 
-func (v *NullableRequestB2BAmendmentResponse) UnmarshalJSON(src []byte) error {
+func (v *NullableQuoteB2BAmendmentResponse) UnmarshalJSON(src []byte) error {
 	v.isSet = true
 	return json.Unmarshal(src, &v.value)
 }

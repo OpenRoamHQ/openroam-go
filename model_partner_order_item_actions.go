@@ -20,10 +20,12 @@ var _ MappedNullable = &PartnerOrderItemActions{}
 
 // PartnerOrderItemActions Item-level actions.
 type PartnerOrderItemActions struct {
-	// Whether the item can be changed.
+	// Whether the item can be changed through a priced amendment (hotels and flights).
 	Amendment *PartnerAction `json:"amendment,omitempty"`
-	// Whether the item can be refunded.
-	Refund *PartnerAction `json:"refund,omitempty"`
+	// Whether the item can be cancelled now.
+	Cancellation *PartnerAction `json:"cancellation,omitempty"`
+	// Whether the item can be updated now with `POST /order-items/{id}/update`, a change that             never charges. `notAvailable` for every product that cannot be updated.
+	Update *PartnerAction `json:"update,omitempty"`
 }
 
 // NewPartnerOrderItemActions instantiates a new PartnerOrderItemActions object
@@ -75,36 +77,68 @@ func (o *PartnerOrderItemActions) SetAmendment(v PartnerAction) {
 	o.Amendment = &v
 }
 
-// GetRefund returns the Refund field value if set, zero value otherwise.
-func (o *PartnerOrderItemActions) GetRefund() PartnerAction {
-	if o == nil || IsNil(o.Refund) {
+// GetCancellation returns the Cancellation field value if set, zero value otherwise.
+func (o *PartnerOrderItemActions) GetCancellation() PartnerAction {
+	if o == nil || IsNil(o.Cancellation) {
 		var ret PartnerAction
 		return ret
 	}
-	return *o.Refund
+	return *o.Cancellation
 }
 
-// GetRefundOk returns a tuple with the Refund field value if set, nil otherwise
+// GetCancellationOk returns a tuple with the Cancellation field value if set, nil otherwise
 // and a boolean to check if the value has been set.
-func (o *PartnerOrderItemActions) GetRefundOk() (*PartnerAction, bool) {
-	if o == nil || IsNil(o.Refund) {
+func (o *PartnerOrderItemActions) GetCancellationOk() (*PartnerAction, bool) {
+	if o == nil || IsNil(o.Cancellation) {
 		return nil, false
 	}
-	return o.Refund, true
+	return o.Cancellation, true
 }
 
-// HasRefund returns a boolean if a field has been set.
-func (o *PartnerOrderItemActions) HasRefund() bool {
-	if o != nil && !IsNil(o.Refund) {
+// HasCancellation returns a boolean if a field has been set.
+func (o *PartnerOrderItemActions) HasCancellation() bool {
+	if o != nil && !IsNil(o.Cancellation) {
 		return true
 	}
 
 	return false
 }
 
-// SetRefund gets a reference to the given PartnerAction and assigns it to the Refund field.
-func (o *PartnerOrderItemActions) SetRefund(v PartnerAction) {
-	o.Refund = &v
+// SetCancellation gets a reference to the given PartnerAction and assigns it to the Cancellation field.
+func (o *PartnerOrderItemActions) SetCancellation(v PartnerAction) {
+	o.Cancellation = &v
+}
+
+// GetUpdate returns the Update field value if set, zero value otherwise.
+func (o *PartnerOrderItemActions) GetUpdate() PartnerAction {
+	if o == nil || IsNil(o.Update) {
+		var ret PartnerAction
+		return ret
+	}
+	return *o.Update
+}
+
+// GetUpdateOk returns a tuple with the Update field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+func (o *PartnerOrderItemActions) GetUpdateOk() (*PartnerAction, bool) {
+	if o == nil || IsNil(o.Update) {
+		return nil, false
+	}
+	return o.Update, true
+}
+
+// HasUpdate returns a boolean if a field has been set.
+func (o *PartnerOrderItemActions) HasUpdate() bool {
+	if o != nil && !IsNil(o.Update) {
+		return true
+	}
+
+	return false
+}
+
+// SetUpdate gets a reference to the given PartnerAction and assigns it to the Update field.
+func (o *PartnerOrderItemActions) SetUpdate(v PartnerAction) {
+	o.Update = &v
 }
 
 func (o PartnerOrderItemActions) MarshalJSON() ([]byte, error) {
@@ -120,8 +154,11 @@ func (o PartnerOrderItemActions) ToMap() (map[string]interface{}, error) {
 	if !IsNil(o.Amendment) {
 		toSerialize["amendment"] = o.Amendment
 	}
-	if !IsNil(o.Refund) {
-		toSerialize["refund"] = o.Refund
+	if !IsNil(o.Cancellation) {
+		toSerialize["cancellation"] = o.Cancellation
+	}
+	if !IsNil(o.Update) {
+		toSerialize["update"] = o.Update
 	}
 	return toSerialize, nil
 }

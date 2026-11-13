@@ -15,34 +15,34 @@ import (
 	"encoding/json"
 )
 
-// checks if the RequestB2BAmendmentQuery type satisfies the MappedNullable interface at compile time
-var _ MappedNullable = &RequestB2BAmendmentQuery{}
+// checks if the QuoteB2BAmendmentQuery type satisfies the MappedNullable interface at compile time
+var _ MappedNullable = &QuoteB2BAmendmentQuery{}
 
-// RequestB2BAmendmentQuery The change requested for a delivered order item.
-type RequestB2BAmendmentQuery struct {
+// QuoteB2BAmendmentQuery The change requested for a delivered order item.
+type QuoteB2BAmendmentQuery struct {
 	// Required. A JSON object describing the change, in the shape the item's product defines for amendments.
 	Attributes interface{} `json:"attributes,omitempty"`
 }
 
-// NewRequestB2BAmendmentQuery instantiates a new RequestB2BAmendmentQuery object
+// NewQuoteB2BAmendmentQuery instantiates a new QuoteB2BAmendmentQuery object
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewRequestB2BAmendmentQuery() *RequestB2BAmendmentQuery {
-	this := RequestB2BAmendmentQuery{}
+func NewQuoteB2BAmendmentQuery() *QuoteB2BAmendmentQuery {
+	this := QuoteB2BAmendmentQuery{}
 	return &this
 }
 
-// NewRequestB2BAmendmentQueryWithDefaults instantiates a new RequestB2BAmendmentQuery object
+// NewQuoteB2BAmendmentQueryWithDefaults instantiates a new QuoteB2BAmendmentQuery object
 // This constructor will only assign default values to properties that have it defined,
 // but it doesn't guarantee that properties required by API are set
-func NewRequestB2BAmendmentQueryWithDefaults() *RequestB2BAmendmentQuery {
-	this := RequestB2BAmendmentQuery{}
+func NewQuoteB2BAmendmentQueryWithDefaults() *QuoteB2BAmendmentQuery {
+	this := QuoteB2BAmendmentQuery{}
 	return &this
 }
 
 // GetAttributes returns the Attributes field value if set, zero value otherwise (both if not set or set to explicit null).
-func (o *RequestB2BAmendmentQuery) GetAttributes() interface{} {
+func (o *QuoteB2BAmendmentQuery) GetAttributes() interface{} {
 	if o == nil {
 		var ret interface{}
 		return ret
@@ -53,7 +53,7 @@ func (o *RequestB2BAmendmentQuery) GetAttributes() interface{} {
 // GetAttributesOk returns a tuple with the Attributes field value if set, nil otherwise
 // and a boolean to check if the value has been set.
 // NOTE: If the value is an explicit nil, `nil, true` will be returned
-func (o *RequestB2BAmendmentQuery) GetAttributesOk() (*interface{}, bool) {
+func (o *QuoteB2BAmendmentQuery) GetAttributesOk() (*interface{}, bool) {
 	if o == nil || IsNil(o.Attributes) {
 		return nil, false
 	}
@@ -61,7 +61,7 @@ func (o *RequestB2BAmendmentQuery) GetAttributesOk() (*interface{}, bool) {
 }
 
 // HasAttributes returns a boolean if a field has been set.
-func (o *RequestB2BAmendmentQuery) HasAttributes() bool {
+func (o *QuoteB2BAmendmentQuery) HasAttributes() bool {
 	if o != nil && !IsNil(o.Attributes) {
 		return true
 	}
@@ -70,11 +70,11 @@ func (o *RequestB2BAmendmentQuery) HasAttributes() bool {
 }
 
 // SetAttributes gets a reference to the given interface{} and assigns it to the Attributes field.
-func (o *RequestB2BAmendmentQuery) SetAttributes(v interface{}) {
+func (o *QuoteB2BAmendmentQuery) SetAttributes(v interface{}) {
 	o.Attributes = v
 }
 
-func (o RequestB2BAmendmentQuery) MarshalJSON() ([]byte, error) {
+func (o QuoteB2BAmendmentQuery) MarshalJSON() ([]byte, error) {
 	toSerialize,err := o.ToMap()
 	if err != nil {
 		return []byte{}, err
@@ -82,7 +82,7 @@ func (o RequestB2BAmendmentQuery) MarshalJSON() ([]byte, error) {
 	return json.Marshal(toSerialize)
 }
 
-func (o RequestB2BAmendmentQuery) ToMap() (map[string]interface{}, error) {
+func (o QuoteB2BAmendmentQuery) ToMap() (map[string]interface{}, error) {
 	toSerialize := map[string]interface{}{}
 	if o.Attributes != nil {
 		toSerialize["attributes"] = o.Attributes
@@ -90,38 +90,38 @@ func (o RequestB2BAmendmentQuery) ToMap() (map[string]interface{}, error) {
 	return toSerialize, nil
 }
 
-type NullableRequestB2BAmendmentQuery struct {
-	value *RequestB2BAmendmentQuery
+type NullableQuoteB2BAmendmentQuery struct {
+	value *QuoteB2BAmendmentQuery
 	isSet bool
 }
 
-func (v NullableRequestB2BAmendmentQuery) Get() *RequestB2BAmendmentQuery {
+func (v NullableQuoteB2BAmendmentQuery) Get() *QuoteB2BAmendmentQuery {
 	return v.value
 }
 
-func (v *NullableRequestB2BAmendmentQuery) Set(val *RequestB2BAmendmentQuery) {
+func (v *NullableQuoteB2BAmendmentQuery) Set(val *QuoteB2BAmendmentQuery) {
 	v.value = val
 	v.isSet = true
 }
 
-func (v NullableRequestB2BAmendmentQuery) IsSet() bool {
+func (v NullableQuoteB2BAmendmentQuery) IsSet() bool {
 	return v.isSet
 }
 
-func (v *NullableRequestB2BAmendmentQuery) Unset() {
+func (v *NullableQuoteB2BAmendmentQuery) Unset() {
 	v.value = nil
 	v.isSet = false
 }
 
-func NewNullableRequestB2BAmendmentQuery(val *RequestB2BAmendmentQuery) *NullableRequestB2BAmendmentQuery {
-	return &NullableRequestB2BAmendmentQuery{value: val, isSet: true}
+func NewNullableQuoteB2BAmendmentQuery(val *QuoteB2BAmendmentQuery) *NullableQuoteB2BAmendmentQuery {
+	return &NullableQuoteB2BAmendmentQuery{value: val, isSet: true}
 }
 
-func (v NullableRequestB2BAmendmentQuery) MarshalJSON() ([]byte, error) {
+func (v NullableQuoteB2BAmendmentQuery) MarshalJSON() ([]byte, error) {
 	return json.Marshal(v.value)
 }
 
-func (v *NullableRequestB2BAmendmentQuery) UnmarshalJSON(src []byte) error {
+func (v *NullableQuoteB2BAmendmentQuery) UnmarshalJSON(src []byte) error {
 	v.isSet = true
 	return json.Unmarshal(src, &v.value)
 }

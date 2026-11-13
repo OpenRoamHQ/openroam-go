@@ -30,6 +30,8 @@ type HotelSearchFilters struct {
 	MaxPrice NullableFloat32 `json:"maxPrice,omitempty"`
 	// Meal plans to keep; `Unknown` is not accepted.
 	BoardTypes []string `json:"boardTypes,omitempty"`
+	// Cancellation types to keep, by the offer's `details.terms.cancellation.type`: `fullyRefundable`, `partiallyRefundable` or `nonRefundable`. Not empty when sent; omit it to keep every type.
+	CancellationTypes []string `json:"cancellationTypes,omitempty"`
 	// Amenity codes a hotel must have <em>all</em> of, as names such as `FreeWifi`; the codes are listed by `hotels/amenities/catalog`. A hotel without any amenity information never matches.
 	AmenityCodes []string `json:"amenityCodes,omitempty"`
 }
@@ -252,6 +254,39 @@ func (o *HotelSearchFilters) SetBoardTypes(v []string) {
 	o.BoardTypes = v
 }
 
+// GetCancellationTypes returns the CancellationTypes field value if set, zero value otherwise (both if not set or set to explicit null).
+func (o *HotelSearchFilters) GetCancellationTypes() []string {
+	if o == nil {
+		var ret []string
+		return ret
+	}
+	return o.CancellationTypes
+}
+
+// GetCancellationTypesOk returns a tuple with the CancellationTypes field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+// NOTE: If the value is an explicit nil, `nil, true` will be returned
+func (o *HotelSearchFilters) GetCancellationTypesOk() ([]string, bool) {
+	if o == nil || IsNil(o.CancellationTypes) {
+		return nil, false
+	}
+	return o.CancellationTypes, true
+}
+
+// HasCancellationTypes returns a boolean if a field has been set.
+func (o *HotelSearchFilters) HasCancellationTypes() bool {
+	if o != nil && !IsNil(o.CancellationTypes) {
+		return true
+	}
+
+	return false
+}
+
+// SetCancellationTypes gets a reference to the given []string and assigns it to the CancellationTypes field.
+func (o *HotelSearchFilters) SetCancellationTypes(v []string) {
+	o.CancellationTypes = v
+}
+
 // GetAmenityCodes returns the AmenityCodes field value if set, zero value otherwise (both if not set or set to explicit null).
 func (o *HotelSearchFilters) GetAmenityCodes() []string {
 	if o == nil {
@@ -309,6 +344,9 @@ func (o HotelSearchFilters) ToMap() (map[string]interface{}, error) {
 	}
 	if o.BoardTypes != nil {
 		toSerialize["boardTypes"] = o.BoardTypes
+	}
+	if o.CancellationTypes != nil {
+		toSerialize["cancellationTypes"] = o.CancellationTypes
 	}
 	if o.AmenityCodes != nil {
 		toSerialize["amenityCodes"] = o.AmenityCodes

@@ -1,0 +1,1631 @@
+[
+  {
+    "method": "airtime.listCatalog",
+    "verb": "GET",
+    "route": "/api/v1/b2b/airtime/catalog",
+    "pathNames": [],
+    "query": [
+      {
+        "name": "countryCode",
+        "required": false,
+        "kind": "string"
+      },
+      {
+        "name": "cursor",
+        "required": false,
+        "kind": "string"
+      },
+      {
+        "name": "limit",
+        "required": false,
+        "kind": "number"
+      }
+    ],
+    "idempotent": false,
+    "body": false,
+    "bodyModel": null,
+    "bodySample": null
+  },
+  {
+    "method": "airtime.search",
+    "verb": "GET",
+    "route": "/api/v1/b2b/airtime/search",
+    "pathNames": [],
+    "query": [
+      {
+        "name": "phoneNumber",
+        "required": true,
+        "kind": "string"
+      },
+      {
+        "name": "valueType",
+        "required": false,
+        "kind": "string"
+      },
+      {
+        "name": "valueCurrency",
+        "required": false,
+        "kind": "string"
+      },
+      {
+        "name": "minValue",
+        "required": false,
+        "kind": "number"
+      },
+      {
+        "name": "maxValue",
+        "required": false,
+        "kind": "number"
+      },
+      {
+        "name": "minPrice",
+        "required": false,
+        "kind": "number"
+      },
+      {
+        "name": "maxPrice",
+        "required": false,
+        "kind": "number"
+      },
+      {
+        "name": "currency",
+        "required": false,
+        "kind": "string"
+      },
+      {
+        "name": "page",
+        "required": false,
+        "kind": "number"
+      },
+      {
+        "name": "limit",
+        "required": false,
+        "kind": "number"
+      }
+    ],
+    "idempotent": false,
+    "body": false,
+    "bodyModel": null,
+    "bodySample": null
+  },
+  {
+    "method": "airtime.lookupNumber",
+    "verb": "GET",
+    "route": "/api/v1/b2b/airtime/number-lookup",
+    "pathNames": [],
+    "query": [
+      {
+        "name": "phoneNumber",
+        "required": true,
+        "kind": "string"
+      }
+    ],
+    "idempotent": false,
+    "body": false,
+    "bodyModel": null,
+    "bodySample": null
+  },
+  {
+    "method": "airtime.listOperators",
+    "verb": "GET",
+    "route": "/api/v1/b2b/airtime/operators",
+    "pathNames": [],
+    "query": [
+      {
+        "name": "countryCode",
+        "required": true,
+        "kind": "string"
+      }
+    ],
+    "idempotent": false,
+    "body": false,
+    "bodyModel": null,
+    "bodySample": null
+  },
+  {
+    "method": "airtime.getOperator",
+    "verb": "GET",
+    "route": "/api/v1/b2b/airtime/operators/{id}",
+    "pathNames": [
+      "id"
+    ],
+    "query": [
+      {
+        "name": "phoneNumber",
+        "required": true,
+        "kind": "string"
+      },
+      {
+        "name": "valueType",
+        "required": false,
+        "kind": "string"
+      },
+      {
+        "name": "valueCurrency",
+        "required": false,
+        "kind": "string"
+      },
+      {
+        "name": "minValue",
+        "required": false,
+        "kind": "number"
+      },
+      {
+        "name": "maxValue",
+        "required": false,
+        "kind": "number"
+      },
+      {
+        "name": "minPrice",
+        "required": false,
+        "kind": "number"
+      },
+      {
+        "name": "maxPrice",
+        "required": false,
+        "kind": "number"
+      },
+      {
+        "name": "currency",
+        "required": false,
+        "kind": "string"
+      }
+    ],
+    "idempotent": false,
+    "body": false,
+    "bodyModel": null,
+    "bodySample": null
+  },
+  {
+    "method": "airtime.quote",
+    "verb": "POST",
+    "route": "/api/v1/b2b/airtime/quote",
+    "pathNames": [],
+    "query": [],
+    "idempotent": false,
+    "body": true,
+    "bodyModel": "AirtimeOrderRequest",
+    "bodySample": {
+      "items": [
+        {
+          "inputs": {
+            "phoneNumber": null
+          },
+          "publicId": "sample"
+        }
+      ]
+    }
+  },
+  {
+    "method": "airtime.order",
+    "verb": "POST",
+    "route": "/api/v1/b2b/airtime/order",
+    "pathNames": [],
+    "query": [],
+    "idempotent": true,
+    "body": true,
+    "bodyModel": "AirtimeOrderRequest",
+    "bodySample": {
+      "items": [
+        {
+          "inputs": {
+            "phoneNumber": null
+          },
+          "publicId": "sample"
+        }
+      ]
+    }
+  },
+  {
+    "method": "countries.list",
+    "verb": "GET",
+    "route": "/api/v1/b2b/common/countries",
+    "pathNames": [],
+    "query": [],
+    "idempotent": false,
+    "body": false,
+    "bodyModel": null,
+    "bodySample": null
+  },
+  {
+    "method": "mobileNetworks.list",
+    "verb": "GET",
+    "route": "/api/v1/b2b/common/mccmnc",
+    "pathNames": [],
+    "query": [
+      {
+        "name": "countryCode",
+        "required": false,
+        "kind": "string"
+      },
+      {
+        "name": "mcc",
+        "required": false,
+        "kind": "string"
+      }
+    ],
+    "idempotent": false,
+    "body": false,
+    "bodyModel": null,
+    "bodySample": null
+  },
+  {
+    "method": "currencies.list",
+    "verb": "GET",
+    "route": "/api/v1/b2b/currencies",
+    "pathNames": [],
+    "query": [],
+    "idempotent": false,
+    "body": false,
+    "bodyModel": null,
+    "bodySample": null
+  },
+  {
+    "method": "esims.search",
+    "verb": "GET",
+    "route": "/api/v1/b2b/esims/search",
+    "pathNames": [],
+    "query": [
+      {
+        "name": "countryCode",
+        "required": false,
+        "kind": "string"
+      },
+      {
+        "name": "category",
+        "required": false,
+        "kind": "string"
+      },
+      {
+        "name": "region",
+        "required": false,
+        "kind": "string"
+      },
+      {
+        "name": "validityDays",
+        "required": false,
+        "kind": "number"
+      },
+      {
+        "name": "isUnlimited",
+        "required": false,
+        "kind": "boolean"
+      },
+      {
+        "name": "iccid",
+        "required": false,
+        "kind": "string"
+      },
+      {
+        "name": "currency",
+        "required": false,
+        "kind": "string"
+      },
+      {
+        "name": "page",
+        "required": false,
+        "kind": "number"
+      },
+      {
+        "name": "limit",
+        "required": false,
+        "kind": "number"
+      }
+    ],
+    "idempotent": false,
+    "body": false,
+    "bodyModel": null,
+    "bodySample": null
+  },
+  {
+    "method": "esims.listDestinations",
+    "verb": "GET",
+    "route": "/api/v1/b2b/esims/destinations",
+    "pathNames": [],
+    "query": [
+      {
+        "name": "category",
+        "required": false,
+        "kind": "string"
+      },
+      {
+        "name": "region",
+        "required": false,
+        "kind": "string"
+      }
+    ],
+    "idempotent": false,
+    "body": false,
+    "bodyModel": null,
+    "bodySample": null
+  },
+  {
+    "method": "esims.getDestination",
+    "verb": "GET",
+    "route": "/api/v1/b2b/esims/destinations/{id}",
+    "pathNames": [
+      "id"
+    ],
+    "query": [
+      {
+        "name": "currency",
+        "required": false,
+        "kind": "string"
+      }
+    ],
+    "idempotent": false,
+    "body": false,
+    "bodyModel": null,
+    "bodySample": null
+  },
+  {
+    "method": "esims.listCatalog",
+    "verb": "GET",
+    "route": "/api/v1/b2b/esims/catalog",
+    "pathNames": [],
+    "query": [
+      {
+        "name": "countryCode",
+        "required": false,
+        "kind": "string"
+      },
+      {
+        "name": "category",
+        "required": false,
+        "kind": "string"
+      },
+      {
+        "name": "region",
+        "required": false,
+        "kind": "string"
+      },
+      {
+        "name": "validityDays",
+        "required": false,
+        "kind": "number"
+      },
+      {
+        "name": "isUnlimited",
+        "required": false,
+        "kind": "boolean"
+      },
+      {
+        "name": "currency",
+        "required": false,
+        "kind": "string"
+      },
+      {
+        "name": "cursor",
+        "required": false,
+        "kind": "string"
+      },
+      {
+        "name": "limit",
+        "required": false,
+        "kind": "number"
+      }
+    ],
+    "idempotent": false,
+    "body": false,
+    "bodyModel": null,
+    "bodySample": null
+  },
+  {
+    "method": "esims.listCompatibleDevices",
+    "verb": "GET",
+    "route": "/api/v1/b2b/esims/compatible-devices",
+    "pathNames": [],
+    "query": [],
+    "idempotent": false,
+    "body": false,
+    "bodyModel": null,
+    "bodySample": null
+  },
+  {
+    "method": "esims.order",
+    "verb": "POST",
+    "route": "/api/v1/b2b/esims/order",
+    "pathNames": [],
+    "query": [],
+    "idempotent": true,
+    "body": true,
+    "bodyModel": "EsimOrderRequest",
+    "bodySample": {
+      "items": [
+        {
+          "publicId": "sample"
+        }
+      ]
+    }
+  },
+  {
+    "method": "esims.quote",
+    "verb": "POST",
+    "route": "/api/v1/b2b/esims/quote",
+    "pathNames": [],
+    "query": [],
+    "idempotent": false,
+    "body": true,
+    "bodyModel": "EsimOrderRequest",
+    "bodySample": {
+      "items": [
+        {
+          "publicId": "sample"
+        }
+      ]
+    }
+  },
+  {
+    "method": "esims.getProfile",
+    "verb": "GET",
+    "route": "/api/v1/b2b/esims/{iccid}/profile",
+    "pathNames": [
+      "iccid"
+    ],
+    "query": [],
+    "idempotent": false,
+    "body": false,
+    "bodyModel": null,
+    "bodySample": null
+  },
+  {
+    "method": "esims.getUsage",
+    "verb": "GET",
+    "route": "/api/v1/b2b/esims/{iccid}/usage",
+    "pathNames": [
+      "iccid"
+    ],
+    "query": [],
+    "idempotent": false,
+    "body": false,
+    "bodyModel": null,
+    "bodySample": null
+  },
+  {
+    "method": "esims.listDailyUsage",
+    "verb": "GET",
+    "route": "/api/v1/b2b/esims/{iccid}/usage/details",
+    "pathNames": [
+      "iccid"
+    ],
+    "query": [],
+    "idempotent": false,
+    "body": false,
+    "bodyModel": null,
+    "bodySample": null
+  },
+  {
+    "method": "esims.listUsageHistory",
+    "verb": "GET",
+    "route": "/api/v1/b2b/esims/{iccid}/usage/history",
+    "pathNames": [
+      "iccid"
+    ],
+    "query": [
+      {
+        "name": "page",
+        "required": false,
+        "kind": "number"
+      },
+      {
+        "name": "limit",
+        "required": false,
+        "kind": "number"
+      },
+      {
+        "name": "from",
+        "required": false,
+        "kind": "date"
+      },
+      {
+        "name": "to",
+        "required": false,
+        "kind": "date"
+      }
+    ],
+    "idempotent": false,
+    "body": false,
+    "bodyModel": null,
+    "bodySample": null
+  },
+  {
+    "method": "esims.listStatusHistory",
+    "verb": "GET",
+    "route": "/api/v1/b2b/esims/{iccid}/status-events",
+    "pathNames": [
+      "iccid"
+    ],
+    "query": [
+      {
+        "name": "page",
+        "required": false,
+        "kind": "number"
+      },
+      {
+        "name": "limit",
+        "required": false,
+        "kind": "number"
+      },
+      {
+        "name": "from",
+        "required": false,
+        "kind": "date"
+      },
+      {
+        "name": "to",
+        "required": false,
+        "kind": "date"
+      }
+    ],
+    "idempotent": false,
+    "body": false,
+    "bodyModel": null,
+    "bodySample": null
+  },
+  {
+    "method": "esims.listLocationHistory",
+    "verb": "GET",
+    "route": "/api/v1/b2b/esims/{iccid}/location-events",
+    "pathNames": [
+      "iccid"
+    ],
+    "query": [
+      {
+        "name": "page",
+        "required": false,
+        "kind": "number"
+      },
+      {
+        "name": "limit",
+        "required": false,
+        "kind": "number"
+      },
+      {
+        "name": "from",
+        "required": false,
+        "kind": "date"
+      },
+      {
+        "name": "to",
+        "required": false,
+        "kind": "date"
+      }
+    ],
+    "idempotent": false,
+    "body": false,
+    "bodyModel": null,
+    "bodySample": null
+  },
+  {
+    "method": "esims.provision",
+    "verb": "POST",
+    "route": "/api/v1/b2b/esims/{id}/provisioning",
+    "pathNames": [
+      "id"
+    ],
+    "query": [],
+    "idempotent": true,
+    "body": true,
+    "bodyModel": "ProvisionB2BEsimRequest",
+    "bodySample": {}
+  },
+  {
+    "method": "esims.sendSms",
+    "verb": "POST",
+    "route": "/api/v1/b2b/esims/{iccid}/sms",
+    "pathNames": [
+      "iccid"
+    ],
+    "query": [],
+    "idempotent": false,
+    "body": true,
+    "bodyModel": "SendB2BEsimSmsCommand",
+    "bodySample": {
+      "message": "sample"
+    }
+  },
+  {
+    "method": "flights.search",
+    "verb": "POST",
+    "route": "/api/v1/b2b/flights/search",
+    "pathNames": [],
+    "query": [],
+    "idempotent": false,
+    "body": true,
+    "bodyModel": "SearchB2BFlightsQuery",
+    "bodySample": {
+      "passengers": [
+        {
+          "type": "adult"
+        }
+      ],
+      "slices": [
+        {
+          "departureDate": "2026-01-02",
+          "destination": "sample",
+          "origin": "sample"
+        }
+      ]
+    }
+  },
+  {
+    "method": "flights.quote",
+    "verb": "POST",
+    "route": "/api/v1/b2b/flights/quote",
+    "pathNames": [],
+    "query": [],
+    "idempotent": false,
+    "body": true,
+    "bodyModel": "FlightOrderRequest",
+    "bodySample": {
+      "items": [
+        {
+          "publicId": "sample"
+        }
+      ]
+    }
+  },
+  {
+    "method": "flights.order",
+    "verb": "POST",
+    "route": "/api/v1/b2b/flights/order",
+    "pathNames": [],
+    "query": [],
+    "idempotent": true,
+    "body": true,
+    "bodyModel": "FlightOrderRequest",
+    "bodySample": {
+      "items": [
+        {
+          "publicId": "sample"
+        }
+      ]
+    }
+  },
+  {
+    "method": "flights.getSeatMap",
+    "verb": "GET",
+    "route": "/api/v1/b2b/flights/offers/{publicId}/seat-map",
+    "pathNames": [
+      "publicId"
+    ],
+    "query": [],
+    "idempotent": false,
+    "body": false,
+    "bodyModel": null,
+    "bodySample": null
+  },
+  {
+    "method": "giftCards.listCategories",
+    "verb": "GET",
+    "route": "/api/v1/b2b/giftcards/categories",
+    "pathNames": [],
+    "query": [],
+    "idempotent": false,
+    "body": false,
+    "bodyModel": null,
+    "bodySample": null
+  },
+  {
+    "method": "giftCards.search",
+    "verb": "GET",
+    "route": "/api/v1/b2b/giftcards/search",
+    "pathNames": [],
+    "query": [
+      {
+        "name": "countryCode",
+        "required": false,
+        "kind": "string"
+      },
+      {
+        "name": "category",
+        "required": false,
+        "kind": "string"
+      },
+      {
+        "name": "valueType",
+        "required": false,
+        "kind": "string"
+      },
+      {
+        "name": "q",
+        "required": false,
+        "kind": "string"
+      },
+      {
+        "name": "isRedeemableGlobally",
+        "required": false,
+        "kind": "boolean"
+      },
+      {
+        "name": "currency",
+        "required": false,
+        "kind": "string"
+      },
+      {
+        "name": "page",
+        "required": false,
+        "kind": "number"
+      },
+      {
+        "name": "limit",
+        "required": false,
+        "kind": "number"
+      }
+    ],
+    "idempotent": false,
+    "body": false,
+    "bodyModel": null,
+    "bodySample": null
+  },
+  {
+    "method": "giftCards.listCatalog",
+    "verb": "GET",
+    "route": "/api/v1/b2b/giftcards/catalog",
+    "pathNames": [],
+    "query": [
+      {
+        "name": "countryCode",
+        "required": false,
+        "kind": "string"
+      },
+      {
+        "name": "category",
+        "required": false,
+        "kind": "string"
+      },
+      {
+        "name": "valueType",
+        "required": false,
+        "kind": "string"
+      },
+      {
+        "name": "isRedeemableGlobally",
+        "required": false,
+        "kind": "boolean"
+      },
+      {
+        "name": "currency",
+        "required": false,
+        "kind": "string"
+      },
+      {
+        "name": "cursor",
+        "required": false,
+        "kind": "string"
+      },
+      {
+        "name": "limit",
+        "required": false,
+        "kind": "number"
+      }
+    ],
+    "idempotent": false,
+    "body": false,
+    "bodyModel": null,
+    "bodySample": null
+  },
+  {
+    "method": "giftCards.getGiftCard",
+    "verb": "GET",
+    "route": "/api/v1/b2b/giftcards/cards/{id}",
+    "pathNames": [
+      "id"
+    ],
+    "query": [
+      {
+        "name": "currency",
+        "required": false,
+        "kind": "string"
+      }
+    ],
+    "idempotent": false,
+    "body": false,
+    "bodyModel": null,
+    "bodySample": null
+  },
+  {
+    "method": "giftCards.order",
+    "verb": "POST",
+    "route": "/api/v1/b2b/giftcards/order",
+    "pathNames": [],
+    "query": [],
+    "idempotent": true,
+    "body": true,
+    "bodyModel": "GiftCardOrderRequest",
+    "bodySample": {
+      "items": [
+        {
+          "publicId": "sample"
+        }
+      ]
+    }
+  },
+  {
+    "method": "giftCards.quote",
+    "verb": "POST",
+    "route": "/api/v1/b2b/giftcards/quote",
+    "pathNames": [],
+    "query": [],
+    "idempotent": false,
+    "body": true,
+    "bodyModel": "GiftCardOrderRequest",
+    "bodySample": {
+      "items": [
+        {
+          "publicId": "sample"
+        }
+      ]
+    }
+  },
+  {
+    "method": "orderItems.manualAmendments.create",
+    "verb": "POST",
+    "route": "/api/v1/b2b/order-items/{id}/manual-amendments",
+    "pathNames": [
+      "id"
+    ],
+    "query": [],
+    "idempotent": true,
+    "body": true,
+    "bodyModel": "CreateB2BManualAmendmentCommand",
+    "bodySample": {}
+  },
+  {
+    "method": "orderItems.manualAmendments.cancel",
+    "verb": "POST",
+    "route": "/api/v1/b2b/order-items/{id}/manual-amendments/{amendmentId}/cancel",
+    "pathNames": [
+      "id",
+      "amendmentId"
+    ],
+    "query": [],
+    "idempotent": false,
+    "body": false,
+    "bodyModel": null,
+    "bodySample": null
+  },
+  {
+    "method": "orderItems.manualAmendments.approve",
+    "verb": "POST",
+    "route": "/api/v1/b2b/order-items/{id}/manual-amendments/{amendmentId}/approve",
+    "pathNames": [
+      "id",
+      "amendmentId"
+    ],
+    "query": [],
+    "idempotent": true,
+    "body": true,
+    "bodyModel": "ApproveB2BManualAmendmentCommand",
+    "bodySample": {}
+  },
+  {
+    "method": "orderItems.manualAmendments.decline",
+    "verb": "POST",
+    "route": "/api/v1/b2b/order-items/{id}/manual-amendments/{amendmentId}/decline",
+    "pathNames": [
+      "id",
+      "amendmentId"
+    ],
+    "query": [],
+    "idempotent": false,
+    "body": false,
+    "bodyModel": null,
+    "bodySample": null
+  },
+  {
+    "method": "hotels.search",
+    "verb": "POST",
+    "route": "/api/v1/b2b/hotels/search",
+    "pathNames": [],
+    "query": [],
+    "idempotent": false,
+    "body": true,
+    "bodyModel": "SearchHotelQuery",
+    "bodySample": {
+      "checkIn": "2026-01-02",
+      "checkOut": "2026-01-02",
+      "guestNationality": "sample",
+      "rooms": [
+        {}
+      ]
+    }
+  },
+  {
+    "method": "hotels.getHotel",
+    "verb": "GET",
+    "route": "/api/v1/b2b/hotels/properties/{id}",
+    "pathNames": [
+      "id"
+    ],
+    "query": [],
+    "idempotent": false,
+    "body": false,
+    "bodyModel": null,
+    "bodySample": null
+  },
+  {
+    "method": "hotels.listDestinations",
+    "verb": "GET",
+    "route": "/api/v1/b2b/hotels/destinations",
+    "pathNames": [],
+    "query": [
+      {
+        "name": "q",
+        "required": true,
+        "kind": "string"
+      },
+      {
+        "name": "countryCode",
+        "required": false,
+        "kind": "string"
+      },
+      {
+        "name": "limit",
+        "required": false,
+        "kind": "number"
+      }
+    ],
+    "idempotent": false,
+    "body": false,
+    "bodyModel": null,
+    "bodySample": null
+  },
+  {
+    "method": "hotels.listAmenities",
+    "verb": "GET",
+    "route": "/api/v1/b2b/hotels/amenities/catalog",
+    "pathNames": [],
+    "query": [],
+    "idempotent": false,
+    "body": false,
+    "bodyModel": null,
+    "bodySample": null
+  },
+  {
+    "method": "hotels.exportCatalog",
+    "verb": "GET",
+    "route": "/api/v1/b2b/hotels/catalog/files",
+    "pathNames": [],
+    "query": [],
+    "idempotent": false,
+    "body": false,
+    "bodyModel": null,
+    "bodySample": null
+  },
+  {
+    "method": "hotels.quote",
+    "verb": "POST",
+    "route": "/api/v1/b2b/hotels/quote",
+    "pathNames": [],
+    "query": [],
+    "idempotent": false,
+    "body": true,
+    "bodyModel": "HotelOrderRequest",
+    "bodySample": {
+      "items": [
+        {
+          "publicId": "sample"
+        }
+      ]
+    }
+  },
+  {
+    "method": "hotels.order",
+    "verb": "POST",
+    "route": "/api/v1/b2b/hotels/order",
+    "pathNames": [],
+    "query": [],
+    "idempotent": true,
+    "body": true,
+    "bodyModel": "HotelOrderRequest",
+    "bodySample": {
+      "items": [
+        {
+          "publicId": "sample"
+        }
+      ]
+    }
+  },
+  {
+    "method": "orderItems.listPartnerAmendments",
+    "verb": "GET",
+    "route": "/api/v1/b2b/amendments",
+    "pathNames": [],
+    "query": [
+      {
+        "name": "page",
+        "required": false,
+        "kind": "number"
+      },
+      {
+        "name": "limit",
+        "required": false,
+        "kind": "number"
+      },
+      {
+        "name": "statuses",
+        "required": false,
+        "kind": "array"
+      },
+      {
+        "name": "productType",
+        "required": false,
+        "kind": "string"
+      },
+      {
+        "name": "amendmentMode",
+        "required": false,
+        "kind": "string"
+      },
+      {
+        "name": "orderId",
+        "required": false,
+        "kind": "string",
+        "format": "uuid"
+      },
+      {
+        "name": "orderItemId",
+        "required": false,
+        "kind": "string",
+        "format": "uuid"
+      },
+      {
+        "name": "from",
+        "required": false,
+        "kind": "date"
+      },
+      {
+        "name": "to",
+        "required": false,
+        "kind": "date"
+      }
+    ],
+    "idempotent": false,
+    "body": false,
+    "bodyModel": null,
+    "bodySample": null
+  },
+  {
+    "method": "orderItems.get",
+    "verb": "GET",
+    "route": "/api/v1/b2b/order-items/{id}",
+    "pathNames": [
+      "id"
+    ],
+    "query": [],
+    "idempotent": false,
+    "body": false,
+    "bodyModel": null,
+    "bodySample": null
+  },
+  {
+    "method": "orderItems.getCancellationPreview",
+    "verb": "GET",
+    "route": "/api/v1/b2b/order-items/{id}/cancellation-preview",
+    "pathNames": [
+      "id"
+    ],
+    "query": [],
+    "idempotent": false,
+    "body": false,
+    "bodyModel": null,
+    "bodySample": null
+  },
+  {
+    "method": "orderItems.quoteAmendment",
+    "verb": "POST",
+    "route": "/api/v1/b2b/order-items/{id}/amendments/quote",
+    "pathNames": [
+      "id"
+    ],
+    "query": [],
+    "idempotent": true,
+    "body": true,
+    "bodyModel": "QuoteB2BAmendmentQuery",
+    "bodySample": {}
+  },
+  {
+    "method": "orderItems.listAmendments",
+    "verb": "GET",
+    "route": "/api/v1/b2b/order-items/{id}/amendments",
+    "pathNames": [
+      "id"
+    ],
+    "query": [],
+    "idempotent": false,
+    "body": false,
+    "bodyModel": null,
+    "bodySample": null
+  },
+  {
+    "method": "orderItems.getAmendment",
+    "verb": "GET",
+    "route": "/api/v1/b2b/order-items/{id}/amendments/{amendmentId}",
+    "pathNames": [
+      "id",
+      "amendmentId"
+    ],
+    "query": [],
+    "idempotent": false,
+    "body": false,
+    "bodyModel": null,
+    "bodySample": null
+  },
+  {
+    "method": "orderItems.cancel",
+    "verb": "POST",
+    "route": "/api/v1/b2b/order-items/{id}/cancel",
+    "pathNames": [
+      "id"
+    ],
+    "query": [],
+    "idempotent": true,
+    "body": true,
+    "bodyModel": "RefundOrderItemRequest",
+    "bodySample": {
+      "reason": "requestedByCustomer"
+    }
+  },
+  {
+    "method": "orderItems.update",
+    "verb": "POST",
+    "route": "/api/v1/b2b/order-items/{id}/update",
+    "pathNames": [
+      "id"
+    ],
+    "query": [],
+    "idempotent": true,
+    "body": true,
+    "bodyModel": "UpdateB2BOrderItemRequest",
+    "bodySample": {
+      "inputs": {}
+    }
+  },
+  {
+    "method": "orderItems.confirmAmendment",
+    "verb": "POST",
+    "route": "/api/v1/b2b/order-items/{id}/amendments/confirm",
+    "pathNames": [
+      "id"
+    ],
+    "query": [],
+    "idempotent": true,
+    "body": true,
+    "bodyModel": "ConfirmB2BAmendmentRequest",
+    "bodySample": {
+      "amendmentRequestId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+      "paymentMethod": "balance"
+    }
+  },
+  {
+    "method": "orders.list",
+    "verb": "GET",
+    "route": "/api/v1/b2b/orders",
+    "pathNames": [],
+    "query": [
+      {
+        "name": "page",
+        "required": false,
+        "kind": "number"
+      },
+      {
+        "name": "limit",
+        "required": false,
+        "kind": "number"
+      },
+      {
+        "name": "startDate",
+        "required": false,
+        "kind": "date"
+      },
+      {
+        "name": "endDate",
+        "required": false,
+        "kind": "date"
+      },
+      {
+        "name": "minAmount",
+        "required": false,
+        "kind": "number"
+      },
+      {
+        "name": "maxAmount",
+        "required": false,
+        "kind": "number"
+      },
+      {
+        "name": "search",
+        "required": false,
+        "kind": "string"
+      },
+      {
+        "name": "referenceId",
+        "required": false,
+        "kind": "string"
+      },
+      {
+        "name": "salesChannel",
+        "required": false,
+        "kind": "string"
+      },
+      {
+        "name": "productTypes",
+        "required": false,
+        "kind": "array"
+      },
+      {
+        "name": "orderStatuses",
+        "required": false,
+        "kind": "array"
+      }
+    ],
+    "idempotent": false,
+    "body": false,
+    "bodyModel": null,
+    "bodySample": null
+  },
+  {
+    "method": "orders.order",
+    "verb": "POST",
+    "route": "/api/v1/b2b/orders",
+    "pathNames": [],
+    "query": [],
+    "idempotent": true,
+    "body": true,
+    "bodyModel": "CreateB2BOrderCommand",
+    "bodySample": {
+      "items": [
+        {
+          "publicId": "sample",
+          "productType": "esim"
+        }
+      ]
+    }
+  },
+  {
+    "method": "orders.get",
+    "verb": "GET",
+    "route": "/api/v1/b2b/orders/{id}",
+    "pathNames": [
+      "id"
+    ],
+    "query": [],
+    "idempotent": false,
+    "body": false,
+    "bodyModel": null,
+    "bodySample": null
+  },
+  {
+    "method": "orders.quote",
+    "verb": "POST",
+    "route": "/api/v1/b2b/orders/quote",
+    "pathNames": [],
+    "query": [],
+    "idempotent": false,
+    "body": true,
+    "bodyModel": "CreateB2BOrderCommand",
+    "bodySample": {
+      "items": [
+        {
+          "publicId": "sample",
+          "productType": "esim"
+        }
+      ]
+    }
+  },
+  {
+    "method": "orders.retryPayment",
+    "verb": "POST",
+    "route": "/api/v1/b2b/orders/{orderId}/payment/retry",
+    "pathNames": [
+      "orderId"
+    ],
+    "query": [],
+    "idempotent": true,
+    "body": false,
+    "bodyModel": null,
+    "bodySample": null
+  },
+  {
+    "method": "orders.retryFulfillment",
+    "verb": "POST",
+    "route": "/api/v1/b2b/orders/{orderId}/fulfillment/retry",
+    "pathNames": [
+      "orderId"
+    ],
+    "query": [],
+    "idempotent": true,
+    "body": false,
+    "bodyModel": null,
+    "bodySample": null
+  },
+  {
+    "method": "orders.getFulfillmentStatus",
+    "verb": "GET",
+    "route": "/api/v1/b2b/orders/{orderId}/fulfillment/status",
+    "pathNames": [
+      "orderId"
+    ],
+    "query": [],
+    "idempotent": false,
+    "body": false,
+    "bodyModel": null,
+    "bodySample": null
+  },
+  {
+    "method": "orders.getCancellationPreview",
+    "verb": "GET",
+    "route": "/api/v1/b2b/orders/{id}/cancellation-preview",
+    "pathNames": [
+      "id"
+    ],
+    "query": [],
+    "idempotent": false,
+    "body": false,
+    "bodyModel": null,
+    "bodySample": null
+  },
+  {
+    "method": "utilities.search",
+    "verb": "GET",
+    "route": "/api/v1/b2b/utility/search",
+    "pathNames": [],
+    "query": [
+      {
+        "name": "countryCode",
+        "required": true,
+        "kind": "string"
+      },
+      {
+        "name": "category",
+        "required": false,
+        "kind": "string"
+      },
+      {
+        "name": "serviceType",
+        "required": false,
+        "kind": "string"
+      },
+      {
+        "name": "q",
+        "required": false,
+        "kind": "string"
+      },
+      {
+        "name": "currency",
+        "required": false,
+        "kind": "string"
+      },
+      {
+        "name": "page",
+        "required": false,
+        "kind": "number"
+      },
+      {
+        "name": "limit",
+        "required": false,
+        "kind": "number"
+      }
+    ],
+    "idempotent": false,
+    "body": false,
+    "bodyModel": null,
+    "bodySample": null
+  },
+  {
+    "method": "utilities.getBiller",
+    "verb": "GET",
+    "route": "/api/v1/b2b/utility/billers/{id}",
+    "pathNames": [
+      "id"
+    ],
+    "query": [
+      {
+        "name": "currency",
+        "required": false,
+        "kind": "string"
+      }
+    ],
+    "idempotent": false,
+    "body": false,
+    "bodyModel": null,
+    "bodySample": null
+  },
+  {
+    "method": "utilities.listCatalog",
+    "verb": "GET",
+    "route": "/api/v1/b2b/utility/catalog",
+    "pathNames": [],
+    "query": [
+      {
+        "name": "countryCode",
+        "required": false,
+        "kind": "string"
+      },
+      {
+        "name": "category",
+        "required": false,
+        "kind": "string"
+      },
+      {
+        "name": "serviceType",
+        "required": false,
+        "kind": "string"
+      },
+      {
+        "name": "currency",
+        "required": false,
+        "kind": "string"
+      },
+      {
+        "name": "cursor",
+        "required": false,
+        "kind": "string"
+      },
+      {
+        "name": "limit",
+        "required": false,
+        "kind": "number"
+      }
+    ],
+    "idempotent": false,
+    "body": false,
+    "bodyModel": null,
+    "bodySample": null
+  },
+  {
+    "method": "utilities.order",
+    "verb": "POST",
+    "route": "/api/v1/b2b/utility/order",
+    "pathNames": [],
+    "query": [],
+    "idempotent": true,
+    "body": true,
+    "bodyModel": "UtilityOrderRequest",
+    "bodySample": {
+      "items": [
+        {
+          "publicId": "sample"
+        }
+      ]
+    }
+  },
+  {
+    "method": "utilities.quote",
+    "verb": "POST",
+    "route": "/api/v1/b2b/utility/quote",
+    "pathNames": [],
+    "query": [],
+    "idempotent": false,
+    "body": true,
+    "bodyModel": "UtilityOrderRequest",
+    "bodySample": {
+      "items": [
+        {
+          "publicId": "sample"
+        }
+      ]
+    }
+  },
+  {
+    "method": "wallets.list",
+    "verb": "GET",
+    "route": "/api/v1/b2b/wallets",
+    "pathNames": [],
+    "query": [],
+    "idempotent": false,
+    "body": false,
+    "bodyModel": null,
+    "bodySample": null
+  },
+  {
+    "method": "wallets.create",
+    "verb": "POST",
+    "route": "/api/v1/b2b/wallets",
+    "pathNames": [],
+    "query": [],
+    "idempotent": false,
+    "body": true,
+    "bodyModel": "CreateB2BWalletCommand",
+    "bodySample": {}
+  },
+  {
+    "method": "wallets.get",
+    "verb": "GET",
+    "route": "/api/v1/b2b/wallets/{id}",
+    "pathNames": [
+      "id"
+    ],
+    "query": [],
+    "idempotent": false,
+    "body": false,
+    "bodyModel": null,
+    "bodySample": null
+  },
+  {
+    "method": "wallets.update",
+    "verb": "PATCH",
+    "route": "/api/v1/b2b/wallets/{id}",
+    "pathNames": [
+      "id"
+    ],
+    "query": [],
+    "idempotent": false,
+    "body": true,
+    "bodyModel": "UpdateB2BWalletCommand",
+    "bodySample": {}
+  },
+  {
+    "method": "wallets.setDefault",
+    "verb": "PATCH",
+    "route": "/api/v1/b2b/wallets/select/{id}",
+    "pathNames": [
+      "id"
+    ],
+    "query": [],
+    "idempotent": false,
+    "body": false,
+    "bodyModel": null,
+    "bodySample": null
+  },
+  {
+    "method": "wallets.transfer",
+    "verb": "POST",
+    "route": "/api/v1/b2b/wallets/transfer",
+    "pathNames": [],
+    "query": [],
+    "idempotent": true,
+    "body": true,
+    "bodyModel": "TransferB2BWalletsCommand",
+    "bodySample": {
+      "amount": 1.5,
+      "fromWalletId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+      "toWalletId": "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+    }
+  },
+  {
+    "method": "wallets.listTransactions",
+    "verb": "GET",
+    "route": "/api/v1/b2b/wallets/{walletId}/transactions",
+    "pathNames": [
+      "walletId"
+    ],
+    "query": [
+      {
+        "name": "page",
+        "required": false,
+        "kind": "number"
+      },
+      {
+        "name": "limit",
+        "required": false,
+        "kind": "number"
+      },
+      {
+        "name": "startDate",
+        "required": false,
+        "kind": "date"
+      },
+      {
+        "name": "endDate",
+        "required": false,
+        "kind": "date"
+      },
+      {
+        "name": "type",
+        "required": false,
+        "kind": "string"
+      },
+      {
+        "name": "source",
+        "required": false,
+        "kind": "string"
+      }
+    ],
+    "idempotent": false,
+    "body": false,
+    "bodyModel": null,
+    "bodySample": null
+  }
+]

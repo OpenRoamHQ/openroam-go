@@ -20,7 +20,7 @@ var _ MappedNullable = &HotelPurchasedProduct{}
 
 // HotelPurchasedProduct The stay an order item bought. A hotel stay has no monetary value, so there is no `value`. It never changes after purchase.
 type HotelPurchasedProduct struct {
-	// `\"{hotel} · {offer}\"`, named as the quote names it, for example             `Hotel Arts Barcelona · Deluxe King, Breakfast, Free cancellation`.
+	// `\"{hotel} · {offer}\"`, named as the quote names it, for example `Hotel Arts Barcelona · Deluxe King, Breakfast, Free cancellation`.
 	Name *string `json:"name,omitempty"`
 	// ISO 3166-1 alpha-2 code of the hotel's country, in upper case; null when it is unknown.
 	CountryCode NullableString `json:"countryCode,omitempty"`

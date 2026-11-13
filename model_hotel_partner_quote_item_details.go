@@ -23,7 +23,7 @@ var _ MappedNullable = &HotelPartnerQuoteItemDetails{}
 type HotelPartnerQuoteItemDetails struct {
 	// When the returned `publicId` stops being accepted (UTC): at most 30 minutes after the quote, and never after an expiry the hotel system states.
 	ExpiresAt *time.Time `json:"expiresAt,omitempty"`
-	// `confirmed` when the rate is confirmed; `onRequest` when it is held only on request, which             an order refuses with 409 / 11003.
+	// `confirmed` when the rate is confirmed; `onRequest` when it is held only on request, which an order refuses with 409 / 11003.
 	Availability *string `json:"availability,omitempty"`
 	// The searched check-in date.
 	CheckInDate *string `json:"checkInDate,omitempty"`

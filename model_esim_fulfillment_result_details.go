@@ -19,7 +19,7 @@ import (
 // checks if the EsimFulfillmentResultDetails type satisfies the MappedNullable interface at compile time
 var _ MappedNullable = &EsimFulfillmentResultDetails{}
 
-// EsimFulfillmentResultDetails The eSIM an order item delivered: its ICCID and states, how to install it, and its plan. A top-up item reads the eSIM it topped up, with `mode``topUp`.
+// EsimFulfillmentResultDetails The eSIM an order item delivered: its ICCID and states, how to install it, and its plan. A top-up item reads the eSIM it topped up, with `mode` `topUp`.
 type EsimFulfillmentResultDetails struct {
 	// The eSIM's ICCID, which the post-purchase routes take; null until the eSIM is provisioned.
 	Iccid NullableString `json:"iccid,omitempty"`

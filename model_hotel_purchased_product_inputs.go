@@ -26,6 +26,8 @@ type HotelPurchasedProductInputs struct {
 	RoomGuests []HotelPurchasedProductRoomGuests `json:"roomGuests,omitempty"`
 	// The requests sent to the hotel; null when none were sent.
 	SpecialRequests NullableString `json:"specialRequests,omitempty"`
+	// Selected opaque request codes applied to every room, when supplied.
+	SpecialRequestCodes []string `json:"specialRequestCodes,omitempty"`
 }
 
 // NewHotelPurchasedProductInputs instantiates a new HotelPurchasedProductInputs object
@@ -151,6 +153,39 @@ func (o *HotelPurchasedProductInputs) UnsetSpecialRequests() {
 	o.SpecialRequests.Unset()
 }
 
+// GetSpecialRequestCodes returns the SpecialRequestCodes field value if set, zero value otherwise (both if not set or set to explicit null).
+func (o *HotelPurchasedProductInputs) GetSpecialRequestCodes() []string {
+	if o == nil {
+		var ret []string
+		return ret
+	}
+	return o.SpecialRequestCodes
+}
+
+// GetSpecialRequestCodesOk returns a tuple with the SpecialRequestCodes field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+// NOTE: If the value is an explicit nil, `nil, true` will be returned
+func (o *HotelPurchasedProductInputs) GetSpecialRequestCodesOk() ([]string, bool) {
+	if o == nil || IsNil(o.SpecialRequestCodes) {
+		return nil, false
+	}
+	return o.SpecialRequestCodes, true
+}
+
+// HasSpecialRequestCodes returns a boolean if a field has been set.
+func (o *HotelPurchasedProductInputs) HasSpecialRequestCodes() bool {
+	if o != nil && !IsNil(o.SpecialRequestCodes) {
+		return true
+	}
+
+	return false
+}
+
+// SetSpecialRequestCodes gets a reference to the given []string and assigns it to the SpecialRequestCodes field.
+func (o *HotelPurchasedProductInputs) SetSpecialRequestCodes(v []string) {
+	o.SpecialRequestCodes = v
+}
+
 func (o HotelPurchasedProductInputs) MarshalJSON() ([]byte, error) {
 	toSerialize,err := o.ToMap()
 	if err != nil {
@@ -169,6 +204,9 @@ func (o HotelPurchasedProductInputs) ToMap() (map[string]interface{}, error) {
 	}
 	if o.SpecialRequests.IsSet() {
 		toSerialize["specialRequests"] = o.SpecialRequests.Get()
+	}
+	if o.SpecialRequestCodes != nil {
+		toSerialize["specialRequestCodes"] = o.SpecialRequestCodes
 	}
 	return toSerialize, nil
 }

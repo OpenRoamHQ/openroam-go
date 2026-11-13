@@ -63,7 +63,7 @@ validated before anything is charged; a rejected item is reported at `items[i]` 
 other-product `publicId`, `11003` (`OFFER_UNAVAILABLE`) or `11002`
 (`OFFER_PRICE_CHANGED`).
             
-The optional `maxTotal``{ amount, currency }` caps the whole order: the sum of every item's
+The optional `maxTotal` `{ amount, currency }` caps the whole order: the sum of every item's
 price times its quantity, in the order currency. Its currency must be the order currency (otherwise
 `400`, `10001`, `CURRENCY_MISMATCH` at `maxTotal.currency`). A higher total returns
 `409` with code `11002` (`OFFER_PRICE_CHANGED`) at `maxTotal`, after every item is
@@ -587,7 +587,7 @@ Order `status` moves from `paymentPending` to `paid` once the wallet is charged,
 fulfilled) or `cancelled`. Each item reports its own `fulfillment.status`: `pending`,
 `fulfilled` with a typed `result`, or `rejected` with a safe `failure`
 (`11001`, `FULFILLMENT_REJECTED`). `actions` and `items[].actions` say whether
-payment retry, fulfillment retry, amendment and refund are available now.
+payment retry, fulfillment retry, amendment and cancellation are available now.
             
 An order of another partner, or an unknown id, returns `404` with code `10004`.
 
@@ -765,7 +765,7 @@ Previews cancelling every item of an order now, with the totals.
 Requires the `read` order permission. Returns `{ orderId, currency, items, totals }`, every amount
 in the order currency. Each item has `orderItemId`, `productType` and `status`.
 `previewable` items carry `preview`, the same payload as
-`GET order-items/{id}/cancellation-penalty` (`isRefundable: false` included);
+`GET order-items/{id}/cancellation-preview` (`isRefundable: false` included);
 `notCancellable` items carry a `reason`: `notFulfilled` (not delivered), `refunded`,
 `refundInProgress` (a refund was started and has not finished), `amendmentInProgress`,
 `manualReview` (contact support) or `notAllowed` (the product's rules do not allow cancelling it
@@ -773,7 +773,7 @@ now). `totals` sums `penaltyAmount`, `cancellationFee` and `refundAmount` over t
 `previewable` items; `totals.isComplete` is `true` only when every item is
 `previewable`.
             
-The preview cancels nothing, changes no state and locks no amount: each item's refund prices its
+The preview cancels nothing, changes no state and locks no amount: cancelling an item prices its
 cancellation again. Only an item the item preview refuses is `notAllowed`: a booking system that cannot answer
 right now fails this whole call, with `503` when it is unavailable, as it fails the item preview.
 Retry later. An order of another partner, or an unknown id, returns `404` with code `10004`.
@@ -1355,7 +1355,7 @@ func (a *OrdersAPIService) OrdersRetryFulfillmentExecute(r ApiOrdersRetryFulfill
 		return localVarReturnValue, nil, &GenericOpenAPIError{error: err.Error()}
 	}
 
-	localVarPath := localBasePath + "/api/v1/b2b/orders/{orderId}/fulfillments/retry"
+	localVarPath := localBasePath + "/api/v1/b2b/orders/{orderId}/fulfillment/retry"
 	localVarPath = strings.Replace(localVarPath, "{"+"orderId"+"}", url.PathEscape(parameterValueToString(r.orderId, "orderId")), -1)
 
 	localVarHeaderParams := make(map[string]string)

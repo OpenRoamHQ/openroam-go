@@ -15,12 +15,12 @@ import (
 	"encoding/json"
 )
 
-// checks if the CommitB2BAmendmentResponse type satisfies the MappedNullable interface at compile time
-var _ MappedNullable = &CommitB2BAmendmentResponse{}
+// checks if the ConfirmB2BAmendmentResponse type satisfies the MappedNullable interface at compile time
+var _ MappedNullable = &ConfirmB2BAmendmentResponse{}
 
-// CommitB2BAmendmentResponse The committed amendment.
-type CommitB2BAmendmentResponse struct {
-	// The committed quote.
+// ConfirmB2BAmendmentResponse The confirmed amendment.
+type ConfirmB2BAmendmentResponse struct {
+	// The confirmed quote.
 	AmendmentRequestId *string `json:"amendmentRequestId,omitempty"`
 	// The new amendment's id.
 	AmendmentId *string `json:"amendmentId,omitempty"`
@@ -32,25 +32,25 @@ type CommitB2BAmendmentResponse struct {
 	Refund NullableB2BAmendmentRefund `json:"refund,omitempty"`
 }
 
-// NewCommitB2BAmendmentResponse instantiates a new CommitB2BAmendmentResponse object
+// NewConfirmB2BAmendmentResponse instantiates a new ConfirmB2BAmendmentResponse object
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewCommitB2BAmendmentResponse() *CommitB2BAmendmentResponse {
-	this := CommitB2BAmendmentResponse{}
+func NewConfirmB2BAmendmentResponse() *ConfirmB2BAmendmentResponse {
+	this := ConfirmB2BAmendmentResponse{}
 	return &this
 }
 
-// NewCommitB2BAmendmentResponseWithDefaults instantiates a new CommitB2BAmendmentResponse object
+// NewConfirmB2BAmendmentResponseWithDefaults instantiates a new ConfirmB2BAmendmentResponse object
 // This constructor will only assign default values to properties that have it defined,
 // but it doesn't guarantee that properties required by API are set
-func NewCommitB2BAmendmentResponseWithDefaults() *CommitB2BAmendmentResponse {
-	this := CommitB2BAmendmentResponse{}
+func NewConfirmB2BAmendmentResponseWithDefaults() *ConfirmB2BAmendmentResponse {
+	this := ConfirmB2BAmendmentResponse{}
 	return &this
 }
 
 // GetAmendmentRequestId returns the AmendmentRequestId field value if set, zero value otherwise.
-func (o *CommitB2BAmendmentResponse) GetAmendmentRequestId() string {
+func (o *ConfirmB2BAmendmentResponse) GetAmendmentRequestId() string {
 	if o == nil || IsNil(o.AmendmentRequestId) {
 		var ret string
 		return ret
@@ -60,7 +60,7 @@ func (o *CommitB2BAmendmentResponse) GetAmendmentRequestId() string {
 
 // GetAmendmentRequestIdOk returns a tuple with the AmendmentRequestId field value if set, nil otherwise
 // and a boolean to check if the value has been set.
-func (o *CommitB2BAmendmentResponse) GetAmendmentRequestIdOk() (*string, bool) {
+func (o *ConfirmB2BAmendmentResponse) GetAmendmentRequestIdOk() (*string, bool) {
 	if o == nil || IsNil(o.AmendmentRequestId) {
 		return nil, false
 	}
@@ -68,7 +68,7 @@ func (o *CommitB2BAmendmentResponse) GetAmendmentRequestIdOk() (*string, bool) {
 }
 
 // HasAmendmentRequestId returns a boolean if a field has been set.
-func (o *CommitB2BAmendmentResponse) HasAmendmentRequestId() bool {
+func (o *ConfirmB2BAmendmentResponse) HasAmendmentRequestId() bool {
 	if o != nil && !IsNil(o.AmendmentRequestId) {
 		return true
 	}
@@ -77,12 +77,12 @@ func (o *CommitB2BAmendmentResponse) HasAmendmentRequestId() bool {
 }
 
 // SetAmendmentRequestId gets a reference to the given string and assigns it to the AmendmentRequestId field.
-func (o *CommitB2BAmendmentResponse) SetAmendmentRequestId(v string) {
+func (o *ConfirmB2BAmendmentResponse) SetAmendmentRequestId(v string) {
 	o.AmendmentRequestId = &v
 }
 
 // GetAmendmentId returns the AmendmentId field value if set, zero value otherwise.
-func (o *CommitB2BAmendmentResponse) GetAmendmentId() string {
+func (o *ConfirmB2BAmendmentResponse) GetAmendmentId() string {
 	if o == nil || IsNil(o.AmendmentId) {
 		var ret string
 		return ret
@@ -92,7 +92,7 @@ func (o *CommitB2BAmendmentResponse) GetAmendmentId() string {
 
 // GetAmendmentIdOk returns a tuple with the AmendmentId field value if set, nil otherwise
 // and a boolean to check if the value has been set.
-func (o *CommitB2BAmendmentResponse) GetAmendmentIdOk() (*string, bool) {
+func (o *ConfirmB2BAmendmentResponse) GetAmendmentIdOk() (*string, bool) {
 	if o == nil || IsNil(o.AmendmentId) {
 		return nil, false
 	}
@@ -100,7 +100,7 @@ func (o *CommitB2BAmendmentResponse) GetAmendmentIdOk() (*string, bool) {
 }
 
 // HasAmendmentId returns a boolean if a field has been set.
-func (o *CommitB2BAmendmentResponse) HasAmendmentId() bool {
+func (o *ConfirmB2BAmendmentResponse) HasAmendmentId() bool {
 	if o != nil && !IsNil(o.AmendmentId) {
 		return true
 	}
@@ -109,12 +109,12 @@ func (o *CommitB2BAmendmentResponse) HasAmendmentId() bool {
 }
 
 // SetAmendmentId gets a reference to the given string and assigns it to the AmendmentId field.
-func (o *CommitB2BAmendmentResponse) SetAmendmentId(v string) {
+func (o *ConfirmB2BAmendmentResponse) SetAmendmentId(v string) {
 	o.AmendmentId = &v
 }
 
 // GetStatus returns the Status field value if set, zero value otherwise.
-func (o *CommitB2BAmendmentResponse) GetStatus() string {
+func (o *ConfirmB2BAmendmentResponse) GetStatus() string {
 	if o == nil || IsNil(o.Status) {
 		var ret string
 		return ret
@@ -124,7 +124,7 @@ func (o *CommitB2BAmendmentResponse) GetStatus() string {
 
 // GetStatusOk returns a tuple with the Status field value if set, nil otherwise
 // and a boolean to check if the value has been set.
-func (o *CommitB2BAmendmentResponse) GetStatusOk() (*string, bool) {
+func (o *ConfirmB2BAmendmentResponse) GetStatusOk() (*string, bool) {
 	if o == nil || IsNil(o.Status) {
 		return nil, false
 	}
@@ -132,7 +132,7 @@ func (o *CommitB2BAmendmentResponse) GetStatusOk() (*string, bool) {
 }
 
 // HasStatus returns a boolean if a field has been set.
-func (o *CommitB2BAmendmentResponse) HasStatus() bool {
+func (o *ConfirmB2BAmendmentResponse) HasStatus() bool {
 	if o != nil && !IsNil(o.Status) {
 		return true
 	}
@@ -141,12 +141,12 @@ func (o *CommitB2BAmendmentResponse) HasStatus() bool {
 }
 
 // SetStatus gets a reference to the given string and assigns it to the Status field.
-func (o *CommitB2BAmendmentResponse) SetStatus(v string) {
+func (o *ConfirmB2BAmendmentResponse) SetStatus(v string) {
 	o.Status = &v
 }
 
 // GetPayment returns the Payment field value if set, zero value otherwise (both if not set or set to explicit null).
-func (o *CommitB2BAmendmentResponse) GetPayment() B2BAmendmentPayment {
+func (o *ConfirmB2BAmendmentResponse) GetPayment() B2BAmendmentPayment {
 	if o == nil || IsNil(o.Payment.Get()) {
 		var ret B2BAmendmentPayment
 		return ret
@@ -157,7 +157,7 @@ func (o *CommitB2BAmendmentResponse) GetPayment() B2BAmendmentPayment {
 // GetPaymentOk returns a tuple with the Payment field value if set, nil otherwise
 // and a boolean to check if the value has been set.
 // NOTE: If the value is an explicit nil, `nil, true` will be returned
-func (o *CommitB2BAmendmentResponse) GetPaymentOk() (*B2BAmendmentPayment, bool) {
+func (o *ConfirmB2BAmendmentResponse) GetPaymentOk() (*B2BAmendmentPayment, bool) {
 	if o == nil {
 		return nil, false
 	}
@@ -165,7 +165,7 @@ func (o *CommitB2BAmendmentResponse) GetPaymentOk() (*B2BAmendmentPayment, bool)
 }
 
 // HasPayment returns a boolean if a field has been set.
-func (o *CommitB2BAmendmentResponse) HasPayment() bool {
+func (o *ConfirmB2BAmendmentResponse) HasPayment() bool {
 	if o != nil && o.Payment.IsSet() {
 		return true
 	}
@@ -174,21 +174,21 @@ func (o *CommitB2BAmendmentResponse) HasPayment() bool {
 }
 
 // SetPayment gets a reference to the given NullableB2BAmendmentPayment and assigns it to the Payment field.
-func (o *CommitB2BAmendmentResponse) SetPayment(v B2BAmendmentPayment) {
+func (o *ConfirmB2BAmendmentResponse) SetPayment(v B2BAmendmentPayment) {
 	o.Payment.Set(&v)
 }
 // SetPaymentNil sets the value for Payment to be an explicit nil
-func (o *CommitB2BAmendmentResponse) SetPaymentNil() {
+func (o *ConfirmB2BAmendmentResponse) SetPaymentNil() {
 	o.Payment.Set(nil)
 }
 
 // UnsetPayment ensures that no value is present for Payment, not even an explicit nil
-func (o *CommitB2BAmendmentResponse) UnsetPayment() {
+func (o *ConfirmB2BAmendmentResponse) UnsetPayment() {
 	o.Payment.Unset()
 }
 
 // GetRefund returns the Refund field value if set, zero value otherwise (both if not set or set to explicit null).
-func (o *CommitB2BAmendmentResponse) GetRefund() B2BAmendmentRefund {
+func (o *ConfirmB2BAmendmentResponse) GetRefund() B2BAmendmentRefund {
 	if o == nil || IsNil(o.Refund.Get()) {
 		var ret B2BAmendmentRefund
 		return ret
@@ -199,7 +199,7 @@ func (o *CommitB2BAmendmentResponse) GetRefund() B2BAmendmentRefund {
 // GetRefundOk returns a tuple with the Refund field value if set, nil otherwise
 // and a boolean to check if the value has been set.
 // NOTE: If the value is an explicit nil, `nil, true` will be returned
-func (o *CommitB2BAmendmentResponse) GetRefundOk() (*B2BAmendmentRefund, bool) {
+func (o *ConfirmB2BAmendmentResponse) GetRefundOk() (*B2BAmendmentRefund, bool) {
 	if o == nil {
 		return nil, false
 	}
@@ -207,7 +207,7 @@ func (o *CommitB2BAmendmentResponse) GetRefundOk() (*B2BAmendmentRefund, bool) {
 }
 
 // HasRefund returns a boolean if a field has been set.
-func (o *CommitB2BAmendmentResponse) HasRefund() bool {
+func (o *ConfirmB2BAmendmentResponse) HasRefund() bool {
 	if o != nil && o.Refund.IsSet() {
 		return true
 	}
@@ -216,20 +216,20 @@ func (o *CommitB2BAmendmentResponse) HasRefund() bool {
 }
 
 // SetRefund gets a reference to the given NullableB2BAmendmentRefund and assigns it to the Refund field.
-func (o *CommitB2BAmendmentResponse) SetRefund(v B2BAmendmentRefund) {
+func (o *ConfirmB2BAmendmentResponse) SetRefund(v B2BAmendmentRefund) {
 	o.Refund.Set(&v)
 }
 // SetRefundNil sets the value for Refund to be an explicit nil
-func (o *CommitB2BAmendmentResponse) SetRefundNil() {
+func (o *ConfirmB2BAmendmentResponse) SetRefundNil() {
 	o.Refund.Set(nil)
 }
 
 // UnsetRefund ensures that no value is present for Refund, not even an explicit nil
-func (o *CommitB2BAmendmentResponse) UnsetRefund() {
+func (o *ConfirmB2BAmendmentResponse) UnsetRefund() {
 	o.Refund.Unset()
 }
 
-func (o CommitB2BAmendmentResponse) MarshalJSON() ([]byte, error) {
+func (o ConfirmB2BAmendmentResponse) MarshalJSON() ([]byte, error) {
 	toSerialize,err := o.ToMap()
 	if err != nil {
 		return []byte{}, err
@@ -237,7 +237,7 @@ func (o CommitB2BAmendmentResponse) MarshalJSON() ([]byte, error) {
 	return json.Marshal(toSerialize)
 }
 
-func (o CommitB2BAmendmentResponse) ToMap() (map[string]interface{}, error) {
+func (o ConfirmB2BAmendmentResponse) ToMap() (map[string]interface{}, error) {
 	toSerialize := map[string]interface{}{}
 	if !IsNil(o.AmendmentRequestId) {
 		toSerialize["amendmentRequestId"] = o.AmendmentRequestId
@@ -257,38 +257,38 @@ func (o CommitB2BAmendmentResponse) ToMap() (map[string]interface{}, error) {
 	return toSerialize, nil
 }
 
-type NullableCommitB2BAmendmentResponse struct {
-	value *CommitB2BAmendmentResponse
+type NullableConfirmB2BAmendmentResponse struct {
+	value *ConfirmB2BAmendmentResponse
 	isSet bool
 }
 
-func (v NullableCommitB2BAmendmentResponse) Get() *CommitB2BAmendmentResponse {
+func (v NullableConfirmB2BAmendmentResponse) Get() *ConfirmB2BAmendmentResponse {
 	return v.value
 }
 
-func (v *NullableCommitB2BAmendmentResponse) Set(val *CommitB2BAmendmentResponse) {
+func (v *NullableConfirmB2BAmendmentResponse) Set(val *ConfirmB2BAmendmentResponse) {
 	v.value = val
 	v.isSet = true
 }
 
-func (v NullableCommitB2BAmendmentResponse) IsSet() bool {
+func (v NullableConfirmB2BAmendmentResponse) IsSet() bool {
 	return v.isSet
 }
 
-func (v *NullableCommitB2BAmendmentResponse) Unset() {
+func (v *NullableConfirmB2BAmendmentResponse) Unset() {
 	v.value = nil
 	v.isSet = false
 }
 
-func NewNullableCommitB2BAmendmentResponse(val *CommitB2BAmendmentResponse) *NullableCommitB2BAmendmentResponse {
-	return &NullableCommitB2BAmendmentResponse{value: val, isSet: true}
+func NewNullableConfirmB2BAmendmentResponse(val *ConfirmB2BAmendmentResponse) *NullableConfirmB2BAmendmentResponse {
+	return &NullableConfirmB2BAmendmentResponse{value: val, isSet: true}
 }
 
-func (v NullableCommitB2BAmendmentResponse) MarshalJSON() ([]byte, error) {
+func (v NullableConfirmB2BAmendmentResponse) MarshalJSON() ([]byte, error) {
 	return json.Marshal(v.value)
 }
 
-func (v *NullableCommitB2BAmendmentResponse) UnmarshalJSON(src []byte) error {
+func (v *NullableConfirmB2BAmendmentResponse) UnmarshalJSON(src []byte) error {
 	v.isSet = true
 	return json.Unmarshal(src, &v.value)
 }

@@ -20,7 +20,7 @@ var _ MappedNullable = &AirtimeFulfillmentResultDetails{}
 
 // AirtimeFulfillmentResultDetails How the customer redeems the delivered top-up. `redemption` is null when the route does not declare its delivery.
 type AirtimeFulfillmentResultDetails struct {
-	// `type` is `directTopUp` (automatic recharge) or `pin` (customer activation). A PIN top-up             carries the issued `pin` as a string and the customer `instructions`; either is null when             it was not received, and both are null for a direct top-up.
+	// `type` is `directTopUp` (automatic recharge) or `pin` (customer activation). A PIN top-up carries the issued `pin` as a string and the customer `instructions`; either is null when it was not received, and both are null for a direct top-up.
 	Redemption NullableAirtimeFulfillmentRedemption `json:"redemption,omitempty"`
 }
 

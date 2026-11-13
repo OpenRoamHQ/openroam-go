@@ -22,7 +22,7 @@ var _ MappedNullable = &HotelOffer{}
 type HotelOffer struct {
 	// Opaque offer ID (`hotel_…`) to quote or order, valid until `details.expiresAt`; pass it back unchanged. It identifies this rate, not the hotel.
 	PublicId *string `json:"publicId,omitempty"`
-	// `\"{rooms}, {board}, {terms}\"`, for example `Deluxe King, Breakfast, Free cancellation`. The terms are             `Free cancellation` when `details.terms.cancellation.type` is `fullyRefundable` and             `Non-refundable` when it is `nonRefundable`; a partially refundable rate has none.
+	// `\"{rooms}, {board}, {terms}\"`, for example `Deluxe King, Breakfast, Free cancellation`. The terms are `Free cancellation` when `details.terms.cancellation.type` is `fullyRefundable` and `Non-refundable` when it is `nonRefundable`; a partially refundable rate has none.
 	Name *string `json:"name,omitempty"`
 	// Always null.
 	Description NullableString `json:"description,omitempty"`

@@ -27,7 +27,7 @@ type B2BMixedQuoteItemHotel struct {
 	PublicId string `json:"publicId"`
 	// Always 1: an item books one rate.
 	Quantity *int32 `json:"quantity,omitempty"`
-	// `\"{hotel} · {offer}\"`, the hotel's name and the offer's name, for example             `Hotel Arts Barcelona · Deluxe King, Breakfast, Free cancellation`.
+	// `\"{hotel} · {offer}\"`, the hotel's name and the offer's name, for example `Hotel Arts Barcelona · Deluxe King, Breakfast, Free cancellation`.
 	Name *string `json:"name,omitempty"`
 	// Price for the whole stay, all rooms and nights, in the quote currency. An order of the returned `publicId` without `inputs.maxPrice` is refused if the rate then costs more.
 	Price *MoneyAmount `json:"price,omitempty"`

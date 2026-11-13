@@ -20,7 +20,7 @@ var _ MappedNullable = &EsimFulfillmentResult{}
 
 // EsimFulfillmentResult What a fulfilled eSIM order item delivered. An eSIM has no monetary value, so there is no `deliveredValue`; everything sits under `details`. Order reads and the `order.fulfillment.updated` webhook carry the same result.
 type EsimFulfillmentResult struct {
-	// The eSIM an order item delivered: its ICCID and states, how to install it, and its plan. A top-up item reads the eSIM it topped up, with `mode``topUp`.
+	// The eSIM an order item delivered: its ICCID and states, how to install it, and its plan. A top-up item reads the eSIM it topped up, with `mode` `topUp`.
 	Details *EsimFulfillmentResultDetails `json:"details,omitempty"`
 }
 

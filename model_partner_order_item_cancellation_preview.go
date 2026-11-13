@@ -28,8 +28,8 @@ type PartnerOrderItemCancellationPreview struct {
 	Status *string `json:"status,omitempty"`
 	// `notFulfilled`, `refunded`, `refundInProgress`, `amendmentInProgress`,             `manualReview` or `notAllowed`; `null` when `previewable`.
 	Reason NullableString `json:"reason,omitempty"`
-	// The item's cancellation-penalty preview; `null` when `notCancellable`.
-	Preview NullableB2BCancellationPenaltyResponse `json:"preview,omitempty"`
+	// The item's cancellation preview; `null` when `notCancellable`.
+	Preview NullableB2BCancellationPreviewResponse `json:"preview,omitempty"`
 }
 
 // NewPartnerOrderItemCancellationPreview instantiates a new PartnerOrderItemCancellationPreview object
@@ -188,9 +188,9 @@ func (o *PartnerOrderItemCancellationPreview) UnsetReason() {
 }
 
 // GetPreview returns the Preview field value if set, zero value otherwise (both if not set or set to explicit null).
-func (o *PartnerOrderItemCancellationPreview) GetPreview() B2BCancellationPenaltyResponse {
+func (o *PartnerOrderItemCancellationPreview) GetPreview() B2BCancellationPreviewResponse {
 	if o == nil || IsNil(o.Preview.Get()) {
-		var ret B2BCancellationPenaltyResponse
+		var ret B2BCancellationPreviewResponse
 		return ret
 	}
 	return *o.Preview.Get()
@@ -199,7 +199,7 @@ func (o *PartnerOrderItemCancellationPreview) GetPreview() B2BCancellationPenalt
 // GetPreviewOk returns a tuple with the Preview field value if set, nil otherwise
 // and a boolean to check if the value has been set.
 // NOTE: If the value is an explicit nil, `nil, true` will be returned
-func (o *PartnerOrderItemCancellationPreview) GetPreviewOk() (*B2BCancellationPenaltyResponse, bool) {
+func (o *PartnerOrderItemCancellationPreview) GetPreviewOk() (*B2BCancellationPreviewResponse, bool) {
 	if o == nil {
 		return nil, false
 	}
@@ -215,8 +215,8 @@ func (o *PartnerOrderItemCancellationPreview) HasPreview() bool {
 	return false
 }
 
-// SetPreview gets a reference to the given NullableB2BCancellationPenaltyResponse and assigns it to the Preview field.
-func (o *PartnerOrderItemCancellationPreview) SetPreview(v B2BCancellationPenaltyResponse) {
+// SetPreview gets a reference to the given NullableB2BCancellationPreviewResponse and assigns it to the Preview field.
+func (o *PartnerOrderItemCancellationPreview) SetPreview(v B2BCancellationPreviewResponse) {
 	o.Preview.Set(&v)
 }
 // SetPreviewNil sets the value for Preview to be an explicit nil

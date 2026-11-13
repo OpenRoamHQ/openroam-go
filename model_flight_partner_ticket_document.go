@@ -20,7 +20,7 @@ var _ MappedNullable = &FlightPartnerTicketDocument{}
 
 // FlightPartnerTicketDocument A document the airline issued for the booking and its number, for example an e-ticket number.
 type FlightPartnerTicketDocument struct {
-	// `electronicTicket`, `electronicMiscellaneousDocumentAssociated`,             `electronicMiscellaneousDocumentStandalone` or `other`.
+	// `electronicTicket`, `electronicMiscellaneousDocumentAssociated`, `electronicMiscellaneousDocumentStandalone` or `other`.
 	Type *string `json:"type,omitempty"`
 	// The document's number.
 	UniqueIdentifier *string `json:"uniqueIdentifier,omitempty"`

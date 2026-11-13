@@ -47,6 +47,14 @@ type HotelOfferDetails struct {
 	RateRules []string `json:"rateRules,omitempty"`
 	// Whether a booking of this rate can be amended.
 	AmendabilityStatus *string `json:"amendabilityStatus,omitempty"`
+	// What the booking accepts as a holder's or guest's first and last name, so a form can check the names before the order is sent.
+	GuestNameRules *HotelGuestNameRules `json:"guestNameRules,omitempty"`
+	// Minimum resale price for the whole stay; use its stated currency. Null when unavailable.
+	MinimumSellingPrice NullableMoneyAmount `json:"minimumSellingPrice,omitempty"`
+	// Whether every room accepts requests; omitted when unstated.
+	AllowsSpecialRequests NullableBool `json:"allowsSpecialRequests,omitempty"`
+	// Available requests, subject to availability at check-in; null for free-text requests.
+	SpecialRequestOptions []HotelSpecialRequestOption `json:"specialRequestOptions,omitempty"`
 }
 
 // NewHotelOfferDetails instantiates a new HotelOfferDetails object
@@ -502,6 +510,155 @@ func (o *HotelOfferDetails) SetAmendabilityStatus(v string) {
 	o.AmendabilityStatus = &v
 }
 
+// GetGuestNameRules returns the GuestNameRules field value if set, zero value otherwise.
+func (o *HotelOfferDetails) GetGuestNameRules() HotelGuestNameRules {
+	if o == nil || IsNil(o.GuestNameRules) {
+		var ret HotelGuestNameRules
+		return ret
+	}
+	return *o.GuestNameRules
+}
+
+// GetGuestNameRulesOk returns a tuple with the GuestNameRules field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+func (o *HotelOfferDetails) GetGuestNameRulesOk() (*HotelGuestNameRules, bool) {
+	if o == nil || IsNil(o.GuestNameRules) {
+		return nil, false
+	}
+	return o.GuestNameRules, true
+}
+
+// HasGuestNameRules returns a boolean if a field has been set.
+func (o *HotelOfferDetails) HasGuestNameRules() bool {
+	if o != nil && !IsNil(o.GuestNameRules) {
+		return true
+	}
+
+	return false
+}
+
+// SetGuestNameRules gets a reference to the given HotelGuestNameRules and assigns it to the GuestNameRules field.
+func (o *HotelOfferDetails) SetGuestNameRules(v HotelGuestNameRules) {
+	o.GuestNameRules = &v
+}
+
+// GetMinimumSellingPrice returns the MinimumSellingPrice field value if set, zero value otherwise (both if not set or set to explicit null).
+func (o *HotelOfferDetails) GetMinimumSellingPrice() MoneyAmount {
+	if o == nil || IsNil(o.MinimumSellingPrice.Get()) {
+		var ret MoneyAmount
+		return ret
+	}
+	return *o.MinimumSellingPrice.Get()
+}
+
+// GetMinimumSellingPriceOk returns a tuple with the MinimumSellingPrice field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+// NOTE: If the value is an explicit nil, `nil, true` will be returned
+func (o *HotelOfferDetails) GetMinimumSellingPriceOk() (*MoneyAmount, bool) {
+	if o == nil {
+		return nil, false
+	}
+	return o.MinimumSellingPrice.Get(), o.MinimumSellingPrice.IsSet()
+}
+
+// HasMinimumSellingPrice returns a boolean if a field has been set.
+func (o *HotelOfferDetails) HasMinimumSellingPrice() bool {
+	if o != nil && o.MinimumSellingPrice.IsSet() {
+		return true
+	}
+
+	return false
+}
+
+// SetMinimumSellingPrice gets a reference to the given NullableMoneyAmount and assigns it to the MinimumSellingPrice field.
+func (o *HotelOfferDetails) SetMinimumSellingPrice(v MoneyAmount) {
+	o.MinimumSellingPrice.Set(&v)
+}
+// SetMinimumSellingPriceNil sets the value for MinimumSellingPrice to be an explicit nil
+func (o *HotelOfferDetails) SetMinimumSellingPriceNil() {
+	o.MinimumSellingPrice.Set(nil)
+}
+
+// UnsetMinimumSellingPrice ensures that no value is present for MinimumSellingPrice, not even an explicit nil
+func (o *HotelOfferDetails) UnsetMinimumSellingPrice() {
+	o.MinimumSellingPrice.Unset()
+}
+
+// GetAllowsSpecialRequests returns the AllowsSpecialRequests field value if set, zero value otherwise (both if not set or set to explicit null).
+func (o *HotelOfferDetails) GetAllowsSpecialRequests() bool {
+	if o == nil || IsNil(o.AllowsSpecialRequests.Get()) {
+		var ret bool
+		return ret
+	}
+	return *o.AllowsSpecialRequests.Get()
+}
+
+// GetAllowsSpecialRequestsOk returns a tuple with the AllowsSpecialRequests field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+// NOTE: If the value is an explicit nil, `nil, true` will be returned
+func (o *HotelOfferDetails) GetAllowsSpecialRequestsOk() (*bool, bool) {
+	if o == nil {
+		return nil, false
+	}
+	return o.AllowsSpecialRequests.Get(), o.AllowsSpecialRequests.IsSet()
+}
+
+// HasAllowsSpecialRequests returns a boolean if a field has been set.
+func (o *HotelOfferDetails) HasAllowsSpecialRequests() bool {
+	if o != nil && o.AllowsSpecialRequests.IsSet() {
+		return true
+	}
+
+	return false
+}
+
+// SetAllowsSpecialRequests gets a reference to the given NullableBool and assigns it to the AllowsSpecialRequests field.
+func (o *HotelOfferDetails) SetAllowsSpecialRequests(v bool) {
+	o.AllowsSpecialRequests.Set(&v)
+}
+// SetAllowsSpecialRequestsNil sets the value for AllowsSpecialRequests to be an explicit nil
+func (o *HotelOfferDetails) SetAllowsSpecialRequestsNil() {
+	o.AllowsSpecialRequests.Set(nil)
+}
+
+// UnsetAllowsSpecialRequests ensures that no value is present for AllowsSpecialRequests, not even an explicit nil
+func (o *HotelOfferDetails) UnsetAllowsSpecialRequests() {
+	o.AllowsSpecialRequests.Unset()
+}
+
+// GetSpecialRequestOptions returns the SpecialRequestOptions field value if set, zero value otherwise (both if not set or set to explicit null).
+func (o *HotelOfferDetails) GetSpecialRequestOptions() []HotelSpecialRequestOption {
+	if o == nil {
+		var ret []HotelSpecialRequestOption
+		return ret
+	}
+	return o.SpecialRequestOptions
+}
+
+// GetSpecialRequestOptionsOk returns a tuple with the SpecialRequestOptions field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+// NOTE: If the value is an explicit nil, `nil, true` will be returned
+func (o *HotelOfferDetails) GetSpecialRequestOptionsOk() ([]HotelSpecialRequestOption, bool) {
+	if o == nil || IsNil(o.SpecialRequestOptions) {
+		return nil, false
+	}
+	return o.SpecialRequestOptions, true
+}
+
+// HasSpecialRequestOptions returns a boolean if a field has been set.
+func (o *HotelOfferDetails) HasSpecialRequestOptions() bool {
+	if o != nil && !IsNil(o.SpecialRequestOptions) {
+		return true
+	}
+
+	return false
+}
+
+// SetSpecialRequestOptions gets a reference to the given []HotelSpecialRequestOption and assigns it to the SpecialRequestOptions field.
+func (o *HotelOfferDetails) SetSpecialRequestOptions(v []HotelSpecialRequestOption) {
+	o.SpecialRequestOptions = v
+}
+
 func (o HotelOfferDetails) MarshalJSON() ([]byte, error) {
 	toSerialize,err := o.ToMap()
 	if err != nil {
@@ -550,6 +707,18 @@ func (o HotelOfferDetails) ToMap() (map[string]interface{}, error) {
 	}
 	if !IsNil(o.AmendabilityStatus) {
 		toSerialize["amendabilityStatus"] = o.AmendabilityStatus
+	}
+	if !IsNil(o.GuestNameRules) {
+		toSerialize["guestNameRules"] = o.GuestNameRules
+	}
+	if o.MinimumSellingPrice.IsSet() {
+		toSerialize["minimumSellingPrice"] = o.MinimumSellingPrice.Get()
+	}
+	if o.AllowsSpecialRequests.IsSet() {
+		toSerialize["allowsSpecialRequests"] = o.AllowsSpecialRequests.Get()
+	}
+	if o.SpecialRequestOptions != nil {
+		toSerialize["specialRequestOptions"] = o.SpecialRequestOptions
 	}
 	return toSerialize, nil
 }

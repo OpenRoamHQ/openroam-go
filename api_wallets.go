@@ -556,7 +556,7 @@ WalletsGetTransactions List wallet transactions
 
 Lists a wallet's transactions, newest first, with optional filters.
 
-Returns `{ transactions, pagination }`. In a transaction, `type``debit` adds funds to the
+Returns `{ transactions, pagination }`. In a transaction, `type` `debit` adds funds to the
 wallet and `credit` takes funds from it; `source` says why (`topUp`, `payOut`,
 `order`, `exchange` or `reversal`). Filters combine with AND and apply before counting and
 paging.
@@ -921,19 +921,19 @@ WalletsTransfer Transfer between wallets
 Moves funds from one of the partner's wallets to another, converting between their currencies.
 
 `amount` is in the source wallet's currency and is rounded to two decimals. The destination receives
-             the amount converted at the current rate, rounded to two decimals. Returns the `transferId`, the sent
-             and received amounts and currencies, the `conversionRate` and the `transferDate`. Both wallets
-             record an `exchange` transaction.
+the amount converted at the current rate, rounded to two decimals. Returns the `transferId`, the sent
+and received amounts and currencies, the `conversionRate` and the `transferDate`. Both wallets
+record an `exchange` transaction.
             
-             The two wallets must differ, and the amount must be above zero; otherwise, or when the source balance is
-             too low, the call returns `400` with code `10001`. An unknown wallet returns `404` with code
-             `10004`.
+The two wallets must differ, and the amount must be above zero; otherwise, or when the source balance is
+too low, the call returns `400` with code `10001`. An unknown wallet returns `404` with code
+`10004`.
             
-             Requires an `Idempotency-Key` header (a UUID). Repeating a completed transfer with the same key
-             returns `409` with code `12000` (`IDEMPOTENCY_KEY_ALREADY_USED`) and moves no money; one
-             still running returns `409` with code `12002`, and a different body with the same key
-             `409` with code `12001`. A request that ended in an error can be sent again with the same key and
-             body.
+Requires an `Idempotency-Key` header (a UUID). Repeating a completed transfer with the same key
+returns `409` with code `12000` (`IDEMPOTENCY_KEY_ALREADY_USED`) and moves no money; one
+still running returns `409` with code `12002`, and a different body with the same key
+`409` with code `12001`. A request that ended in an error can be sent again with the same key and
+body.
 
  @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
  @return ApiWalletsTransferRequest

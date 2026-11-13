@@ -28,6 +28,8 @@ type HotelCartInputs struct {
 	RoomGuests []HotelRoomGuestsInput `json:"roomGuests"`
 	// Free-text requests for the hotel, up to 500 characters.
 	SpecialRequests NullableString `json:"specialRequests,omitempty"`
+	// Opaque codes from the rate's specialRequestOptions, applied to every room. Up to 32 distinct codes.
+	SpecialRequestCodes []string `json:"specialRequestCodes,omitempty"`
 	// Optional highest accepted unit price, in the order or cart currency; a higher current unit price gives 409 / 11002.
 	MaxPrice NullableMoneyAmountInput `json:"maxPrice,omitempty"`
 }
@@ -143,6 +145,39 @@ func (o *HotelCartInputs) UnsetSpecialRequests() {
 	o.SpecialRequests.Unset()
 }
 
+// GetSpecialRequestCodes returns the SpecialRequestCodes field value if set, zero value otherwise (both if not set or set to explicit null).
+func (o *HotelCartInputs) GetSpecialRequestCodes() []string {
+	if o == nil {
+		var ret []string
+		return ret
+	}
+	return o.SpecialRequestCodes
+}
+
+// GetSpecialRequestCodesOk returns a tuple with the SpecialRequestCodes field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+// NOTE: If the value is an explicit nil, `nil, true` will be returned
+func (o *HotelCartInputs) GetSpecialRequestCodesOk() ([]string, bool) {
+	if o == nil || IsNil(o.SpecialRequestCodes) {
+		return nil, false
+	}
+	return o.SpecialRequestCodes, true
+}
+
+// HasSpecialRequestCodes returns a boolean if a field has been set.
+func (o *HotelCartInputs) HasSpecialRequestCodes() bool {
+	if o != nil && !IsNil(o.SpecialRequestCodes) {
+		return true
+	}
+
+	return false
+}
+
+// SetSpecialRequestCodes gets a reference to the given []string and assigns it to the SpecialRequestCodes field.
+func (o *HotelCartInputs) SetSpecialRequestCodes(v []string) {
+	o.SpecialRequestCodes = v
+}
+
 // GetMaxPrice returns the MaxPrice field value if set, zero value otherwise (both if not set or set to explicit null).
 func (o *HotelCartInputs) GetMaxPrice() MoneyAmountInput {
 	if o == nil || IsNil(o.MaxPrice.Get()) {
@@ -199,6 +234,9 @@ func (o HotelCartInputs) ToMap() (map[string]interface{}, error) {
 	toSerialize["roomGuests"] = o.RoomGuests
 	if o.SpecialRequests.IsSet() {
 		toSerialize["specialRequests"] = o.SpecialRequests.Get()
+	}
+	if o.SpecialRequestCodes != nil {
+		toSerialize["specialRequestCodes"] = o.SpecialRequestCodes
 	}
 	if o.MaxPrice.IsSet() {
 		toSerialize["maxPrice"] = o.MaxPrice.Get()

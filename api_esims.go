@@ -918,7 +918,7 @@ func (a *EsimsAPIService) EsimsGetEsimExecute(r ApiEsimsGetEsimRequest) (*B2BEsi
 		return localVarReturnValue, nil, &GenericOpenAPIError{error: err.Error()}
 	}
 
-	localVarPath := localBasePath + "/api/v1/b2b/esims/{iccid}"
+	localVarPath := localBasePath + "/api/v1/b2b/esims/{iccid}/profile"
 	localVarPath = strings.Replace(localVarPath, "{"+"iccid"+"}", url.PathEscape(parameterValueToString(r.iccid, "iccid")), -1)
 
 	localVarHeaderParams := make(map[string]string)
@@ -2063,7 +2063,7 @@ EsimsProvision Provision a deferred eSIM
 Provisions a deferred eSIM bought with `inputs.isInstant: false` and returns it.
 
 Creates the eSIM for an order item that delivered an entitlement, and returns it as `GET /esims/{iccid}`
-does. The item's result moves to `provisioning.status``processing` and then `ready`, and each
+does. The item's result moves to `provisioning.status` `processing` and then `ready`, and each
 change sends an `order.fulfillment.updated` webhook. An `Idempotency-Key` header with a UUID is
 required; a key already used for a completed call gives 409 / 12000. The optional body
 `{ travelStartDate }` is needed when the plan requires the first day of travel and the order did not send

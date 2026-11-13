@@ -18,7 +18,7 @@ import (
 // checks if the AirtimeFulfillmentRedemption type satisfies the MappedNullable interface at compile time
 var _ MappedNullable = &AirtimeFulfillmentRedemption{}
 
-// AirtimeFulfillmentRedemption `type` is `directTopUp` (automatic recharge) or `pin` (customer activation). A PIN top-up             carries the issued `pin` as a string and the customer `instructions`; either is null when             it was not received, and both are null for a direct top-up.
+// AirtimeFulfillmentRedemption `type` is `directTopUp` (automatic recharge) or `pin` (customer activation). A PIN top-up carries the issued `pin` as a string and the customer `instructions`; either is null when it was not received, and both are null for a direct top-up.
 type AirtimeFulfillmentRedemption struct {
 	Type *string `json:"type,omitempty"`
 	Pin NullableString `json:"pin,omitempty"`

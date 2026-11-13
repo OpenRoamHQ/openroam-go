@@ -25,12 +25,14 @@ var _ MappedNullable = &PartnerOrderItemEsim{}
 type PartnerOrderItemEsim struct {
 	// Order item id, used by the order-item endpoints. It is not the offer's `publicId`.
 	Id *string `json:"id,omitempty"`
+	// The order the item belongs to.
+	OrderId *string `json:"orderId,omitempty"`
 	ProductType string `json:"productType"`
 	// The price paid for the item at purchase, in the order's currency.
 	Price *MoneyAmount `json:"price,omitempty"`
 	PurchasedProduct *EsimPurchasedProduct `json:"purchasedProduct,omitempty"`
 	Fulfillment *ItemEsimFulfillment `json:"fulfillment,omitempty"`
-	// Whether the item can be amended or refunded now.
+	// Whether the item can be amended or cancelled now.
 	Actions *PartnerOrderItemActions `json:"actions,omitempty"`
 	// When the item was created (UTC).
 	CreatedAt *time.Time `json:"createdAt,omitempty"`
@@ -90,6 +92,38 @@ func (o *PartnerOrderItemEsim) HasId() bool {
 // SetId gets a reference to the given string and assigns it to the Id field.
 func (o *PartnerOrderItemEsim) SetId(v string) {
 	o.Id = &v
+}
+
+// GetOrderId returns the OrderId field value if set, zero value otherwise.
+func (o *PartnerOrderItemEsim) GetOrderId() string {
+	if o == nil || IsNil(o.OrderId) {
+		var ret string
+		return ret
+	}
+	return *o.OrderId
+}
+
+// GetOrderIdOk returns a tuple with the OrderId field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+func (o *PartnerOrderItemEsim) GetOrderIdOk() (*string, bool) {
+	if o == nil || IsNil(o.OrderId) {
+		return nil, false
+	}
+	return o.OrderId, true
+}
+
+// HasOrderId returns a boolean if a field has been set.
+func (o *PartnerOrderItemEsim) HasOrderId() bool {
+	if o != nil && !IsNil(o.OrderId) {
+		return true
+	}
+
+	return false
+}
+
+// SetOrderId gets a reference to the given string and assigns it to the OrderId field.
+func (o *PartnerOrderItemEsim) SetOrderId(v string) {
+	o.OrderId = &v
 }
 
 // GetProductType returns the ProductType field value
@@ -362,6 +396,9 @@ func (o PartnerOrderItemEsim) ToMap() (map[string]interface{}, error) {
 	toSerialize := map[string]interface{}{}
 	if !IsNil(o.Id) {
 		toSerialize["id"] = o.Id
+	}
+	if !IsNil(o.OrderId) {
+		toSerialize["orderId"] = o.OrderId
 	}
 	toSerialize["productType"] = o.ProductType
 	if !IsNil(o.Price) {

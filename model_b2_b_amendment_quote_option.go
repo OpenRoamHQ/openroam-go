@@ -20,11 +20,11 @@ var _ MappedNullable = &B2BAmendmentQuoteOption{}
 
 // B2BAmendmentQuoteOption One priced way to make the requested change.
 type B2BAmendmentQuoteOption struct {
-	// Option id, sent as `selectedOptionId` when committing.
+	// Option id, sent as `selectedOptionId` when confirming.
 	Id *string `json:"id,omitempty"`
-	// The surcharge charged on commit, including any amendment fee.
+	// The surcharge charged on confirm, including any amendment fee.
 	AmountToPay *MoneyAmount `json:"amountToPay,omitempty"`
-	// The credit returned on commit, after any amendment fee.
+	// The credit returned on confirm, after any amendment fee.
 	AmountToRefund *MoneyAmount `json:"amountToRefund,omitempty"`
 	// A fee for the change, already included in amountToPay or amountToRefund; null when none             applies.
 	AmendmentFee NullableMoneyAmount `json:"amendmentFee,omitempty"`

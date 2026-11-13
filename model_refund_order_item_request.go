@@ -13,6 +13,8 @@ package openroam
 
 import (
 	"encoding/json"
+	"bytes"
+	"fmt"
 )
 
 // checks if the RefundOrderItemRequest type satisfies the MappedNullable interface at compile time
@@ -21,15 +23,18 @@ var _ MappedNullable = &RefundOrderItemRequest{}
 // RefundOrderItemRequest The reason for refunding an order item.
 type RefundOrderItemRequest struct {
 	// Required. Why the item is refunded: `requestedByCustomer`, `duplicate`, `fraudulent`, or `fulfillmentFailed`, which is accepted only for an item whose fulfillment was rejected.
-	Reason *string `json:"reason,omitempty"`
+	Reason string `json:"reason"`
 }
+
+type _RefundOrderItemRequest RefundOrderItemRequest
 
 // NewRefundOrderItemRequest instantiates a new RefundOrderItemRequest object
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewRefundOrderItemRequest() *RefundOrderItemRequest {
+func NewRefundOrderItemRequest(reason string) *RefundOrderItemRequest {
 	this := RefundOrderItemRequest{}
+	this.Reason = reason
 	return &this
 }
 
@@ -41,36 +46,28 @@ func NewRefundOrderItemRequestWithDefaults() *RefundOrderItemRequest {
 	return &this
 }
 
-// GetReason returns the Reason field value if set, zero value otherwise.
+// GetReason returns the Reason field value
 func (o *RefundOrderItemRequest) GetReason() string {
-	if o == nil || IsNil(o.Reason) {
+	if o == nil {
 		var ret string
 		return ret
 	}
-	return *o.Reason
+
+	return o.Reason
 }
 
-// GetReasonOk returns a tuple with the Reason field value if set, nil otherwise
+// GetReasonOk returns a tuple with the Reason field value
 // and a boolean to check if the value has been set.
 func (o *RefundOrderItemRequest) GetReasonOk() (*string, bool) {
-	if o == nil || IsNil(o.Reason) {
+	if o == nil {
 		return nil, false
 	}
-	return o.Reason, true
+	return &o.Reason, true
 }
 
-// HasReason returns a boolean if a field has been set.
-func (o *RefundOrderItemRequest) HasReason() bool {
-	if o != nil && !IsNil(o.Reason) {
-		return true
-	}
-
-	return false
-}
-
-// SetReason gets a reference to the given string and assigns it to the Reason field.
+// SetReason sets field value
 func (o *RefundOrderItemRequest) SetReason(v string) {
-	o.Reason = &v
+	o.Reason = v
 }
 
 func (o RefundOrderItemRequest) MarshalJSON() ([]byte, error) {
@@ -83,10 +80,45 @@ func (o RefundOrderItemRequest) MarshalJSON() ([]byte, error) {
 
 func (o RefundOrderItemRequest) ToMap() (map[string]interface{}, error) {
 	toSerialize := map[string]interface{}{}
-	if !IsNil(o.Reason) {
-		toSerialize["reason"] = o.Reason
-	}
+	toSerialize["reason"] = o.Reason
 	return toSerialize, nil
+}
+
+func (o *RefundOrderItemRequest) UnmarshalJSON(data []byte) (err error) {
+	// This validates that all required properties are included in the JSON object
+	// by unmarshalling the object into a generic map with string keys and checking
+	// that every required field exists as a key in the generic map.
+	requiredProperties := []string{
+		"reason",
+	}
+
+	allProperties := make(map[string]interface{})
+
+	err = json.Unmarshal(data, &allProperties)
+
+	if err != nil {
+		return err;
+	}
+
+	for _, requiredProperty := range(requiredProperties) {
+		if _, exists := allProperties[requiredProperty]; !exists {
+			return fmt.Errorf("no value given for required property %v", requiredProperty)
+		}
+	}
+
+	varRefundOrderItemRequest := _RefundOrderItemRequest{}
+
+	decoder := json.NewDecoder(bytes.NewReader(data))
+	decoder.DisallowUnknownFields()
+	err = decoder.Decode(&varRefundOrderItemRequest)
+
+	if err != nil {
+		return err
+	}
+
+	*o = RefundOrderItemRequest(varRefundOrderItemRequest)
+
+	return err
 }
 
 type NullableRefundOrderItemRequest struct {

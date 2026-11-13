@@ -18,51 +18,58 @@ import (
 	"net/http"
 	"net/url"
 	"strings"
+	"time"
+	"reflect"
 )
 
 
 // OrderItemsAPIService OrderItemsAPI service
 type OrderItemsAPIService service
 
-type ApiOrderItemsCommitAmendmentRequest struct {
+type ApiOrderItemsCancelRequest struct {
 	ctx context.Context
 	ApiService *OrderItemsAPIService
 	id string
 	idempotencyKey *string
-	commitB2BAmendmentRequest *CommitB2BAmendmentRequest
+	refundOrderItemRequest *RefundOrderItemRequest
 }
 
 // UUID idempotency key for safe retries of this operation.
-func (r ApiOrderItemsCommitAmendmentRequest) IdempotencyKey(idempotencyKey string) ApiOrderItemsCommitAmendmentRequest {
+func (r ApiOrderItemsCancelRequest) IdempotencyKey(idempotencyKey string) ApiOrderItemsCancelRequest {
 	r.idempotencyKey = &idempotencyKey
 	return r
 }
 
-// The quote and option to commit.
-func (r ApiOrderItemsCommitAmendmentRequest) CommitB2BAmendmentRequest(commitB2BAmendmentRequest CommitB2BAmendmentRequest) ApiOrderItemsCommitAmendmentRequest {
-	r.commitB2BAmendmentRequest = &commitB2BAmendmentRequest
+// The cancellation reason.
+func (r ApiOrderItemsCancelRequest) RefundOrderItemRequest(refundOrderItemRequest RefundOrderItemRequest) ApiOrderItemsCancelRequest {
+	r.refundOrderItemRequest = &refundOrderItemRequest
 	return r
 }
 
-func (r ApiOrderItemsCommitAmendmentRequest) Execute() (*CommitB2BAmendmentResponse, *http.Response, error) {
-	return r.ApiService.OrderItemsCommitAmendmentExecute(r)
+func (r ApiOrderItemsCancelRequest) Execute() (*B2BOrderItemRefundResponse, *http.Response, error) {
+	return r.ApiService.OrderItemsCancelExecute(r)
 }
 
 /*
-OrderItemsCommitAmendment Commit an amendment
+OrderItemsCancel Cancel an item
 
-Commits a quoted amendment, paying any surcharge or receiving any refund.
+Cancels an order item and refunds what was paid for it, less any cancellation penalty.
 
-Send the `amendmentRequestId` from the quote and, optionally, the `selectedOptionId` of one of
-its options (the first option is used when it is omitted). The quote is checked again before anything is
-charged: an expired or unknown quote, an option that is no longer offered, or a changed price returns
-`400` with code `10001`; request a new quote then. A quote can be committed once.
+Available when the item's `actions.cancellation` is `available`; while a refund is running it shows
+`inProgress`, and `manualReview` means support must handle it. An item still being delivered
+cannot be cancelled, and the `fulfillmentFailed` reason is accepted only for a rejected item; a
+cancellation that is not valid for the item returns `400` with code `10001`. A kind of item that
+can never be cancelled returns `422` with code `18000` (`CANCELLATION_NOT_SUPPORTED`).
+Otherwise a cancellation that is not allowed now returns `409` with code `18001`
+(`CANCELLATION_NOT_AVAILABLE`), and `details[0].reason` repeats
+`actions.cancellation.availability` (`IN_PROGRESS`, `MANUAL_REVIEW` or `NOT_AVAILABLE`).
+The amount is recalculated at this point, so it can differ from an earlier cancellation preview. A refund
+started by OpenRoam support returns `409`. An item of another partner, or an unknown id, returns
+`404` with code `10004`.
             
-A surcharge is charged with `paymentMethod`; `balance` charges the wallet linked to the API key.
-A refund goes to that wallet. Returns the `amendmentRequestId`, the new `amendmentId`, its
-`status`, and the `payment` or `refund` that was made (`null` when none). A failed
-payment carries `16000` (`PAYMENT_FAILED`) in `payment.failure`. Amendments do not change
-`fulfillmentVersion`; read the order again for the changed item.
+Returns the `orderItemId`, the refund `amount`, the `method` it is returned to and its
+`status`. A balance payment is refunded to the wallet that paid it. Refund progress is also reported
+by the `order-item.refunded` webhook.
             
 Requires an `Idempotency-Key` header (a UUID). Repeating a completed request with the same key
 returns `409` with code `12000` (`IDEMPOTENCY_KEY_ALREADY_USED`); one still running returns
@@ -72,10 +79,10 @@ and body.
 
  @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
  @param id Order item id (`items[].id` from the order response).
- @return ApiOrderItemsCommitAmendmentRequest
+ @return ApiOrderItemsCancelRequest
 */
-func (a *OrderItemsAPIService) OrderItemsCommitAmendment(ctx context.Context, id string) ApiOrderItemsCommitAmendmentRequest {
-	return ApiOrderItemsCommitAmendmentRequest{
+func (a *OrderItemsAPIService) OrderItemsCancel(ctx context.Context, id string) ApiOrderItemsCancelRequest {
+	return ApiOrderItemsCancelRequest{
 		ApiService: a,
 		ctx: ctx,
 		id: id,
@@ -83,21 +90,21 @@ func (a *OrderItemsAPIService) OrderItemsCommitAmendment(ctx context.Context, id
 }
 
 // Execute executes the request
-//  @return CommitB2BAmendmentResponse
-func (a *OrderItemsAPIService) OrderItemsCommitAmendmentExecute(r ApiOrderItemsCommitAmendmentRequest) (*CommitB2BAmendmentResponse, *http.Response, error) {
+//  @return B2BOrderItemRefundResponse
+func (a *OrderItemsAPIService) OrderItemsCancelExecute(r ApiOrderItemsCancelRequest) (*B2BOrderItemRefundResponse, *http.Response, error) {
 	var (
 		localVarHTTPMethod   = http.MethodPost
 		localVarPostBody     interface{}
 		formFiles            []formFile
-		localVarReturnValue  *CommitB2BAmendmentResponse
+		localVarReturnValue  *B2BOrderItemRefundResponse
 	)
 
-	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "OrderItemsAPIService.OrderItemsCommitAmendment")
+	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "OrderItemsAPIService.OrderItemsCancel")
 	if err != nil {
 		return localVarReturnValue, nil, &GenericOpenAPIError{error: err.Error()}
 	}
 
-	localVarPath := localBasePath + "/api/v1/b2b/order-items/{id}/amendments/commit"
+	localVarPath := localBasePath + "/api/v1/b2b/order-items/{id}/cancel"
 	localVarPath = strings.Replace(localVarPath, "{"+"id"+"}", url.PathEscape(parameterValueToString(r.id, "id")), -1)
 
 	localVarHeaderParams := make(map[string]string)
@@ -126,7 +133,7 @@ func (a *OrderItemsAPIService) OrderItemsCommitAmendmentExecute(r ApiOrderItemsC
 	}
 	parameterAddToHeaderOrQuery(localVarHeaderParams, "Idempotency-Key", r.idempotencyKey, "simple", "")
 	// body params
-	localVarPostBody = r.commitB2BAmendmentRequest
+	localVarPostBody = r.refundOrderItemRequest
 	if r.ctx != nil {
 		// API Key Authentication
 		if auth, ok := r.ctx.Value(ContextAPIKeys).(map[string]APIKey); ok {
@@ -174,7 +181,265 @@ func (a *OrderItemsAPIService) OrderItemsCommitAmendmentExecute(r ApiOrderItemsC
 					newErr.model = v
 			return localVarReturnValue, localVarHTTPResponse, newErr
 		}
+		if localVarHTTPResponse.StatusCode == 404 {
+			var v PartnerErrorResponse
+			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = err.Error()
+				return localVarReturnValue, localVarHTTPResponse, newErr
+			}
+					newErr.error = formatErrorMessage(localVarHTTPResponse.Status, &v)
+					newErr.model = v
+			return localVarReturnValue, localVarHTTPResponse, newErr
+		}
 		if localVarHTTPResponse.StatusCode == 409 {
+			var v PartnerErrorResponse
+			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = err.Error()
+				return localVarReturnValue, localVarHTTPResponse, newErr
+			}
+					newErr.error = formatErrorMessage(localVarHTTPResponse.Status, &v)
+					newErr.model = v
+			return localVarReturnValue, localVarHTTPResponse, newErr
+		}
+		if localVarHTTPResponse.StatusCode == 422 {
+			var v PartnerErrorResponse
+			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = err.Error()
+				return localVarReturnValue, localVarHTTPResponse, newErr
+			}
+					newErr.error = formatErrorMessage(localVarHTTPResponse.Status, &v)
+					newErr.model = v
+			return localVarReturnValue, localVarHTTPResponse, newErr
+		}
+		if localVarHTTPResponse.StatusCode == 429 {
+			var v PartnerErrorResponse
+			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = err.Error()
+				return localVarReturnValue, localVarHTTPResponse, newErr
+			}
+					newErr.error = formatErrorMessage(localVarHTTPResponse.Status, &v)
+					newErr.model = v
+			return localVarReturnValue, localVarHTTPResponse, newErr
+		}
+		if localVarHTTPResponse.StatusCode == 503 {
+			var v PartnerErrorResponse
+			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = err.Error()
+				return localVarReturnValue, localVarHTTPResponse, newErr
+			}
+					newErr.error = formatErrorMessage(localVarHTTPResponse.Status, &v)
+					newErr.model = v
+		}
+		return localVarReturnValue, localVarHTTPResponse, newErr
+	}
+
+	err = a.client.decode(&localVarReturnValue, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
+	if err != nil {
+		newErr := &GenericOpenAPIError{
+			body:  localVarBody,
+			error: err.Error(),
+		}
+		return localVarReturnValue, localVarHTTPResponse, newErr
+	}
+
+	return localVarReturnValue, localVarHTTPResponse, nil
+}
+
+type ApiOrderItemsConfirmAmendmentRequest struct {
+	ctx context.Context
+	ApiService *OrderItemsAPIService
+	id string
+	idempotencyKey *string
+	confirmB2BAmendmentRequest *ConfirmB2BAmendmentRequest
+}
+
+// UUID idempotency key for safe retries of this operation.
+func (r ApiOrderItemsConfirmAmendmentRequest) IdempotencyKey(idempotencyKey string) ApiOrderItemsConfirmAmendmentRequest {
+	r.idempotencyKey = &idempotencyKey
+	return r
+}
+
+// The quote and option to confirm, and an optional price limit.
+func (r ApiOrderItemsConfirmAmendmentRequest) ConfirmB2BAmendmentRequest(confirmB2BAmendmentRequest ConfirmB2BAmendmentRequest) ApiOrderItemsConfirmAmendmentRequest {
+	r.confirmB2BAmendmentRequest = &confirmB2BAmendmentRequest
+	return r
+}
+
+func (r ApiOrderItemsConfirmAmendmentRequest) Execute() (*ConfirmB2BAmendmentResponse, *http.Response, error) {
+	return r.ApiService.OrderItemsConfirmAmendmentExecute(r)
+}
+
+/*
+OrderItemsConfirmAmendment Confirm an amendment
+
+Confirms a quoted amendment, paying any surcharge or receiving any refund.
+
+Send the `amendmentRequestId` from the quote and, optionally, the `selectedOptionId` of one of
+its options (the first option is used when it is omitted). The quote is checked again before anything is
+charged: an expired or unknown quote, or an option that is no longer offered, returns `400` with code
+`10001`; request a new quote then. Where the change is priced again before the charge (hotels), a price
+that changed since the quote returns `400` with code `10001` without `maxPrice`, and is charged
+when it is within `maxPrice`. A price above `maxPrice` returns `409` with code `11002` at
+`maxPrice`, with nothing charged; a `maxPrice` in another currency than the quoted amounts returns
+`400` with code `10001` at `maxPrice.currency`. A change refused when it is sent (for example,
+a flight whose price changed since the quote) gets its surcharge back and returns `400` with code
+`10001`.
+            
+Confirming the same quote again with a new `Idempotency-Key` returns `200` with the amendment that
+quote created, and nothing is charged twice. A confirm that was interrupted after its payment is finished
+first: its change is sent, or its surcharge is returned. Two confirms of one quote sent at the same time make
+one amendment: the other returns `200` with it, or `409` with code `10005` while the first is
+still running; send it again shortly. A kind of item that can never be amended returns `422` with code
+`18002` (`AMENDMENT_NOT_SUPPORTED`), and an amendment that is not allowed now returns `409`
+with code `18003` (`AMENDMENT_NOT_AVAILABLE`). An item of another partner, or an unknown id,
+returns `404` with code `10004`.
+            
+A surcharge is charged with `paymentMethod` `balance`, its only value: the wallet linked to the API
+key. Any other value returns `400` with code `10001` at `paymentMethod`. A refund goes to that
+wallet. Returns the
+`amendmentRequestId`, the new `amendmentId`, its `status`, and the `payment` or
+`refund` that was made (`null` when none). A failed
+payment carries `16000` (`PAYMENT_FAILED`) in `payment.failure`. Amendments do not change
+`fulfillmentVersion`; read the order again for the changed item.
+            
+Requires an `Idempotency-Key` header (a UUID). Repeating a completed request with the same key
+returns `409` with code `12000` (`IDEMPOTENCY_KEY_ALREADY_USED`); one still running returns
+`409` with code `12002` (`IDEMPOTENCY_KEY_IN_PROGRESS`), and a different body with the same
+key `409` with code `12001`. A request that ended in an error can be sent again with the same key
+and body.
+
+ @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+ @param id Order item id (`items[].id` from the order response).
+ @return ApiOrderItemsConfirmAmendmentRequest
+*/
+func (a *OrderItemsAPIService) OrderItemsConfirmAmendment(ctx context.Context, id string) ApiOrderItemsConfirmAmendmentRequest {
+	return ApiOrderItemsConfirmAmendmentRequest{
+		ApiService: a,
+		ctx: ctx,
+		id: id,
+	}
+}
+
+// Execute executes the request
+//  @return ConfirmB2BAmendmentResponse
+func (a *OrderItemsAPIService) OrderItemsConfirmAmendmentExecute(r ApiOrderItemsConfirmAmendmentRequest) (*ConfirmB2BAmendmentResponse, *http.Response, error) {
+	var (
+		localVarHTTPMethod   = http.MethodPost
+		localVarPostBody     interface{}
+		formFiles            []formFile
+		localVarReturnValue  *ConfirmB2BAmendmentResponse
+	)
+
+	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "OrderItemsAPIService.OrderItemsConfirmAmendment")
+	if err != nil {
+		return localVarReturnValue, nil, &GenericOpenAPIError{error: err.Error()}
+	}
+
+	localVarPath := localBasePath + "/api/v1/b2b/order-items/{id}/amendments/confirm"
+	localVarPath = strings.Replace(localVarPath, "{"+"id"+"}", url.PathEscape(parameterValueToString(r.id, "id")), -1)
+
+	localVarHeaderParams := make(map[string]string)
+	localVarQueryParams := url.Values{}
+	localVarFormParams := url.Values{}
+	if r.idempotencyKey == nil {
+		return localVarReturnValue, nil, reportError("idempotencyKey is required and must be specified")
+	}
+
+	// to determine the Content-Type header
+	localVarHTTPContentTypes := []string{"application/json", "text/json", "application/*+json"}
+
+	// set Content-Type header
+	localVarHTTPContentType := selectHeaderContentType(localVarHTTPContentTypes)
+	if localVarHTTPContentType != "" {
+		localVarHeaderParams["Content-Type"] = localVarHTTPContentType
+	}
+
+	// to determine the Accept header
+	localVarHTTPHeaderAccepts := []string{"text/plain", "application/json", "text/json"}
+
+	// set Accept header
+	localVarHTTPHeaderAccept := selectHeaderAccept(localVarHTTPHeaderAccepts)
+	if localVarHTTPHeaderAccept != "" {
+		localVarHeaderParams["Accept"] = localVarHTTPHeaderAccept
+	}
+	parameterAddToHeaderOrQuery(localVarHeaderParams, "Idempotency-Key", r.idempotencyKey, "simple", "")
+	// body params
+	localVarPostBody = r.confirmB2BAmendmentRequest
+	if r.ctx != nil {
+		// API Key Authentication
+		if auth, ok := r.ctx.Value(ContextAPIKeys).(map[string]APIKey); ok {
+			if apiKey, ok := auth["PartnerApiKey"]; ok {
+				var key string
+				if apiKey.Prefix != "" {
+					key = apiKey.Prefix + " " + apiKey.Key
+				} else {
+					key = apiKey.Key
+				}
+				localVarHeaderParams["X-Partner-Key"] = key
+			}
+		}
+	}
+	req, err := a.client.prepareRequest(r.ctx, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, formFiles)
+	if err != nil {
+		return localVarReturnValue, nil, err
+	}
+
+	localVarHTTPResponse, err := a.client.callAPI(req)
+	if err != nil || localVarHTTPResponse == nil {
+		return localVarReturnValue, localVarHTTPResponse, err
+	}
+
+	localVarBody, err := io.ReadAll(localVarHTTPResponse.Body)
+	localVarHTTPResponse.Body.Close()
+	localVarHTTPResponse.Body = io.NopCloser(bytes.NewBuffer(localVarBody))
+	if err != nil {
+		return localVarReturnValue, localVarHTTPResponse, err
+	}
+
+	if localVarHTTPResponse.StatusCode >= 300 {
+		newErr := &GenericOpenAPIError{
+			body:  localVarBody,
+			error: localVarHTTPResponse.Status,
+		}
+		if localVarHTTPResponse.StatusCode == 400 {
+			var v PartnerErrorResponse
+			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = err.Error()
+				return localVarReturnValue, localVarHTTPResponse, newErr
+			}
+					newErr.error = formatErrorMessage(localVarHTTPResponse.Status, &v)
+					newErr.model = v
+			return localVarReturnValue, localVarHTTPResponse, newErr
+		}
+		if localVarHTTPResponse.StatusCode == 404 {
+			var v PartnerErrorResponse
+			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = err.Error()
+				return localVarReturnValue, localVarHTTPResponse, newErr
+			}
+					newErr.error = formatErrorMessage(localVarHTTPResponse.Status, &v)
+					newErr.model = v
+			return localVarReturnValue, localVarHTTPResponse, newErr
+		}
+		if localVarHTTPResponse.StatusCode == 409 {
+			var v PartnerErrorResponse
+			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = err.Error()
+				return localVarReturnValue, localVarHTTPResponse, newErr
+			}
+					newErr.error = formatErrorMessage(localVarHTTPResponse.Status, &v)
+					newErr.model = v
+			return localVarReturnValue, localVarHTTPResponse, newErr
+		}
+		if localVarHTTPResponse.StatusCode == 422 {
 			var v PartnerErrorResponse
 			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 			if err != nil {
@@ -242,7 +507,7 @@ or partner, returns `404` with code `10004`.
 
  @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
  @param id Order item id (`items[].id` from the order response).
- @param amendmentId Amendment id (`amendmentId` from the commit response, or `id` from the             amendment list).
+ @param amendmentId Amendment id (`amendmentId` from the confirm response, or `id` from the             amendment list).
  @return ApiOrderItemsGetAmendmentByIdRequest
 */
 func (a *OrderItemsAPIService) OrderItemsGetAmendmentById(ctx context.Context, id string, amendmentId string) ApiOrderItemsGetAmendmentByIdRequest {
@@ -331,6 +596,17 @@ func (a *OrderItemsAPIService) OrderItemsGetAmendmentByIdExecute(r ApiOrderItems
 			error: localVarHTTPResponse.Status,
 		}
 		if localVarHTTPResponse.StatusCode == 400 {
+			var v PartnerErrorResponse
+			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = err.Error()
+				return localVarReturnValue, localVarHTTPResponse, newErr
+			}
+					newErr.error = formatErrorMessage(localVarHTTPResponse.Status, &v)
+					newErr.model = v
+			return localVarReturnValue, localVarHTTPResponse, newErr
+		}
+		if localVarHTTPResponse.StatusCode == 404 {
 			var v PartnerErrorResponse
 			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 			if err != nil {
@@ -519,40 +795,35 @@ func (a *OrderItemsAPIService) OrderItemsGetAmendmentsExecute(r ApiOrderItemsGet
 	return localVarReturnValue, localVarHTTPResponse, nil
 }
 
-type ApiOrderItemsGetCancellationPenaltyRequest struct {
+type ApiOrderItemsGetByIdRequest struct {
 	ctx context.Context
 	ApiService *OrderItemsAPIService
 	id string
 }
 
-func (r ApiOrderItemsGetCancellationPenaltyRequest) Execute() (*B2BCancellationPenaltyResponse, *http.Response, error) {
-	return r.ApiService.OrderItemsGetCancellationPenaltyExecute(r)
+func (r ApiOrderItemsGetByIdRequest) Execute() (*PartnerOrderItem, *http.Response, error) {
+	return r.ApiService.OrderItemsGetByIdExecute(r)
 }
 
 /*
-OrderItemsGetCancellationPenalty Preview an item cancellation
+OrderItemsGetById Get an order item
 
-Previews the cancellation penalty and expected refund for an order item.
+Gets an order item: what was bought, its delivery, its refund and what you can do next.
 
-Requires the `read` order permission. Returns `penaltyAmount`, the `cancellationFee` kept in
-addition to it (`null` when none applies) and the expected `refundAmount`, all in the order
-currency, `isRefundable`, the cancellation band in effect, priced at the penalty
-(`appliedPenalties`: at most one `{ from, penaltyAmount }`), `effectiveCancellationDate` and
-`checkInDate`, calculated with the same rules as the partner portal. The fee comes out of what the
-penalty leaves, so the refund is never negative. `isRefundable: false` means the penalty alone keeps
-the whole price, so the item cannot be cancelled; it is not an error. A fee that takes what the penalty leaves
-does not make it false: the item can still be cancelled, with a refund of 0. The preview does
-not cancel the item or change its state, and it does not lock the penalty: the refund call recalculates it,
-so a later cancellation band may apply. A product or item that cannot be cancelled returns `400` with
-code `10001`; an item of another partner, or an unknown id, returns `404` with code
-`10004`.
+Requires the `read` order permission. Returns the item exactly as it appears in `items[]` of the
+order response, including `orderId`, the order it belongs to. `fulfillment.status` and
+`refund.status` give its state; `actions.cancellation` says whether it can be cancelled now,
+`actions.amendment` whether it can be amended and `actions.update` whether it can be updated. An
+item of another partner, or an unknown id, returns
+`404` with code `10004`; a malformed id or an unknown query parameter returns `400` with code
+`10001`.
 
  @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
  @param id Order item id (`items[].id` from the order response).
- @return ApiOrderItemsGetCancellationPenaltyRequest
+ @return ApiOrderItemsGetByIdRequest
 */
-func (a *OrderItemsAPIService) OrderItemsGetCancellationPenalty(ctx context.Context, id string) ApiOrderItemsGetCancellationPenaltyRequest {
-	return ApiOrderItemsGetCancellationPenaltyRequest{
+func (a *OrderItemsAPIService) OrderItemsGetById(ctx context.Context, id string) ApiOrderItemsGetByIdRequest {
+	return ApiOrderItemsGetByIdRequest{
 		ApiService: a,
 		ctx: ctx,
 		id: id,
@@ -560,21 +831,21 @@ func (a *OrderItemsAPIService) OrderItemsGetCancellationPenalty(ctx context.Cont
 }
 
 // Execute executes the request
-//  @return B2BCancellationPenaltyResponse
-func (a *OrderItemsAPIService) OrderItemsGetCancellationPenaltyExecute(r ApiOrderItemsGetCancellationPenaltyRequest) (*B2BCancellationPenaltyResponse, *http.Response, error) {
+//  @return PartnerOrderItem
+func (a *OrderItemsAPIService) OrderItemsGetByIdExecute(r ApiOrderItemsGetByIdRequest) (*PartnerOrderItem, *http.Response, error) {
 	var (
 		localVarHTTPMethod   = http.MethodGet
 		localVarPostBody     interface{}
 		formFiles            []formFile
-		localVarReturnValue  *B2BCancellationPenaltyResponse
+		localVarReturnValue  *PartnerOrderItem
 	)
 
-	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "OrderItemsAPIService.OrderItemsGetCancellationPenalty")
+	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "OrderItemsAPIService.OrderItemsGetById")
 	if err != nil {
 		return localVarReturnValue, nil, &GenericOpenAPIError{error: err.Error()}
 	}
 
-	localVarPath := localBasePath + "/api/v1/b2b/order-items/{id}/cancellation-penalty"
+	localVarPath := localBasePath + "/api/v1/b2b/order-items/{id}"
 	localVarPath = strings.Replace(localVarPath, "{"+"id"+"}", url.PathEscape(parameterValueToString(r.id, "id")), -1)
 
 	localVarHeaderParams := make(map[string]string)
@@ -703,58 +974,40 @@ func (a *OrderItemsAPIService) OrderItemsGetCancellationPenaltyExecute(r ApiOrde
 	return localVarReturnValue, localVarHTTPResponse, nil
 }
 
-type ApiOrderItemsRefundOrderItemRequest struct {
+type ApiOrderItemsGetCancellationPreviewRequest struct {
 	ctx context.Context
 	ApiService *OrderItemsAPIService
 	id string
-	idempotencyKey *string
-	refundOrderItemRequest *RefundOrderItemRequest
 }
 
-// UUID idempotency key for safe retries of this operation.
-func (r ApiOrderItemsRefundOrderItemRequest) IdempotencyKey(idempotencyKey string) ApiOrderItemsRefundOrderItemRequest {
-	r.idempotencyKey = &idempotencyKey
-	return r
-}
-
-// The refund reason.
-func (r ApiOrderItemsRefundOrderItemRequest) RefundOrderItemRequest(refundOrderItemRequest RefundOrderItemRequest) ApiOrderItemsRefundOrderItemRequest {
-	r.refundOrderItemRequest = &refundOrderItemRequest
-	return r
-}
-
-func (r ApiOrderItemsRefundOrderItemRequest) Execute() (*B2BOrderItemRefundResponse, *http.Response, error) {
-	return r.ApiService.OrderItemsRefundOrderItemExecute(r)
+func (r ApiOrderItemsGetCancellationPreviewRequest) Execute() (*B2BCancellationPreviewResponse, *http.Response, error) {
+	return r.ApiService.OrderItemsGetCancellationPreviewExecute(r)
 }
 
 /*
-OrderItemsRefundOrderItem Cancel and refund an item
+OrderItemsGetCancellationPreview Preview an item cancellation
 
-Cancels an order item and refunds what was paid for it, less any cancellation penalty.
+Previews the cancellation penalty and expected refund for an order item.
 
-Available when the item's `actions.refund` is `available`; while a refund is running it shows
-`inProgress`, and `manualReview` means support must handle it. An item still being delivered
-cannot be refunded, and the `fulfillmentFailed` reason is accepted only for a rejected item; these and
-other ineligible requests return `400` with code `10001`. The amount is recalculated at this
-point, so it can differ from an earlier cancellation-penalty preview. A refund started by OpenRoam support
-returns `409`.
-            
-Returns the `orderItemId`, the refund `amount`, the `method` it is returned to and its
-`status`. A balance payment is refunded to the wallet that paid it. Refund progress is also reported
-by the `order-item.refunded` webhook.
-            
-Requires an `Idempotency-Key` header (a UUID). Repeating a completed request with the same key
-returns `409` with code `12000` (`IDEMPOTENCY_KEY_ALREADY_USED`); one still running returns
-`409` with code `12002` (`IDEMPOTENCY_KEY_IN_PROGRESS`), and a different body with the same
-key `409` with code `12001`. A request that ended in an error can be sent again with the same key
-and body.
+Requires the `read` order permission. Returns `penaltyAmount`, the `cancellationFee` kept in
+addition to it (`null` when none applies) and the expected `refundAmount`, all in the order
+currency, `isRefundable`, the cancellation band in effect, priced at the penalty
+(`appliedPenalties`: at most one `{ from, penaltyAmount }`), `effectiveCancellationDate` and
+`checkInDate`, calculated with the same rules as the partner portal. The fee comes out of what the
+penalty leaves, so the refund is never negative. `isRefundable: false` means the penalty alone keeps
+the whole price, so the item cannot be cancelled; it is not an error. A fee that takes what the penalty leaves
+does not make it false: the item can still be cancelled, with a refund of 0. The preview does
+not cancel the item or change its state, and it does not lock the penalty: the cancel call recalculates it,
+so a later cancellation band may apply. A kind of item that can never be cancelled returns `422` with
+code `18000` (`CANCELLATION_NOT_SUPPORTED`); an item of another partner, or an unknown id, returns
+`404` with code `10004`.
 
  @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
  @param id Order item id (`items[].id` from the order response).
- @return ApiOrderItemsRefundOrderItemRequest
+ @return ApiOrderItemsGetCancellationPreviewRequest
 */
-func (a *OrderItemsAPIService) OrderItemsRefundOrderItem(ctx context.Context, id string) ApiOrderItemsRefundOrderItemRequest {
-	return ApiOrderItemsRefundOrderItemRequest{
+func (a *OrderItemsAPIService) OrderItemsGetCancellationPreview(ctx context.Context, id string) ApiOrderItemsGetCancellationPreviewRequest {
+	return ApiOrderItemsGetCancellationPreviewRequest{
 		ApiService: a,
 		ctx: ctx,
 		id: id,
@@ -762,32 +1015,29 @@ func (a *OrderItemsAPIService) OrderItemsRefundOrderItem(ctx context.Context, id
 }
 
 // Execute executes the request
-//  @return B2BOrderItemRefundResponse
-func (a *OrderItemsAPIService) OrderItemsRefundOrderItemExecute(r ApiOrderItemsRefundOrderItemRequest) (*B2BOrderItemRefundResponse, *http.Response, error) {
+//  @return B2BCancellationPreviewResponse
+func (a *OrderItemsAPIService) OrderItemsGetCancellationPreviewExecute(r ApiOrderItemsGetCancellationPreviewRequest) (*B2BCancellationPreviewResponse, *http.Response, error) {
 	var (
-		localVarHTTPMethod   = http.MethodPost
+		localVarHTTPMethod   = http.MethodGet
 		localVarPostBody     interface{}
 		formFiles            []formFile
-		localVarReturnValue  *B2BOrderItemRefundResponse
+		localVarReturnValue  *B2BCancellationPreviewResponse
 	)
 
-	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "OrderItemsAPIService.OrderItemsRefundOrderItem")
+	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "OrderItemsAPIService.OrderItemsGetCancellationPreview")
 	if err != nil {
 		return localVarReturnValue, nil, &GenericOpenAPIError{error: err.Error()}
 	}
 
-	localVarPath := localBasePath + "/api/v1/b2b/order-items/{id}/refund"
+	localVarPath := localBasePath + "/api/v1/b2b/order-items/{id}/cancellation-preview"
 	localVarPath = strings.Replace(localVarPath, "{"+"id"+"}", url.PathEscape(parameterValueToString(r.id, "id")), -1)
 
 	localVarHeaderParams := make(map[string]string)
 	localVarQueryParams := url.Values{}
 	localVarFormParams := url.Values{}
-	if r.idempotencyKey == nil {
-		return localVarReturnValue, nil, reportError("idempotencyKey is required and must be specified")
-	}
 
 	// to determine the Content-Type header
-	localVarHTTPContentTypes := []string{"application/json", "text/json", "application/*+json"}
+	localVarHTTPContentTypes := []string{}
 
 	// set Content-Type header
 	localVarHTTPContentType := selectHeaderContentType(localVarHTTPContentTypes)
@@ -803,9 +1053,6 @@ func (a *OrderItemsAPIService) OrderItemsRefundOrderItemExecute(r ApiOrderItemsR
 	if localVarHTTPHeaderAccept != "" {
 		localVarHeaderParams["Accept"] = localVarHTTPHeaderAccept
 	}
-	parameterAddToHeaderOrQuery(localVarHeaderParams, "Idempotency-Key", r.idempotencyKey, "simple", "")
-	// body params
-	localVarPostBody = r.refundOrderItemRequest
 	if r.ctx != nil {
 		// API Key Authentication
 		if auth, ok := r.ctx.Value(ContextAPIKeys).(map[string]APIKey); ok {
@@ -853,7 +1100,512 @@ func (a *OrderItemsAPIService) OrderItemsRefundOrderItemExecute(r ApiOrderItemsR
 					newErr.model = v
 			return localVarReturnValue, localVarHTTPResponse, newErr
 		}
+		if localVarHTTPResponse.StatusCode == 401 {
+			var v PartnerErrorResponse
+			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = err.Error()
+				return localVarReturnValue, localVarHTTPResponse, newErr
+			}
+					newErr.error = formatErrorMessage(localVarHTTPResponse.Status, &v)
+					newErr.model = v
+			return localVarReturnValue, localVarHTTPResponse, newErr
+		}
+		if localVarHTTPResponse.StatusCode == 403 {
+			var v PartnerErrorResponse
+			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = err.Error()
+				return localVarReturnValue, localVarHTTPResponse, newErr
+			}
+					newErr.error = formatErrorMessage(localVarHTTPResponse.Status, &v)
+					newErr.model = v
+			return localVarReturnValue, localVarHTTPResponse, newErr
+		}
+		if localVarHTTPResponse.StatusCode == 404 {
+			var v PartnerErrorResponse
+			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = err.Error()
+				return localVarReturnValue, localVarHTTPResponse, newErr
+			}
+					newErr.error = formatErrorMessage(localVarHTTPResponse.Status, &v)
+					newErr.model = v
+			return localVarReturnValue, localVarHTTPResponse, newErr
+		}
+		if localVarHTTPResponse.StatusCode == 422 {
+			var v PartnerErrorResponse
+			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = err.Error()
+				return localVarReturnValue, localVarHTTPResponse, newErr
+			}
+					newErr.error = formatErrorMessage(localVarHTTPResponse.Status, &v)
+					newErr.model = v
+			return localVarReturnValue, localVarHTTPResponse, newErr
+		}
+		if localVarHTTPResponse.StatusCode == 429 {
+			var v PartnerErrorResponse
+			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = err.Error()
+				return localVarReturnValue, localVarHTTPResponse, newErr
+			}
+					newErr.error = formatErrorMessage(localVarHTTPResponse.Status, &v)
+					newErr.model = v
+		}
+		return localVarReturnValue, localVarHTTPResponse, newErr
+	}
+
+	err = a.client.decode(&localVarReturnValue, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
+	if err != nil {
+		newErr := &GenericOpenAPIError{
+			body:  localVarBody,
+			error: err.Error(),
+		}
+		return localVarReturnValue, localVarHTTPResponse, newErr
+	}
+
+	return localVarReturnValue, localVarHTTPResponse, nil
+}
+
+type ApiOrderItemsListPartnerAmendmentsRequest struct {
+	ctx context.Context
+	ApiService *OrderItemsAPIService
+	page *int32
+	limit *int32
+	statuses *[]string
+	productType *string
+	amendmentMode *string
+	orderId *string
+	orderItemId *string
+	from *time.Time
+	to *time.Time
+}
+
+// One-based page number. Default 1.
+func (r ApiOrderItemsListPartnerAmendmentsRequest) Page(page int32) ApiOrderItemsListPartnerAmendmentsRequest {
+	r.page = &page
+	return r
+}
+
+// Page size, 1 to 100. Default 10.
+func (r ApiOrderItemsListPartnerAmendmentsRequest) Limit(limit int32) ApiOrderItemsListPartnerAmendmentsRequest {
+	r.limit = &limit
+	return r
+}
+
+// Repeat to match any of the requested statuses.
+func (r ApiOrderItemsListPartnerAmendmentsRequest) Statuses(statuses []string) ApiOrderItemsListPartnerAmendmentsRequest {
+	r.statuses = &statuses
+	return r
+}
+
+func (r ApiOrderItemsListPartnerAmendmentsRequest) ProductType(productType string) ApiOrderItemsListPartnerAmendmentsRequest {
+	r.productType = &productType
+	return r
+}
+
+func (r ApiOrderItemsListPartnerAmendmentsRequest) AmendmentMode(amendmentMode string) ApiOrderItemsListPartnerAmendmentsRequest {
+	r.amendmentMode = &amendmentMode
+	return r
+}
+
+func (r ApiOrderItemsListPartnerAmendmentsRequest) OrderId(orderId string) ApiOrderItemsListPartnerAmendmentsRequest {
+	r.orderId = &orderId
+	return r
+}
+
+func (r ApiOrderItemsListPartnerAmendmentsRequest) OrderItemId(orderItemId string) ApiOrderItemsListPartnerAmendmentsRequest {
+	r.orderItemId = &orderItemId
+	return r
+}
+
+// Inclusive creation timestamp with UTC offset.
+func (r ApiOrderItemsListPartnerAmendmentsRequest) From(from time.Time) ApiOrderItemsListPartnerAmendmentsRequest {
+	r.from = &from
+	return r
+}
+
+// Inclusive creation timestamp with UTC offset. Send the end of a UTC day to include that whole day.
+func (r ApiOrderItemsListPartnerAmendmentsRequest) To(to time.Time) ApiOrderItemsListPartnerAmendmentsRequest {
+	r.to = &to
+	return r
+}
+
+func (r ApiOrderItemsListPartnerAmendmentsRequest) Execute() (*B2BPartnerAmendmentList, *http.Response, error) {
+	return r.ApiService.OrderItemsListPartnerAmendmentsExecute(r)
+}
+
+/*
+OrderItemsListPartnerAmendments List partner amendments
+
+Lists amendments across the authenticated partner's orders.
+
+Requires the read order permission. Includes manual and automatic amendments in all
+            statuses. Optional repeated statuses, productType, amendmentMode, orderId, orderItemId and inclusive
+            UTC from/to timestamps filter the result. Use flat page (default 1) and limit (default 10,
+            maximum 100) query parameters. Nested paging keys return 400 with code 10001.
+            Amounts retain their original currency; a quote does not imply settlement.
+            Example response:
+            ```{"items":[{"id":"b7428a30-f760-46e8-b504-a670bf9bed19","orderId":"a46ee792-287e-44ef-a641-48de1a0f72fd","orderItemId":"cf4a49ac-b785-43d4-912a-4be3443e48bd","productType":"hotel","amendmentMode":"manual","status":"quoted","createdAt":"2026-11-03T09:00:00Z","amountToPay":{"amount":25,"currency":"USD"},"amountToRefund":{"amount":0,"currency":"USD"}}],"pagination":{"currentCount":1,"totalCount":1,"skip":0,"limit":10,"hasMore":false,"page":1,"totalPages":1}}```
+
+ @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+ @return ApiOrderItemsListPartnerAmendmentsRequest
+*/
+func (a *OrderItemsAPIService) OrderItemsListPartnerAmendments(ctx context.Context) ApiOrderItemsListPartnerAmendmentsRequest {
+	return ApiOrderItemsListPartnerAmendmentsRequest{
+		ApiService: a,
+		ctx: ctx,
+	}
+}
+
+// Execute executes the request
+//  @return B2BPartnerAmendmentList
+func (a *OrderItemsAPIService) OrderItemsListPartnerAmendmentsExecute(r ApiOrderItemsListPartnerAmendmentsRequest) (*B2BPartnerAmendmentList, *http.Response, error) {
+	var (
+		localVarHTTPMethod   = http.MethodGet
+		localVarPostBody     interface{}
+		formFiles            []formFile
+		localVarReturnValue  *B2BPartnerAmendmentList
+	)
+
+	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "OrderItemsAPIService.OrderItemsListPartnerAmendments")
+	if err != nil {
+		return localVarReturnValue, nil, &GenericOpenAPIError{error: err.Error()}
+	}
+
+	localVarPath := localBasePath + "/api/v1/b2b/amendments"
+
+	localVarHeaderParams := make(map[string]string)
+	localVarQueryParams := url.Values{}
+	localVarFormParams := url.Values{}
+
+	if r.page != nil {
+		parameterAddToHeaderOrQuery(localVarQueryParams, "page", r.page, "form", "")
+	}
+	if r.limit != nil {
+		parameterAddToHeaderOrQuery(localVarQueryParams, "limit", r.limit, "form", "")
+	}
+	if r.statuses != nil {
+		t := *r.statuses
+		if reflect.TypeOf(t).Kind() == reflect.Slice {
+			s := reflect.ValueOf(t)
+			for i := 0; i < s.Len(); i++ {
+				parameterAddToHeaderOrQuery(localVarQueryParams, "statuses", s.Index(i).Interface(), "form", "multi")
+			}
+		} else {
+			parameterAddToHeaderOrQuery(localVarQueryParams, "statuses", t, "form", "multi")
+		}
+	}
+	if r.productType != nil {
+		parameterAddToHeaderOrQuery(localVarQueryParams, "productType", r.productType, "form", "")
+	}
+	if r.amendmentMode != nil {
+		parameterAddToHeaderOrQuery(localVarQueryParams, "amendmentMode", r.amendmentMode, "form", "")
+	}
+	if r.orderId != nil {
+		parameterAddToHeaderOrQuery(localVarQueryParams, "orderId", r.orderId, "form", "")
+	}
+	if r.orderItemId != nil {
+		parameterAddToHeaderOrQuery(localVarQueryParams, "orderItemId", r.orderItemId, "form", "")
+	}
+	if r.from != nil {
+		parameterAddToHeaderOrQuery(localVarQueryParams, "from", r.from, "form", "")
+	}
+	if r.to != nil {
+		parameterAddToHeaderOrQuery(localVarQueryParams, "to", r.to, "form", "")
+	}
+	// to determine the Content-Type header
+	localVarHTTPContentTypes := []string{}
+
+	// set Content-Type header
+	localVarHTTPContentType := selectHeaderContentType(localVarHTTPContentTypes)
+	if localVarHTTPContentType != "" {
+		localVarHeaderParams["Content-Type"] = localVarHTTPContentType
+	}
+
+	// to determine the Accept header
+	localVarHTTPHeaderAccepts := []string{"text/plain", "application/json", "text/json"}
+
+	// set Accept header
+	localVarHTTPHeaderAccept := selectHeaderAccept(localVarHTTPHeaderAccepts)
+	if localVarHTTPHeaderAccept != "" {
+		localVarHeaderParams["Accept"] = localVarHTTPHeaderAccept
+	}
+	if r.ctx != nil {
+		// API Key Authentication
+		if auth, ok := r.ctx.Value(ContextAPIKeys).(map[string]APIKey); ok {
+			if apiKey, ok := auth["PartnerApiKey"]; ok {
+				var key string
+				if apiKey.Prefix != "" {
+					key = apiKey.Prefix + " " + apiKey.Key
+				} else {
+					key = apiKey.Key
+				}
+				localVarHeaderParams["X-Partner-Key"] = key
+			}
+		}
+	}
+	req, err := a.client.prepareRequest(r.ctx, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, formFiles)
+	if err != nil {
+		return localVarReturnValue, nil, err
+	}
+
+	localVarHTTPResponse, err := a.client.callAPI(req)
+	if err != nil || localVarHTTPResponse == nil {
+		return localVarReturnValue, localVarHTTPResponse, err
+	}
+
+	localVarBody, err := io.ReadAll(localVarHTTPResponse.Body)
+	localVarHTTPResponse.Body.Close()
+	localVarHTTPResponse.Body = io.NopCloser(bytes.NewBuffer(localVarBody))
+	if err != nil {
+		return localVarReturnValue, localVarHTTPResponse, err
+	}
+
+	if localVarHTTPResponse.StatusCode >= 300 {
+		newErr := &GenericOpenAPIError{
+			body:  localVarBody,
+			error: localVarHTTPResponse.Status,
+		}
+		if localVarHTTPResponse.StatusCode == 400 {
+			var v PartnerErrorResponse
+			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = err.Error()
+				return localVarReturnValue, localVarHTTPResponse, newErr
+			}
+					newErr.error = formatErrorMessage(localVarHTTPResponse.Status, &v)
+					newErr.model = v
+			return localVarReturnValue, localVarHTTPResponse, newErr
+		}
+		if localVarHTTPResponse.StatusCode == 401 {
+			var v PartnerErrorResponse
+			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = err.Error()
+				return localVarReturnValue, localVarHTTPResponse, newErr
+			}
+					newErr.error = formatErrorMessage(localVarHTTPResponse.Status, &v)
+					newErr.model = v
+			return localVarReturnValue, localVarHTTPResponse, newErr
+		}
+		if localVarHTTPResponse.StatusCode == 403 {
+			var v PartnerErrorResponse
+			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = err.Error()
+				return localVarReturnValue, localVarHTTPResponse, newErr
+			}
+					newErr.error = formatErrorMessage(localVarHTTPResponse.Status, &v)
+					newErr.model = v
+			return localVarReturnValue, localVarHTTPResponse, newErr
+		}
+		if localVarHTTPResponse.StatusCode == 429 {
+			var v PartnerErrorResponse
+			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = err.Error()
+				return localVarReturnValue, localVarHTTPResponse, newErr
+			}
+					newErr.error = formatErrorMessage(localVarHTTPResponse.Status, &v)
+					newErr.model = v
+		}
+		return localVarReturnValue, localVarHTTPResponse, newErr
+	}
+
+	err = a.client.decode(&localVarReturnValue, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
+	if err != nil {
+		newErr := &GenericOpenAPIError{
+			body:  localVarBody,
+			error: err.Error(),
+		}
+		return localVarReturnValue, localVarHTTPResponse, newErr
+	}
+
+	return localVarReturnValue, localVarHTTPResponse, nil
+}
+
+type ApiOrderItemsQuoteAmendmentRequest struct {
+	ctx context.Context
+	ApiService *OrderItemsAPIService
+	id string
+	idempotencyKey *string
+	quoteB2BAmendmentQuery *QuoteB2BAmendmentQuery
+}
+
+// UUID idempotency key for safe retries of this operation.
+func (r ApiOrderItemsQuoteAmendmentRequest) IdempotencyKey(idempotencyKey string) ApiOrderItemsQuoteAmendmentRequest {
+	r.idempotencyKey = &idempotencyKey
+	return r
+}
+
+// The requested change.
+func (r ApiOrderItemsQuoteAmendmentRequest) QuoteB2BAmendmentQuery(quoteB2BAmendmentQuery QuoteB2BAmendmentQuery) ApiOrderItemsQuoteAmendmentRequest {
+	r.quoteB2BAmendmentQuery = &quoteB2BAmendmentQuery
+	return r
+}
+
+func (r ApiOrderItemsQuoteAmendmentRequest) Execute() (*QuoteB2BAmendmentResponse, *http.Response, error) {
+	return r.ApiService.OrderItemsQuoteAmendmentExecute(r)
+}
+
+/*
+OrderItemsQuoteAmendment Quote an amendment
+
+Quotes a change to a delivered order item.
+
+Available only when the item's `actions.amendment` is `available`: the item must be fulfilled,
+not refunded, and its product must support automatic changes. Items whose changes need manual review show
+`manualReview` and use the manual amendment routes instead. A kind of item that can never be amended
+returns `422` with code `18002` (`AMENDMENT_NOT_SUPPORTED`); otherwise an amendment that is
+not allowed now returns `409` with code `18003` (`AMENDMENT_NOT_AVAILABLE`), and
+`details[0].reason` repeats `actions.amendment.availability` (`MANUAL_REVIEW` or
+`NOT_AVAILABLE`). An item of another partner, or an unknown id, returns `404` with code
+`10004`.
+            
+Send the requested change in `attributes`, in the shape the item's product defines; top-level names that
+start with `_` are reserved for OpenRoam and ignored. The response
+has an `amendmentRequestId`, the time the quote was made (`processedAt`), the time it expires
+(`expiresAt`) and one or more `options`, each with an `id`, an `amountToPay` and an
+`amountToRefund` in the API key's currency, and an `amendmentFee`: a fee for the change, already
+included in those amounts, or `null` when none applies. Nothing changes and nothing is charged until
+you confirm the quote with `POST /order-items/{id}/amendments/confirm`, before `expiresAt`.
+            
+Requires an `Idempotency-Key` header (a UUID). Repeating a completed request with the same key
+returns `409` with code `12000` (`IDEMPOTENCY_KEY_ALREADY_USED`); one still running returns
+`409` with code `12002` (`IDEMPOTENCY_KEY_IN_PROGRESS`), and a different body with the same
+key `409` with code `12001`. A request that ended in an error can be sent again with the same key
+and body.
+
+ @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+ @param id Order item id (`items[].id` from the order response).
+ @return ApiOrderItemsQuoteAmendmentRequest
+*/
+func (a *OrderItemsAPIService) OrderItemsQuoteAmendment(ctx context.Context, id string) ApiOrderItemsQuoteAmendmentRequest {
+	return ApiOrderItemsQuoteAmendmentRequest{
+		ApiService: a,
+		ctx: ctx,
+		id: id,
+	}
+}
+
+// Execute executes the request
+//  @return QuoteB2BAmendmentResponse
+func (a *OrderItemsAPIService) OrderItemsQuoteAmendmentExecute(r ApiOrderItemsQuoteAmendmentRequest) (*QuoteB2BAmendmentResponse, *http.Response, error) {
+	var (
+		localVarHTTPMethod   = http.MethodPost
+		localVarPostBody     interface{}
+		formFiles            []formFile
+		localVarReturnValue  *QuoteB2BAmendmentResponse
+	)
+
+	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "OrderItemsAPIService.OrderItemsQuoteAmendment")
+	if err != nil {
+		return localVarReturnValue, nil, &GenericOpenAPIError{error: err.Error()}
+	}
+
+	localVarPath := localBasePath + "/api/v1/b2b/order-items/{id}/amendments/quote"
+	localVarPath = strings.Replace(localVarPath, "{"+"id"+"}", url.PathEscape(parameterValueToString(r.id, "id")), -1)
+
+	localVarHeaderParams := make(map[string]string)
+	localVarQueryParams := url.Values{}
+	localVarFormParams := url.Values{}
+	if r.idempotencyKey == nil {
+		return localVarReturnValue, nil, reportError("idempotencyKey is required and must be specified")
+	}
+
+	// to determine the Content-Type header
+	localVarHTTPContentTypes := []string{"application/json", "text/json", "application/*+json"}
+
+	// set Content-Type header
+	localVarHTTPContentType := selectHeaderContentType(localVarHTTPContentTypes)
+	if localVarHTTPContentType != "" {
+		localVarHeaderParams["Content-Type"] = localVarHTTPContentType
+	}
+
+	// to determine the Accept header
+	localVarHTTPHeaderAccepts := []string{"text/plain", "application/json", "text/json"}
+
+	// set Accept header
+	localVarHTTPHeaderAccept := selectHeaderAccept(localVarHTTPHeaderAccepts)
+	if localVarHTTPHeaderAccept != "" {
+		localVarHeaderParams["Accept"] = localVarHTTPHeaderAccept
+	}
+	parameterAddToHeaderOrQuery(localVarHeaderParams, "Idempotency-Key", r.idempotencyKey, "simple", "")
+	// body params
+	localVarPostBody = r.quoteB2BAmendmentQuery
+	if r.ctx != nil {
+		// API Key Authentication
+		if auth, ok := r.ctx.Value(ContextAPIKeys).(map[string]APIKey); ok {
+			if apiKey, ok := auth["PartnerApiKey"]; ok {
+				var key string
+				if apiKey.Prefix != "" {
+					key = apiKey.Prefix + " " + apiKey.Key
+				} else {
+					key = apiKey.Key
+				}
+				localVarHeaderParams["X-Partner-Key"] = key
+			}
+		}
+	}
+	req, err := a.client.prepareRequest(r.ctx, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, formFiles)
+	if err != nil {
+		return localVarReturnValue, nil, err
+	}
+
+	localVarHTTPResponse, err := a.client.callAPI(req)
+	if err != nil || localVarHTTPResponse == nil {
+		return localVarReturnValue, localVarHTTPResponse, err
+	}
+
+	localVarBody, err := io.ReadAll(localVarHTTPResponse.Body)
+	localVarHTTPResponse.Body.Close()
+	localVarHTTPResponse.Body = io.NopCloser(bytes.NewBuffer(localVarBody))
+	if err != nil {
+		return localVarReturnValue, localVarHTTPResponse, err
+	}
+
+	if localVarHTTPResponse.StatusCode >= 300 {
+		newErr := &GenericOpenAPIError{
+			body:  localVarBody,
+			error: localVarHTTPResponse.Status,
+		}
+		if localVarHTTPResponse.StatusCode == 400 {
+			var v PartnerErrorResponse
+			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = err.Error()
+				return localVarReturnValue, localVarHTTPResponse, newErr
+			}
+					newErr.error = formatErrorMessage(localVarHTTPResponse.Status, &v)
+					newErr.model = v
+			return localVarReturnValue, localVarHTTPResponse, newErr
+		}
+		if localVarHTTPResponse.StatusCode == 404 {
+			var v PartnerErrorResponse
+			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = err.Error()
+				return localVarReturnValue, localVarHTTPResponse, newErr
+			}
+					newErr.error = formatErrorMessage(localVarHTTPResponse.Status, &v)
+					newErr.model = v
+			return localVarReturnValue, localVarHTTPResponse, newErr
+		}
 		if localVarHTTPResponse.StatusCode == 409 {
+			var v PartnerErrorResponse
+			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = err.Error()
+				return localVarReturnValue, localVarHTTPResponse, newErr
+			}
+					newErr.error = formatErrorMessage(localVarHTTPResponse.Status, &v)
+					newErr.model = v
+			return localVarReturnValue, localVarHTTPResponse, newErr
+		}
+		if localVarHTTPResponse.StatusCode == 422 {
 			var v PartnerErrorResponse
 			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 			if err != nil {
@@ -900,60 +1652,70 @@ func (a *OrderItemsAPIService) OrderItemsRefundOrderItemExecute(r ApiOrderItemsR
 	return localVarReturnValue, localVarHTTPResponse, nil
 }
 
-type ApiOrderItemsRequestAmendmentRequest struct {
+type ApiOrderItemsUpdateRequest struct {
 	ctx context.Context
 	ApiService *OrderItemsAPIService
 	id string
 	idempotencyKey *string
-	requestB2BAmendmentQuery *RequestB2BAmendmentQuery
+	updateB2BOrderItemRequest *UpdateB2BOrderItemRequest
 }
 
 // UUID idempotency key for safe retries of this operation.
-func (r ApiOrderItemsRequestAmendmentRequest) IdempotencyKey(idempotencyKey string) ApiOrderItemsRequestAmendmentRequest {
+func (r ApiOrderItemsUpdateRequest) IdempotencyKey(idempotencyKey string) ApiOrderItemsUpdateRequest {
 	r.idempotencyKey = &idempotencyKey
 	return r
 }
 
-// The requested change.
-func (r ApiOrderItemsRequestAmendmentRequest) RequestB2BAmendmentQuery(requestB2BAmendmentQuery RequestB2BAmendmentQuery) ApiOrderItemsRequestAmendmentRequest {
-	r.requestB2BAmendmentQuery = &requestB2BAmendmentQuery
+// The members to change.
+func (r ApiOrderItemsUpdateRequest) UpdateB2BOrderItemRequest(updateB2BOrderItemRequest UpdateB2BOrderItemRequest) ApiOrderItemsUpdateRequest {
+	r.updateB2BOrderItemRequest = &updateB2BOrderItemRequest
 	return r
 }
 
-func (r ApiOrderItemsRequestAmendmentRequest) Execute() (*RequestB2BAmendmentResponse, *http.Response, error) {
-	return r.ApiService.OrderItemsRequestAmendmentExecute(r)
+func (r ApiOrderItemsUpdateRequest) Execute() (*PartnerOrderItem, *http.Response, error) {
+	return r.ApiService.OrderItemsUpdateExecute(r)
 }
 
 /*
-OrderItemsRequestAmendment Request an amendment quote
+OrderItemsUpdate Update an item
 
-Requests a priced quote for changing a delivered order item.
+Updates a delivered order item, without a charge.
 
-Available only when the item's `actions.amendment` is `available`: the item must be fulfilled,
-not refunded, and its product must support automatic changes. Items whose changes need manual review show
-`manualReview` and use the manual amendment routes instead. Otherwise the call returns `400` with
-code `10001`.
+Changes what the item's kind lets a partner change after the purchase, in one call. An update never charges
+or refunds anything: a change with a price, such as a hotel or flight change, is an amendment
+(`POST /order-items/{id}/amendments/quote`). At launch only gift cards can be updated: `inputs`
+takes a new `recipientEmail` and `giftMessage`, and the gift email is sent again, to the new address
+with the new message. A card bought without a recipient needs `recipientEmail`. Every other kind of item
+returns `422` with code `18004` (`UPDATE_NOT_SUPPORTED`).
             
-Send the requested change in `attributes`, in the shape the item's product defines; top-level names that
-start with `_` are reserved for OpenRoam and ignored. The response
-has an `amendmentRequestId`, the time the quote was made (`processedAt`) and one or more
-`options`, each with an `id`, an `amountToPay` and an `amountToRefund` in the API key's
-currency, and an `amendmentFee`: a fee for the change, already included in those amounts, or
-`null` when none applies. Nothing changes and nothing is charged until you commit; a quote can be
-committed for 24 hours.
+Available when the item's `actions.update` is `available`; otherwise the update returns `409`
+with code `18005` (`UPDATE_NOT_AVAILABLE`), and `details[0].reason` repeats
+`actions.update.availability` (`IN_PROGRESS` or `NOT_AVAILABLE`). The same `409` is
+returned when the item stops being available during the call, for example after a cancel.
+            
+A member of `inputs` left out or sent as `null` keeps its current value, and at least one member
+must be present. An invalid member returns `400` with code `10001` at `inputs.<member>`,
+with the same reasons as the order's `inputs`, and a member the item's kind does not define returns
+`400` with code `10001` and reason `UNSUPPORTED_FIELD`. An item of another partner, or an
+unknown id, returns `404` with code `10004`. A malformed body (not valid JSON, `inputs`
+missing, `null` or not an object, or a top-level member other than `inputs`) returns `400`
+with code `10001` before the item is read. The checks on the item then run in this order: `404`,
+`422`, `409`, then `400` for the members of `inputs`.
+            
+Returns the item exactly as `GET /order-items/{id}` returns it. No webhook is sent for an update.
             
 Requires an `Idempotency-Key` header (a UUID). Repeating a completed request with the same key
 returns `409` with code `12000` (`IDEMPOTENCY_KEY_ALREADY_USED`); one still running returns
 `409` with code `12002` (`IDEMPOTENCY_KEY_IN_PROGRESS`), and a different body with the same
 key `409` with code `12001`. A request that ended in an error can be sent again with the same key
-and body.
+and body. Updating the same item again needs a new key.
 
  @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
  @param id Order item id (`items[].id` from the order response).
- @return ApiOrderItemsRequestAmendmentRequest
+ @return ApiOrderItemsUpdateRequest
 */
-func (a *OrderItemsAPIService) OrderItemsRequestAmendment(ctx context.Context, id string) ApiOrderItemsRequestAmendmentRequest {
-	return ApiOrderItemsRequestAmendmentRequest{
+func (a *OrderItemsAPIService) OrderItemsUpdate(ctx context.Context, id string) ApiOrderItemsUpdateRequest {
+	return ApiOrderItemsUpdateRequest{
 		ApiService: a,
 		ctx: ctx,
 		id: id,
@@ -961,21 +1723,21 @@ func (a *OrderItemsAPIService) OrderItemsRequestAmendment(ctx context.Context, i
 }
 
 // Execute executes the request
-//  @return RequestB2BAmendmentResponse
-func (a *OrderItemsAPIService) OrderItemsRequestAmendmentExecute(r ApiOrderItemsRequestAmendmentRequest) (*RequestB2BAmendmentResponse, *http.Response, error) {
+//  @return PartnerOrderItem
+func (a *OrderItemsAPIService) OrderItemsUpdateExecute(r ApiOrderItemsUpdateRequest) (*PartnerOrderItem, *http.Response, error) {
 	var (
 		localVarHTTPMethod   = http.MethodPost
 		localVarPostBody     interface{}
 		formFiles            []formFile
-		localVarReturnValue  *RequestB2BAmendmentResponse
+		localVarReturnValue  *PartnerOrderItem
 	)
 
-	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "OrderItemsAPIService.OrderItemsRequestAmendment")
+	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "OrderItemsAPIService.OrderItemsUpdate")
 	if err != nil {
 		return localVarReturnValue, nil, &GenericOpenAPIError{error: err.Error()}
 	}
 
-	localVarPath := localBasePath + "/api/v1/b2b/order-items/{id}/amendments/request"
+	localVarPath := localBasePath + "/api/v1/b2b/order-items/{id}/update"
 	localVarPath = strings.Replace(localVarPath, "{"+"id"+"}", url.PathEscape(parameterValueToString(r.id, "id")), -1)
 
 	localVarHeaderParams := make(map[string]string)
@@ -1004,7 +1766,7 @@ func (a *OrderItemsAPIService) OrderItemsRequestAmendmentExecute(r ApiOrderItems
 	}
 	parameterAddToHeaderOrQuery(localVarHeaderParams, "Idempotency-Key", r.idempotencyKey, "simple", "")
 	// body params
-	localVarPostBody = r.requestB2BAmendmentQuery
+	localVarPostBody = r.updateB2BOrderItemRequest
 	if r.ctx != nil {
 		// API Key Authentication
 		if auth, ok := r.ctx.Value(ContextAPIKeys).(map[string]APIKey); ok {
@@ -1052,7 +1814,29 @@ func (a *OrderItemsAPIService) OrderItemsRequestAmendmentExecute(r ApiOrderItems
 					newErr.model = v
 			return localVarReturnValue, localVarHTTPResponse, newErr
 		}
+		if localVarHTTPResponse.StatusCode == 404 {
+			var v PartnerErrorResponse
+			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = err.Error()
+				return localVarReturnValue, localVarHTTPResponse, newErr
+			}
+					newErr.error = formatErrorMessage(localVarHTTPResponse.Status, &v)
+					newErr.model = v
+			return localVarReturnValue, localVarHTTPResponse, newErr
+		}
 		if localVarHTTPResponse.StatusCode == 409 {
+			var v PartnerErrorResponse
+			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = err.Error()
+				return localVarReturnValue, localVarHTTPResponse, newErr
+			}
+					newErr.error = formatErrorMessage(localVarHTTPResponse.Status, &v)
+					newErr.model = v
+			return localVarReturnValue, localVarHTTPResponse, newErr
+		}
+		if localVarHTTPResponse.StatusCode == 422 {
 			var v PartnerErrorResponse
 			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 			if err != nil {

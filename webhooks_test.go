@@ -37,7 +37,7 @@ func TestARefusedRequest(t *testing.T) {
 	}
 }
 
-func TestTheReadmeSetupCompilesAndBuildsARequest(t *testing.T) {
+func TestTheGeneratedAPIStillBuildsARequest(t *testing.T) {
 	cfg := NewConfiguration()
 	cfg.Servers = ServerConfigurations{{URL: SandboxURL}}
 	client := NewAPIClient(cfg)

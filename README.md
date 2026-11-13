@@ -5,32 +5,83 @@ Official client for the OpenRoam Partner API: eSIMs, airtime, utility payments, 
 ## Install
 
 ```bash
-go get github.com/OpenRoamHQ/openroam-go@v0.1.0-rc.2
+go get github.com/OpenRoamHQ/openroam-go@v0.1.0-rc.4
 ```
 
-> This is a **release candidate**: install it by its exact version, as above; a plain install does not pick it up. Before 1.0 the API can change between minor versions; every change is listed in the [changelog](https://github.com/OpenRoamHQ/openroam-sdks/blob/main/CHANGELOG.md).
+> This is a **release candidate**: install it by its exact version, as above; a plain install does not pick it up. Before 1.0 the API can change between minor versions; every change is listed in the [changelog](https://openroamhq.github.io/openroam-sdks/changelog/).
 
 ## Quick start
 
 ```go
-import (
-	"context"
-	"os"
+import openroam "github.com/OpenRoamHQ/openroam-go"
 
-	openroam "github.com/OpenRoamHQ/openroam-go"
-)
+client, err := openroam.New(os.Getenv("OPENROAM_API_KEY")) // or openroam.New("") with OPENROAM_API_KEY set
+if err != nil {
+	return err
+}
 
-cfg := openroam.NewConfiguration()
-cfg.Servers = openroam.ServerConfigurations{{URL: openroam.SandboxURL}} // or openroam.ProductionURL
-client := openroam.NewAPIClient(cfg)
+found, err := client.Esims.Search(ctx, &openroam.EsimsSearchQuery{CountryCode: openroam.PtrString("JP")})
 
-ctx := context.WithValue(context.Background(), openroam.ContextAPIKeys,
-	map[string]openroam.APIKey{"PartnerApiKey": {Key: os.Getenv("OPENROAM_API_KEY")}})
+body := openroam.NewEsimOrderRequest(items) // items: the offers to buy, []openroam.EsimOrderRequestItem
+body.SetCurrency("USD")
+quote, err := client.Esims.Quote(ctx, body)
+order, err := client.Esims.Order(ctx, body)
 
-result, _, err := client.EsimsAPI.EsimsSearch(ctx).CountryCode("JP").Execute()
+usage, err := client.Esims.GetUsage(ctx, iccid)
+hotels, err := client.Hotels.Search(ctx, openroam.NewSearchHotelQuery( /* ... */ ))
 ```
 
-Every product has its own service (`AirtimeAPI`, `EsimsAPI`, `GiftCardsAPI`, `HotelsAPI`, `FlightsAPI`, `UtilityAPI`, `OrdersAPI`, `WalletsAPI`...) and each follows search, quote, order.
+Every product is a field of the client: `Esims`, `Airtime`, `Utilities`, `GiftCards`, `Hotels`, `Flights`, plus `Orders`, `OrderItems`,
+`Wallets`, `Currencies`, `Countries` and `MobileNetworks`. Buying always reads `Search`, `Quote`, `Order`; `Get` fetches one thing you own,
+`List...` returns many, everything else starts with a verb. Every method takes `ctx` first, then the path ids in path order, then the
+request body (a pointer to its model, passed as it is) or the query parameters (a pointer to the method's `...Query` struct; `nil` sends
+none, and a `nil` field is not sent). A client is safe for concurrent use: make one and share it.
+
+Options when you need them:
+
+```go
+client, err := openroam.New("key",
+	openroam.WithEnvironment(openroam.Sandbox), // default openroam.Production
+	openroam.WithMaxRetries(3),                 // default 0: no retries
+	openroam.WithHTTPClient(&http.Client{Timeout: 30 * time.Second}),
+	// openroam.WithBaseURL("https://...") to point anywhere else, for example a development host
+)
+```
+
+## Orders are safe to repeat
+
+An idempotency key means: if the same request arrives twice, OpenRoam makes one order, not two. `Order` creates a key for you on every call.
+To stay safe even if *your own* program crashes and asks again, pass a UUID generated once and persisted for that purchase, for example your order id if it is a UUID:
+
+```go
+order, err := client.Esims.Order(ctx, body, openroam.WithIdempotencyKey(myOrderID))
+```
+
+`openroam.NewIdempotencyKey()` makes a new one.
+
+## Errors
+
+A failed call returns an `*openroam.OpenRoamError` with the error body of the API: `Status`, `Code` (branch on this), `Name`, `Message`, `RequestID`
+(keep it for support) and `Details`. When no answer arrived (network error, timeout, a cancelled `ctx`), `Status` is 0 and `errors.Unwrap`
+gives the original error, so `errors.Is(err, context.DeadlineExceeded)` still works.
+
+```go
+order, err := client.Esims.Order(ctx, body)
+var apiErr *openroam.OpenRoamError
+if errors.As(err, &apiErr) && apiErr.Code == 11002 {
+	// the price rose above your maxPrice
+} else if err != nil {
+	return err
+}
+```
+
+A `202` whose body has code `12002` (the same order is still being accepted) is an error too, never an order.
+
+## Lists and pages
+
+Pagination depends on the method. `Esims.Search` accepts `Page` and `Limit` and returns `Items` and `Pagination`, while `Orders.List` returns `Orders` and `Pagination`.
+`Esims.ListCatalog` accepts `Cursor` and `Limit` and returns `Items` and `NextCursor`; pass `NextCursor.Get()` as `Cursor` to fetch the next page.
+Some lists, such as `Esims.ListCompatibleDevices`, return an unpaged slice.
 
 ## Webhooks
 
@@ -60,11 +111,22 @@ for _, item := range order.Items {
 
 An unknown `productType` is an error, never a silent gap.
 
+## Retries
+
+Retries are off by default. `WithMaxRetries` retries network errors, `429`, `502/503/504` and "still running" (`12002`) safely, with
+backoff and `Retry-After`; `500` and other `4xx` never are. A `POST` is sent again only with its `Idempotency-Key`, the same key and the
+same body, and `Order` always has one.
+
+```go
+client, err := openroam.New(apiKey, openroam.WithMaxRetries(3))
+```
+
+The full behaviour: [Retries and idempotency](https://openroamhq.github.io/openroam-sdks/retries/). `NewRetryingHTTPClient` (with `RetryOptions` for the delays
+and an `OnRetry` callback for logging) and `NewIdempotencyKey` are also exported if you build your own requests.
+
 ## Good to know
 
-- **Orders need an `Idempotency-Key`** (a new UUID per purchase). After a timeout or a `5xx`, retry with the same key and the same body: it never charges twice.
 - **Amounts** are `{ amount, currency }`. `price` is what OpenRoam charges you, `value` what your customer receives.
-- **Errors** carry `code`, `name`, `message`, `requestId` and `details`; quote `requestId` when you contact support.
 - Full API documentation: https://openroam.com (partner portal). Support: support@openroam.com.
 
-This SDK is generated from the OpenRoam Partner API description; `webhooks` is hand-written. MIT licensed.
+The client is generated from the OpenRoam Partner API description, so it always matches the API; `webhooks`, `retry` and the errors are hand-written. MIT licensed.

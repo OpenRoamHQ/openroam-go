@@ -21,7 +21,7 @@ var _ MappedNullable = &BookingTermsCancellation{}
 
 // BookingTermsCancellation struct for BookingTermsCancellation
 type BookingTermsCancellation struct {
-	// `fullyRefundable` (a full refund until FreeUntil), `partiallyRefundable` or             `nonRefundable` (nothing comes back).
+	// `fullyRefundable` (a full refund until FreeUntil), `partiallyRefundable` or `nonRefundable` (nothing comes back).
 	Type *string `json:"type,omitempty"`
 	// Cancel at or before this instant (UTC) for a full refund; null unless the type is             `fullyRefundable`.
 	FreeUntil NullableTime `json:"freeUntil,omitempty"`

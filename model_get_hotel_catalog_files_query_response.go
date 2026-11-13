@@ -27,6 +27,8 @@ type GetHotelCatalogFilesQueryResponse struct {
 	HotelCount *int32 `json:"hotelCount,omitempty"`
 	// The current catalog zips, one per variant; empty whenever `generatedAt` is null.
 	Files []HotelCatalogFile `json:"files,omitempty"`
+	// The complete confirmed ID replacement map for this build; null before its first build.
+	Replacements NullableHotelCatalogReplacementFile `json:"replacements,omitempty"`
 }
 
 // NewGetHotelCatalogFilesQueryResponse instantiates a new GetHotelCatalogFilesQueryResponse object
@@ -152,6 +154,48 @@ func (o *GetHotelCatalogFilesQueryResponse) SetFiles(v []HotelCatalogFile) {
 	o.Files = v
 }
 
+// GetReplacements returns the Replacements field value if set, zero value otherwise (both if not set or set to explicit null).
+func (o *GetHotelCatalogFilesQueryResponse) GetReplacements() HotelCatalogReplacementFile {
+	if o == nil || IsNil(o.Replacements.Get()) {
+		var ret HotelCatalogReplacementFile
+		return ret
+	}
+	return *o.Replacements.Get()
+}
+
+// GetReplacementsOk returns a tuple with the Replacements field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+// NOTE: If the value is an explicit nil, `nil, true` will be returned
+func (o *GetHotelCatalogFilesQueryResponse) GetReplacementsOk() (*HotelCatalogReplacementFile, bool) {
+	if o == nil {
+		return nil, false
+	}
+	return o.Replacements.Get(), o.Replacements.IsSet()
+}
+
+// HasReplacements returns a boolean if a field has been set.
+func (o *GetHotelCatalogFilesQueryResponse) HasReplacements() bool {
+	if o != nil && o.Replacements.IsSet() {
+		return true
+	}
+
+	return false
+}
+
+// SetReplacements gets a reference to the given NullableHotelCatalogReplacementFile and assigns it to the Replacements field.
+func (o *GetHotelCatalogFilesQueryResponse) SetReplacements(v HotelCatalogReplacementFile) {
+	o.Replacements.Set(&v)
+}
+// SetReplacementsNil sets the value for Replacements to be an explicit nil
+func (o *GetHotelCatalogFilesQueryResponse) SetReplacementsNil() {
+	o.Replacements.Set(nil)
+}
+
+// UnsetReplacements ensures that no value is present for Replacements, not even an explicit nil
+func (o *GetHotelCatalogFilesQueryResponse) UnsetReplacements() {
+	o.Replacements.Unset()
+}
+
 func (o GetHotelCatalogFilesQueryResponse) MarshalJSON() ([]byte, error) {
 	toSerialize,err := o.ToMap()
 	if err != nil {
@@ -170,6 +214,9 @@ func (o GetHotelCatalogFilesQueryResponse) ToMap() (map[string]interface{}, erro
 	}
 	if !IsNil(o.Files) {
 		toSerialize["files"] = o.Files
+	}
+	if o.Replacements.IsSet() {
+		toSerialize["replacements"] = o.Replacements.Get()
 	}
 	return toSerialize, nil
 }

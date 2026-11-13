@@ -18,11 +18,11 @@ import (
 	"fmt"
 )
 
-// checks if the B2BCancellationPenaltyResponse type satisfies the MappedNullable interface at compile time
-var _ MappedNullable = &B2BCancellationPenaltyResponse{}
+// checks if the B2BCancellationPreviewResponse type satisfies the MappedNullable interface at compile time
+var _ MappedNullable = &B2BCancellationPreviewResponse{}
 
-// B2BCancellationPenaltyResponse A preview of cancelling an order item now. It changes nothing and does not lock the amounts.
-type B2BCancellationPenaltyResponse struct {
+// B2BCancellationPreviewResponse A preview of cancelling an order item now. It changes nothing and does not lock the amounts.
+type B2BCancellationPreviewResponse struct {
 	// The penalty that would be kept, in the order currency.
 	PenaltyAmount MoneyAmount `json:"penaltyAmount"`
 	// A cancellation fee taken in addition to the penalty, in the order currency; `null` when none applies. It comes out of what the penalty leaves, so it never makes the refund negative.
@@ -39,30 +39,30 @@ type B2BCancellationPenaltyResponse struct {
 	CheckInDate *time.Time `json:"checkInDate,omitempty"`
 }
 
-type _B2BCancellationPenaltyResponse B2BCancellationPenaltyResponse
+type _B2BCancellationPreviewResponse B2BCancellationPreviewResponse
 
-// NewB2BCancellationPenaltyResponse instantiates a new B2BCancellationPenaltyResponse object
+// NewB2BCancellationPreviewResponse instantiates a new B2BCancellationPreviewResponse object
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewB2BCancellationPenaltyResponse(penaltyAmount MoneyAmount, refundAmount MoneyAmount, isRefundable bool) *B2BCancellationPenaltyResponse {
-	this := B2BCancellationPenaltyResponse{}
+func NewB2BCancellationPreviewResponse(penaltyAmount MoneyAmount, refundAmount MoneyAmount, isRefundable bool) *B2BCancellationPreviewResponse {
+	this := B2BCancellationPreviewResponse{}
 	this.PenaltyAmount = penaltyAmount
 	this.RefundAmount = refundAmount
 	this.IsRefundable = isRefundable
 	return &this
 }
 
-// NewB2BCancellationPenaltyResponseWithDefaults instantiates a new B2BCancellationPenaltyResponse object
+// NewB2BCancellationPreviewResponseWithDefaults instantiates a new B2BCancellationPreviewResponse object
 // This constructor will only assign default values to properties that have it defined,
 // but it doesn't guarantee that properties required by API are set
-func NewB2BCancellationPenaltyResponseWithDefaults() *B2BCancellationPenaltyResponse {
-	this := B2BCancellationPenaltyResponse{}
+func NewB2BCancellationPreviewResponseWithDefaults() *B2BCancellationPreviewResponse {
+	this := B2BCancellationPreviewResponse{}
 	return &this
 }
 
 // GetPenaltyAmount returns the PenaltyAmount field value
-func (o *B2BCancellationPenaltyResponse) GetPenaltyAmount() MoneyAmount {
+func (o *B2BCancellationPreviewResponse) GetPenaltyAmount() MoneyAmount {
 	if o == nil {
 		var ret MoneyAmount
 		return ret
@@ -73,7 +73,7 @@ func (o *B2BCancellationPenaltyResponse) GetPenaltyAmount() MoneyAmount {
 
 // GetPenaltyAmountOk returns a tuple with the PenaltyAmount field value
 // and a boolean to check if the value has been set.
-func (o *B2BCancellationPenaltyResponse) GetPenaltyAmountOk() (*MoneyAmount, bool) {
+func (o *B2BCancellationPreviewResponse) GetPenaltyAmountOk() (*MoneyAmount, bool) {
 	if o == nil {
 		return nil, false
 	}
@@ -81,12 +81,12 @@ func (o *B2BCancellationPenaltyResponse) GetPenaltyAmountOk() (*MoneyAmount, boo
 }
 
 // SetPenaltyAmount sets field value
-func (o *B2BCancellationPenaltyResponse) SetPenaltyAmount(v MoneyAmount) {
+func (o *B2BCancellationPreviewResponse) SetPenaltyAmount(v MoneyAmount) {
 	o.PenaltyAmount = v
 }
 
 // GetCancellationFee returns the CancellationFee field value if set, zero value otherwise (both if not set or set to explicit null).
-func (o *B2BCancellationPenaltyResponse) GetCancellationFee() MoneyAmount {
+func (o *B2BCancellationPreviewResponse) GetCancellationFee() MoneyAmount {
 	if o == nil || IsNil(o.CancellationFee.Get()) {
 		var ret MoneyAmount
 		return ret
@@ -97,7 +97,7 @@ func (o *B2BCancellationPenaltyResponse) GetCancellationFee() MoneyAmount {
 // GetCancellationFeeOk returns a tuple with the CancellationFee field value if set, nil otherwise
 // and a boolean to check if the value has been set.
 // NOTE: If the value is an explicit nil, `nil, true` will be returned
-func (o *B2BCancellationPenaltyResponse) GetCancellationFeeOk() (*MoneyAmount, bool) {
+func (o *B2BCancellationPreviewResponse) GetCancellationFeeOk() (*MoneyAmount, bool) {
 	if o == nil {
 		return nil, false
 	}
@@ -105,7 +105,7 @@ func (o *B2BCancellationPenaltyResponse) GetCancellationFeeOk() (*MoneyAmount, b
 }
 
 // HasCancellationFee returns a boolean if a field has been set.
-func (o *B2BCancellationPenaltyResponse) HasCancellationFee() bool {
+func (o *B2BCancellationPreviewResponse) HasCancellationFee() bool {
 	if o != nil && o.CancellationFee.IsSet() {
 		return true
 	}
@@ -114,21 +114,21 @@ func (o *B2BCancellationPenaltyResponse) HasCancellationFee() bool {
 }
 
 // SetCancellationFee gets a reference to the given NullableMoneyAmount and assigns it to the CancellationFee field.
-func (o *B2BCancellationPenaltyResponse) SetCancellationFee(v MoneyAmount) {
+func (o *B2BCancellationPreviewResponse) SetCancellationFee(v MoneyAmount) {
 	o.CancellationFee.Set(&v)
 }
 // SetCancellationFeeNil sets the value for CancellationFee to be an explicit nil
-func (o *B2BCancellationPenaltyResponse) SetCancellationFeeNil() {
+func (o *B2BCancellationPreviewResponse) SetCancellationFeeNil() {
 	o.CancellationFee.Set(nil)
 }
 
 // UnsetCancellationFee ensures that no value is present for CancellationFee, not even an explicit nil
-func (o *B2BCancellationPenaltyResponse) UnsetCancellationFee() {
+func (o *B2BCancellationPreviewResponse) UnsetCancellationFee() {
 	o.CancellationFee.Unset()
 }
 
 // GetRefundAmount returns the RefundAmount field value
-func (o *B2BCancellationPenaltyResponse) GetRefundAmount() MoneyAmount {
+func (o *B2BCancellationPreviewResponse) GetRefundAmount() MoneyAmount {
 	if o == nil {
 		var ret MoneyAmount
 		return ret
@@ -139,7 +139,7 @@ func (o *B2BCancellationPenaltyResponse) GetRefundAmount() MoneyAmount {
 
 // GetRefundAmountOk returns a tuple with the RefundAmount field value
 // and a boolean to check if the value has been set.
-func (o *B2BCancellationPenaltyResponse) GetRefundAmountOk() (*MoneyAmount, bool) {
+func (o *B2BCancellationPreviewResponse) GetRefundAmountOk() (*MoneyAmount, bool) {
 	if o == nil {
 		return nil, false
 	}
@@ -147,12 +147,12 @@ func (o *B2BCancellationPenaltyResponse) GetRefundAmountOk() (*MoneyAmount, bool
 }
 
 // SetRefundAmount sets field value
-func (o *B2BCancellationPenaltyResponse) SetRefundAmount(v MoneyAmount) {
+func (o *B2BCancellationPreviewResponse) SetRefundAmount(v MoneyAmount) {
 	o.RefundAmount = v
 }
 
 // GetIsRefundable returns the IsRefundable field value
-func (o *B2BCancellationPenaltyResponse) GetIsRefundable() bool {
+func (o *B2BCancellationPreviewResponse) GetIsRefundable() bool {
 	if o == nil {
 		var ret bool
 		return ret
@@ -163,7 +163,7 @@ func (o *B2BCancellationPenaltyResponse) GetIsRefundable() bool {
 
 // GetIsRefundableOk returns a tuple with the IsRefundable field value
 // and a boolean to check if the value has been set.
-func (o *B2BCancellationPenaltyResponse) GetIsRefundableOk() (*bool, bool) {
+func (o *B2BCancellationPreviewResponse) GetIsRefundableOk() (*bool, bool) {
 	if o == nil {
 		return nil, false
 	}
@@ -171,12 +171,12 @@ func (o *B2BCancellationPenaltyResponse) GetIsRefundableOk() (*bool, bool) {
 }
 
 // SetIsRefundable sets field value
-func (o *B2BCancellationPenaltyResponse) SetIsRefundable(v bool) {
+func (o *B2BCancellationPreviewResponse) SetIsRefundable(v bool) {
 	o.IsRefundable = v
 }
 
 // GetAppliedPenalties returns the AppliedPenalties field value if set, zero value otherwise (both if not set or set to explicit null).
-func (o *B2BCancellationPenaltyResponse) GetAppliedPenalties() []CancellationPenaltyDetail {
+func (o *B2BCancellationPreviewResponse) GetAppliedPenalties() []CancellationPenaltyDetail {
 	if o == nil {
 		var ret []CancellationPenaltyDetail
 		return ret
@@ -187,7 +187,7 @@ func (o *B2BCancellationPenaltyResponse) GetAppliedPenalties() []CancellationPen
 // GetAppliedPenaltiesOk returns a tuple with the AppliedPenalties field value if set, nil otherwise
 // and a boolean to check if the value has been set.
 // NOTE: If the value is an explicit nil, `nil, true` will be returned
-func (o *B2BCancellationPenaltyResponse) GetAppliedPenaltiesOk() ([]CancellationPenaltyDetail, bool) {
+func (o *B2BCancellationPreviewResponse) GetAppliedPenaltiesOk() ([]CancellationPenaltyDetail, bool) {
 	if o == nil || IsNil(o.AppliedPenalties) {
 		return nil, false
 	}
@@ -195,7 +195,7 @@ func (o *B2BCancellationPenaltyResponse) GetAppliedPenaltiesOk() ([]Cancellation
 }
 
 // HasAppliedPenalties returns a boolean if a field has been set.
-func (o *B2BCancellationPenaltyResponse) HasAppliedPenalties() bool {
+func (o *B2BCancellationPreviewResponse) HasAppliedPenalties() bool {
 	if o != nil && !IsNil(o.AppliedPenalties) {
 		return true
 	}
@@ -204,12 +204,12 @@ func (o *B2BCancellationPenaltyResponse) HasAppliedPenalties() bool {
 }
 
 // SetAppliedPenalties gets a reference to the given []CancellationPenaltyDetail and assigns it to the AppliedPenalties field.
-func (o *B2BCancellationPenaltyResponse) SetAppliedPenalties(v []CancellationPenaltyDetail) {
+func (o *B2BCancellationPreviewResponse) SetAppliedPenalties(v []CancellationPenaltyDetail) {
 	o.AppliedPenalties = v
 }
 
 // GetEffectiveCancellationDate returns the EffectiveCancellationDate field value if set, zero value otherwise.
-func (o *B2BCancellationPenaltyResponse) GetEffectiveCancellationDate() time.Time {
+func (o *B2BCancellationPreviewResponse) GetEffectiveCancellationDate() time.Time {
 	if o == nil || IsNil(o.EffectiveCancellationDate) {
 		var ret time.Time
 		return ret
@@ -219,7 +219,7 @@ func (o *B2BCancellationPenaltyResponse) GetEffectiveCancellationDate() time.Tim
 
 // GetEffectiveCancellationDateOk returns a tuple with the EffectiveCancellationDate field value if set, nil otherwise
 // and a boolean to check if the value has been set.
-func (o *B2BCancellationPenaltyResponse) GetEffectiveCancellationDateOk() (*time.Time, bool) {
+func (o *B2BCancellationPreviewResponse) GetEffectiveCancellationDateOk() (*time.Time, bool) {
 	if o == nil || IsNil(o.EffectiveCancellationDate) {
 		return nil, false
 	}
@@ -227,7 +227,7 @@ func (o *B2BCancellationPenaltyResponse) GetEffectiveCancellationDateOk() (*time
 }
 
 // HasEffectiveCancellationDate returns a boolean if a field has been set.
-func (o *B2BCancellationPenaltyResponse) HasEffectiveCancellationDate() bool {
+func (o *B2BCancellationPreviewResponse) HasEffectiveCancellationDate() bool {
 	if o != nil && !IsNil(o.EffectiveCancellationDate) {
 		return true
 	}
@@ -236,12 +236,12 @@ func (o *B2BCancellationPenaltyResponse) HasEffectiveCancellationDate() bool {
 }
 
 // SetEffectiveCancellationDate gets a reference to the given time.Time and assigns it to the EffectiveCancellationDate field.
-func (o *B2BCancellationPenaltyResponse) SetEffectiveCancellationDate(v time.Time) {
+func (o *B2BCancellationPreviewResponse) SetEffectiveCancellationDate(v time.Time) {
 	o.EffectiveCancellationDate = &v
 }
 
 // GetCheckInDate returns the CheckInDate field value if set, zero value otherwise.
-func (o *B2BCancellationPenaltyResponse) GetCheckInDate() time.Time {
+func (o *B2BCancellationPreviewResponse) GetCheckInDate() time.Time {
 	if o == nil || IsNil(o.CheckInDate) {
 		var ret time.Time
 		return ret
@@ -251,7 +251,7 @@ func (o *B2BCancellationPenaltyResponse) GetCheckInDate() time.Time {
 
 // GetCheckInDateOk returns a tuple with the CheckInDate field value if set, nil otherwise
 // and a boolean to check if the value has been set.
-func (o *B2BCancellationPenaltyResponse) GetCheckInDateOk() (*time.Time, bool) {
+func (o *B2BCancellationPreviewResponse) GetCheckInDateOk() (*time.Time, bool) {
 	if o == nil || IsNil(o.CheckInDate) {
 		return nil, false
 	}
@@ -259,7 +259,7 @@ func (o *B2BCancellationPenaltyResponse) GetCheckInDateOk() (*time.Time, bool) {
 }
 
 // HasCheckInDate returns a boolean if a field has been set.
-func (o *B2BCancellationPenaltyResponse) HasCheckInDate() bool {
+func (o *B2BCancellationPreviewResponse) HasCheckInDate() bool {
 	if o != nil && !IsNil(o.CheckInDate) {
 		return true
 	}
@@ -268,11 +268,11 @@ func (o *B2BCancellationPenaltyResponse) HasCheckInDate() bool {
 }
 
 // SetCheckInDate gets a reference to the given time.Time and assigns it to the CheckInDate field.
-func (o *B2BCancellationPenaltyResponse) SetCheckInDate(v time.Time) {
+func (o *B2BCancellationPreviewResponse) SetCheckInDate(v time.Time) {
 	o.CheckInDate = &v
 }
 
-func (o B2BCancellationPenaltyResponse) MarshalJSON() ([]byte, error) {
+func (o B2BCancellationPreviewResponse) MarshalJSON() ([]byte, error) {
 	toSerialize,err := o.ToMap()
 	if err != nil {
 		return []byte{}, err
@@ -280,7 +280,7 @@ func (o B2BCancellationPenaltyResponse) MarshalJSON() ([]byte, error) {
 	return json.Marshal(toSerialize)
 }
 
-func (o B2BCancellationPenaltyResponse) ToMap() (map[string]interface{}, error) {
+func (o B2BCancellationPreviewResponse) ToMap() (map[string]interface{}, error) {
 	toSerialize := map[string]interface{}{}
 	toSerialize["penaltyAmount"] = o.PenaltyAmount
 	if o.CancellationFee.IsSet() {
@@ -300,7 +300,7 @@ func (o B2BCancellationPenaltyResponse) ToMap() (map[string]interface{}, error) 
 	return toSerialize, nil
 }
 
-func (o *B2BCancellationPenaltyResponse) UnmarshalJSON(data []byte) (err error) {
+func (o *B2BCancellationPreviewResponse) UnmarshalJSON(data []byte) (err error) {
 	// This validates that all required properties are included in the JSON object
 	// by unmarshalling the object into a generic map with string keys and checking
 	// that every required field exists as a key in the generic map.
@@ -324,53 +324,53 @@ func (o *B2BCancellationPenaltyResponse) UnmarshalJSON(data []byte) (err error) 
 		}
 	}
 
-	varB2BCancellationPenaltyResponse := _B2BCancellationPenaltyResponse{}
+	varB2BCancellationPreviewResponse := _B2BCancellationPreviewResponse{}
 
 	decoder := json.NewDecoder(bytes.NewReader(data))
 	decoder.DisallowUnknownFields()
-	err = decoder.Decode(&varB2BCancellationPenaltyResponse)
+	err = decoder.Decode(&varB2BCancellationPreviewResponse)
 
 	if err != nil {
 		return err
 	}
 
-	*o = B2BCancellationPenaltyResponse(varB2BCancellationPenaltyResponse)
+	*o = B2BCancellationPreviewResponse(varB2BCancellationPreviewResponse)
 
 	return err
 }
 
-type NullableB2BCancellationPenaltyResponse struct {
-	value *B2BCancellationPenaltyResponse
+type NullableB2BCancellationPreviewResponse struct {
+	value *B2BCancellationPreviewResponse
 	isSet bool
 }
 
-func (v NullableB2BCancellationPenaltyResponse) Get() *B2BCancellationPenaltyResponse {
+func (v NullableB2BCancellationPreviewResponse) Get() *B2BCancellationPreviewResponse {
 	return v.value
 }
 
-func (v *NullableB2BCancellationPenaltyResponse) Set(val *B2BCancellationPenaltyResponse) {
+func (v *NullableB2BCancellationPreviewResponse) Set(val *B2BCancellationPreviewResponse) {
 	v.value = val
 	v.isSet = true
 }
 
-func (v NullableB2BCancellationPenaltyResponse) IsSet() bool {
+func (v NullableB2BCancellationPreviewResponse) IsSet() bool {
 	return v.isSet
 }
 
-func (v *NullableB2BCancellationPenaltyResponse) Unset() {
+func (v *NullableB2BCancellationPreviewResponse) Unset() {
 	v.value = nil
 	v.isSet = false
 }
 
-func NewNullableB2BCancellationPenaltyResponse(val *B2BCancellationPenaltyResponse) *NullableB2BCancellationPenaltyResponse {
-	return &NullableB2BCancellationPenaltyResponse{value: val, isSet: true}
+func NewNullableB2BCancellationPreviewResponse(val *B2BCancellationPreviewResponse) *NullableB2BCancellationPreviewResponse {
+	return &NullableB2BCancellationPreviewResponse{value: val, isSet: true}
 }
 
-func (v NullableB2BCancellationPenaltyResponse) MarshalJSON() ([]byte, error) {
+func (v NullableB2BCancellationPreviewResponse) MarshalJSON() ([]byte, error) {
 	return json.Marshal(v.value)
 }
 
-func (v *NullableB2BCancellationPenaltyResponse) UnmarshalJSON(src []byte) error {
+func (v *NullableB2BCancellationPreviewResponse) UnmarshalJSON(src []byte) error {
 	v.isSet = true
 	return json.Unmarshal(src, &v.value)
 }
