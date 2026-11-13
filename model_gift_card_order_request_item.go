@@ -27,7 +27,7 @@ type GiftCardOrderRequestItem struct {
 	// Number of cards, at least 1; default 1. Each card becomes its own order item.
 	Quantity *int32 `json:"quantity,omitempty"`
 	// The inputs the offer's `requiredInputs` list, plus `value` and `maxPrice`. May be omitted for a fixed offer that does not list `recipientIdentifier`; a range offer needs at least `value`.
-	Inputs NullableGiftCardCartInputs `json:"inputs,omitempty"`
+	Inputs NullableGiftCardInputs `json:"inputs,omitempty"`
 }
 
 type _GiftCardOrderRequestItem GiftCardOrderRequestItem
@@ -107,9 +107,9 @@ func (o *GiftCardOrderRequestItem) SetQuantity(v int32) {
 }
 
 // GetInputs returns the Inputs field value if set, zero value otherwise (both if not set or set to explicit null).
-func (o *GiftCardOrderRequestItem) GetInputs() GiftCardCartInputs {
+func (o *GiftCardOrderRequestItem) GetInputs() GiftCardInputs {
 	if o == nil || IsNil(o.Inputs.Get()) {
-		var ret GiftCardCartInputs
+		var ret GiftCardInputs
 		return ret
 	}
 	return *o.Inputs.Get()
@@ -118,7 +118,7 @@ func (o *GiftCardOrderRequestItem) GetInputs() GiftCardCartInputs {
 // GetInputsOk returns a tuple with the Inputs field value if set, nil otherwise
 // and a boolean to check if the value has been set.
 // NOTE: If the value is an explicit nil, `nil, true` will be returned
-func (o *GiftCardOrderRequestItem) GetInputsOk() (*GiftCardCartInputs, bool) {
+func (o *GiftCardOrderRequestItem) GetInputsOk() (*GiftCardInputs, bool) {
 	if o == nil {
 		return nil, false
 	}
@@ -134,8 +134,8 @@ func (o *GiftCardOrderRequestItem) HasInputs() bool {
 	return false
 }
 
-// SetInputs gets a reference to the given NullableGiftCardCartInputs and assigns it to the Inputs field.
-func (o *GiftCardOrderRequestItem) SetInputs(v GiftCardCartInputs) {
+// SetInputs gets a reference to the given NullableGiftCardInputs and assigns it to the Inputs field.
+func (o *GiftCardOrderRequestItem) SetInputs(v GiftCardInputs) {
 	o.Inputs.Set(&v)
 }
 // SetInputsNil sets the value for Inputs to be an explicit nil

@@ -43,7 +43,7 @@ func (r ApiEsimsCreateOrderRequest) EsimOrderRequest(esimOrderRequest EsimOrderR
 	return r
 }
 
-func (r ApiEsimsCreateOrderRequest) Execute() (*EsimsCreateOrder200Response, *http.Response, error) {
+func (r ApiEsimsCreateOrderRequest) Execute() (*EsimOrder, *http.Response, error) {
 	return r.ApiService.EsimsCreateOrderExecute(r)
 }
 
@@ -72,13 +72,13 @@ func (a *EsimsAPIService) EsimsCreateOrder(ctx context.Context) ApiEsimsCreateOr
 }
 
 // Execute executes the request
-//  @return EsimsCreateOrder200Response
-func (a *EsimsAPIService) EsimsCreateOrderExecute(r ApiEsimsCreateOrderRequest) (*EsimsCreateOrder200Response, *http.Response, error) {
+//  @return EsimOrder
+func (a *EsimsAPIService) EsimsCreateOrderExecute(r ApiEsimsCreateOrderRequest) (*EsimOrder, *http.Response, error) {
 	var (
 		localVarHTTPMethod   = http.MethodPost
 		localVarPostBody     interface{}
 		formFiles            []formFile
-		localVarReturnValue  *EsimsCreateOrder200Response
+		localVarReturnValue  *EsimOrder
 	)
 
 	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "EsimsAPIService.EsimsCreateOrder")
@@ -152,7 +152,7 @@ func (a *EsimsAPIService) EsimsCreateOrderExecute(r ApiEsimsCreateOrderRequest) 
 			error: localVarHTTPResponse.Status,
 		}
 		if localVarHTTPResponse.StatusCode == 400 {
-			var v PartnerErrorResponse
+			var v ErrorResponse
 			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -163,7 +163,7 @@ func (a *EsimsAPIService) EsimsCreateOrderExecute(r ApiEsimsCreateOrderRequest) 
 			return localVarReturnValue, localVarHTTPResponse, newErr
 		}
 		if localVarHTTPResponse.StatusCode == 409 {
-			var v PartnerErrorResponse
+			var v ErrorResponse
 			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -174,7 +174,7 @@ func (a *EsimsAPIService) EsimsCreateOrderExecute(r ApiEsimsCreateOrderRequest) 
 			return localVarReturnValue, localVarHTTPResponse, newErr
 		}
 		if localVarHTTPResponse.StatusCode == 429 {
-			var v PartnerErrorResponse
+			var v ErrorResponse
 			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -185,7 +185,7 @@ func (a *EsimsAPIService) EsimsCreateOrderExecute(r ApiEsimsCreateOrderRequest) 
 			return localVarReturnValue, localVarHTTPResponse, newErr
 		}
 		if localVarHTTPResponse.StatusCode == 503 {
-			var v PartnerErrorResponse
+			var v ErrorResponse
 			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -270,7 +270,7 @@ func (r ApiEsimsGetCatalogRequest) Limit(limit int32) ApiEsimsGetCatalogRequest 
 	return r
 }
 
-func (r ApiEsimsGetCatalogRequest) Execute() (*EsimCatalogResponse, *http.Response, error) {
+func (r ApiEsimsGetCatalogRequest) Execute() (*EsimCatalogPage, *http.Response, error) {
 	return r.ApiService.EsimsGetCatalogExecute(r)
 }
 
@@ -295,13 +295,13 @@ func (a *EsimsAPIService) EsimsGetCatalog(ctx context.Context) ApiEsimsGetCatalo
 }
 
 // Execute executes the request
-//  @return EsimCatalogResponse
-func (a *EsimsAPIService) EsimsGetCatalogExecute(r ApiEsimsGetCatalogRequest) (*EsimCatalogResponse, *http.Response, error) {
+//  @return EsimCatalogPage
+func (a *EsimsAPIService) EsimsGetCatalogExecute(r ApiEsimsGetCatalogRequest) (*EsimCatalogPage, *http.Response, error) {
 	var (
 		localVarHTTPMethod   = http.MethodGet
 		localVarPostBody     interface{}
 		formFiles            []formFile
-		localVarReturnValue  *EsimCatalogResponse
+		localVarReturnValue  *EsimCatalogPage
 	)
 
 	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "EsimsAPIService.EsimsGetCatalog")
@@ -393,7 +393,7 @@ func (a *EsimsAPIService) EsimsGetCatalogExecute(r ApiEsimsGetCatalogRequest) (*
 			error: localVarHTTPResponse.Status,
 		}
 		if localVarHTTPResponse.StatusCode == 400 {
-			var v PartnerErrorResponse
+			var v ErrorResponse
 			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -404,7 +404,7 @@ func (a *EsimsAPIService) EsimsGetCatalogExecute(r ApiEsimsGetCatalogRequest) (*
 			return localVarReturnValue, localVarHTTPResponse, newErr
 		}
 		if localVarHTTPResponse.StatusCode == 429 {
-			var v PartnerErrorResponse
+			var v ErrorResponse
 			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -529,7 +529,7 @@ func (a *EsimsAPIService) EsimsGetCompatibleDevicesExecute(r ApiEsimsGetCompatib
 			error: localVarHTTPResponse.Status,
 		}
 		if localVarHTTPResponse.StatusCode == 400 {
-			var v PartnerErrorResponse
+			var v ErrorResponse
 			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -540,7 +540,7 @@ func (a *EsimsAPIService) EsimsGetCompatibleDevicesExecute(r ApiEsimsGetCompatib
 			return localVarReturnValue, localVarHTTPResponse, newErr
 		}
 		if localVarHTTPResponse.StatusCode == 429 {
-			var v PartnerErrorResponse
+			var v ErrorResponse
 			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -680,7 +680,7 @@ func (a *EsimsAPIService) EsimsGetDestinationExecute(r ApiEsimsGetDestinationReq
 			error: localVarHTTPResponse.Status,
 		}
 		if localVarHTTPResponse.StatusCode == 400 {
-			var v PartnerErrorResponse
+			var v ErrorResponse
 			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -691,7 +691,7 @@ func (a *EsimsAPIService) EsimsGetDestinationExecute(r ApiEsimsGetDestinationReq
 			return localVarReturnValue, localVarHTTPResponse, newErr
 		}
 		if localVarHTTPResponse.StatusCode == 429 {
-			var v PartnerErrorResponse
+			var v ErrorResponse
 			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -734,7 +734,7 @@ func (r ApiEsimsGetDestinationsRequest) Region(region string) ApiEsimsGetDestina
 	return r
 }
 
-func (r ApiEsimsGetDestinationsRequest) Execute() (*EsimDestinationListResponse, *http.Response, error) {
+func (r ApiEsimsGetDestinationsRequest) Execute() (*EsimDestinationList, *http.Response, error) {
 	return r.ApiService.EsimsGetDestinationsExecute(r)
 }
 
@@ -757,13 +757,13 @@ func (a *EsimsAPIService) EsimsGetDestinations(ctx context.Context) ApiEsimsGetD
 }
 
 // Execute executes the request
-//  @return EsimDestinationListResponse
-func (a *EsimsAPIService) EsimsGetDestinationsExecute(r ApiEsimsGetDestinationsRequest) (*EsimDestinationListResponse, *http.Response, error) {
+//  @return EsimDestinationList
+func (a *EsimsAPIService) EsimsGetDestinationsExecute(r ApiEsimsGetDestinationsRequest) (*EsimDestinationList, *http.Response, error) {
 	var (
 		localVarHTTPMethod   = http.MethodGet
 		localVarPostBody     interface{}
 		formFiles            []formFile
-		localVarReturnValue  *EsimDestinationListResponse
+		localVarReturnValue  *EsimDestinationList
 	)
 
 	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "EsimsAPIService.EsimsGetDestinations")
@@ -837,7 +837,7 @@ func (a *EsimsAPIService) EsimsGetDestinationsExecute(r ApiEsimsGetDestinationsR
 			error: localVarHTTPResponse.Status,
 		}
 		if localVarHTTPResponse.StatusCode == 400 {
-			var v PartnerErrorResponse
+			var v ErrorResponse
 			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -848,7 +848,7 @@ func (a *EsimsAPIService) EsimsGetDestinationsExecute(r ApiEsimsGetDestinationsR
 			return localVarReturnValue, localVarHTTPResponse, newErr
 		}
 		if localVarHTTPResponse.StatusCode == 429 {
-			var v PartnerErrorResponse
+			var v ErrorResponse
 			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -878,7 +878,7 @@ type ApiEsimsGetEsimRequest struct {
 	iccid string
 }
 
-func (r ApiEsimsGetEsimRequest) Execute() (*B2BEsimProfile, *http.Response, error) {
+func (r ApiEsimsGetEsimRequest) Execute() (*EsimProfile, *http.Response, error) {
 	return r.ApiService.EsimsGetEsimExecute(r)
 }
 
@@ -904,13 +904,13 @@ func (a *EsimsAPIService) EsimsGetEsim(ctx context.Context, iccid string) ApiEsi
 }
 
 // Execute executes the request
-//  @return B2BEsimProfile
-func (a *EsimsAPIService) EsimsGetEsimExecute(r ApiEsimsGetEsimRequest) (*B2BEsimProfile, *http.Response, error) {
+//  @return EsimProfile
+func (a *EsimsAPIService) EsimsGetEsimExecute(r ApiEsimsGetEsimRequest) (*EsimProfile, *http.Response, error) {
 	var (
 		localVarHTTPMethod   = http.MethodGet
 		localVarPostBody     interface{}
 		formFiles            []formFile
-		localVarReturnValue  *B2BEsimProfile
+		localVarReturnValue  *EsimProfile
 	)
 
 	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "EsimsAPIService.EsimsGetEsim")
@@ -979,7 +979,7 @@ func (a *EsimsAPIService) EsimsGetEsimExecute(r ApiEsimsGetEsimRequest) (*B2BEsi
 			error: localVarHTTPResponse.Status,
 		}
 		if localVarHTTPResponse.StatusCode == 400 {
-			var v PartnerErrorResponse
+			var v ErrorResponse
 			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -990,7 +990,7 @@ func (a *EsimsAPIService) EsimsGetEsimExecute(r ApiEsimsGetEsimRequest) (*B2BEsi
 			return localVarReturnValue, localVarHTTPResponse, newErr
 		}
 		if localVarHTTPResponse.StatusCode == 401 {
-			var v PartnerErrorResponse
+			var v ErrorResponse
 			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -1001,7 +1001,7 @@ func (a *EsimsAPIService) EsimsGetEsimExecute(r ApiEsimsGetEsimRequest) (*B2BEsi
 			return localVarReturnValue, localVarHTTPResponse, newErr
 		}
 		if localVarHTTPResponse.StatusCode == 404 {
-			var v PartnerErrorResponse
+			var v ErrorResponse
 			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -1012,7 +1012,7 @@ func (a *EsimsAPIService) EsimsGetEsimExecute(r ApiEsimsGetEsimRequest) (*B2BEsi
 			return localVarReturnValue, localVarHTTPResponse, newErr
 		}
 		if localVarHTTPResponse.StatusCode == 429 {
-			var v PartnerErrorResponse
+			var v ErrorResponse
 			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -1023,7 +1023,7 @@ func (a *EsimsAPIService) EsimsGetEsimExecute(r ApiEsimsGetEsimRequest) (*B2BEsi
 			return localVarReturnValue, localVarHTTPResponse, newErr
 		}
 		if localVarHTTPResponse.StatusCode == 500 {
-			var v PartnerErrorResponse
+			var v ErrorResponse
 			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -1081,7 +1081,7 @@ func (r ApiEsimsGetLocationEventsRequest) To(to time.Time) ApiEsimsGetLocationEv
 	return r
 }
 
-func (r ApiEsimsGetLocationEventsRequest) Execute() (*B2BEsimLocationEventsResponse, *http.Response, error) {
+func (r ApiEsimsGetLocationEventsRequest) Execute() (*EsimLocationEventList, *http.Response, error) {
 	return r.ApiService.EsimsGetLocationEventsExecute(r)
 }
 
@@ -1107,13 +1107,13 @@ func (a *EsimsAPIService) EsimsGetLocationEvents(ctx context.Context, iccid stri
 }
 
 // Execute executes the request
-//  @return B2BEsimLocationEventsResponse
-func (a *EsimsAPIService) EsimsGetLocationEventsExecute(r ApiEsimsGetLocationEventsRequest) (*B2BEsimLocationEventsResponse, *http.Response, error) {
+//  @return EsimLocationEventList
+func (a *EsimsAPIService) EsimsGetLocationEventsExecute(r ApiEsimsGetLocationEventsRequest) (*EsimLocationEventList, *http.Response, error) {
 	var (
 		localVarHTTPMethod   = http.MethodGet
 		localVarPostBody     interface{}
 		formFiles            []formFile
-		localVarReturnValue  *B2BEsimLocationEventsResponse
+		localVarReturnValue  *EsimLocationEventList
 	)
 
 	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "EsimsAPIService.EsimsGetLocationEvents")
@@ -1202,7 +1202,7 @@ func (a *EsimsAPIService) EsimsGetLocationEventsExecute(r ApiEsimsGetLocationEve
 			error: localVarHTTPResponse.Status,
 		}
 		if localVarHTTPResponse.StatusCode == 400 {
-			var v PartnerErrorResponse
+			var v ErrorResponse
 			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -1213,7 +1213,7 @@ func (a *EsimsAPIService) EsimsGetLocationEventsExecute(r ApiEsimsGetLocationEve
 			return localVarReturnValue, localVarHTTPResponse, newErr
 		}
 		if localVarHTTPResponse.StatusCode == 401 {
-			var v PartnerErrorResponse
+			var v ErrorResponse
 			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -1224,7 +1224,7 @@ func (a *EsimsAPIService) EsimsGetLocationEventsExecute(r ApiEsimsGetLocationEve
 			return localVarReturnValue, localVarHTTPResponse, newErr
 		}
 		if localVarHTTPResponse.StatusCode == 404 {
-			var v PartnerErrorResponse
+			var v ErrorResponse
 			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -1235,7 +1235,7 @@ func (a *EsimsAPIService) EsimsGetLocationEventsExecute(r ApiEsimsGetLocationEve
 			return localVarReturnValue, localVarHTTPResponse, newErr
 		}
 		if localVarHTTPResponse.StatusCode == 429 {
-			var v PartnerErrorResponse
+			var v ErrorResponse
 			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -1293,7 +1293,7 @@ func (r ApiEsimsGetStatusEventsRequest) To(to time.Time) ApiEsimsGetStatusEvents
 	return r
 }
 
-func (r ApiEsimsGetStatusEventsRequest) Execute() (*B2BEsimStatusEventsResponse, *http.Response, error) {
+func (r ApiEsimsGetStatusEventsRequest) Execute() (*EsimStatusEventList, *http.Response, error) {
 	return r.ApiService.EsimsGetStatusEventsExecute(r)
 }
 
@@ -1319,13 +1319,13 @@ func (a *EsimsAPIService) EsimsGetStatusEvents(ctx context.Context, iccid string
 }
 
 // Execute executes the request
-//  @return B2BEsimStatusEventsResponse
-func (a *EsimsAPIService) EsimsGetStatusEventsExecute(r ApiEsimsGetStatusEventsRequest) (*B2BEsimStatusEventsResponse, *http.Response, error) {
+//  @return EsimStatusEventList
+func (a *EsimsAPIService) EsimsGetStatusEventsExecute(r ApiEsimsGetStatusEventsRequest) (*EsimStatusEventList, *http.Response, error) {
 	var (
 		localVarHTTPMethod   = http.MethodGet
 		localVarPostBody     interface{}
 		formFiles            []formFile
-		localVarReturnValue  *B2BEsimStatusEventsResponse
+		localVarReturnValue  *EsimStatusEventList
 	)
 
 	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "EsimsAPIService.EsimsGetStatusEvents")
@@ -1414,7 +1414,7 @@ func (a *EsimsAPIService) EsimsGetStatusEventsExecute(r ApiEsimsGetStatusEventsR
 			error: localVarHTTPResponse.Status,
 		}
 		if localVarHTTPResponse.StatusCode == 400 {
-			var v PartnerErrorResponse
+			var v ErrorResponse
 			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -1425,7 +1425,7 @@ func (a *EsimsAPIService) EsimsGetStatusEventsExecute(r ApiEsimsGetStatusEventsR
 			return localVarReturnValue, localVarHTTPResponse, newErr
 		}
 		if localVarHTTPResponse.StatusCode == 401 {
-			var v PartnerErrorResponse
+			var v ErrorResponse
 			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -1436,7 +1436,7 @@ func (a *EsimsAPIService) EsimsGetStatusEventsExecute(r ApiEsimsGetStatusEventsR
 			return localVarReturnValue, localVarHTTPResponse, newErr
 		}
 		if localVarHTTPResponse.StatusCode == 404 {
-			var v PartnerErrorResponse
+			var v ErrorResponse
 			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -1447,7 +1447,7 @@ func (a *EsimsAPIService) EsimsGetStatusEventsExecute(r ApiEsimsGetStatusEventsR
 			return localVarReturnValue, localVarHTTPResponse, newErr
 		}
 		if localVarHTTPResponse.StatusCode == 429 {
-			var v PartnerErrorResponse
+			var v ErrorResponse
 			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -1477,7 +1477,7 @@ type ApiEsimsGetUsageRequest struct {
 	iccid string
 }
 
-func (r ApiEsimsGetUsageRequest) Execute() (*B2BEsimUsageResponse, *http.Response, error) {
+func (r ApiEsimsGetUsageRequest) Execute() (*EsimCurrentUsage, *http.Response, error) {
 	return r.ApiService.EsimsGetUsageExecute(r)
 }
 
@@ -1503,13 +1503,13 @@ func (a *EsimsAPIService) EsimsGetUsage(ctx context.Context, iccid string) ApiEs
 }
 
 // Execute executes the request
-//  @return B2BEsimUsageResponse
-func (a *EsimsAPIService) EsimsGetUsageExecute(r ApiEsimsGetUsageRequest) (*B2BEsimUsageResponse, *http.Response, error) {
+//  @return EsimCurrentUsage
+func (a *EsimsAPIService) EsimsGetUsageExecute(r ApiEsimsGetUsageRequest) (*EsimCurrentUsage, *http.Response, error) {
 	var (
 		localVarHTTPMethod   = http.MethodGet
 		localVarPostBody     interface{}
 		formFiles            []formFile
-		localVarReturnValue  *B2BEsimUsageResponse
+		localVarReturnValue  *EsimCurrentUsage
 	)
 
 	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "EsimsAPIService.EsimsGetUsage")
@@ -1578,7 +1578,7 @@ func (a *EsimsAPIService) EsimsGetUsageExecute(r ApiEsimsGetUsageRequest) (*B2BE
 			error: localVarHTTPResponse.Status,
 		}
 		if localVarHTTPResponse.StatusCode == 400 {
-			var v PartnerErrorResponse
+			var v ErrorResponse
 			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -1589,7 +1589,7 @@ func (a *EsimsAPIService) EsimsGetUsageExecute(r ApiEsimsGetUsageRequest) (*B2BE
 			return localVarReturnValue, localVarHTTPResponse, newErr
 		}
 		if localVarHTTPResponse.StatusCode == 401 {
-			var v PartnerErrorResponse
+			var v ErrorResponse
 			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -1600,7 +1600,7 @@ func (a *EsimsAPIService) EsimsGetUsageExecute(r ApiEsimsGetUsageRequest) (*B2BE
 			return localVarReturnValue, localVarHTTPResponse, newErr
 		}
 		if localVarHTTPResponse.StatusCode == 404 {
-			var v PartnerErrorResponse
+			var v ErrorResponse
 			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -1611,7 +1611,7 @@ func (a *EsimsAPIService) EsimsGetUsageExecute(r ApiEsimsGetUsageRequest) (*B2BE
 			return localVarReturnValue, localVarHTTPResponse, newErr
 		}
 		if localVarHTTPResponse.StatusCode == 429 {
-			var v PartnerErrorResponse
+			var v ErrorResponse
 			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -1622,7 +1622,7 @@ func (a *EsimsAPIService) EsimsGetUsageExecute(r ApiEsimsGetUsageRequest) (*B2BE
 			return localVarReturnValue, localVarHTTPResponse, newErr
 		}
 		if localVarHTTPResponse.StatusCode == 500 {
-			var v PartnerErrorResponse
+			var v ErrorResponse
 			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -1652,7 +1652,7 @@ type ApiEsimsGetUsageDetailsRequest struct {
 	iccid string
 }
 
-func (r ApiEsimsGetUsageDetailsRequest) Execute() (*B2BEsimUsageDetailsResponse, *http.Response, error) {
+func (r ApiEsimsGetUsageDetailsRequest) Execute() (*EsimDailyUsage, *http.Response, error) {
 	return r.ApiService.EsimsGetUsageDetailsExecute(r)
 }
 
@@ -1678,13 +1678,13 @@ func (a *EsimsAPIService) EsimsGetUsageDetails(ctx context.Context, iccid string
 }
 
 // Execute executes the request
-//  @return B2BEsimUsageDetailsResponse
-func (a *EsimsAPIService) EsimsGetUsageDetailsExecute(r ApiEsimsGetUsageDetailsRequest) (*B2BEsimUsageDetailsResponse, *http.Response, error) {
+//  @return EsimDailyUsage
+func (a *EsimsAPIService) EsimsGetUsageDetailsExecute(r ApiEsimsGetUsageDetailsRequest) (*EsimDailyUsage, *http.Response, error) {
 	var (
 		localVarHTTPMethod   = http.MethodGet
 		localVarPostBody     interface{}
 		formFiles            []formFile
-		localVarReturnValue  *B2BEsimUsageDetailsResponse
+		localVarReturnValue  *EsimDailyUsage
 	)
 
 	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "EsimsAPIService.EsimsGetUsageDetails")
@@ -1753,7 +1753,7 @@ func (a *EsimsAPIService) EsimsGetUsageDetailsExecute(r ApiEsimsGetUsageDetailsR
 			error: localVarHTTPResponse.Status,
 		}
 		if localVarHTTPResponse.StatusCode == 400 {
-			var v PartnerErrorResponse
+			var v ErrorResponse
 			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -1764,7 +1764,7 @@ func (a *EsimsAPIService) EsimsGetUsageDetailsExecute(r ApiEsimsGetUsageDetailsR
 			return localVarReturnValue, localVarHTTPResponse, newErr
 		}
 		if localVarHTTPResponse.StatusCode == 401 {
-			var v PartnerErrorResponse
+			var v ErrorResponse
 			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -1775,7 +1775,7 @@ func (a *EsimsAPIService) EsimsGetUsageDetailsExecute(r ApiEsimsGetUsageDetailsR
 			return localVarReturnValue, localVarHTTPResponse, newErr
 		}
 		if localVarHTTPResponse.StatusCode == 404 {
-			var v PartnerErrorResponse
+			var v ErrorResponse
 			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -1786,7 +1786,7 @@ func (a *EsimsAPIService) EsimsGetUsageDetailsExecute(r ApiEsimsGetUsageDetailsR
 			return localVarReturnValue, localVarHTTPResponse, newErr
 		}
 		if localVarHTTPResponse.StatusCode == 429 {
-			var v PartnerErrorResponse
+			var v ErrorResponse
 			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -1797,7 +1797,7 @@ func (a *EsimsAPIService) EsimsGetUsageDetailsExecute(r ApiEsimsGetUsageDetailsR
 			return localVarReturnValue, localVarHTTPResponse, newErr
 		}
 		if localVarHTTPResponse.StatusCode == 500 {
-			var v PartnerErrorResponse
+			var v ErrorResponse
 			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -1855,7 +1855,7 @@ func (r ApiEsimsGetUsageHistoryRequest) To(to time.Time) ApiEsimsGetUsageHistory
 	return r
 }
 
-func (r ApiEsimsGetUsageHistoryRequest) Execute() (*B2BEsimUsageHistoryResponse, *http.Response, error) {
+func (r ApiEsimsGetUsageHistoryRequest) Execute() (*EsimUsageReadingList, *http.Response, error) {
 	return r.ApiService.EsimsGetUsageHistoryExecute(r)
 }
 
@@ -1881,13 +1881,13 @@ func (a *EsimsAPIService) EsimsGetUsageHistory(ctx context.Context, iccid string
 }
 
 // Execute executes the request
-//  @return B2BEsimUsageHistoryResponse
-func (a *EsimsAPIService) EsimsGetUsageHistoryExecute(r ApiEsimsGetUsageHistoryRequest) (*B2BEsimUsageHistoryResponse, *http.Response, error) {
+//  @return EsimUsageReadingList
+func (a *EsimsAPIService) EsimsGetUsageHistoryExecute(r ApiEsimsGetUsageHistoryRequest) (*EsimUsageReadingList, *http.Response, error) {
 	var (
 		localVarHTTPMethod   = http.MethodGet
 		localVarPostBody     interface{}
 		formFiles            []formFile
-		localVarReturnValue  *B2BEsimUsageHistoryResponse
+		localVarReturnValue  *EsimUsageReadingList
 	)
 
 	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "EsimsAPIService.EsimsGetUsageHistory")
@@ -1976,7 +1976,7 @@ func (a *EsimsAPIService) EsimsGetUsageHistoryExecute(r ApiEsimsGetUsageHistoryR
 			error: localVarHTTPResponse.Status,
 		}
 		if localVarHTTPResponse.StatusCode == 400 {
-			var v PartnerErrorResponse
+			var v ErrorResponse
 			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -1987,7 +1987,7 @@ func (a *EsimsAPIService) EsimsGetUsageHistoryExecute(r ApiEsimsGetUsageHistoryR
 			return localVarReturnValue, localVarHTTPResponse, newErr
 		}
 		if localVarHTTPResponse.StatusCode == 401 {
-			var v PartnerErrorResponse
+			var v ErrorResponse
 			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -1998,7 +1998,7 @@ func (a *EsimsAPIService) EsimsGetUsageHistoryExecute(r ApiEsimsGetUsageHistoryR
 			return localVarReturnValue, localVarHTTPResponse, newErr
 		}
 		if localVarHTTPResponse.StatusCode == 404 {
-			var v PartnerErrorResponse
+			var v ErrorResponse
 			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -2009,7 +2009,7 @@ func (a *EsimsAPIService) EsimsGetUsageHistoryExecute(r ApiEsimsGetUsageHistoryR
 			return localVarReturnValue, localVarHTTPResponse, newErr
 		}
 		if localVarHTTPResponse.StatusCode == 429 {
-			var v PartnerErrorResponse
+			var v ErrorResponse
 			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -2038,7 +2038,7 @@ type ApiEsimsProvisionRequest struct {
 	ApiService *EsimsAPIService
 	id string
 	idempotencyKey *string
-	provisionB2BEsimRequest *ProvisionB2BEsimRequest
+	esimProvisionRequest *EsimProvisionRequest
 }
 
 // UUID idempotency key for safe retries of this operation.
@@ -2048,12 +2048,12 @@ func (r ApiEsimsProvisionRequest) IdempotencyKey(idempotencyKey string) ApiEsims
 }
 
 // Optional: &#x60;{ travelStartDate }&#x60;, the first day of travel.
-func (r ApiEsimsProvisionRequest) ProvisionB2BEsimRequest(provisionB2BEsimRequest ProvisionB2BEsimRequest) ApiEsimsProvisionRequest {
-	r.provisionB2BEsimRequest = &provisionB2BEsimRequest
+func (r ApiEsimsProvisionRequest) EsimProvisionRequest(esimProvisionRequest EsimProvisionRequest) ApiEsimsProvisionRequest {
+	r.esimProvisionRequest = &esimProvisionRequest
 	return r
 }
 
-func (r ApiEsimsProvisionRequest) Execute() (*B2BEsimProfile, *http.Response, error) {
+func (r ApiEsimsProvisionRequest) Execute() (*EsimProfile, *http.Response, error) {
 	return r.ApiService.EsimsProvisionExecute(r)
 }
 
@@ -2084,13 +2084,13 @@ func (a *EsimsAPIService) EsimsProvision(ctx context.Context, id string) ApiEsim
 }
 
 // Execute executes the request
-//  @return B2BEsimProfile
-func (a *EsimsAPIService) EsimsProvisionExecute(r ApiEsimsProvisionRequest) (*B2BEsimProfile, *http.Response, error) {
+//  @return EsimProfile
+func (a *EsimsAPIService) EsimsProvisionExecute(r ApiEsimsProvisionRequest) (*EsimProfile, *http.Response, error) {
 	var (
 		localVarHTTPMethod   = http.MethodPost
 		localVarPostBody     interface{}
 		formFiles            []formFile
-		localVarReturnValue  *B2BEsimProfile
+		localVarReturnValue  *EsimProfile
 	)
 
 	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "EsimsAPIService.EsimsProvision")
@@ -2127,7 +2127,7 @@ func (a *EsimsAPIService) EsimsProvisionExecute(r ApiEsimsProvisionRequest) (*B2
 	}
 	parameterAddToHeaderOrQuery(localVarHeaderParams, "Idempotency-Key", r.idempotencyKey, "simple", "")
 	// body params
-	localVarPostBody = r.provisionB2BEsimRequest
+	localVarPostBody = r.esimProvisionRequest
 	if r.ctx != nil {
 		// API Key Authentication
 		if auth, ok := r.ctx.Value(ContextAPIKeys).(map[string]APIKey); ok {
@@ -2165,7 +2165,7 @@ func (a *EsimsAPIService) EsimsProvisionExecute(r ApiEsimsProvisionRequest) (*B2
 			error: localVarHTTPResponse.Status,
 		}
 		if localVarHTTPResponse.StatusCode == 400 {
-			var v PartnerErrorResponse
+			var v ErrorResponse
 			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -2176,7 +2176,7 @@ func (a *EsimsAPIService) EsimsProvisionExecute(r ApiEsimsProvisionRequest) (*B2
 			return localVarReturnValue, localVarHTTPResponse, newErr
 		}
 		if localVarHTTPResponse.StatusCode == 403 {
-			var v PartnerErrorResponse
+			var v ErrorResponse
 			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -2187,7 +2187,7 @@ func (a *EsimsAPIService) EsimsProvisionExecute(r ApiEsimsProvisionRequest) (*B2
 			return localVarReturnValue, localVarHTTPResponse, newErr
 		}
 		if localVarHTTPResponse.StatusCode == 409 {
-			var v PartnerErrorResponse
+			var v ErrorResponse
 			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -2198,7 +2198,7 @@ func (a *EsimsAPIService) EsimsProvisionExecute(r ApiEsimsProvisionRequest) (*B2
 			return localVarReturnValue, localVarHTTPResponse, newErr
 		}
 		if localVarHTTPResponse.StatusCode == 429 {
-			var v PartnerErrorResponse
+			var v ErrorResponse
 			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -2209,7 +2209,7 @@ func (a *EsimsAPIService) EsimsProvisionExecute(r ApiEsimsProvisionRequest) (*B2
 			return localVarReturnValue, localVarHTTPResponse, newErr
 		}
 		if localVarHTTPResponse.StatusCode == 503 {
-			var v PartnerErrorResponse
+			var v ErrorResponse
 			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -2244,7 +2244,7 @@ func (r ApiEsimsQuoteRequest) EsimOrderRequest(esimOrderRequest EsimOrderRequest
 	return r
 }
 
-func (r ApiEsimsQuoteRequest) Execute() (*EsimQuoteResponse, *http.Response, error) {
+func (r ApiEsimsQuoteRequest) Execute() (*EsimQuote, *http.Response, error) {
 	return r.ApiService.EsimsQuoteExecute(r)
 }
 
@@ -2271,13 +2271,13 @@ func (a *EsimsAPIService) EsimsQuote(ctx context.Context) ApiEsimsQuoteRequest {
 }
 
 // Execute executes the request
-//  @return EsimQuoteResponse
-func (a *EsimsAPIService) EsimsQuoteExecute(r ApiEsimsQuoteRequest) (*EsimQuoteResponse, *http.Response, error) {
+//  @return EsimQuote
+func (a *EsimsAPIService) EsimsQuoteExecute(r ApiEsimsQuoteRequest) (*EsimQuote, *http.Response, error) {
 	var (
 		localVarHTTPMethod   = http.MethodPost
 		localVarPostBody     interface{}
 		formFiles            []formFile
-		localVarReturnValue  *EsimQuoteResponse
+		localVarReturnValue  *EsimQuote
 	)
 
 	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "EsimsAPIService.EsimsQuote")
@@ -2347,7 +2347,7 @@ func (a *EsimsAPIService) EsimsQuoteExecute(r ApiEsimsQuoteRequest) (*EsimQuoteR
 			error: localVarHTTPResponse.Status,
 		}
 		if localVarHTTPResponse.StatusCode == 400 {
-			var v PartnerErrorResponse
+			var v ErrorResponse
 			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -2358,7 +2358,7 @@ func (a *EsimsAPIService) EsimsQuoteExecute(r ApiEsimsQuoteRequest) (*EsimQuoteR
 			return localVarReturnValue, localVarHTTPResponse, newErr
 		}
 		if localVarHTTPResponse.StatusCode == 409 {
-			var v PartnerErrorResponse
+			var v ErrorResponse
 			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -2369,7 +2369,7 @@ func (a *EsimsAPIService) EsimsQuoteExecute(r ApiEsimsQuoteRequest) (*EsimQuoteR
 			return localVarReturnValue, localVarHTTPResponse, newErr
 		}
 		if localVarHTTPResponse.StatusCode == 429 {
-			var v PartnerErrorResponse
+			var v ErrorResponse
 			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -2461,7 +2461,7 @@ func (r ApiEsimsSearchRequest) Limit(limit int32) ApiEsimsSearchRequest {
 	return r
 }
 
-func (r ApiEsimsSearchRequest) Execute() (*EsimSearchResponse, *http.Response, error) {
+func (r ApiEsimsSearchRequest) Execute() (*EsimSearchResult, *http.Response, error) {
 	return r.ApiService.EsimsSearchExecute(r)
 }
 
@@ -2488,13 +2488,13 @@ func (a *EsimsAPIService) EsimsSearch(ctx context.Context) ApiEsimsSearchRequest
 }
 
 // Execute executes the request
-//  @return EsimSearchResponse
-func (a *EsimsAPIService) EsimsSearchExecute(r ApiEsimsSearchRequest) (*EsimSearchResponse, *http.Response, error) {
+//  @return EsimSearchResult
+func (a *EsimsAPIService) EsimsSearchExecute(r ApiEsimsSearchRequest) (*EsimSearchResult, *http.Response, error) {
 	var (
 		localVarHTTPMethod   = http.MethodGet
 		localVarPostBody     interface{}
 		formFiles            []formFile
-		localVarReturnValue  *EsimSearchResponse
+		localVarReturnValue  *EsimSearchResult
 	)
 
 	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "EsimsAPIService.EsimsSearch")
@@ -2589,7 +2589,7 @@ func (a *EsimsAPIService) EsimsSearchExecute(r ApiEsimsSearchRequest) (*EsimSear
 			error: localVarHTTPResponse.Status,
 		}
 		if localVarHTTPResponse.StatusCode == 400 {
-			var v PartnerErrorResponse
+			var v ErrorResponse
 			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -2600,7 +2600,7 @@ func (a *EsimsAPIService) EsimsSearchExecute(r ApiEsimsSearchRequest) (*EsimSear
 			return localVarReturnValue, localVarHTTPResponse, newErr
 		}
 		if localVarHTTPResponse.StatusCode == 429 {
-			var v PartnerErrorResponse
+			var v ErrorResponse
 			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -2628,16 +2628,16 @@ type ApiEsimsSendSmsRequest struct {
 	ctx context.Context
 	ApiService *EsimsAPIService
 	iccid string
-	sendB2BEsimSmsCommand *SendB2BEsimSmsCommand
+	esimSendSmsRequest *EsimSendSmsRequest
 }
 
 // The message to send.
-func (r ApiEsimsSendSmsRequest) SendB2BEsimSmsCommand(sendB2BEsimSmsCommand SendB2BEsimSmsCommand) ApiEsimsSendSmsRequest {
-	r.sendB2BEsimSmsCommand = &sendB2BEsimSmsCommand
+func (r ApiEsimsSendSmsRequest) EsimSendSmsRequest(esimSendSmsRequest EsimSendSmsRequest) ApiEsimsSendSmsRequest {
+	r.esimSendSmsRequest = &esimSendSmsRequest
 	return r
 }
 
-func (r ApiEsimsSendSmsRequest) Execute() (*EsimSendSmsResponse, *http.Response, error) {
+func (r ApiEsimsSendSmsRequest) Execute() (*EsimSendSmsResult, *http.Response, error) {
 	return r.ApiService.EsimsSendSmsExecute(r)
 }
 
@@ -2663,13 +2663,13 @@ func (a *EsimsAPIService) EsimsSendSms(ctx context.Context, iccid string) ApiEsi
 }
 
 // Execute executes the request
-//  @return EsimSendSmsResponse
-func (a *EsimsAPIService) EsimsSendSmsExecute(r ApiEsimsSendSmsRequest) (*EsimSendSmsResponse, *http.Response, error) {
+//  @return EsimSendSmsResult
+func (a *EsimsAPIService) EsimsSendSmsExecute(r ApiEsimsSendSmsRequest) (*EsimSendSmsResult, *http.Response, error) {
 	var (
 		localVarHTTPMethod   = http.MethodPost
 		localVarPostBody     interface{}
 		formFiles            []formFile
-		localVarReturnValue  *EsimSendSmsResponse
+		localVarReturnValue  *EsimSendSmsResult
 	)
 
 	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "EsimsAPIService.EsimsSendSms")
@@ -2702,7 +2702,7 @@ func (a *EsimsAPIService) EsimsSendSmsExecute(r ApiEsimsSendSmsRequest) (*EsimSe
 		localVarHeaderParams["Accept"] = localVarHTTPHeaderAccept
 	}
 	// body params
-	localVarPostBody = r.sendB2BEsimSmsCommand
+	localVarPostBody = r.esimSendSmsRequest
 	if r.ctx != nil {
 		// API Key Authentication
 		if auth, ok := r.ctx.Value(ContextAPIKeys).(map[string]APIKey); ok {
@@ -2740,7 +2740,7 @@ func (a *EsimsAPIService) EsimsSendSmsExecute(r ApiEsimsSendSmsRequest) (*EsimSe
 			error: localVarHTTPResponse.Status,
 		}
 		if localVarHTTPResponse.StatusCode == 400 {
-			var v PartnerErrorResponse
+			var v ErrorResponse
 			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -2751,7 +2751,7 @@ func (a *EsimsAPIService) EsimsSendSmsExecute(r ApiEsimsSendSmsRequest) (*EsimSe
 			return localVarReturnValue, localVarHTTPResponse, newErr
 		}
 		if localVarHTTPResponse.StatusCode == 403 {
-			var v PartnerErrorResponse
+			var v ErrorResponse
 			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -2762,7 +2762,7 @@ func (a *EsimsAPIService) EsimsSendSmsExecute(r ApiEsimsSendSmsRequest) (*EsimSe
 			return localVarReturnValue, localVarHTTPResponse, newErr
 		}
 		if localVarHTTPResponse.StatusCode == 429 {
-			var v PartnerErrorResponse
+			var v ErrorResponse
 			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()

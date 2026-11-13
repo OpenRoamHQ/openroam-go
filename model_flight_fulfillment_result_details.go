@@ -23,7 +23,7 @@ type FlightFulfillmentResultDetails struct {
 	// The booking's status: `confirmed`, `pending`, `cancelled` or `failed`.
 	BookingStatus *string `json:"bookingStatus,omitempty"`
 	// The documents the airline issued, such as e-tickets.
-	TicketDocuments []FlightPartnerTicketDocument `json:"ticketDocuments,omitempty"`
+	TicketDocuments []FlightTicketDocument `json:"ticketDocuments,omitempty"`
 	// What is booked now; the purchased product keeps what was bought.
 	Booking *FlightFulfillmentBooking `json:"booking,omitempty"`
 }
@@ -78,9 +78,9 @@ func (o *FlightFulfillmentResultDetails) SetBookingStatus(v string) {
 }
 
 // GetTicketDocuments returns the TicketDocuments field value if set, zero value otherwise.
-func (o *FlightFulfillmentResultDetails) GetTicketDocuments() []FlightPartnerTicketDocument {
+func (o *FlightFulfillmentResultDetails) GetTicketDocuments() []FlightTicketDocument {
 	if o == nil || IsNil(o.TicketDocuments) {
-		var ret []FlightPartnerTicketDocument
+		var ret []FlightTicketDocument
 		return ret
 	}
 	return o.TicketDocuments
@@ -88,7 +88,7 @@ func (o *FlightFulfillmentResultDetails) GetTicketDocuments() []FlightPartnerTic
 
 // GetTicketDocumentsOk returns a tuple with the TicketDocuments field value if set, nil otherwise
 // and a boolean to check if the value has been set.
-func (o *FlightFulfillmentResultDetails) GetTicketDocumentsOk() ([]FlightPartnerTicketDocument, bool) {
+func (o *FlightFulfillmentResultDetails) GetTicketDocumentsOk() ([]FlightTicketDocument, bool) {
 	if o == nil || IsNil(o.TicketDocuments) {
 		return nil, false
 	}
@@ -104,8 +104,8 @@ func (o *FlightFulfillmentResultDetails) HasTicketDocuments() bool {
 	return false
 }
 
-// SetTicketDocuments gets a reference to the given []FlightPartnerTicketDocument and assigns it to the TicketDocuments field.
-func (o *FlightFulfillmentResultDetails) SetTicketDocuments(v []FlightPartnerTicketDocument) {
+// SetTicketDocuments gets a reference to the given []FlightTicketDocument and assigns it to the TicketDocuments field.
+func (o *FlightFulfillmentResultDetails) SetTicketDocuments(v []FlightTicketDocument) {
 	o.TicketDocuments = v
 }
 

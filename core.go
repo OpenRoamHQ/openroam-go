@@ -206,7 +206,7 @@ type OpenRoamError struct {
 	Name      string
 	Message   string
 	RequestID string
-	Details   []PartnerErrorDetail
+	Details   []ErrorDetail
 	cause     error
 }
 
@@ -304,7 +304,7 @@ func fromBody(status int, body []byte) *OpenRoamError {
 	if read("requestId", &text) {
 		e.RequestID = text
 	}
-	var details []PartnerErrorDetail
+	var details []ErrorDetail
 	if read("details", &details) {
 		e.Details = details
 	}

@@ -22,7 +22,7 @@ var _ MappedNullable = &OrderFulfillmentUpdatedWebhookData{}
 type OrderFulfillmentUpdatedWebhookData struct {
 	OrderId *string `json:"orderId,omitempty"`
 	// Where an order was created.
-	Origin *PartnerOrderOrigin `json:"origin,omitempty"`
+	Origin *OrderOrigin `json:"origin,omitempty"`
 	Status *string `json:"status,omitempty"`
 	FulfillmentVersion *int64 `json:"fulfillmentVersion,omitempty"`
 	Items []OrderFulfillmentUpdatedWebhookItem `json:"items,omitempty"`
@@ -78,9 +78,9 @@ func (o *OrderFulfillmentUpdatedWebhookData) SetOrderId(v string) {
 }
 
 // GetOrigin returns the Origin field value if set, zero value otherwise.
-func (o *OrderFulfillmentUpdatedWebhookData) GetOrigin() PartnerOrderOrigin {
+func (o *OrderFulfillmentUpdatedWebhookData) GetOrigin() OrderOrigin {
 	if o == nil || IsNil(o.Origin) {
-		var ret PartnerOrderOrigin
+		var ret OrderOrigin
 		return ret
 	}
 	return *o.Origin
@@ -88,7 +88,7 @@ func (o *OrderFulfillmentUpdatedWebhookData) GetOrigin() PartnerOrderOrigin {
 
 // GetOriginOk returns a tuple with the Origin field value if set, nil otherwise
 // and a boolean to check if the value has been set.
-func (o *OrderFulfillmentUpdatedWebhookData) GetOriginOk() (*PartnerOrderOrigin, bool) {
+func (o *OrderFulfillmentUpdatedWebhookData) GetOriginOk() (*OrderOrigin, bool) {
 	if o == nil || IsNil(o.Origin) {
 		return nil, false
 	}
@@ -104,8 +104,8 @@ func (o *OrderFulfillmentUpdatedWebhookData) HasOrigin() bool {
 	return false
 }
 
-// SetOrigin gets a reference to the given PartnerOrderOrigin and assigns it to the Origin field.
-func (o *OrderFulfillmentUpdatedWebhookData) SetOrigin(v PartnerOrderOrigin) {
+// SetOrigin gets a reference to the given OrderOrigin and assigns it to the Origin field.
+func (o *OrderFulfillmentUpdatedWebhookData) SetOrigin(v OrderOrigin) {
 	o.Origin = &v
 }
 

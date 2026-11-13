@@ -30,7 +30,7 @@ type ApiHotelManualAmendmentsApproveManualAmendmentRequest struct {
 	id string
 	amendmentId string
 	idempotencyKey *string
-	approveB2BManualAmendmentCommand *ApproveB2BManualAmendmentCommand
+	manualAmendmentApproveRequest *ManualAmendmentApproveRequest
 }
 
 // UUID idempotency key for safe retries of this operation.
@@ -40,12 +40,12 @@ func (r ApiHotelManualAmendmentsApproveManualAmendmentRequest) IdempotencyKey(id
 }
 
 // Optional settlement choice.
-func (r ApiHotelManualAmendmentsApproveManualAmendmentRequest) ApproveB2BManualAmendmentCommand(approveB2BManualAmendmentCommand ApproveB2BManualAmendmentCommand) ApiHotelManualAmendmentsApproveManualAmendmentRequest {
-	r.approveB2BManualAmendmentCommand = &approveB2BManualAmendmentCommand
+func (r ApiHotelManualAmendmentsApproveManualAmendmentRequest) ManualAmendmentApproveRequest(manualAmendmentApproveRequest ManualAmendmentApproveRequest) ApiHotelManualAmendmentsApproveManualAmendmentRequest {
+	r.manualAmendmentApproveRequest = &manualAmendmentApproveRequest
 	return r
 }
 
-func (r ApiHotelManualAmendmentsApproveManualAmendmentRequest) Execute() (*ApproveB2BManualAmendmentResponse, *http.Response, error) {
+func (r ApiHotelManualAmendmentsApproveManualAmendmentRequest) Execute() (*ManualAmendmentResult, *http.Response, error) {
 	return r.ApiService.HotelManualAmendmentsApproveManualAmendmentExecute(r)
 }
 
@@ -79,13 +79,13 @@ func (a *HotelManualAmendmentsAPIService) HotelManualAmendmentsApproveManualAmen
 }
 
 // Execute executes the request
-//  @return ApproveB2BManualAmendmentResponse
-func (a *HotelManualAmendmentsAPIService) HotelManualAmendmentsApproveManualAmendmentExecute(r ApiHotelManualAmendmentsApproveManualAmendmentRequest) (*ApproveB2BManualAmendmentResponse, *http.Response, error) {
+//  @return ManualAmendmentResult
+func (a *HotelManualAmendmentsAPIService) HotelManualAmendmentsApproveManualAmendmentExecute(r ApiHotelManualAmendmentsApproveManualAmendmentRequest) (*ManualAmendmentResult, *http.Response, error) {
 	var (
 		localVarHTTPMethod   = http.MethodPost
 		localVarPostBody     interface{}
 		formFiles            []formFile
-		localVarReturnValue  *ApproveB2BManualAmendmentResponse
+		localVarReturnValue  *ManualAmendmentResult
 	)
 
 	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "HotelManualAmendmentsAPIService.HotelManualAmendmentsApproveManualAmendment")
@@ -123,7 +123,7 @@ func (a *HotelManualAmendmentsAPIService) HotelManualAmendmentsApproveManualAmen
 	}
 	parameterAddToHeaderOrQuery(localVarHeaderParams, "Idempotency-Key", r.idempotencyKey, "simple", "")
 	// body params
-	localVarPostBody = r.approveB2BManualAmendmentCommand
+	localVarPostBody = r.manualAmendmentApproveRequest
 	if r.ctx != nil {
 		// API Key Authentication
 		if auth, ok := r.ctx.Value(ContextAPIKeys).(map[string]APIKey); ok {
@@ -161,7 +161,7 @@ func (a *HotelManualAmendmentsAPIService) HotelManualAmendmentsApproveManualAmen
 			error: localVarHTTPResponse.Status,
 		}
 		if localVarHTTPResponse.StatusCode == 400 {
-			var v PartnerErrorResponse
+			var v ErrorResponse
 			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -172,7 +172,7 @@ func (a *HotelManualAmendmentsAPIService) HotelManualAmendmentsApproveManualAmen
 			return localVarReturnValue, localVarHTTPResponse, newErr
 		}
 		if localVarHTTPResponse.StatusCode == 409 {
-			var v PartnerErrorResponse
+			var v ErrorResponse
 			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -183,7 +183,7 @@ func (a *HotelManualAmendmentsAPIService) HotelManualAmendmentsApproveManualAmen
 			return localVarReturnValue, localVarHTTPResponse, newErr
 		}
 		if localVarHTTPResponse.StatusCode == 429 {
-			var v PartnerErrorResponse
+			var v ErrorResponse
 			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -194,7 +194,7 @@ func (a *HotelManualAmendmentsAPIService) HotelManualAmendmentsApproveManualAmen
 			return localVarReturnValue, localVarHTTPResponse, newErr
 		}
 		if localVarHTTPResponse.StatusCode == 503 {
-			var v PartnerErrorResponse
+			var v ErrorResponse
 			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -225,7 +225,7 @@ type ApiHotelManualAmendmentsCancelManualAmendmentRequest struct {
 	amendmentId string
 }
 
-func (r ApiHotelManualAmendmentsCancelManualAmendmentRequest) Execute() (*CancelB2BManualAmendmentResponse, *http.Response, error) {
+func (r ApiHotelManualAmendmentsCancelManualAmendmentRequest) Execute() (*ManualAmendmentResult, *http.Response, error) {
 	return r.ApiService.HotelManualAmendmentsCancelManualAmendmentExecute(r)
 }
 
@@ -253,13 +253,13 @@ func (a *HotelManualAmendmentsAPIService) HotelManualAmendmentsCancelManualAmend
 }
 
 // Execute executes the request
-//  @return CancelB2BManualAmendmentResponse
-func (a *HotelManualAmendmentsAPIService) HotelManualAmendmentsCancelManualAmendmentExecute(r ApiHotelManualAmendmentsCancelManualAmendmentRequest) (*CancelB2BManualAmendmentResponse, *http.Response, error) {
+//  @return ManualAmendmentResult
+func (a *HotelManualAmendmentsAPIService) HotelManualAmendmentsCancelManualAmendmentExecute(r ApiHotelManualAmendmentsCancelManualAmendmentRequest) (*ManualAmendmentResult, *http.Response, error) {
 	var (
 		localVarHTTPMethod   = http.MethodPost
 		localVarPostBody     interface{}
 		formFiles            []formFile
-		localVarReturnValue  *CancelB2BManualAmendmentResponse
+		localVarReturnValue  *ManualAmendmentResult
 	)
 
 	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "HotelManualAmendmentsAPIService.HotelManualAmendmentsCancelManualAmendment")
@@ -329,7 +329,7 @@ func (a *HotelManualAmendmentsAPIService) HotelManualAmendmentsCancelManualAmend
 			error: localVarHTTPResponse.Status,
 		}
 		if localVarHTTPResponse.StatusCode == 400 {
-			var v PartnerErrorResponse
+			var v ErrorResponse
 			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -340,7 +340,7 @@ func (a *HotelManualAmendmentsAPIService) HotelManualAmendmentsCancelManualAmend
 			return localVarReturnValue, localVarHTTPResponse, newErr
 		}
 		if localVarHTTPResponse.StatusCode == 429 {
-			var v PartnerErrorResponse
+			var v ErrorResponse
 			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -369,7 +369,7 @@ type ApiHotelManualAmendmentsCreateManualAmendmentRequest struct {
 	ApiService *HotelManualAmendmentsAPIService
 	id string
 	idempotencyKey *string
-	createB2BManualAmendmentCommand *CreateB2BManualAmendmentCommand
+	manualAmendmentCreateRequest *ManualAmendmentCreateRequest
 }
 
 // UUID idempotency key for safe retries of this operation.
@@ -379,12 +379,12 @@ func (r ApiHotelManualAmendmentsCreateManualAmendmentRequest) IdempotencyKey(ide
 }
 
 // The requested change.
-func (r ApiHotelManualAmendmentsCreateManualAmendmentRequest) CreateB2BManualAmendmentCommand(createB2BManualAmendmentCommand CreateB2BManualAmendmentCommand) ApiHotelManualAmendmentsCreateManualAmendmentRequest {
-	r.createB2BManualAmendmentCommand = &createB2BManualAmendmentCommand
+func (r ApiHotelManualAmendmentsCreateManualAmendmentRequest) ManualAmendmentCreateRequest(manualAmendmentCreateRequest ManualAmendmentCreateRequest) ApiHotelManualAmendmentsCreateManualAmendmentRequest {
+	r.manualAmendmentCreateRequest = &manualAmendmentCreateRequest
 	return r
 }
 
-func (r ApiHotelManualAmendmentsCreateManualAmendmentRequest) Execute() (*CreateB2BManualAmendmentResponse, *http.Response, error) {
+func (r ApiHotelManualAmendmentsCreateManualAmendmentRequest) Execute() (*ManualAmendmentResult, *http.Response, error) {
 	return r.ApiService.HotelManualAmendmentsCreateManualAmendmentExecute(r)
 }
 
@@ -417,13 +417,13 @@ func (a *HotelManualAmendmentsAPIService) HotelManualAmendmentsCreateManualAmend
 }
 
 // Execute executes the request
-//  @return CreateB2BManualAmendmentResponse
-func (a *HotelManualAmendmentsAPIService) HotelManualAmendmentsCreateManualAmendmentExecute(r ApiHotelManualAmendmentsCreateManualAmendmentRequest) (*CreateB2BManualAmendmentResponse, *http.Response, error) {
+//  @return ManualAmendmentResult
+func (a *HotelManualAmendmentsAPIService) HotelManualAmendmentsCreateManualAmendmentExecute(r ApiHotelManualAmendmentsCreateManualAmendmentRequest) (*ManualAmendmentResult, *http.Response, error) {
 	var (
 		localVarHTTPMethod   = http.MethodPost
 		localVarPostBody     interface{}
 		formFiles            []formFile
-		localVarReturnValue  *CreateB2BManualAmendmentResponse
+		localVarReturnValue  *ManualAmendmentResult
 	)
 
 	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "HotelManualAmendmentsAPIService.HotelManualAmendmentsCreateManualAmendment")
@@ -460,7 +460,7 @@ func (a *HotelManualAmendmentsAPIService) HotelManualAmendmentsCreateManualAmend
 	}
 	parameterAddToHeaderOrQuery(localVarHeaderParams, "Idempotency-Key", r.idempotencyKey, "simple", "")
 	// body params
-	localVarPostBody = r.createB2BManualAmendmentCommand
+	localVarPostBody = r.manualAmendmentCreateRequest
 	if r.ctx != nil {
 		// API Key Authentication
 		if auth, ok := r.ctx.Value(ContextAPIKeys).(map[string]APIKey); ok {
@@ -498,7 +498,7 @@ func (a *HotelManualAmendmentsAPIService) HotelManualAmendmentsCreateManualAmend
 			error: localVarHTTPResponse.Status,
 		}
 		if localVarHTTPResponse.StatusCode == 400 {
-			var v PartnerErrorResponse
+			var v ErrorResponse
 			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -509,7 +509,7 @@ func (a *HotelManualAmendmentsAPIService) HotelManualAmendmentsCreateManualAmend
 			return localVarReturnValue, localVarHTTPResponse, newErr
 		}
 		if localVarHTTPResponse.StatusCode == 409 {
-			var v PartnerErrorResponse
+			var v ErrorResponse
 			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -520,7 +520,7 @@ func (a *HotelManualAmendmentsAPIService) HotelManualAmendmentsCreateManualAmend
 			return localVarReturnValue, localVarHTTPResponse, newErr
 		}
 		if localVarHTTPResponse.StatusCode == 429 {
-			var v PartnerErrorResponse
+			var v ErrorResponse
 			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -531,7 +531,7 @@ func (a *HotelManualAmendmentsAPIService) HotelManualAmendmentsCreateManualAmend
 			return localVarReturnValue, localVarHTTPResponse, newErr
 		}
 		if localVarHTTPResponse.StatusCode == 503 {
-			var v PartnerErrorResponse
+			var v ErrorResponse
 			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -562,7 +562,7 @@ type ApiHotelManualAmendmentsDeclineManualAmendmentRequest struct {
 	amendmentId string
 }
 
-func (r ApiHotelManualAmendmentsDeclineManualAmendmentRequest) Execute() (*DeclineB2BManualAmendmentResponse, *http.Response, error) {
+func (r ApiHotelManualAmendmentsDeclineManualAmendmentRequest) Execute() (*ManualAmendmentResult, *http.Response, error) {
 	return r.ApiService.HotelManualAmendmentsDeclineManualAmendmentExecute(r)
 }
 
@@ -590,13 +590,13 @@ func (a *HotelManualAmendmentsAPIService) HotelManualAmendmentsDeclineManualAmen
 }
 
 // Execute executes the request
-//  @return DeclineB2BManualAmendmentResponse
-func (a *HotelManualAmendmentsAPIService) HotelManualAmendmentsDeclineManualAmendmentExecute(r ApiHotelManualAmendmentsDeclineManualAmendmentRequest) (*DeclineB2BManualAmendmentResponse, *http.Response, error) {
+//  @return ManualAmendmentResult
+func (a *HotelManualAmendmentsAPIService) HotelManualAmendmentsDeclineManualAmendmentExecute(r ApiHotelManualAmendmentsDeclineManualAmendmentRequest) (*ManualAmendmentResult, *http.Response, error) {
 	var (
 		localVarHTTPMethod   = http.MethodPost
 		localVarPostBody     interface{}
 		formFiles            []formFile
-		localVarReturnValue  *DeclineB2BManualAmendmentResponse
+		localVarReturnValue  *ManualAmendmentResult
 	)
 
 	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "HotelManualAmendmentsAPIService.HotelManualAmendmentsDeclineManualAmendment")
@@ -666,7 +666,7 @@ func (a *HotelManualAmendmentsAPIService) HotelManualAmendmentsDeclineManualAmen
 			error: localVarHTTPResponse.Status,
 		}
 		if localVarHTTPResponse.StatusCode == 400 {
-			var v PartnerErrorResponse
+			var v ErrorResponse
 			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -677,7 +677,7 @@ func (a *HotelManualAmendmentsAPIService) HotelManualAmendmentsDeclineManualAmen
 			return localVarReturnValue, localVarHTTPResponse, newErr
 		}
 		if localVarHTTPResponse.StatusCode == 429 {
-			var v PartnerErrorResponse
+			var v ErrorResponse
 			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()

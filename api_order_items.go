@@ -31,7 +31,7 @@ type ApiOrderItemsCancelRequest struct {
 	ApiService *OrderItemsAPIService
 	id string
 	idempotencyKey *string
-	refundOrderItemRequest *RefundOrderItemRequest
+	orderItemCancelRequest *OrderItemCancelRequest
 }
 
 // UUID idempotency key for safe retries of this operation.
@@ -41,12 +41,12 @@ func (r ApiOrderItemsCancelRequest) IdempotencyKey(idempotencyKey string) ApiOrd
 }
 
 // The cancellation reason.
-func (r ApiOrderItemsCancelRequest) RefundOrderItemRequest(refundOrderItemRequest RefundOrderItemRequest) ApiOrderItemsCancelRequest {
-	r.refundOrderItemRequest = &refundOrderItemRequest
+func (r ApiOrderItemsCancelRequest) OrderItemCancelRequest(orderItemCancelRequest OrderItemCancelRequest) ApiOrderItemsCancelRequest {
+	r.orderItemCancelRequest = &orderItemCancelRequest
 	return r
 }
 
-func (r ApiOrderItemsCancelRequest) Execute() (*B2BOrderItemRefundResponse, *http.Response, error) {
+func (r ApiOrderItemsCancelRequest) Execute() (*OrderItemCancelResult, *http.Response, error) {
 	return r.ApiService.OrderItemsCancelExecute(r)
 }
 
@@ -90,13 +90,13 @@ func (a *OrderItemsAPIService) OrderItemsCancel(ctx context.Context, id string) 
 }
 
 // Execute executes the request
-//  @return B2BOrderItemRefundResponse
-func (a *OrderItemsAPIService) OrderItemsCancelExecute(r ApiOrderItemsCancelRequest) (*B2BOrderItemRefundResponse, *http.Response, error) {
+//  @return OrderItemCancelResult
+func (a *OrderItemsAPIService) OrderItemsCancelExecute(r ApiOrderItemsCancelRequest) (*OrderItemCancelResult, *http.Response, error) {
 	var (
 		localVarHTTPMethod   = http.MethodPost
 		localVarPostBody     interface{}
 		formFiles            []formFile
-		localVarReturnValue  *B2BOrderItemRefundResponse
+		localVarReturnValue  *OrderItemCancelResult
 	)
 
 	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "OrderItemsAPIService.OrderItemsCancel")
@@ -133,7 +133,7 @@ func (a *OrderItemsAPIService) OrderItemsCancelExecute(r ApiOrderItemsCancelRequ
 	}
 	parameterAddToHeaderOrQuery(localVarHeaderParams, "Idempotency-Key", r.idempotencyKey, "simple", "")
 	// body params
-	localVarPostBody = r.refundOrderItemRequest
+	localVarPostBody = r.orderItemCancelRequest
 	if r.ctx != nil {
 		// API Key Authentication
 		if auth, ok := r.ctx.Value(ContextAPIKeys).(map[string]APIKey); ok {
@@ -171,7 +171,7 @@ func (a *OrderItemsAPIService) OrderItemsCancelExecute(r ApiOrderItemsCancelRequ
 			error: localVarHTTPResponse.Status,
 		}
 		if localVarHTTPResponse.StatusCode == 400 {
-			var v PartnerErrorResponse
+			var v ErrorResponse
 			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -182,7 +182,7 @@ func (a *OrderItemsAPIService) OrderItemsCancelExecute(r ApiOrderItemsCancelRequ
 			return localVarReturnValue, localVarHTTPResponse, newErr
 		}
 		if localVarHTTPResponse.StatusCode == 404 {
-			var v PartnerErrorResponse
+			var v ErrorResponse
 			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -193,7 +193,7 @@ func (a *OrderItemsAPIService) OrderItemsCancelExecute(r ApiOrderItemsCancelRequ
 			return localVarReturnValue, localVarHTTPResponse, newErr
 		}
 		if localVarHTTPResponse.StatusCode == 409 {
-			var v PartnerErrorResponse
+			var v ErrorResponse
 			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -204,7 +204,7 @@ func (a *OrderItemsAPIService) OrderItemsCancelExecute(r ApiOrderItemsCancelRequ
 			return localVarReturnValue, localVarHTTPResponse, newErr
 		}
 		if localVarHTTPResponse.StatusCode == 422 {
-			var v PartnerErrorResponse
+			var v ErrorResponse
 			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -215,7 +215,7 @@ func (a *OrderItemsAPIService) OrderItemsCancelExecute(r ApiOrderItemsCancelRequ
 			return localVarReturnValue, localVarHTTPResponse, newErr
 		}
 		if localVarHTTPResponse.StatusCode == 429 {
-			var v PartnerErrorResponse
+			var v ErrorResponse
 			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -226,7 +226,7 @@ func (a *OrderItemsAPIService) OrderItemsCancelExecute(r ApiOrderItemsCancelRequ
 			return localVarReturnValue, localVarHTTPResponse, newErr
 		}
 		if localVarHTTPResponse.StatusCode == 503 {
-			var v PartnerErrorResponse
+			var v ErrorResponse
 			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -255,7 +255,7 @@ type ApiOrderItemsConfirmAmendmentRequest struct {
 	ApiService *OrderItemsAPIService
 	id string
 	idempotencyKey *string
-	confirmB2BAmendmentRequest *ConfirmB2BAmendmentRequest
+	amendmentConfirmRequest *AmendmentConfirmRequest
 }
 
 // UUID idempotency key for safe retries of this operation.
@@ -265,12 +265,12 @@ func (r ApiOrderItemsConfirmAmendmentRequest) IdempotencyKey(idempotencyKey stri
 }
 
 // The quote and option to confirm, and an optional price limit.
-func (r ApiOrderItemsConfirmAmendmentRequest) ConfirmB2BAmendmentRequest(confirmB2BAmendmentRequest ConfirmB2BAmendmentRequest) ApiOrderItemsConfirmAmendmentRequest {
-	r.confirmB2BAmendmentRequest = &confirmB2BAmendmentRequest
+func (r ApiOrderItemsConfirmAmendmentRequest) AmendmentConfirmRequest(amendmentConfirmRequest AmendmentConfirmRequest) ApiOrderItemsConfirmAmendmentRequest {
+	r.amendmentConfirmRequest = &amendmentConfirmRequest
 	return r
 }
 
-func (r ApiOrderItemsConfirmAmendmentRequest) Execute() (*ConfirmB2BAmendmentResponse, *http.Response, error) {
+func (r ApiOrderItemsConfirmAmendmentRequest) Execute() (*AmendmentConfirmResult, *http.Response, error) {
 	return r.ApiService.OrderItemsConfirmAmendmentExecute(r)
 }
 
@@ -326,13 +326,13 @@ func (a *OrderItemsAPIService) OrderItemsConfirmAmendment(ctx context.Context, i
 }
 
 // Execute executes the request
-//  @return ConfirmB2BAmendmentResponse
-func (a *OrderItemsAPIService) OrderItemsConfirmAmendmentExecute(r ApiOrderItemsConfirmAmendmentRequest) (*ConfirmB2BAmendmentResponse, *http.Response, error) {
+//  @return AmendmentConfirmResult
+func (a *OrderItemsAPIService) OrderItemsConfirmAmendmentExecute(r ApiOrderItemsConfirmAmendmentRequest) (*AmendmentConfirmResult, *http.Response, error) {
 	var (
 		localVarHTTPMethod   = http.MethodPost
 		localVarPostBody     interface{}
 		formFiles            []formFile
-		localVarReturnValue  *ConfirmB2BAmendmentResponse
+		localVarReturnValue  *AmendmentConfirmResult
 	)
 
 	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "OrderItemsAPIService.OrderItemsConfirmAmendment")
@@ -369,7 +369,7 @@ func (a *OrderItemsAPIService) OrderItemsConfirmAmendmentExecute(r ApiOrderItems
 	}
 	parameterAddToHeaderOrQuery(localVarHeaderParams, "Idempotency-Key", r.idempotencyKey, "simple", "")
 	// body params
-	localVarPostBody = r.confirmB2BAmendmentRequest
+	localVarPostBody = r.amendmentConfirmRequest
 	if r.ctx != nil {
 		// API Key Authentication
 		if auth, ok := r.ctx.Value(ContextAPIKeys).(map[string]APIKey); ok {
@@ -407,7 +407,7 @@ func (a *OrderItemsAPIService) OrderItemsConfirmAmendmentExecute(r ApiOrderItems
 			error: localVarHTTPResponse.Status,
 		}
 		if localVarHTTPResponse.StatusCode == 400 {
-			var v PartnerErrorResponse
+			var v ErrorResponse
 			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -418,7 +418,7 @@ func (a *OrderItemsAPIService) OrderItemsConfirmAmendmentExecute(r ApiOrderItems
 			return localVarReturnValue, localVarHTTPResponse, newErr
 		}
 		if localVarHTTPResponse.StatusCode == 404 {
-			var v PartnerErrorResponse
+			var v ErrorResponse
 			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -429,7 +429,7 @@ func (a *OrderItemsAPIService) OrderItemsConfirmAmendmentExecute(r ApiOrderItems
 			return localVarReturnValue, localVarHTTPResponse, newErr
 		}
 		if localVarHTTPResponse.StatusCode == 409 {
-			var v PartnerErrorResponse
+			var v ErrorResponse
 			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -440,7 +440,7 @@ func (a *OrderItemsAPIService) OrderItemsConfirmAmendmentExecute(r ApiOrderItems
 			return localVarReturnValue, localVarHTTPResponse, newErr
 		}
 		if localVarHTTPResponse.StatusCode == 422 {
-			var v PartnerErrorResponse
+			var v ErrorResponse
 			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -451,7 +451,7 @@ func (a *OrderItemsAPIService) OrderItemsConfirmAmendmentExecute(r ApiOrderItems
 			return localVarReturnValue, localVarHTTPResponse, newErr
 		}
 		if localVarHTTPResponse.StatusCode == 429 {
-			var v PartnerErrorResponse
+			var v ErrorResponse
 			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -462,7 +462,7 @@ func (a *OrderItemsAPIService) OrderItemsConfirmAmendmentExecute(r ApiOrderItems
 			return localVarReturnValue, localVarHTTPResponse, newErr
 		}
 		if localVarHTTPResponse.StatusCode == 503 {
-			var v PartnerErrorResponse
+			var v ErrorResponse
 			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -493,7 +493,7 @@ type ApiOrderItemsGetAmendmentByIdRequest struct {
 	amendmentId string
 }
 
-func (r ApiOrderItemsGetAmendmentByIdRequest) Execute() (*B2BOrderItemAmendment, *http.Response, error) {
+func (r ApiOrderItemsGetAmendmentByIdRequest) Execute() (*OrderItemAmendment, *http.Response, error) {
 	return r.ApiService.OrderItemsGetAmendmentByIdExecute(r)
 }
 
@@ -520,13 +520,13 @@ func (a *OrderItemsAPIService) OrderItemsGetAmendmentById(ctx context.Context, i
 }
 
 // Execute executes the request
-//  @return B2BOrderItemAmendment
-func (a *OrderItemsAPIService) OrderItemsGetAmendmentByIdExecute(r ApiOrderItemsGetAmendmentByIdRequest) (*B2BOrderItemAmendment, *http.Response, error) {
+//  @return OrderItemAmendment
+func (a *OrderItemsAPIService) OrderItemsGetAmendmentByIdExecute(r ApiOrderItemsGetAmendmentByIdRequest) (*OrderItemAmendment, *http.Response, error) {
 	var (
 		localVarHTTPMethod   = http.MethodGet
 		localVarPostBody     interface{}
 		formFiles            []formFile
-		localVarReturnValue  *B2BOrderItemAmendment
+		localVarReturnValue  *OrderItemAmendment
 	)
 
 	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "OrderItemsAPIService.OrderItemsGetAmendmentById")
@@ -596,7 +596,7 @@ func (a *OrderItemsAPIService) OrderItemsGetAmendmentByIdExecute(r ApiOrderItems
 			error: localVarHTTPResponse.Status,
 		}
 		if localVarHTTPResponse.StatusCode == 400 {
-			var v PartnerErrorResponse
+			var v ErrorResponse
 			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -607,7 +607,7 @@ func (a *OrderItemsAPIService) OrderItemsGetAmendmentByIdExecute(r ApiOrderItems
 			return localVarReturnValue, localVarHTTPResponse, newErr
 		}
 		if localVarHTTPResponse.StatusCode == 404 {
-			var v PartnerErrorResponse
+			var v ErrorResponse
 			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -618,7 +618,7 @@ func (a *OrderItemsAPIService) OrderItemsGetAmendmentByIdExecute(r ApiOrderItems
 			return localVarReturnValue, localVarHTTPResponse, newErr
 		}
 		if localVarHTTPResponse.StatusCode == 429 {
-			var v PartnerErrorResponse
+			var v ErrorResponse
 			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -648,7 +648,7 @@ type ApiOrderItemsGetAmendmentsRequest struct {
 	id string
 }
 
-func (r ApiOrderItemsGetAmendmentsRequest) Execute() ([]B2BOrderItemAmendment, *http.Response, error) {
+func (r ApiOrderItemsGetAmendmentsRequest) Execute() ([]OrderItemAmendment, *http.Response, error) {
 	return r.ApiService.OrderItemsGetAmendmentsExecute(r)
 }
 
@@ -674,13 +674,13 @@ func (a *OrderItemsAPIService) OrderItemsGetAmendments(ctx context.Context, id s
 }
 
 // Execute executes the request
-//  @return []B2BOrderItemAmendment
-func (a *OrderItemsAPIService) OrderItemsGetAmendmentsExecute(r ApiOrderItemsGetAmendmentsRequest) ([]B2BOrderItemAmendment, *http.Response, error) {
+//  @return []OrderItemAmendment
+func (a *OrderItemsAPIService) OrderItemsGetAmendmentsExecute(r ApiOrderItemsGetAmendmentsRequest) ([]OrderItemAmendment, *http.Response, error) {
 	var (
 		localVarHTTPMethod   = http.MethodGet
 		localVarPostBody     interface{}
 		formFiles            []formFile
-		localVarReturnValue  []B2BOrderItemAmendment
+		localVarReturnValue  []OrderItemAmendment
 	)
 
 	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "OrderItemsAPIService.OrderItemsGetAmendments")
@@ -749,7 +749,7 @@ func (a *OrderItemsAPIService) OrderItemsGetAmendmentsExecute(r ApiOrderItemsGet
 			error: localVarHTTPResponse.Status,
 		}
 		if localVarHTTPResponse.StatusCode == 400 {
-			var v PartnerErrorResponse
+			var v ErrorResponse
 			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -760,7 +760,7 @@ func (a *OrderItemsAPIService) OrderItemsGetAmendmentsExecute(r ApiOrderItemsGet
 			return localVarReturnValue, localVarHTTPResponse, newErr
 		}
 		if localVarHTTPResponse.StatusCode == 404 {
-			var v PartnerErrorResponse
+			var v ErrorResponse
 			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -771,7 +771,7 @@ func (a *OrderItemsAPIService) OrderItemsGetAmendmentsExecute(r ApiOrderItemsGet
 			return localVarReturnValue, localVarHTTPResponse, newErr
 		}
 		if localVarHTTPResponse.StatusCode == 429 {
-			var v PartnerErrorResponse
+			var v ErrorResponse
 			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -801,7 +801,7 @@ type ApiOrderItemsGetByIdRequest struct {
 	id string
 }
 
-func (r ApiOrderItemsGetByIdRequest) Execute() (*PartnerOrderItem, *http.Response, error) {
+func (r ApiOrderItemsGetByIdRequest) Execute() (*OrderItem, *http.Response, error) {
 	return r.ApiService.OrderItemsGetByIdExecute(r)
 }
 
@@ -831,13 +831,13 @@ func (a *OrderItemsAPIService) OrderItemsGetById(ctx context.Context, id string)
 }
 
 // Execute executes the request
-//  @return PartnerOrderItem
-func (a *OrderItemsAPIService) OrderItemsGetByIdExecute(r ApiOrderItemsGetByIdRequest) (*PartnerOrderItem, *http.Response, error) {
+//  @return OrderItem
+func (a *OrderItemsAPIService) OrderItemsGetByIdExecute(r ApiOrderItemsGetByIdRequest) (*OrderItem, *http.Response, error) {
 	var (
 		localVarHTTPMethod   = http.MethodGet
 		localVarPostBody     interface{}
 		formFiles            []formFile
-		localVarReturnValue  *PartnerOrderItem
+		localVarReturnValue  *OrderItem
 	)
 
 	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "OrderItemsAPIService.OrderItemsGetById")
@@ -906,7 +906,7 @@ func (a *OrderItemsAPIService) OrderItemsGetByIdExecute(r ApiOrderItemsGetByIdRe
 			error: localVarHTTPResponse.Status,
 		}
 		if localVarHTTPResponse.StatusCode == 400 {
-			var v PartnerErrorResponse
+			var v ErrorResponse
 			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -917,7 +917,7 @@ func (a *OrderItemsAPIService) OrderItemsGetByIdExecute(r ApiOrderItemsGetByIdRe
 			return localVarReturnValue, localVarHTTPResponse, newErr
 		}
 		if localVarHTTPResponse.StatusCode == 401 {
-			var v PartnerErrorResponse
+			var v ErrorResponse
 			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -928,7 +928,7 @@ func (a *OrderItemsAPIService) OrderItemsGetByIdExecute(r ApiOrderItemsGetByIdRe
 			return localVarReturnValue, localVarHTTPResponse, newErr
 		}
 		if localVarHTTPResponse.StatusCode == 403 {
-			var v PartnerErrorResponse
+			var v ErrorResponse
 			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -939,7 +939,7 @@ func (a *OrderItemsAPIService) OrderItemsGetByIdExecute(r ApiOrderItemsGetByIdRe
 			return localVarReturnValue, localVarHTTPResponse, newErr
 		}
 		if localVarHTTPResponse.StatusCode == 404 {
-			var v PartnerErrorResponse
+			var v ErrorResponse
 			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -950,7 +950,7 @@ func (a *OrderItemsAPIService) OrderItemsGetByIdExecute(r ApiOrderItemsGetByIdRe
 			return localVarReturnValue, localVarHTTPResponse, newErr
 		}
 		if localVarHTTPResponse.StatusCode == 429 {
-			var v PartnerErrorResponse
+			var v ErrorResponse
 			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -980,7 +980,7 @@ type ApiOrderItemsGetCancellationPreviewRequest struct {
 	id string
 }
 
-func (r ApiOrderItemsGetCancellationPreviewRequest) Execute() (*B2BCancellationPreviewResponse, *http.Response, error) {
+func (r ApiOrderItemsGetCancellationPreviewRequest) Execute() (*OrderItemCancellationPreview, *http.Response, error) {
 	return r.ApiService.OrderItemsGetCancellationPreviewExecute(r)
 }
 
@@ -1015,13 +1015,13 @@ func (a *OrderItemsAPIService) OrderItemsGetCancellationPreview(ctx context.Cont
 }
 
 // Execute executes the request
-//  @return B2BCancellationPreviewResponse
-func (a *OrderItemsAPIService) OrderItemsGetCancellationPreviewExecute(r ApiOrderItemsGetCancellationPreviewRequest) (*B2BCancellationPreviewResponse, *http.Response, error) {
+//  @return OrderItemCancellationPreview
+func (a *OrderItemsAPIService) OrderItemsGetCancellationPreviewExecute(r ApiOrderItemsGetCancellationPreviewRequest) (*OrderItemCancellationPreview, *http.Response, error) {
 	var (
 		localVarHTTPMethod   = http.MethodGet
 		localVarPostBody     interface{}
 		formFiles            []formFile
-		localVarReturnValue  *B2BCancellationPreviewResponse
+		localVarReturnValue  *OrderItemCancellationPreview
 	)
 
 	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "OrderItemsAPIService.OrderItemsGetCancellationPreview")
@@ -1090,7 +1090,7 @@ func (a *OrderItemsAPIService) OrderItemsGetCancellationPreviewExecute(r ApiOrde
 			error: localVarHTTPResponse.Status,
 		}
 		if localVarHTTPResponse.StatusCode == 400 {
-			var v PartnerErrorResponse
+			var v ErrorResponse
 			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -1101,7 +1101,7 @@ func (a *OrderItemsAPIService) OrderItemsGetCancellationPreviewExecute(r ApiOrde
 			return localVarReturnValue, localVarHTTPResponse, newErr
 		}
 		if localVarHTTPResponse.StatusCode == 401 {
-			var v PartnerErrorResponse
+			var v ErrorResponse
 			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -1112,7 +1112,7 @@ func (a *OrderItemsAPIService) OrderItemsGetCancellationPreviewExecute(r ApiOrde
 			return localVarReturnValue, localVarHTTPResponse, newErr
 		}
 		if localVarHTTPResponse.StatusCode == 403 {
-			var v PartnerErrorResponse
+			var v ErrorResponse
 			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -1123,7 +1123,7 @@ func (a *OrderItemsAPIService) OrderItemsGetCancellationPreviewExecute(r ApiOrde
 			return localVarReturnValue, localVarHTTPResponse, newErr
 		}
 		if localVarHTTPResponse.StatusCode == 404 {
-			var v PartnerErrorResponse
+			var v ErrorResponse
 			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -1134,7 +1134,7 @@ func (a *OrderItemsAPIService) OrderItemsGetCancellationPreviewExecute(r ApiOrde
 			return localVarReturnValue, localVarHTTPResponse, newErr
 		}
 		if localVarHTTPResponse.StatusCode == 422 {
-			var v PartnerErrorResponse
+			var v ErrorResponse
 			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -1145,7 +1145,7 @@ func (a *OrderItemsAPIService) OrderItemsGetCancellationPreviewExecute(r ApiOrde
 			return localVarReturnValue, localVarHTTPResponse, newErr
 		}
 		if localVarHTTPResponse.StatusCode == 429 {
-			var v PartnerErrorResponse
+			var v ErrorResponse
 			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -1233,7 +1233,7 @@ func (r ApiOrderItemsListPartnerAmendmentsRequest) To(to time.Time) ApiOrderItem
 	return r
 }
 
-func (r ApiOrderItemsListPartnerAmendmentsRequest) Execute() (*B2BPartnerAmendmentList, *http.Response, error) {
+func (r ApiOrderItemsListPartnerAmendmentsRequest) Execute() (*AmendmentList, *http.Response, error) {
 	return r.ApiService.OrderItemsListPartnerAmendmentsExecute(r)
 }
 
@@ -1261,13 +1261,13 @@ func (a *OrderItemsAPIService) OrderItemsListPartnerAmendments(ctx context.Conte
 }
 
 // Execute executes the request
-//  @return B2BPartnerAmendmentList
-func (a *OrderItemsAPIService) OrderItemsListPartnerAmendmentsExecute(r ApiOrderItemsListPartnerAmendmentsRequest) (*B2BPartnerAmendmentList, *http.Response, error) {
+//  @return AmendmentList
+func (a *OrderItemsAPIService) OrderItemsListPartnerAmendmentsExecute(r ApiOrderItemsListPartnerAmendmentsRequest) (*AmendmentList, *http.Response, error) {
 	var (
 		localVarHTTPMethod   = http.MethodGet
 		localVarPostBody     interface{}
 		formFiles            []formFile
-		localVarReturnValue  *B2BPartnerAmendmentList
+		localVarReturnValue  *AmendmentList
 	)
 
 	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "OrderItemsAPIService.OrderItemsListPartnerAmendments")
@@ -1370,7 +1370,7 @@ func (a *OrderItemsAPIService) OrderItemsListPartnerAmendmentsExecute(r ApiOrder
 			error: localVarHTTPResponse.Status,
 		}
 		if localVarHTTPResponse.StatusCode == 400 {
-			var v PartnerErrorResponse
+			var v ErrorResponse
 			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -1381,7 +1381,7 @@ func (a *OrderItemsAPIService) OrderItemsListPartnerAmendmentsExecute(r ApiOrder
 			return localVarReturnValue, localVarHTTPResponse, newErr
 		}
 		if localVarHTTPResponse.StatusCode == 401 {
-			var v PartnerErrorResponse
+			var v ErrorResponse
 			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -1392,7 +1392,7 @@ func (a *OrderItemsAPIService) OrderItemsListPartnerAmendmentsExecute(r ApiOrder
 			return localVarReturnValue, localVarHTTPResponse, newErr
 		}
 		if localVarHTTPResponse.StatusCode == 403 {
-			var v PartnerErrorResponse
+			var v ErrorResponse
 			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -1403,7 +1403,7 @@ func (a *OrderItemsAPIService) OrderItemsListPartnerAmendmentsExecute(r ApiOrder
 			return localVarReturnValue, localVarHTTPResponse, newErr
 		}
 		if localVarHTTPResponse.StatusCode == 429 {
-			var v PartnerErrorResponse
+			var v ErrorResponse
 			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -1432,7 +1432,7 @@ type ApiOrderItemsQuoteAmendmentRequest struct {
 	ApiService *OrderItemsAPIService
 	id string
 	idempotencyKey *string
-	quoteB2BAmendmentQuery *QuoteB2BAmendmentQuery
+	amendmentQuoteRequest *AmendmentQuoteRequest
 }
 
 // UUID idempotency key for safe retries of this operation.
@@ -1442,12 +1442,12 @@ func (r ApiOrderItemsQuoteAmendmentRequest) IdempotencyKey(idempotencyKey string
 }
 
 // The requested change.
-func (r ApiOrderItemsQuoteAmendmentRequest) QuoteB2BAmendmentQuery(quoteB2BAmendmentQuery QuoteB2BAmendmentQuery) ApiOrderItemsQuoteAmendmentRequest {
-	r.quoteB2BAmendmentQuery = &quoteB2BAmendmentQuery
+func (r ApiOrderItemsQuoteAmendmentRequest) AmendmentQuoteRequest(amendmentQuoteRequest AmendmentQuoteRequest) ApiOrderItemsQuoteAmendmentRequest {
+	r.amendmentQuoteRequest = &amendmentQuoteRequest
 	return r
 }
 
-func (r ApiOrderItemsQuoteAmendmentRequest) Execute() (*QuoteB2BAmendmentResponse, *http.Response, error) {
+func (r ApiOrderItemsQuoteAmendmentRequest) Execute() (*AmendmentQuote, *http.Response, error) {
 	return r.ApiService.OrderItemsQuoteAmendmentExecute(r)
 }
 
@@ -1492,13 +1492,13 @@ func (a *OrderItemsAPIService) OrderItemsQuoteAmendment(ctx context.Context, id 
 }
 
 // Execute executes the request
-//  @return QuoteB2BAmendmentResponse
-func (a *OrderItemsAPIService) OrderItemsQuoteAmendmentExecute(r ApiOrderItemsQuoteAmendmentRequest) (*QuoteB2BAmendmentResponse, *http.Response, error) {
+//  @return AmendmentQuote
+func (a *OrderItemsAPIService) OrderItemsQuoteAmendmentExecute(r ApiOrderItemsQuoteAmendmentRequest) (*AmendmentQuote, *http.Response, error) {
 	var (
 		localVarHTTPMethod   = http.MethodPost
 		localVarPostBody     interface{}
 		formFiles            []formFile
-		localVarReturnValue  *QuoteB2BAmendmentResponse
+		localVarReturnValue  *AmendmentQuote
 	)
 
 	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "OrderItemsAPIService.OrderItemsQuoteAmendment")
@@ -1535,7 +1535,7 @@ func (a *OrderItemsAPIService) OrderItemsQuoteAmendmentExecute(r ApiOrderItemsQu
 	}
 	parameterAddToHeaderOrQuery(localVarHeaderParams, "Idempotency-Key", r.idempotencyKey, "simple", "")
 	// body params
-	localVarPostBody = r.quoteB2BAmendmentQuery
+	localVarPostBody = r.amendmentQuoteRequest
 	if r.ctx != nil {
 		// API Key Authentication
 		if auth, ok := r.ctx.Value(ContextAPIKeys).(map[string]APIKey); ok {
@@ -1573,7 +1573,7 @@ func (a *OrderItemsAPIService) OrderItemsQuoteAmendmentExecute(r ApiOrderItemsQu
 			error: localVarHTTPResponse.Status,
 		}
 		if localVarHTTPResponse.StatusCode == 400 {
-			var v PartnerErrorResponse
+			var v ErrorResponse
 			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -1584,7 +1584,7 @@ func (a *OrderItemsAPIService) OrderItemsQuoteAmendmentExecute(r ApiOrderItemsQu
 			return localVarReturnValue, localVarHTTPResponse, newErr
 		}
 		if localVarHTTPResponse.StatusCode == 404 {
-			var v PartnerErrorResponse
+			var v ErrorResponse
 			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -1595,7 +1595,7 @@ func (a *OrderItemsAPIService) OrderItemsQuoteAmendmentExecute(r ApiOrderItemsQu
 			return localVarReturnValue, localVarHTTPResponse, newErr
 		}
 		if localVarHTTPResponse.StatusCode == 409 {
-			var v PartnerErrorResponse
+			var v ErrorResponse
 			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -1606,7 +1606,7 @@ func (a *OrderItemsAPIService) OrderItemsQuoteAmendmentExecute(r ApiOrderItemsQu
 			return localVarReturnValue, localVarHTTPResponse, newErr
 		}
 		if localVarHTTPResponse.StatusCode == 422 {
-			var v PartnerErrorResponse
+			var v ErrorResponse
 			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -1617,7 +1617,7 @@ func (a *OrderItemsAPIService) OrderItemsQuoteAmendmentExecute(r ApiOrderItemsQu
 			return localVarReturnValue, localVarHTTPResponse, newErr
 		}
 		if localVarHTTPResponse.StatusCode == 429 {
-			var v PartnerErrorResponse
+			var v ErrorResponse
 			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -1628,7 +1628,7 @@ func (a *OrderItemsAPIService) OrderItemsQuoteAmendmentExecute(r ApiOrderItemsQu
 			return localVarReturnValue, localVarHTTPResponse, newErr
 		}
 		if localVarHTTPResponse.StatusCode == 503 {
-			var v PartnerErrorResponse
+			var v ErrorResponse
 			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -1657,7 +1657,7 @@ type ApiOrderItemsUpdateRequest struct {
 	ApiService *OrderItemsAPIService
 	id string
 	idempotencyKey *string
-	updateB2BOrderItemRequest *UpdateB2BOrderItemRequest
+	orderItemUpdateRequest *OrderItemUpdateRequest
 }
 
 // UUID idempotency key for safe retries of this operation.
@@ -1667,12 +1667,12 @@ func (r ApiOrderItemsUpdateRequest) IdempotencyKey(idempotencyKey string) ApiOrd
 }
 
 // The members to change.
-func (r ApiOrderItemsUpdateRequest) UpdateB2BOrderItemRequest(updateB2BOrderItemRequest UpdateB2BOrderItemRequest) ApiOrderItemsUpdateRequest {
-	r.updateB2BOrderItemRequest = &updateB2BOrderItemRequest
+func (r ApiOrderItemsUpdateRequest) OrderItemUpdateRequest(orderItemUpdateRequest OrderItemUpdateRequest) ApiOrderItemsUpdateRequest {
+	r.orderItemUpdateRequest = &orderItemUpdateRequest
 	return r
 }
 
-func (r ApiOrderItemsUpdateRequest) Execute() (*PartnerOrderItem, *http.Response, error) {
+func (r ApiOrderItemsUpdateRequest) Execute() (*OrderItem, *http.Response, error) {
 	return r.ApiService.OrderItemsUpdateExecute(r)
 }
 
@@ -1723,13 +1723,13 @@ func (a *OrderItemsAPIService) OrderItemsUpdate(ctx context.Context, id string) 
 }
 
 // Execute executes the request
-//  @return PartnerOrderItem
-func (a *OrderItemsAPIService) OrderItemsUpdateExecute(r ApiOrderItemsUpdateRequest) (*PartnerOrderItem, *http.Response, error) {
+//  @return OrderItem
+func (a *OrderItemsAPIService) OrderItemsUpdateExecute(r ApiOrderItemsUpdateRequest) (*OrderItem, *http.Response, error) {
 	var (
 		localVarHTTPMethod   = http.MethodPost
 		localVarPostBody     interface{}
 		formFiles            []formFile
-		localVarReturnValue  *PartnerOrderItem
+		localVarReturnValue  *OrderItem
 	)
 
 	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "OrderItemsAPIService.OrderItemsUpdate")
@@ -1766,7 +1766,7 @@ func (a *OrderItemsAPIService) OrderItemsUpdateExecute(r ApiOrderItemsUpdateRequ
 	}
 	parameterAddToHeaderOrQuery(localVarHeaderParams, "Idempotency-Key", r.idempotencyKey, "simple", "")
 	// body params
-	localVarPostBody = r.updateB2BOrderItemRequest
+	localVarPostBody = r.orderItemUpdateRequest
 	if r.ctx != nil {
 		// API Key Authentication
 		if auth, ok := r.ctx.Value(ContextAPIKeys).(map[string]APIKey); ok {
@@ -1804,7 +1804,7 @@ func (a *OrderItemsAPIService) OrderItemsUpdateExecute(r ApiOrderItemsUpdateRequ
 			error: localVarHTTPResponse.Status,
 		}
 		if localVarHTTPResponse.StatusCode == 400 {
-			var v PartnerErrorResponse
+			var v ErrorResponse
 			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -1815,7 +1815,7 @@ func (a *OrderItemsAPIService) OrderItemsUpdateExecute(r ApiOrderItemsUpdateRequ
 			return localVarReturnValue, localVarHTTPResponse, newErr
 		}
 		if localVarHTTPResponse.StatusCode == 404 {
-			var v PartnerErrorResponse
+			var v ErrorResponse
 			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -1826,7 +1826,7 @@ func (a *OrderItemsAPIService) OrderItemsUpdateExecute(r ApiOrderItemsUpdateRequ
 			return localVarReturnValue, localVarHTTPResponse, newErr
 		}
 		if localVarHTTPResponse.StatusCode == 409 {
-			var v PartnerErrorResponse
+			var v ErrorResponse
 			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -1837,7 +1837,7 @@ func (a *OrderItemsAPIService) OrderItemsUpdateExecute(r ApiOrderItemsUpdateRequ
 			return localVarReturnValue, localVarHTTPResponse, newErr
 		}
 		if localVarHTTPResponse.StatusCode == 422 {
-			var v PartnerErrorResponse
+			var v ErrorResponse
 			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -1848,7 +1848,7 @@ func (a *OrderItemsAPIService) OrderItemsUpdateExecute(r ApiOrderItemsUpdateRequ
 			return localVarReturnValue, localVarHTTPResponse, newErr
 		}
 		if localVarHTTPResponse.StatusCode == 429 {
-			var v PartnerErrorResponse
+			var v ErrorResponse
 			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -1859,7 +1859,7 @@ func (a *OrderItemsAPIService) OrderItemsUpdateExecute(r ApiOrderItemsUpdateRequ
 			return localVarReturnValue, localVarHTTPResponse, newErr
 		}
 		if localVarHTTPResponse.StatusCode == 503 {
-			var v PartnerErrorResponse
+			var v ErrorResponse
 			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()

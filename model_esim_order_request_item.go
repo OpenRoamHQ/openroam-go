@@ -27,7 +27,7 @@ type EsimOrderRequestItem struct {
 	// Number of eSIMs, at least 1; default 1. Each eSIM becomes its own order item. A top-up takes exactly 1.
 	Quantity *int32 `json:"quantity,omitempty"`
 	// The inputs the offer's `requiredInputs` list, plus the optional `maxPrice`. May be omitted for a new eSIM whose offer requires none; a top-up needs `iccid`.
-	Inputs NullableEsimCartInputs `json:"inputs,omitempty"`
+	Inputs NullableEsimInputs `json:"inputs,omitempty"`
 }
 
 type _EsimOrderRequestItem EsimOrderRequestItem
@@ -107,9 +107,9 @@ func (o *EsimOrderRequestItem) SetQuantity(v int32) {
 }
 
 // GetInputs returns the Inputs field value if set, zero value otherwise (both if not set or set to explicit null).
-func (o *EsimOrderRequestItem) GetInputs() EsimCartInputs {
+func (o *EsimOrderRequestItem) GetInputs() EsimInputs {
 	if o == nil || IsNil(o.Inputs.Get()) {
-		var ret EsimCartInputs
+		var ret EsimInputs
 		return ret
 	}
 	return *o.Inputs.Get()
@@ -118,7 +118,7 @@ func (o *EsimOrderRequestItem) GetInputs() EsimCartInputs {
 // GetInputsOk returns a tuple with the Inputs field value if set, nil otherwise
 // and a boolean to check if the value has been set.
 // NOTE: If the value is an explicit nil, `nil, true` will be returned
-func (o *EsimOrderRequestItem) GetInputsOk() (*EsimCartInputs, bool) {
+func (o *EsimOrderRequestItem) GetInputsOk() (*EsimInputs, bool) {
 	if o == nil {
 		return nil, false
 	}
@@ -134,8 +134,8 @@ func (o *EsimOrderRequestItem) HasInputs() bool {
 	return false
 }
 
-// SetInputs gets a reference to the given NullableEsimCartInputs and assigns it to the Inputs field.
-func (o *EsimOrderRequestItem) SetInputs(v EsimCartInputs) {
+// SetInputs gets a reference to the given NullableEsimInputs and assigns it to the Inputs field.
+func (o *EsimOrderRequestItem) SetInputs(v EsimInputs) {
 	o.Inputs.Set(&v)
 }
 // SetInputsNil sets the value for Inputs to be an explicit nil

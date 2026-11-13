@@ -8,15 +8,15 @@ import (
 
 // Responses and requests carry a union of one variant per product, chosen by the `productType` property.
 func TestOrderItemIsReadAsItsOwnProductVariant(t *testing.T) {
-	for productType, check := range map[string]func(PartnerOrderItem) bool{
-		"airtime":  func(i PartnerOrderItem) bool { return i.PartnerOrderItemAirtime != nil },
-		"esim":     func(i PartnerOrderItem) bool { return i.PartnerOrderItemEsim != nil },
-		"flight":   func(i PartnerOrderItem) bool { return i.PartnerOrderItemFlight != nil },
-		"giftCard": func(i PartnerOrderItem) bool { return i.PartnerOrderItemGiftCard != nil },
-		"hotel":    func(i PartnerOrderItem) bool { return i.PartnerOrderItemHotel != nil },
-		"utility":  func(i PartnerOrderItem) bool { return i.PartnerOrderItemUtility != nil },
+	for productType, check := range map[string]func(OrderItem) bool{
+		"airtime":  func(i OrderItem) bool { return i.AirtimeOrderItem != nil },
+		"esim":     func(i OrderItem) bool { return i.EsimOrderItem != nil },
+		"flight":   func(i OrderItem) bool { return i.FlightOrderItem != nil },
+		"giftCard": func(i OrderItem) bool { return i.GiftCardOrderItem != nil },
+		"hotel":    func(i OrderItem) bool { return i.HotelOrderItem != nil },
+		"utility":  func(i OrderItem) bool { return i.UtilityOrderItem != nil },
 	} {
-		var item PartnerOrderItem
+		var item OrderItem
 		if err := json.Unmarshal([]byte(`{"id":"11111111-1111-1111-1111-111111111111","productType":"`+productType+`"}`), &item); err != nil {
 			t.Fatalf("%s: %v", productType, err)
 		}
@@ -32,7 +32,7 @@ func TestEsimWebhookItemKeepsItsDeliveryDetails(t *testing.T) {
 	if err := json.Unmarshal([]byte(body), &item); err != nil {
 		t.Fatal(err)
 	}
-	if item.OrderFulfillmentUpdatedWebhookItemEsim == nil {
+	if item.EsimOrderFulfillmentUpdatedWebhookItem == nil {
 		t.Fatalf("not the eSIM variant: %+v", item)
 	}
 	out, err := json.Marshal(item)
@@ -47,13 +47,13 @@ func TestPendingWebhookItemHasNoResult(t *testing.T) {
 	if err := json.Unmarshal([]byte(body), &item); err != nil {
 		t.Fatal(err)
 	}
-	if item.OrderFulfillmentUpdatedWebhookItemAirtime == nil {
+	if item.AirtimeOrderFulfillmentUpdatedWebhookItem == nil {
 		t.Fatalf("not the airtime variant: %+v", item)
 	}
 }
 
 func TestAnUnknownProductTypeIsAnErrorNotASilentGap(t *testing.T) {
-	var item PartnerOrderItem
+	var item OrderItem
 	err := json.Unmarshal([]byte(`{"id":"1","productType":"spaceship"}`), &item)
 	if err == nil || !strings.Contains(err.Error(), "spaceship") {
 		t.Fatalf("want an error naming the unknown productType, got %v", err)
@@ -61,11 +61,11 @@ func TestAnUnknownProductTypeIsAnErrorNotASilentGap(t *testing.T) {
 }
 
 func TestOrderCommandItemsKeepTheirVariant(t *testing.T) {
-	var command CreateB2BOrderCommand
+	var command OrderRequest
 	if err := json.Unmarshal([]byte(`{"items":[{"productType":"esim","publicId":"esim_abc","quantity":1}]}`), &command); err != nil {
 		t.Fatal(err)
 	}
-	if len(command.Items) != 1 || command.Items[0].CreateB2BOrderItemCommandEsim == nil {
+	if len(command.Items) != 1 || command.Items[0].EsimMixedOrderRequestItem == nil {
 		t.Fatalf("the esim item was lost: %+v", command.Items)
 	}
 }

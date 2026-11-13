@@ -28,7 +28,7 @@ type ApiCurrenciesGetAllRequest struct {
 	ApiService *CurrenciesAPIService
 }
 
-func (r ApiCurrenciesGetAllRequest) Execute() (*GetB2BAllCurrenciesCommandResponse, *http.Response, error) {
+func (r ApiCurrenciesGetAllRequest) Execute() (*CurrencyList, *http.Response, error) {
 	return r.ApiService.CurrenciesGetAllExecute(r)
 }
 
@@ -52,13 +52,13 @@ func (a *CurrenciesAPIService) CurrenciesGetAll(ctx context.Context) ApiCurrenci
 }
 
 // Execute executes the request
-//  @return GetB2BAllCurrenciesCommandResponse
-func (a *CurrenciesAPIService) CurrenciesGetAllExecute(r ApiCurrenciesGetAllRequest) (*GetB2BAllCurrenciesCommandResponse, *http.Response, error) {
+//  @return CurrencyList
+func (a *CurrenciesAPIService) CurrenciesGetAllExecute(r ApiCurrenciesGetAllRequest) (*CurrencyList, *http.Response, error) {
 	var (
 		localVarHTTPMethod   = http.MethodGet
 		localVarPostBody     interface{}
 		formFiles            []formFile
-		localVarReturnValue  *GetB2BAllCurrenciesCommandResponse
+		localVarReturnValue  *CurrencyList
 	)
 
 	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "CurrenciesAPIService.CurrenciesGetAll")
@@ -126,7 +126,7 @@ func (a *CurrenciesAPIService) CurrenciesGetAllExecute(r ApiCurrenciesGetAllRequ
 			error: localVarHTTPResponse.Status,
 		}
 		if localVarHTTPResponse.StatusCode == 400 {
-			var v PartnerErrorResponse
+			var v ErrorResponse
 			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -137,7 +137,7 @@ func (a *CurrenciesAPIService) CurrenciesGetAllExecute(r ApiCurrenciesGetAllRequ
 			return localVarReturnValue, localVarHTTPResponse, newErr
 		}
 		if localVarHTTPResponse.StatusCode == 429 {
-			var v PartnerErrorResponse
+			var v ErrorResponse
 			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()

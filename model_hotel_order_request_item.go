@@ -27,7 +27,7 @@ type HotelOrderRequestItem struct {
 	// Must be 1: one item books one rate.
 	Quantity *int32 `json:"quantity,omitempty"`
 	// The holder and one `roomGuests` entry per searched room, with the optional `specialRequests` and `maxPrice`. Required to order. A quote may leave them out; when sent, it checks them as the order does.
-	Inputs NullableHotelCartInputs `json:"inputs,omitempty"`
+	Inputs NullableHotelInputs `json:"inputs,omitempty"`
 }
 
 type _HotelOrderRequestItem HotelOrderRequestItem
@@ -107,9 +107,9 @@ func (o *HotelOrderRequestItem) SetQuantity(v int32) {
 }
 
 // GetInputs returns the Inputs field value if set, zero value otherwise (both if not set or set to explicit null).
-func (o *HotelOrderRequestItem) GetInputs() HotelCartInputs {
+func (o *HotelOrderRequestItem) GetInputs() HotelInputs {
 	if o == nil || IsNil(o.Inputs.Get()) {
-		var ret HotelCartInputs
+		var ret HotelInputs
 		return ret
 	}
 	return *o.Inputs.Get()
@@ -118,7 +118,7 @@ func (o *HotelOrderRequestItem) GetInputs() HotelCartInputs {
 // GetInputsOk returns a tuple with the Inputs field value if set, nil otherwise
 // and a boolean to check if the value has been set.
 // NOTE: If the value is an explicit nil, `nil, true` will be returned
-func (o *HotelOrderRequestItem) GetInputsOk() (*HotelCartInputs, bool) {
+func (o *HotelOrderRequestItem) GetInputsOk() (*HotelInputs, bool) {
 	if o == nil {
 		return nil, false
 	}
@@ -134,8 +134,8 @@ func (o *HotelOrderRequestItem) HasInputs() bool {
 	return false
 }
 
-// SetInputs gets a reference to the given NullableHotelCartInputs and assigns it to the Inputs field.
-func (o *HotelOrderRequestItem) SetInputs(v HotelCartInputs) {
+// SetInputs gets a reference to the given NullableHotelInputs and assigns it to the Inputs field.
+func (o *HotelOrderRequestItem) SetInputs(v HotelInputs) {
 	o.Inputs.Set(&v)
 }
 // SetInputsNil sets the value for Inputs to be an explicit nil

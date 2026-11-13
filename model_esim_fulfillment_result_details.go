@@ -47,7 +47,7 @@ type EsimFulfillmentResultDetails struct {
 	Sms NullableEsimProductOptionSms `json:"sms,omitempty"`
 	Apn NullableEsimProductOptionApn `json:"apn,omitempty"`
 	// The top-ups applied to the eSIM.
-	Addons []EsimPartnerAddonSummary `json:"addons,omitempty"`
+	Addons []EsimAddon `json:"addons,omitempty"`
 	// Stored notes about the plan, shown verbatim.
 	Notes []string `json:"notes,omitempty"`
 	FulfilledAt NullableTime `json:"fulfilledAt,omitempty"`
@@ -609,9 +609,9 @@ func (o *EsimFulfillmentResultDetails) UnsetApn() {
 }
 
 // GetAddons returns the Addons field value if set, zero value otherwise.
-func (o *EsimFulfillmentResultDetails) GetAddons() []EsimPartnerAddonSummary {
+func (o *EsimFulfillmentResultDetails) GetAddons() []EsimAddon {
 	if o == nil || IsNil(o.Addons) {
-		var ret []EsimPartnerAddonSummary
+		var ret []EsimAddon
 		return ret
 	}
 	return o.Addons
@@ -619,7 +619,7 @@ func (o *EsimFulfillmentResultDetails) GetAddons() []EsimPartnerAddonSummary {
 
 // GetAddonsOk returns a tuple with the Addons field value if set, nil otherwise
 // and a boolean to check if the value has been set.
-func (o *EsimFulfillmentResultDetails) GetAddonsOk() ([]EsimPartnerAddonSummary, bool) {
+func (o *EsimFulfillmentResultDetails) GetAddonsOk() ([]EsimAddon, bool) {
 	if o == nil || IsNil(o.Addons) {
 		return nil, false
 	}
@@ -635,8 +635,8 @@ func (o *EsimFulfillmentResultDetails) HasAddons() bool {
 	return false
 }
 
-// SetAddons gets a reference to the given []EsimPartnerAddonSummary and assigns it to the Addons field.
-func (o *EsimFulfillmentResultDetails) SetAddons(v []EsimPartnerAddonSummary) {
+// SetAddons gets a reference to the given []EsimAddon and assigns it to the Addons field.
+func (o *EsimFulfillmentResultDetails) SetAddons(v []EsimAddon) {
 	o.Addons = v
 }
 

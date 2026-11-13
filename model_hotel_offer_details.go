@@ -36,7 +36,7 @@ type HotelOfferDetails struct {
 	// The price split by night, every night in the price's currency; the nights add up to the price. Empty when the price is not split by night: on a B2B location search, when no nightly amounts are given, or when a night could not be converted to the search currency.
 	NightlyPrices []HotelNightlyPrice `json:"nightlyPrices,omitempty"`
 	// Fees outside the room rate, such as a city tax or a deposit, in the quote's and the order item's shape: `price` in the property's currency, `approxPrice` in the search currency or null when it could not be converted, and `includedInTotal` when the fee is already in the offer's price. Indicative: the quote's surcharges are binding. Empty on a B2B location search.
-	Surcharges []HotelPartnerSurcharge `json:"surcharges,omitempty"`
+	Surcharges []HotelSurcharge `json:"surcharges,omitempty"`
 	// Short labels on the rate, such as a promotion name.
 	RateTags []string `json:"rateTags,omitempty"`
 	// Remarks about the rate, verbatim.
@@ -319,9 +319,9 @@ func (o *HotelOfferDetails) SetNightlyPrices(v []HotelNightlyPrice) {
 }
 
 // GetSurcharges returns the Surcharges field value if set, zero value otherwise.
-func (o *HotelOfferDetails) GetSurcharges() []HotelPartnerSurcharge {
+func (o *HotelOfferDetails) GetSurcharges() []HotelSurcharge {
 	if o == nil || IsNil(o.Surcharges) {
-		var ret []HotelPartnerSurcharge
+		var ret []HotelSurcharge
 		return ret
 	}
 	return o.Surcharges
@@ -329,7 +329,7 @@ func (o *HotelOfferDetails) GetSurcharges() []HotelPartnerSurcharge {
 
 // GetSurchargesOk returns a tuple with the Surcharges field value if set, nil otherwise
 // and a boolean to check if the value has been set.
-func (o *HotelOfferDetails) GetSurchargesOk() ([]HotelPartnerSurcharge, bool) {
+func (o *HotelOfferDetails) GetSurchargesOk() ([]HotelSurcharge, bool) {
 	if o == nil || IsNil(o.Surcharges) {
 		return nil, false
 	}
@@ -345,8 +345,8 @@ func (o *HotelOfferDetails) HasSurcharges() bool {
 	return false
 }
 
-// SetSurcharges gets a reference to the given []HotelPartnerSurcharge and assigns it to the Surcharges field.
-func (o *HotelOfferDetails) SetSurcharges(v []HotelPartnerSurcharge) {
+// SetSurcharges gets a reference to the given []HotelSurcharge and assigns it to the Surcharges field.
+func (o *HotelOfferDetails) SetSurcharges(v []HotelSurcharge) {
 	o.Surcharges = v
 }
 

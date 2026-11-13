@@ -111,19 +111,19 @@ var routeCalls = map[string]func(t *testing.T, ctx context.Context, c *OpenRoam,
 		return err
 	},
 	"esims.provision": func(t *testing.T, ctx context.Context, c *OpenRoam, ids []string, body []byte, opts ...CallOption) error {
-		var b ProvisionB2BEsimRequest
+		var b EsimProvisionRequest
 		readSample(t, body, &b)
 		_, err := c.Esims.Provision(ctx, ids[0], &b, opts...)
 		return err
 	},
 	"esims.sendSms": func(t *testing.T, ctx context.Context, c *OpenRoam, ids []string, body []byte, opts ...CallOption) error {
-		var b SendB2BEsimSmsCommand
+		var b EsimSendSmsRequest
 		readSample(t, body, &b)
 		_, err := c.Esims.SendSms(ctx, ids[0], &b, opts...)
 		return err
 	},
 	"flights.search": func(t *testing.T, ctx context.Context, c *OpenRoam, ids []string, body []byte, opts ...CallOption) error {
-		var b SearchB2BFlightsQuery
+		var b FlightSearchRequest
 		readSample(t, body, &b)
 		_, err := c.Flights.Search(ctx, &b, opts...)
 		return err
@@ -173,7 +173,7 @@ var routeCalls = map[string]func(t *testing.T, ctx context.Context, c *OpenRoam,
 		return err
 	},
 	"orderItems.manualAmendments.create": func(t *testing.T, ctx context.Context, c *OpenRoam, ids []string, body []byte, opts ...CallOption) error {
-		var b CreateB2BManualAmendmentCommand
+		var b ManualAmendmentCreateRequest
 		readSample(t, body, &b)
 		_, err := c.OrderItems.ManualAmendments.Create(ctx, ids[0], &b, opts...)
 		return err
@@ -183,7 +183,7 @@ var routeCalls = map[string]func(t *testing.T, ctx context.Context, c *OpenRoam,
 		return err
 	},
 	"orderItems.manualAmendments.approve": func(t *testing.T, ctx context.Context, c *OpenRoam, ids []string, body []byte, opts ...CallOption) error {
-		var b ApproveB2BManualAmendmentCommand
+		var b ManualAmendmentApproveRequest
 		readSample(t, body, &b)
 		_, err := c.OrderItems.ManualAmendments.Approve(ctx, ids[0], ids[1], &b, opts...)
 		return err
@@ -193,7 +193,7 @@ var routeCalls = map[string]func(t *testing.T, ctx context.Context, c *OpenRoam,
 		return err
 	},
 	"hotels.search": func(t *testing.T, ctx context.Context, c *OpenRoam, ids []string, body []byte, opts ...CallOption) error {
-		var b SearchHotelQuery
+		var b HotelSearchRequest
 		readSample(t, body, &b)
 		_, err := c.Hotels.Search(ctx, &b, opts...)
 		return err
@@ -239,7 +239,7 @@ var routeCalls = map[string]func(t *testing.T, ctx context.Context, c *OpenRoam,
 		return err
 	},
 	"orderItems.quoteAmendment": func(t *testing.T, ctx context.Context, c *OpenRoam, ids []string, body []byte, opts ...CallOption) error {
-		var b QuoteB2BAmendmentQuery
+		var b AmendmentQuoteRequest
 		readSample(t, body, &b)
 		_, err := c.OrderItems.QuoteAmendment(ctx, ids[0], &b, opts...)
 		return err
@@ -253,19 +253,19 @@ var routeCalls = map[string]func(t *testing.T, ctx context.Context, c *OpenRoam,
 		return err
 	},
 	"orderItems.cancel": func(t *testing.T, ctx context.Context, c *OpenRoam, ids []string, body []byte, opts ...CallOption) error {
-		var b RefundOrderItemRequest
+		var b OrderItemCancelRequest
 		readSample(t, body, &b)
 		_, err := c.OrderItems.Cancel(ctx, ids[0], &b, opts...)
 		return err
 	},
 	"orderItems.update": func(t *testing.T, ctx context.Context, c *OpenRoam, ids []string, body []byte, opts ...CallOption) error {
-		var b UpdateB2BOrderItemRequest
+		var b OrderItemUpdateRequest
 		readSample(t, body, &b)
 		_, err := c.OrderItems.Update(ctx, ids[0], &b, opts...)
 		return err
 	},
 	"orderItems.confirmAmendment": func(t *testing.T, ctx context.Context, c *OpenRoam, ids []string, body []byte, opts ...CallOption) error {
-		var b ConfirmB2BAmendmentRequest
+		var b AmendmentConfirmRequest
 		readSample(t, body, &b)
 		_, err := c.OrderItems.ConfirmAmendment(ctx, ids[0], &b, opts...)
 		return err
@@ -275,7 +275,7 @@ var routeCalls = map[string]func(t *testing.T, ctx context.Context, c *OpenRoam,
 		return err
 	},
 	"orders.order": func(t *testing.T, ctx context.Context, c *OpenRoam, ids []string, body []byte, opts ...CallOption) error {
-		var b CreateB2BOrderCommand
+		var b OrderRequest
 		readSample(t, body, &b)
 		_, err := c.Orders.Order(ctx, &b, opts...)
 		return err
@@ -285,7 +285,7 @@ var routeCalls = map[string]func(t *testing.T, ctx context.Context, c *OpenRoam,
 		return err
 	},
 	"orders.quote": func(t *testing.T, ctx context.Context, c *OpenRoam, ids []string, body []byte, opts ...CallOption) error {
-		var b CreateB2BOrderCommand
+		var b OrderRequest
 		readSample(t, body, &b)
 		_, err := c.Orders.Quote(ctx, &b, opts...)
 		return err
@@ -335,7 +335,7 @@ var routeCalls = map[string]func(t *testing.T, ctx context.Context, c *OpenRoam,
 		return err
 	},
 	"wallets.create": func(t *testing.T, ctx context.Context, c *OpenRoam, ids []string, body []byte, opts ...CallOption) error {
-		var b CreateB2BWalletCommand
+		var b WalletCreateRequest
 		readSample(t, body, &b)
 		return c.Wallets.Create(ctx, &b, opts...)
 	},
@@ -344,7 +344,7 @@ var routeCalls = map[string]func(t *testing.T, ctx context.Context, c *OpenRoam,
 		return err
 	},
 	"wallets.update": func(t *testing.T, ctx context.Context, c *OpenRoam, ids []string, body []byte, opts ...CallOption) error {
-		var b UpdateB2BWalletCommand
+		var b WalletUpdateRequest
 		readSample(t, body, &b)
 		return c.Wallets.Update(ctx, ids[0], &b, opts...)
 	},
@@ -352,7 +352,7 @@ var routeCalls = map[string]func(t *testing.T, ctx context.Context, c *OpenRoam,
 		return c.Wallets.SetDefault(ctx, ids[0], opts...)
 	},
 	"wallets.transfer": func(t *testing.T, ctx context.Context, c *OpenRoam, ids []string, body []byte, opts ...CallOption) error {
-		var b TransferB2BWalletsCommand
+		var b WalletTransferRequest
 		readSample(t, body, &b)
 		_, err := c.Wallets.Transfer(ctx, &b, opts...)
 		return err

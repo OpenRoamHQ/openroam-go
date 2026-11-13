@@ -5,7 +5,7 @@ Official client for the OpenRoam Partner API: eSIMs, airtime, utility payments, 
 ## Install
 
 ```bash
-go get github.com/OpenRoamHQ/openroam-go@v0.1.0-rc.4
+go get github.com/OpenRoamHQ/openroam-go@v0.1.0-rc.5
 ```
 
 > This is a **release candidate**: install it by its exact version, as above; a plain install does not pick it up. Before 1.0 the API can change between minor versions; every change is listed in the [changelog](https://openroamhq.github.io/openroam-sdks/changelog/).
@@ -28,7 +28,7 @@ quote, err := client.Esims.Quote(ctx, body)
 order, err := client.Esims.Order(ctx, body)
 
 usage, err := client.Esims.GetUsage(ctx, iccid)
-hotels, err := client.Hotels.Search(ctx, openroam.NewSearchHotelQuery( /* ... */ ))
+hotels, err := client.Hotels.Search(ctx, openroam.NewHotelSearchRequest( /* ... */ ))
 ```
 
 Every product is a field of the client: `Esims`, `Airtime`, `Utilities`, `GiftCards`, `Hotels`, `Flights`, plus `Orders`, `OrderItems`,
@@ -101,9 +101,9 @@ An order item (and a webhook item, and an item of an order request) is a union w
 ```go
 for _, item := range order.Items {
     switch {
-    case item.PartnerOrderItemEsim != nil:
-        fmt.Println(item.PartnerOrderItemEsim.Fulfillment) // eSIM details are kept
-    case item.PartnerOrderItemAirtime != nil:
+    case item.EsimOrderItem != nil:
+        fmt.Println(item.EsimOrderItem.Fulfillment) // eSIM details are kept
+    case item.AirtimeOrderItem != nil:
         // ...
     }
 }

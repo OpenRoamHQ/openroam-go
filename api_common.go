@@ -28,7 +28,7 @@ type ApiCommonGetCountriesRequest struct {
 	ApiService *CommonAPIService
 }
 
-func (r ApiCommonGetCountriesRequest) Execute() (*CountryListResponse, *http.Response, error) {
+func (r ApiCommonGetCountriesRequest) Execute() (*CountryList, *http.Response, error) {
 	return r.ApiService.CommonGetCountriesExecute(r)
 }
 
@@ -52,13 +52,13 @@ func (a *CommonAPIService) CommonGetCountries(ctx context.Context) ApiCommonGetC
 }
 
 // Execute executes the request
-//  @return CountryListResponse
-func (a *CommonAPIService) CommonGetCountriesExecute(r ApiCommonGetCountriesRequest) (*CountryListResponse, *http.Response, error) {
+//  @return CountryList
+func (a *CommonAPIService) CommonGetCountriesExecute(r ApiCommonGetCountriesRequest) (*CountryList, *http.Response, error) {
 	var (
 		localVarHTTPMethod   = http.MethodGet
 		localVarPostBody     interface{}
 		formFiles            []formFile
-		localVarReturnValue  *CountryListResponse
+		localVarReturnValue  *CountryList
 	)
 
 	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "CommonAPIService.CommonGetCountries")
@@ -126,7 +126,7 @@ func (a *CommonAPIService) CommonGetCountriesExecute(r ApiCommonGetCountriesRequ
 			error: localVarHTTPResponse.Status,
 		}
 		if localVarHTTPResponse.StatusCode == 400 {
-			var v PartnerErrorResponse
+			var v ErrorResponse
 			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -137,7 +137,7 @@ func (a *CommonAPIService) CommonGetCountriesExecute(r ApiCommonGetCountriesRequ
 			return localVarReturnValue, localVarHTTPResponse, newErr
 		}
 		if localVarHTTPResponse.StatusCode == 429 {
-			var v PartnerErrorResponse
+			var v ErrorResponse
 			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -180,7 +180,7 @@ func (r ApiCommonGetMobileNetworksRequest) Mcc(mcc string) ApiCommonGetMobileNet
 	return r
 }
 
-func (r ApiCommonGetMobileNetworksRequest) Execute() (*MobileNetworkListResponse, *http.Response, error) {
+func (r ApiCommonGetMobileNetworksRequest) Execute() (*MobileNetworkList, *http.Response, error) {
 	return r.ApiService.CommonGetMobileNetworksExecute(r)
 }
 
@@ -205,13 +205,13 @@ func (a *CommonAPIService) CommonGetMobileNetworks(ctx context.Context) ApiCommo
 }
 
 // Execute executes the request
-//  @return MobileNetworkListResponse
-func (a *CommonAPIService) CommonGetMobileNetworksExecute(r ApiCommonGetMobileNetworksRequest) (*MobileNetworkListResponse, *http.Response, error) {
+//  @return MobileNetworkList
+func (a *CommonAPIService) CommonGetMobileNetworksExecute(r ApiCommonGetMobileNetworksRequest) (*MobileNetworkList, *http.Response, error) {
 	var (
 		localVarHTTPMethod   = http.MethodGet
 		localVarPostBody     interface{}
 		formFiles            []formFile
-		localVarReturnValue  *MobileNetworkListResponse
+		localVarReturnValue  *MobileNetworkList
 	)
 
 	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "CommonAPIService.CommonGetMobileNetworks")
@@ -285,7 +285,7 @@ func (a *CommonAPIService) CommonGetMobileNetworksExecute(r ApiCommonGetMobileNe
 			error: localVarHTTPResponse.Status,
 		}
 		if localVarHTTPResponse.StatusCode == 400 {
-			var v PartnerErrorResponse
+			var v ErrorResponse
 			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -296,7 +296,7 @@ func (a *CommonAPIService) CommonGetMobileNetworksExecute(r ApiCommonGetMobileNe
 			return localVarReturnValue, localVarHTTPResponse, newErr
 		}
 		if localVarHTTPResponse.StatusCode == 429 {
-			var v PartnerErrorResponse
+			var v ErrorResponse
 			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()

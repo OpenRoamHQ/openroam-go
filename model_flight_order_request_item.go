@@ -27,7 +27,7 @@ type FlightOrderRequestItem struct {
 	// Always 1: one item books one fare for all its passengers.
 	Quantity *int32 `json:"quantity,omitempty"`
 	// The passengers, paid extras and optional price guard of the fare. Optional on quote, which then prices the fare alone; required on order.
-	Inputs NullableFlightCartInputs `json:"inputs,omitempty"`
+	Inputs NullableFlightInputs `json:"inputs,omitempty"`
 }
 
 type _FlightOrderRequestItem FlightOrderRequestItem
@@ -107,9 +107,9 @@ func (o *FlightOrderRequestItem) SetQuantity(v int32) {
 }
 
 // GetInputs returns the Inputs field value if set, zero value otherwise (both if not set or set to explicit null).
-func (o *FlightOrderRequestItem) GetInputs() FlightCartInputs {
+func (o *FlightOrderRequestItem) GetInputs() FlightInputs {
 	if o == nil || IsNil(o.Inputs.Get()) {
-		var ret FlightCartInputs
+		var ret FlightInputs
 		return ret
 	}
 	return *o.Inputs.Get()
@@ -118,7 +118,7 @@ func (o *FlightOrderRequestItem) GetInputs() FlightCartInputs {
 // GetInputsOk returns a tuple with the Inputs field value if set, nil otherwise
 // and a boolean to check if the value has been set.
 // NOTE: If the value is an explicit nil, `nil, true` will be returned
-func (o *FlightOrderRequestItem) GetInputsOk() (*FlightCartInputs, bool) {
+func (o *FlightOrderRequestItem) GetInputsOk() (*FlightInputs, bool) {
 	if o == nil {
 		return nil, false
 	}
@@ -134,8 +134,8 @@ func (o *FlightOrderRequestItem) HasInputs() bool {
 	return false
 }
 
-// SetInputs gets a reference to the given NullableFlightCartInputs and assigns it to the Inputs field.
-func (o *FlightOrderRequestItem) SetInputs(v FlightCartInputs) {
+// SetInputs gets a reference to the given NullableFlightInputs and assigns it to the Inputs field.
+func (o *FlightOrderRequestItem) SetInputs(v FlightInputs) {
 	o.Inputs.Set(&v)
 }
 // SetInputsNil sets the value for Inputs to be an explicit nil

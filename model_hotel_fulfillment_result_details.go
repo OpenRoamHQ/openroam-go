@@ -25,7 +25,7 @@ type HotelFulfillmentResultDetails struct {
 	// The hotel's own confirmation number, the one the guest gives at the desk; null until the hotel issues one, which may come after fulfillment.
 	HotelConfirmationNumber NullableString `json:"hotelConfirmationNumber,omitempty"`
 	// What an amendment may change about the booked rooms and guests. Dates and the holder are always amendable.
-	AmendmentComposition *HotelAmendmentCompositionCapabilitiesModel `json:"amendmentComposition,omitempty"`
+	AmendmentComposition *HotelAmendmentCapabilities `json:"amendmentComposition,omitempty"`
 	// The dates, holder and guests as booked now.
 	Booking *HotelFulfillmentBooking `json:"booking,omitempty"`
 }
@@ -122,9 +122,9 @@ func (o *HotelFulfillmentResultDetails) UnsetHotelConfirmationNumber() {
 }
 
 // GetAmendmentComposition returns the AmendmentComposition field value if set, zero value otherwise.
-func (o *HotelFulfillmentResultDetails) GetAmendmentComposition() HotelAmendmentCompositionCapabilitiesModel {
+func (o *HotelFulfillmentResultDetails) GetAmendmentComposition() HotelAmendmentCapabilities {
 	if o == nil || IsNil(o.AmendmentComposition) {
-		var ret HotelAmendmentCompositionCapabilitiesModel
+		var ret HotelAmendmentCapabilities
 		return ret
 	}
 	return *o.AmendmentComposition
@@ -132,7 +132,7 @@ func (o *HotelFulfillmentResultDetails) GetAmendmentComposition() HotelAmendment
 
 // GetAmendmentCompositionOk returns a tuple with the AmendmentComposition field value if set, nil otherwise
 // and a boolean to check if the value has been set.
-func (o *HotelFulfillmentResultDetails) GetAmendmentCompositionOk() (*HotelAmendmentCompositionCapabilitiesModel, bool) {
+func (o *HotelFulfillmentResultDetails) GetAmendmentCompositionOk() (*HotelAmendmentCapabilities, bool) {
 	if o == nil || IsNil(o.AmendmentComposition) {
 		return nil, false
 	}
@@ -148,8 +148,8 @@ func (o *HotelFulfillmentResultDetails) HasAmendmentComposition() bool {
 	return false
 }
 
-// SetAmendmentComposition gets a reference to the given HotelAmendmentCompositionCapabilitiesModel and assigns it to the AmendmentComposition field.
-func (o *HotelFulfillmentResultDetails) SetAmendmentComposition(v HotelAmendmentCompositionCapabilitiesModel) {
+// SetAmendmentComposition gets a reference to the given HotelAmendmentCapabilities and assigns it to the AmendmentComposition field.
+func (o *HotelFulfillmentResultDetails) SetAmendmentComposition(v HotelAmendmentCapabilities) {
 	o.AmendmentComposition = &v
 }
 

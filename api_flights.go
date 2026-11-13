@@ -42,7 +42,7 @@ func (r ApiFlightsCreateOrderRequest) FlightOrderRequest(flightOrderRequest Flig
 	return r
 }
 
-func (r ApiFlightsCreateOrderRequest) Execute() (*FlightsCreateOrder200Response, *http.Response, error) {
+func (r ApiFlightsCreateOrderRequest) Execute() (*FlightOrder, *http.Response, error) {
 	return r.ApiService.FlightsCreateOrderExecute(r)
 }
 
@@ -87,13 +87,13 @@ func (a *FlightsAPIService) FlightsCreateOrder(ctx context.Context) ApiFlightsCr
 }
 
 // Execute executes the request
-//  @return FlightsCreateOrder200Response
-func (a *FlightsAPIService) FlightsCreateOrderExecute(r ApiFlightsCreateOrderRequest) (*FlightsCreateOrder200Response, *http.Response, error) {
+//  @return FlightOrder
+func (a *FlightsAPIService) FlightsCreateOrderExecute(r ApiFlightsCreateOrderRequest) (*FlightOrder, *http.Response, error) {
 	var (
 		localVarHTTPMethod   = http.MethodPost
 		localVarPostBody     interface{}
 		formFiles            []formFile
-		localVarReturnValue  *FlightsCreateOrder200Response
+		localVarReturnValue  *FlightOrder
 	)
 
 	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "FlightsAPIService.FlightsCreateOrder")
@@ -167,7 +167,7 @@ func (a *FlightsAPIService) FlightsCreateOrderExecute(r ApiFlightsCreateOrderReq
 			error: localVarHTTPResponse.Status,
 		}
 		if localVarHTTPResponse.StatusCode == 400 {
-			var v PartnerErrorResponse
+			var v ErrorResponse
 			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -178,7 +178,7 @@ func (a *FlightsAPIService) FlightsCreateOrderExecute(r ApiFlightsCreateOrderReq
 			return localVarReturnValue, localVarHTTPResponse, newErr
 		}
 		if localVarHTTPResponse.StatusCode == 409 {
-			var v PartnerErrorResponse
+			var v ErrorResponse
 			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -189,7 +189,7 @@ func (a *FlightsAPIService) FlightsCreateOrderExecute(r ApiFlightsCreateOrderReq
 			return localVarReturnValue, localVarHTTPResponse, newErr
 		}
 		if localVarHTTPResponse.StatusCode == 429 {
-			var v PartnerErrorResponse
+			var v ErrorResponse
 			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -200,7 +200,7 @@ func (a *FlightsAPIService) FlightsCreateOrderExecute(r ApiFlightsCreateOrderReq
 			return localVarReturnValue, localVarHTTPResponse, newErr
 		}
 		if localVarHTTPResponse.StatusCode == 503 {
-			var v PartnerErrorResponse
+			var v ErrorResponse
 			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -230,7 +230,7 @@ type ApiFlightsGetSeatMapRequest struct {
 	publicId string
 }
 
-func (r ApiFlightsGetSeatMapRequest) Execute() (*FlightSeatMapApiResponse, *http.Response, error) {
+func (r ApiFlightsGetSeatMapRequest) Execute() (*FlightSeatMap, *http.Response, error) {
 	return r.ApiService.FlightsGetSeatMapExecute(r)
 }
 
@@ -259,13 +259,13 @@ func (a *FlightsAPIService) FlightsGetSeatMap(ctx context.Context, publicId stri
 }
 
 // Execute executes the request
-//  @return FlightSeatMapApiResponse
-func (a *FlightsAPIService) FlightsGetSeatMapExecute(r ApiFlightsGetSeatMapRequest) (*FlightSeatMapApiResponse, *http.Response, error) {
+//  @return FlightSeatMap
+func (a *FlightsAPIService) FlightsGetSeatMapExecute(r ApiFlightsGetSeatMapRequest) (*FlightSeatMap, *http.Response, error) {
 	var (
 		localVarHTTPMethod   = http.MethodGet
 		localVarPostBody     interface{}
 		formFiles            []formFile
-		localVarReturnValue  *FlightSeatMapApiResponse
+		localVarReturnValue  *FlightSeatMap
 	)
 
 	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "FlightsAPIService.FlightsGetSeatMap")
@@ -334,7 +334,7 @@ func (a *FlightsAPIService) FlightsGetSeatMapExecute(r ApiFlightsGetSeatMapReque
 			error: localVarHTTPResponse.Status,
 		}
 		if localVarHTTPResponse.StatusCode == 400 {
-			var v PartnerErrorResponse
+			var v ErrorResponse
 			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -345,7 +345,7 @@ func (a *FlightsAPIService) FlightsGetSeatMapExecute(r ApiFlightsGetSeatMapReque
 			return localVarReturnValue, localVarHTTPResponse, newErr
 		}
 		if localVarHTTPResponse.StatusCode == 429 {
-			var v PartnerErrorResponse
+			var v ErrorResponse
 			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -380,7 +380,7 @@ func (r ApiFlightsQuoteRequest) FlightOrderRequest(flightOrderRequest FlightOrde
 	return r
 }
 
-func (r ApiFlightsQuoteRequest) Execute() (*FlightQuoteApiResponse, *http.Response, error) {
+func (r ApiFlightsQuoteRequest) Execute() (*FlightQuote, *http.Response, error) {
 	return r.ApiService.FlightsQuoteExecute(r)
 }
 
@@ -420,13 +420,13 @@ func (a *FlightsAPIService) FlightsQuote(ctx context.Context) ApiFlightsQuoteReq
 }
 
 // Execute executes the request
-//  @return FlightQuoteApiResponse
-func (a *FlightsAPIService) FlightsQuoteExecute(r ApiFlightsQuoteRequest) (*FlightQuoteApiResponse, *http.Response, error) {
+//  @return FlightQuote
+func (a *FlightsAPIService) FlightsQuoteExecute(r ApiFlightsQuoteRequest) (*FlightQuote, *http.Response, error) {
 	var (
 		localVarHTTPMethod   = http.MethodPost
 		localVarPostBody     interface{}
 		formFiles            []formFile
-		localVarReturnValue  *FlightQuoteApiResponse
+		localVarReturnValue  *FlightQuote
 	)
 
 	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "FlightsAPIService.FlightsQuote")
@@ -496,7 +496,7 @@ func (a *FlightsAPIService) FlightsQuoteExecute(r ApiFlightsQuoteRequest) (*Flig
 			error: localVarHTTPResponse.Status,
 		}
 		if localVarHTTPResponse.StatusCode == 400 {
-			var v PartnerErrorResponse
+			var v ErrorResponse
 			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -507,7 +507,7 @@ func (a *FlightsAPIService) FlightsQuoteExecute(r ApiFlightsQuoteRequest) (*Flig
 			return localVarReturnValue, localVarHTTPResponse, newErr
 		}
 		if localVarHTTPResponse.StatusCode == 409 {
-			var v PartnerErrorResponse
+			var v ErrorResponse
 			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -518,7 +518,7 @@ func (a *FlightsAPIService) FlightsQuoteExecute(r ApiFlightsQuoteRequest) (*Flig
 			return localVarReturnValue, localVarHTTPResponse, newErr
 		}
 		if localVarHTTPResponse.StatusCode == 429 {
-			var v PartnerErrorResponse
+			var v ErrorResponse
 			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -545,15 +545,15 @@ func (a *FlightsAPIService) FlightsQuoteExecute(r ApiFlightsQuoteRequest) (*Flig
 type ApiFlightsSearchRequest struct {
 	ctx context.Context
 	ApiService *FlightsAPIService
-	searchB2BFlightsQuery *SearchB2BFlightsQuery
+	flightSearchRequest *FlightSearchRequest
 }
 
-func (r ApiFlightsSearchRequest) SearchB2BFlightsQuery(searchB2BFlightsQuery SearchB2BFlightsQuery) ApiFlightsSearchRequest {
-	r.searchB2BFlightsQuery = &searchB2BFlightsQuery
+func (r ApiFlightsSearchRequest) FlightSearchRequest(flightSearchRequest FlightSearchRequest) ApiFlightsSearchRequest {
+	r.flightSearchRequest = &flightSearchRequest
 	return r
 }
 
-func (r ApiFlightsSearchRequest) Execute() (*FlightSearchApiResponse, *http.Response, error) {
+func (r ApiFlightsSearchRequest) Execute() (*FlightSearchResult, *http.Response, error) {
 	return r.ApiService.FlightsSearchExecute(r)
 }
 
@@ -591,13 +591,13 @@ func (a *FlightsAPIService) FlightsSearch(ctx context.Context) ApiFlightsSearchR
 }
 
 // Execute executes the request
-//  @return FlightSearchApiResponse
-func (a *FlightsAPIService) FlightsSearchExecute(r ApiFlightsSearchRequest) (*FlightSearchApiResponse, *http.Response, error) {
+//  @return FlightSearchResult
+func (a *FlightsAPIService) FlightsSearchExecute(r ApiFlightsSearchRequest) (*FlightSearchResult, *http.Response, error) {
 	var (
 		localVarHTTPMethod   = http.MethodPost
 		localVarPostBody     interface{}
 		formFiles            []formFile
-		localVarReturnValue  *FlightSearchApiResponse
+		localVarReturnValue  *FlightSearchResult
 	)
 
 	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "FlightsAPIService.FlightsSearch")
@@ -629,7 +629,7 @@ func (a *FlightsAPIService) FlightsSearchExecute(r ApiFlightsSearchRequest) (*Fl
 		localVarHeaderParams["Accept"] = localVarHTTPHeaderAccept
 	}
 	// body params
-	localVarPostBody = r.searchB2BFlightsQuery
+	localVarPostBody = r.flightSearchRequest
 	if r.ctx != nil {
 		// API Key Authentication
 		if auth, ok := r.ctx.Value(ContextAPIKeys).(map[string]APIKey); ok {
@@ -667,7 +667,7 @@ func (a *FlightsAPIService) FlightsSearchExecute(r ApiFlightsSearchRequest) (*Fl
 			error: localVarHTTPResponse.Status,
 		}
 		if localVarHTTPResponse.StatusCode == 400 {
-			var v PartnerErrorResponse
+			var v ErrorResponse
 			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -678,7 +678,7 @@ func (a *FlightsAPIService) FlightsSearchExecute(r ApiFlightsSearchRequest) (*Fl
 			return localVarReturnValue, localVarHTTPResponse, newErr
 		}
 		if localVarHTTPResponse.StatusCode == 429 {
-			var v PartnerErrorResponse
+			var v ErrorResponse
 			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()

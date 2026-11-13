@@ -28,12 +28,12 @@ type WalletsAPIService service
 type ApiWalletsCreateRequest struct {
 	ctx context.Context
 	ApiService *WalletsAPIService
-	createB2BWalletCommand *CreateB2BWalletCommand
+	walletCreateRequest *WalletCreateRequest
 }
 
 // The wallet to create.
-func (r ApiWalletsCreateRequest) CreateB2BWalletCommand(createB2BWalletCommand CreateB2BWalletCommand) ApiWalletsCreateRequest {
-	r.createB2BWalletCommand = &createB2BWalletCommand
+func (r ApiWalletsCreateRequest) WalletCreateRequest(walletCreateRequest WalletCreateRequest) ApiWalletsCreateRequest {
+	r.walletCreateRequest = &walletCreateRequest
 	return r
 }
 
@@ -102,7 +102,7 @@ func (a *WalletsAPIService) WalletsCreateExecute(r ApiWalletsCreateRequest) (*ht
 		localVarHeaderParams["Accept"] = localVarHTTPHeaderAccept
 	}
 	// body params
-	localVarPostBody = r.createB2BWalletCommand
+	localVarPostBody = r.walletCreateRequest
 	if r.ctx != nil {
 		// API Key Authentication
 		if auth, ok := r.ctx.Value(ContextAPIKeys).(map[string]APIKey); ok {
@@ -140,7 +140,7 @@ func (a *WalletsAPIService) WalletsCreateExecute(r ApiWalletsCreateRequest) (*ht
 			error: localVarHTTPResponse.Status,
 		}
 		if localVarHTTPResponse.StatusCode == 400 {
-			var v PartnerErrorResponse
+			var v ErrorResponse
 			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -151,7 +151,7 @@ func (a *WalletsAPIService) WalletsCreateExecute(r ApiWalletsCreateRequest) (*ht
 			return localVarHTTPResponse, newErr
 		}
 		if localVarHTTPResponse.StatusCode == 401 {
-			var v PartnerErrorResponse
+			var v ErrorResponse
 			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -162,7 +162,7 @@ func (a *WalletsAPIService) WalletsCreateExecute(r ApiWalletsCreateRequest) (*ht
 			return localVarHTTPResponse, newErr
 		}
 		if localVarHTTPResponse.StatusCode == 403 {
-			var v PartnerErrorResponse
+			var v ErrorResponse
 			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -173,7 +173,7 @@ func (a *WalletsAPIService) WalletsCreateExecute(r ApiWalletsCreateRequest) (*ht
 			return localVarHTTPResponse, newErr
 		}
 		if localVarHTTPResponse.StatusCode == 429 {
-			var v PartnerErrorResponse
+			var v ErrorResponse
 			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -193,7 +193,7 @@ type ApiWalletsGetAllRequest struct {
 	ApiService *WalletsAPIService
 }
 
-func (r ApiWalletsGetAllRequest) Execute() ([]GetWalletItem, *http.Response, error) {
+func (r ApiWalletsGetAllRequest) Execute() ([]WalletSummary, *http.Response, error) {
 	return r.ApiService.WalletsGetAllExecute(r)
 }
 
@@ -216,13 +216,13 @@ func (a *WalletsAPIService) WalletsGetAll(ctx context.Context) ApiWalletsGetAllR
 }
 
 // Execute executes the request
-//  @return []GetWalletItem
-func (a *WalletsAPIService) WalletsGetAllExecute(r ApiWalletsGetAllRequest) ([]GetWalletItem, *http.Response, error) {
+//  @return []WalletSummary
+func (a *WalletsAPIService) WalletsGetAllExecute(r ApiWalletsGetAllRequest) ([]WalletSummary, *http.Response, error) {
 	var (
 		localVarHTTPMethod   = http.MethodGet
 		localVarPostBody     interface{}
 		formFiles            []formFile
-		localVarReturnValue  []GetWalletItem
+		localVarReturnValue  []WalletSummary
 	)
 
 	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "WalletsAPIService.WalletsGetAll")
@@ -290,7 +290,7 @@ func (a *WalletsAPIService) WalletsGetAllExecute(r ApiWalletsGetAllRequest) ([]G
 			error: localVarHTTPResponse.Status,
 		}
 		if localVarHTTPResponse.StatusCode == 400 {
-			var v PartnerErrorResponse
+			var v ErrorResponse
 			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -301,7 +301,7 @@ func (a *WalletsAPIService) WalletsGetAllExecute(r ApiWalletsGetAllRequest) ([]G
 			return localVarReturnValue, localVarHTTPResponse, newErr
 		}
 		if localVarHTTPResponse.StatusCode == 401 {
-			var v PartnerErrorResponse
+			var v ErrorResponse
 			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -312,7 +312,7 @@ func (a *WalletsAPIService) WalletsGetAllExecute(r ApiWalletsGetAllRequest) ([]G
 			return localVarReturnValue, localVarHTTPResponse, newErr
 		}
 		if localVarHTTPResponse.StatusCode == 429 {
-			var v PartnerErrorResponse
+			var v ErrorResponse
 			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -342,7 +342,7 @@ type ApiWalletsGetByIdRequest struct {
 	id string
 }
 
-func (r ApiWalletsGetByIdRequest) Execute() (*GetWalletWithStatistics, *http.Response, error) {
+func (r ApiWalletsGetByIdRequest) Execute() (*Wallet, *http.Response, error) {
 	return r.ApiService.WalletsGetByIdExecute(r)
 }
 
@@ -367,13 +367,13 @@ func (a *WalletsAPIService) WalletsGetById(ctx context.Context, id string) ApiWa
 }
 
 // Execute executes the request
-//  @return GetWalletWithStatistics
-func (a *WalletsAPIService) WalletsGetByIdExecute(r ApiWalletsGetByIdRequest) (*GetWalletWithStatistics, *http.Response, error) {
+//  @return Wallet
+func (a *WalletsAPIService) WalletsGetByIdExecute(r ApiWalletsGetByIdRequest) (*Wallet, *http.Response, error) {
 	var (
 		localVarHTTPMethod   = http.MethodGet
 		localVarPostBody     interface{}
 		formFiles            []formFile
-		localVarReturnValue  *GetWalletWithStatistics
+		localVarReturnValue  *Wallet
 	)
 
 	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "WalletsAPIService.WalletsGetById")
@@ -442,7 +442,7 @@ func (a *WalletsAPIService) WalletsGetByIdExecute(r ApiWalletsGetByIdRequest) (*
 			error: localVarHTTPResponse.Status,
 		}
 		if localVarHTTPResponse.StatusCode == 400 {
-			var v PartnerErrorResponse
+			var v ErrorResponse
 			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -453,7 +453,7 @@ func (a *WalletsAPIService) WalletsGetByIdExecute(r ApiWalletsGetByIdRequest) (*
 			return localVarReturnValue, localVarHTTPResponse, newErr
 		}
 		if localVarHTTPResponse.StatusCode == 401 {
-			var v PartnerErrorResponse
+			var v ErrorResponse
 			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -464,7 +464,7 @@ func (a *WalletsAPIService) WalletsGetByIdExecute(r ApiWalletsGetByIdRequest) (*
 			return localVarReturnValue, localVarHTTPResponse, newErr
 		}
 		if localVarHTTPResponse.StatusCode == 404 {
-			var v PartnerErrorResponse
+			var v ErrorResponse
 			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -475,7 +475,7 @@ func (a *WalletsAPIService) WalletsGetByIdExecute(r ApiWalletsGetByIdRequest) (*
 			return localVarReturnValue, localVarHTTPResponse, newErr
 		}
 		if localVarHTTPResponse.StatusCode == 429 {
-			var v PartnerErrorResponse
+			var v ErrorResponse
 			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -547,7 +547,7 @@ func (r ApiWalletsGetTransactionsRequest) Source(source string) ApiWalletsGetTra
 	return r
 }
 
-func (r ApiWalletsGetTransactionsRequest) Execute() (*WalletTransactionsResponse, *http.Response, error) {
+func (r ApiWalletsGetTransactionsRequest) Execute() (*WalletTransactionList, *http.Response, error) {
 	return r.ApiService.WalletsGetTransactionsExecute(r)
 }
 
@@ -579,13 +579,13 @@ func (a *WalletsAPIService) WalletsGetTransactions(ctx context.Context, walletId
 }
 
 // Execute executes the request
-//  @return WalletTransactionsResponse
-func (a *WalletsAPIService) WalletsGetTransactionsExecute(r ApiWalletsGetTransactionsRequest) (*WalletTransactionsResponse, *http.Response, error) {
+//  @return WalletTransactionList
+func (a *WalletsAPIService) WalletsGetTransactionsExecute(r ApiWalletsGetTransactionsRequest) (*WalletTransactionList, *http.Response, error) {
 	var (
 		localVarHTTPMethod   = http.MethodGet
 		localVarPostBody     interface{}
 		formFiles            []formFile
-		localVarReturnValue  *WalletTransactionsResponse
+		localVarReturnValue  *WalletTransactionList
 	)
 
 	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "WalletsAPIService.WalletsGetTransactions")
@@ -672,7 +672,7 @@ func (a *WalletsAPIService) WalletsGetTransactionsExecute(r ApiWalletsGetTransac
 			error: localVarHTTPResponse.Status,
 		}
 		if localVarHTTPResponse.StatusCode == 400 {
-			var v PartnerErrorResponse
+			var v ErrorResponse
 			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -683,7 +683,7 @@ func (a *WalletsAPIService) WalletsGetTransactionsExecute(r ApiWalletsGetTransac
 			return localVarReturnValue, localVarHTTPResponse, newErr
 		}
 		if localVarHTTPResponse.StatusCode == 401 {
-			var v PartnerErrorResponse
+			var v ErrorResponse
 			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -694,7 +694,7 @@ func (a *WalletsAPIService) WalletsGetTransactionsExecute(r ApiWalletsGetTransac
 			return localVarReturnValue, localVarHTTPResponse, newErr
 		}
 		if localVarHTTPResponse.StatusCode == 404 {
-			var v PartnerErrorResponse
+			var v ErrorResponse
 			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -705,7 +705,7 @@ func (a *WalletsAPIService) WalletsGetTransactionsExecute(r ApiWalletsGetTransac
 			return localVarReturnValue, localVarHTTPResponse, newErr
 		}
 		if localVarHTTPResponse.StatusCode == 429 {
-			var v PartnerErrorResponse
+			var v ErrorResponse
 			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -833,7 +833,7 @@ func (a *WalletsAPIService) WalletsSelectExecute(r ApiWalletsSelectRequest) (*ht
 			error: localVarHTTPResponse.Status,
 		}
 		if localVarHTTPResponse.StatusCode == 400 {
-			var v PartnerErrorResponse
+			var v ErrorResponse
 			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -844,7 +844,7 @@ func (a *WalletsAPIService) WalletsSelectExecute(r ApiWalletsSelectRequest) (*ht
 			return localVarHTTPResponse, newErr
 		}
 		if localVarHTTPResponse.StatusCode == 401 {
-			var v PartnerErrorResponse
+			var v ErrorResponse
 			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -855,7 +855,7 @@ func (a *WalletsAPIService) WalletsSelectExecute(r ApiWalletsSelectRequest) (*ht
 			return localVarHTTPResponse, newErr
 		}
 		if localVarHTTPResponse.StatusCode == 403 {
-			var v PartnerErrorResponse
+			var v ErrorResponse
 			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -866,7 +866,7 @@ func (a *WalletsAPIService) WalletsSelectExecute(r ApiWalletsSelectRequest) (*ht
 			return localVarHTTPResponse, newErr
 		}
 		if localVarHTTPResponse.StatusCode == 404 {
-			var v PartnerErrorResponse
+			var v ErrorResponse
 			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -877,7 +877,7 @@ func (a *WalletsAPIService) WalletsSelectExecute(r ApiWalletsSelectRequest) (*ht
 			return localVarHTTPResponse, newErr
 		}
 		if localVarHTTPResponse.StatusCode == 429 {
-			var v PartnerErrorResponse
+			var v ErrorResponse
 			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -896,7 +896,7 @@ type ApiWalletsTransferRequest struct {
 	ctx context.Context
 	ApiService *WalletsAPIService
 	idempotencyKey *string
-	transferB2BWalletsCommand *TransferB2BWalletsCommand
+	walletTransferRequest *WalletTransferRequest
 }
 
 // UUID idempotency key for safe retries of this operation.
@@ -906,12 +906,12 @@ func (r ApiWalletsTransferRequest) IdempotencyKey(idempotencyKey string) ApiWall
 }
 
 // The source wallet, destination wallet and amount.
-func (r ApiWalletsTransferRequest) TransferB2BWalletsCommand(transferB2BWalletsCommand TransferB2BWalletsCommand) ApiWalletsTransferRequest {
-	r.transferB2BWalletsCommand = &transferB2BWalletsCommand
+func (r ApiWalletsTransferRequest) WalletTransferRequest(walletTransferRequest WalletTransferRequest) ApiWalletsTransferRequest {
+	r.walletTransferRequest = &walletTransferRequest
 	return r
 }
 
-func (r ApiWalletsTransferRequest) Execute() (*WalletTransferResponse, *http.Response, error) {
+func (r ApiWalletsTransferRequest) Execute() (*WalletTransfer, *http.Response, error) {
 	return r.ApiService.WalletsTransferExecute(r)
 }
 
@@ -946,13 +946,13 @@ func (a *WalletsAPIService) WalletsTransfer(ctx context.Context) ApiWalletsTrans
 }
 
 // Execute executes the request
-//  @return WalletTransferResponse
-func (a *WalletsAPIService) WalletsTransferExecute(r ApiWalletsTransferRequest) (*WalletTransferResponse, *http.Response, error) {
+//  @return WalletTransfer
+func (a *WalletsAPIService) WalletsTransferExecute(r ApiWalletsTransferRequest) (*WalletTransfer, *http.Response, error) {
 	var (
 		localVarHTTPMethod   = http.MethodPost
 		localVarPostBody     interface{}
 		formFiles            []formFile
-		localVarReturnValue  *WalletTransferResponse
+		localVarReturnValue  *WalletTransfer
 	)
 
 	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "WalletsAPIService.WalletsTransfer")
@@ -988,7 +988,7 @@ func (a *WalletsAPIService) WalletsTransferExecute(r ApiWalletsTransferRequest) 
 	}
 	parameterAddToHeaderOrQuery(localVarHeaderParams, "Idempotency-Key", r.idempotencyKey, "simple", "")
 	// body params
-	localVarPostBody = r.transferB2BWalletsCommand
+	localVarPostBody = r.walletTransferRequest
 	if r.ctx != nil {
 		// API Key Authentication
 		if auth, ok := r.ctx.Value(ContextAPIKeys).(map[string]APIKey); ok {
@@ -1026,7 +1026,7 @@ func (a *WalletsAPIService) WalletsTransferExecute(r ApiWalletsTransferRequest) 
 			error: localVarHTTPResponse.Status,
 		}
 		if localVarHTTPResponse.StatusCode == 400 {
-			var v PartnerErrorResponse
+			var v ErrorResponse
 			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -1037,7 +1037,7 @@ func (a *WalletsAPIService) WalletsTransferExecute(r ApiWalletsTransferRequest) 
 			return localVarReturnValue, localVarHTTPResponse, newErr
 		}
 		if localVarHTTPResponse.StatusCode == 401 {
-			var v PartnerErrorResponse
+			var v ErrorResponse
 			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -1048,7 +1048,7 @@ func (a *WalletsAPIService) WalletsTransferExecute(r ApiWalletsTransferRequest) 
 			return localVarReturnValue, localVarHTTPResponse, newErr
 		}
 		if localVarHTTPResponse.StatusCode == 403 {
-			var v PartnerErrorResponse
+			var v ErrorResponse
 			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -1059,7 +1059,7 @@ func (a *WalletsAPIService) WalletsTransferExecute(r ApiWalletsTransferRequest) 
 			return localVarReturnValue, localVarHTTPResponse, newErr
 		}
 		if localVarHTTPResponse.StatusCode == 404 {
-			var v PartnerErrorResponse
+			var v ErrorResponse
 			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -1070,7 +1070,7 @@ func (a *WalletsAPIService) WalletsTransferExecute(r ApiWalletsTransferRequest) 
 			return localVarReturnValue, localVarHTTPResponse, newErr
 		}
 		if localVarHTTPResponse.StatusCode == 409 {
-			var v PartnerErrorResponse
+			var v ErrorResponse
 			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -1081,7 +1081,7 @@ func (a *WalletsAPIService) WalletsTransferExecute(r ApiWalletsTransferRequest) 
 			return localVarReturnValue, localVarHTTPResponse, newErr
 		}
 		if localVarHTTPResponse.StatusCode == 429 {
-			var v PartnerErrorResponse
+			var v ErrorResponse
 			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -1092,7 +1092,7 @@ func (a *WalletsAPIService) WalletsTransferExecute(r ApiWalletsTransferRequest) 
 			return localVarReturnValue, localVarHTTPResponse, newErr
 		}
 		if localVarHTTPResponse.StatusCode == 503 {
-			var v PartnerErrorResponse
+			var v ErrorResponse
 			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -1120,12 +1120,12 @@ type ApiWalletsUpdateRequest struct {
 	ctx context.Context
 	ApiService *WalletsAPIService
 	id string
-	updateB2BWalletCommand *UpdateB2BWalletCommand
+	walletUpdateRequest *WalletUpdateRequest
 }
 
 // The new label and threshold.
-func (r ApiWalletsUpdateRequest) UpdateB2BWalletCommand(updateB2BWalletCommand UpdateB2BWalletCommand) ApiWalletsUpdateRequest {
-	r.updateB2BWalletCommand = &updateB2BWalletCommand
+func (r ApiWalletsUpdateRequest) WalletUpdateRequest(walletUpdateRequest WalletUpdateRequest) ApiWalletsUpdateRequest {
+	r.walletUpdateRequest = &walletUpdateRequest
 	return r
 }
 
@@ -1193,7 +1193,7 @@ func (a *WalletsAPIService) WalletsUpdateExecute(r ApiWalletsUpdateRequest) (*ht
 		localVarHeaderParams["Accept"] = localVarHTTPHeaderAccept
 	}
 	// body params
-	localVarPostBody = r.updateB2BWalletCommand
+	localVarPostBody = r.walletUpdateRequest
 	if r.ctx != nil {
 		// API Key Authentication
 		if auth, ok := r.ctx.Value(ContextAPIKeys).(map[string]APIKey); ok {
@@ -1231,7 +1231,7 @@ func (a *WalletsAPIService) WalletsUpdateExecute(r ApiWalletsUpdateRequest) (*ht
 			error: localVarHTTPResponse.Status,
 		}
 		if localVarHTTPResponse.StatusCode == 400 {
-			var v PartnerErrorResponse
+			var v ErrorResponse
 			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -1242,7 +1242,7 @@ func (a *WalletsAPIService) WalletsUpdateExecute(r ApiWalletsUpdateRequest) (*ht
 			return localVarHTTPResponse, newErr
 		}
 		if localVarHTTPResponse.StatusCode == 403 {
-			var v PartnerErrorResponse
+			var v ErrorResponse
 			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -1253,7 +1253,7 @@ func (a *WalletsAPIService) WalletsUpdateExecute(r ApiWalletsUpdateRequest) (*ht
 			return localVarHTTPResponse, newErr
 		}
 		if localVarHTTPResponse.StatusCode == 429 {
-			var v PartnerErrorResponse
+			var v ErrorResponse
 			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()

@@ -42,7 +42,7 @@ func (r ApiUtilityCreateOrderRequest) UtilityOrderRequest(utilityOrderRequest Ut
 	return r
 }
 
-func (r ApiUtilityCreateOrderRequest) Execute() (*UtilityCreateOrder200Response, *http.Response, error) {
+func (r ApiUtilityCreateOrderRequest) Execute() (*UtilityOrder, *http.Response, error) {
 	return r.ApiService.UtilityCreateOrderExecute(r)
 }
 
@@ -71,13 +71,13 @@ func (a *UtilityAPIService) UtilityCreateOrder(ctx context.Context) ApiUtilityCr
 }
 
 // Execute executes the request
-//  @return UtilityCreateOrder200Response
-func (a *UtilityAPIService) UtilityCreateOrderExecute(r ApiUtilityCreateOrderRequest) (*UtilityCreateOrder200Response, *http.Response, error) {
+//  @return UtilityOrder
+func (a *UtilityAPIService) UtilityCreateOrderExecute(r ApiUtilityCreateOrderRequest) (*UtilityOrder, *http.Response, error) {
 	var (
 		localVarHTTPMethod   = http.MethodPost
 		localVarPostBody     interface{}
 		formFiles            []formFile
-		localVarReturnValue  *UtilityCreateOrder200Response
+		localVarReturnValue  *UtilityOrder
 	)
 
 	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "UtilityAPIService.UtilityCreateOrder")
@@ -151,7 +151,7 @@ func (a *UtilityAPIService) UtilityCreateOrderExecute(r ApiUtilityCreateOrderReq
 			error: localVarHTTPResponse.Status,
 		}
 		if localVarHTTPResponse.StatusCode == 400 {
-			var v PartnerErrorResponse
+			var v ErrorResponse
 			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -162,7 +162,7 @@ func (a *UtilityAPIService) UtilityCreateOrderExecute(r ApiUtilityCreateOrderReq
 			return localVarReturnValue, localVarHTTPResponse, newErr
 		}
 		if localVarHTTPResponse.StatusCode == 409 {
-			var v PartnerErrorResponse
+			var v ErrorResponse
 			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -173,7 +173,7 @@ func (a *UtilityAPIService) UtilityCreateOrderExecute(r ApiUtilityCreateOrderReq
 			return localVarReturnValue, localVarHTTPResponse, newErr
 		}
 		if localVarHTTPResponse.StatusCode == 429 {
-			var v PartnerErrorResponse
+			var v ErrorResponse
 			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -184,7 +184,7 @@ func (a *UtilityAPIService) UtilityCreateOrderExecute(r ApiUtilityCreateOrderReq
 			return localVarReturnValue, localVarHTTPResponse, newErr
 		}
 		if localVarHTTPResponse.StatusCode == 503 {
-			var v PartnerErrorResponse
+			var v ErrorResponse
 			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -324,7 +324,7 @@ func (a *UtilityAPIService) UtilityGetBillerExecute(r ApiUtilityGetBillerRequest
 			error: localVarHTTPResponse.Status,
 		}
 		if localVarHTTPResponse.StatusCode == 400 {
-			var v PartnerErrorResponse
+			var v ErrorResponse
 			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -335,7 +335,7 @@ func (a *UtilityAPIService) UtilityGetBillerExecute(r ApiUtilityGetBillerRequest
 			return localVarReturnValue, localVarHTTPResponse, newErr
 		}
 		if localVarHTTPResponse.StatusCode == 429 {
-			var v PartnerErrorResponse
+			var v ErrorResponse
 			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -406,7 +406,7 @@ func (r ApiUtilityGetCatalogRequest) Limit(limit int32) ApiUtilityGetCatalogRequ
 	return r
 }
 
-func (r ApiUtilityGetCatalogRequest) Execute() (*UtilityCatalogResponse, *http.Response, error) {
+func (r ApiUtilityGetCatalogRequest) Execute() (*UtilityCatalogPage, *http.Response, error) {
 	return r.ApiService.UtilityGetCatalogExecute(r)
 }
 
@@ -433,13 +433,13 @@ func (a *UtilityAPIService) UtilityGetCatalog(ctx context.Context) ApiUtilityGet
 }
 
 // Execute executes the request
-//  @return UtilityCatalogResponse
-func (a *UtilityAPIService) UtilityGetCatalogExecute(r ApiUtilityGetCatalogRequest) (*UtilityCatalogResponse, *http.Response, error) {
+//  @return UtilityCatalogPage
+func (a *UtilityAPIService) UtilityGetCatalogExecute(r ApiUtilityGetCatalogRequest) (*UtilityCatalogPage, *http.Response, error) {
 	var (
 		localVarHTTPMethod   = http.MethodGet
 		localVarPostBody     interface{}
 		formFiles            []formFile
-		localVarReturnValue  *UtilityCatalogResponse
+		localVarReturnValue  *UtilityCatalogPage
 	)
 
 	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "UtilityAPIService.UtilityGetCatalog")
@@ -525,7 +525,7 @@ func (a *UtilityAPIService) UtilityGetCatalogExecute(r ApiUtilityGetCatalogReque
 			error: localVarHTTPResponse.Status,
 		}
 		if localVarHTTPResponse.StatusCode == 400 {
-			var v PartnerErrorResponse
+			var v ErrorResponse
 			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -536,7 +536,7 @@ func (a *UtilityAPIService) UtilityGetCatalogExecute(r ApiUtilityGetCatalogReque
 			return localVarReturnValue, localVarHTTPResponse, newErr
 		}
 		if localVarHTTPResponse.StatusCode == 429 {
-			var v PartnerErrorResponse
+			var v ErrorResponse
 			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -571,7 +571,7 @@ func (r ApiUtilityQuoteRequest) UtilityOrderRequest(utilityOrderRequest UtilityO
 	return r
 }
 
-func (r ApiUtilityQuoteRequest) Execute() (*UtilityQuoteResponse, *http.Response, error) {
+func (r ApiUtilityQuoteRequest) Execute() (*UtilityQuote, *http.Response, error) {
 	return r.ApiService.UtilityQuoteExecute(r)
 }
 
@@ -597,13 +597,13 @@ func (a *UtilityAPIService) UtilityQuote(ctx context.Context) ApiUtilityQuoteReq
 }
 
 // Execute executes the request
-//  @return UtilityQuoteResponse
-func (a *UtilityAPIService) UtilityQuoteExecute(r ApiUtilityQuoteRequest) (*UtilityQuoteResponse, *http.Response, error) {
+//  @return UtilityQuote
+func (a *UtilityAPIService) UtilityQuoteExecute(r ApiUtilityQuoteRequest) (*UtilityQuote, *http.Response, error) {
 	var (
 		localVarHTTPMethod   = http.MethodPost
 		localVarPostBody     interface{}
 		formFiles            []formFile
-		localVarReturnValue  *UtilityQuoteResponse
+		localVarReturnValue  *UtilityQuote
 	)
 
 	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "UtilityAPIService.UtilityQuote")
@@ -673,7 +673,7 @@ func (a *UtilityAPIService) UtilityQuoteExecute(r ApiUtilityQuoteRequest) (*Util
 			error: localVarHTTPResponse.Status,
 		}
 		if localVarHTTPResponse.StatusCode == 400 {
-			var v PartnerErrorResponse
+			var v ErrorResponse
 			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -684,7 +684,7 @@ func (a *UtilityAPIService) UtilityQuoteExecute(r ApiUtilityQuoteRequest) (*Util
 			return localVarReturnValue, localVarHTTPResponse, newErr
 		}
 		if localVarHTTPResponse.StatusCode == 409 {
-			var v PartnerErrorResponse
+			var v ErrorResponse
 			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -695,7 +695,7 @@ func (a *UtilityAPIService) UtilityQuoteExecute(r ApiUtilityQuoteRequest) (*Util
 			return localVarReturnValue, localVarHTTPResponse, newErr
 		}
 		if localVarHTTPResponse.StatusCode == 429 {
-			var v PartnerErrorResponse
+			var v ErrorResponse
 			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -773,7 +773,7 @@ func (r ApiUtilitySearchRequest) Limit(limit int32) ApiUtilitySearchRequest {
 	return r
 }
 
-func (r ApiUtilitySearchRequest) Execute() (*UtilitySearchResponse, *http.Response, error) {
+func (r ApiUtilitySearchRequest) Execute() (*UtilitySearchResult, *http.Response, error) {
 	return r.ApiService.UtilitySearchExecute(r)
 }
 
@@ -799,13 +799,13 @@ func (a *UtilityAPIService) UtilitySearch(ctx context.Context) ApiUtilitySearchR
 }
 
 // Execute executes the request
-//  @return UtilitySearchResponse
-func (a *UtilityAPIService) UtilitySearchExecute(r ApiUtilitySearchRequest) (*UtilitySearchResponse, *http.Response, error) {
+//  @return UtilitySearchResult
+func (a *UtilityAPIService) UtilitySearchExecute(r ApiUtilitySearchRequest) (*UtilitySearchResult, *http.Response, error) {
 	var (
 		localVarHTTPMethod   = http.MethodGet
 		localVarPostBody     interface{}
 		formFiles            []formFile
-		localVarReturnValue  *UtilitySearchResponse
+		localVarReturnValue  *UtilitySearchResult
 	)
 
 	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "UtilityAPIService.UtilitySearch")
@@ -895,7 +895,7 @@ func (a *UtilityAPIService) UtilitySearchExecute(r ApiUtilitySearchRequest) (*Ut
 			error: localVarHTTPResponse.Status,
 		}
 		if localVarHTTPResponse.StatusCode == 400 {
-			var v PartnerErrorResponse
+			var v ErrorResponse
 			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -906,7 +906,7 @@ func (a *UtilityAPIService) UtilitySearchExecute(r ApiUtilitySearchRequest) (*Ut
 			return localVarReturnValue, localVarHTTPResponse, newErr
 		}
 		if localVarHTTPResponse.StatusCode == 429 {
-			var v PartnerErrorResponse
+			var v ErrorResponse
 			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()

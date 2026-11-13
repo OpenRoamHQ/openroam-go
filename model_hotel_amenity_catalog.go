@@ -18,10 +18,16 @@ import (
 // checks if the HotelAmenityCatalog type satisfies the MappedNullable interface at compile time
 var _ MappedNullable = &HotelAmenityCatalog{}
 
-// HotelAmenityCatalog One amenity available in the static amenity catalog.
+// HotelAmenityCatalog struct for HotelAmenityCatalog
 type HotelAmenityCatalog struct {
-	Code *string `json:"code,omitempty"`
-	Label *string `json:"label,omitempty"`
+	// Version of the amenity catalog the labels and codes come from.
+	MapVersion *int32 `json:"mapVersion,omitempty"`
+	// Every amenity group, labelled, with the codes it holds.
+	Groups []HotelAmenityGroupFacet `json:"groups,omitempty"`
+	// Every amenity code with its label, for rendering a card or a rail.
+	Amenities []HotelAmenity `json:"amenities,omitempty"`
+	// Heading for a card's `amenityNotes`. Those strings are free text with no code, so unlike every other label on a card this one cannot be looked up from Amenities.
+	NotesLabel *string `json:"notesLabel,omitempty"`
 }
 
 // NewHotelAmenityCatalog instantiates a new HotelAmenityCatalog object
@@ -41,68 +47,132 @@ func NewHotelAmenityCatalogWithDefaults() *HotelAmenityCatalog {
 	return &this
 }
 
-// GetCode returns the Code field value if set, zero value otherwise.
-func (o *HotelAmenityCatalog) GetCode() string {
-	if o == nil || IsNil(o.Code) {
-		var ret string
+// GetMapVersion returns the MapVersion field value if set, zero value otherwise.
+func (o *HotelAmenityCatalog) GetMapVersion() int32 {
+	if o == nil || IsNil(o.MapVersion) {
+		var ret int32
 		return ret
 	}
-	return *o.Code
+	return *o.MapVersion
 }
 
-// GetCodeOk returns a tuple with the Code field value if set, nil otherwise
+// GetMapVersionOk returns a tuple with the MapVersion field value if set, nil otherwise
 // and a boolean to check if the value has been set.
-func (o *HotelAmenityCatalog) GetCodeOk() (*string, bool) {
-	if o == nil || IsNil(o.Code) {
+func (o *HotelAmenityCatalog) GetMapVersionOk() (*int32, bool) {
+	if o == nil || IsNil(o.MapVersion) {
 		return nil, false
 	}
-	return o.Code, true
+	return o.MapVersion, true
 }
 
-// HasCode returns a boolean if a field has been set.
-func (o *HotelAmenityCatalog) HasCode() bool {
-	if o != nil && !IsNil(o.Code) {
+// HasMapVersion returns a boolean if a field has been set.
+func (o *HotelAmenityCatalog) HasMapVersion() bool {
+	if o != nil && !IsNil(o.MapVersion) {
 		return true
 	}
 
 	return false
 }
 
-// SetCode gets a reference to the given string and assigns it to the Code field.
-func (o *HotelAmenityCatalog) SetCode(v string) {
-	o.Code = &v
+// SetMapVersion gets a reference to the given int32 and assigns it to the MapVersion field.
+func (o *HotelAmenityCatalog) SetMapVersion(v int32) {
+	o.MapVersion = &v
 }
 
-// GetLabel returns the Label field value if set, zero value otherwise.
-func (o *HotelAmenityCatalog) GetLabel() string {
-	if o == nil || IsNil(o.Label) {
-		var ret string
+// GetGroups returns the Groups field value if set, zero value otherwise.
+func (o *HotelAmenityCatalog) GetGroups() []HotelAmenityGroupFacet {
+	if o == nil || IsNil(o.Groups) {
+		var ret []HotelAmenityGroupFacet
 		return ret
 	}
-	return *o.Label
+	return o.Groups
 }
 
-// GetLabelOk returns a tuple with the Label field value if set, nil otherwise
+// GetGroupsOk returns a tuple with the Groups field value if set, nil otherwise
 // and a boolean to check if the value has been set.
-func (o *HotelAmenityCatalog) GetLabelOk() (*string, bool) {
-	if o == nil || IsNil(o.Label) {
+func (o *HotelAmenityCatalog) GetGroupsOk() ([]HotelAmenityGroupFacet, bool) {
+	if o == nil || IsNil(o.Groups) {
 		return nil, false
 	}
-	return o.Label, true
+	return o.Groups, true
 }
 
-// HasLabel returns a boolean if a field has been set.
-func (o *HotelAmenityCatalog) HasLabel() bool {
-	if o != nil && !IsNil(o.Label) {
+// HasGroups returns a boolean if a field has been set.
+func (o *HotelAmenityCatalog) HasGroups() bool {
+	if o != nil && !IsNil(o.Groups) {
 		return true
 	}
 
 	return false
 }
 
-// SetLabel gets a reference to the given string and assigns it to the Label field.
-func (o *HotelAmenityCatalog) SetLabel(v string) {
-	o.Label = &v
+// SetGroups gets a reference to the given []HotelAmenityGroupFacet and assigns it to the Groups field.
+func (o *HotelAmenityCatalog) SetGroups(v []HotelAmenityGroupFacet) {
+	o.Groups = v
+}
+
+// GetAmenities returns the Amenities field value if set, zero value otherwise.
+func (o *HotelAmenityCatalog) GetAmenities() []HotelAmenity {
+	if o == nil || IsNil(o.Amenities) {
+		var ret []HotelAmenity
+		return ret
+	}
+	return o.Amenities
+}
+
+// GetAmenitiesOk returns a tuple with the Amenities field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+func (o *HotelAmenityCatalog) GetAmenitiesOk() ([]HotelAmenity, bool) {
+	if o == nil || IsNil(o.Amenities) {
+		return nil, false
+	}
+	return o.Amenities, true
+}
+
+// HasAmenities returns a boolean if a field has been set.
+func (o *HotelAmenityCatalog) HasAmenities() bool {
+	if o != nil && !IsNil(o.Amenities) {
+		return true
+	}
+
+	return false
+}
+
+// SetAmenities gets a reference to the given []HotelAmenity and assigns it to the Amenities field.
+func (o *HotelAmenityCatalog) SetAmenities(v []HotelAmenity) {
+	o.Amenities = v
+}
+
+// GetNotesLabel returns the NotesLabel field value if set, zero value otherwise.
+func (o *HotelAmenityCatalog) GetNotesLabel() string {
+	if o == nil || IsNil(o.NotesLabel) {
+		var ret string
+		return ret
+	}
+	return *o.NotesLabel
+}
+
+// GetNotesLabelOk returns a tuple with the NotesLabel field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+func (o *HotelAmenityCatalog) GetNotesLabelOk() (*string, bool) {
+	if o == nil || IsNil(o.NotesLabel) {
+		return nil, false
+	}
+	return o.NotesLabel, true
+}
+
+// HasNotesLabel returns a boolean if a field has been set.
+func (o *HotelAmenityCatalog) HasNotesLabel() bool {
+	if o != nil && !IsNil(o.NotesLabel) {
+		return true
+	}
+
+	return false
+}
+
+// SetNotesLabel gets a reference to the given string and assigns it to the NotesLabel field.
+func (o *HotelAmenityCatalog) SetNotesLabel(v string) {
+	o.NotesLabel = &v
 }
 
 func (o HotelAmenityCatalog) MarshalJSON() ([]byte, error) {
@@ -115,11 +185,17 @@ func (o HotelAmenityCatalog) MarshalJSON() ([]byte, error) {
 
 func (o HotelAmenityCatalog) ToMap() (map[string]interface{}, error) {
 	toSerialize := map[string]interface{}{}
-	if !IsNil(o.Code) {
-		toSerialize["code"] = o.Code
+	if !IsNil(o.MapVersion) {
+		toSerialize["mapVersion"] = o.MapVersion
 	}
-	if !IsNil(o.Label) {
-		toSerialize["label"] = o.Label
+	if !IsNil(o.Groups) {
+		toSerialize["groups"] = o.Groups
+	}
+	if !IsNil(o.Amenities) {
+		toSerialize["amenities"] = o.Amenities
+	}
+	if !IsNil(o.NotesLabel) {
+		toSerialize["notesLabel"] = o.NotesLabel
 	}
 	return toSerialize, nil
 }

@@ -21,19 +21,19 @@ var _ MappedNullable = &FlightPurchasedProductDetails{}
 // FlightPurchasedProductDetails Flight facts outside the purchased-product keys every partner service shares, as bought.
 type FlightPurchasedProductDetails struct {
 	// The airline that sold the fare.
-	Owner *FlightPartnerAirline `json:"owner,omitempty"`
+	Owner *FlightBookedAirline `json:"owner,omitempty"`
 	// The flights bought, in order. They stay as bought; the result's `booking` has the flights booked now.
-	Slices []FlightPartnerSlice `json:"slices,omitempty"`
+	Slices []FlightBookedSlice `json:"slices,omitempty"`
 	// The fare's cabin.
 	CabinClass *string `json:"cabinClass,omitempty"`
 	// The terms the item was bought on, as quoted: always `payNow`, what cancelling gives back and whether it can be changed, in the order currency, OpenRoam's fees included.
 	Terms *BookingTerms `json:"terms,omitempty"`
 	// Baggage included for every passenger.
-	IncludedBaggage []FlightPartnerBaggage `json:"includedBaggage,omitempty"`
+	IncludedBaggage []FlightBookedBaggage `json:"includedBaggage,omitempty"`
 	// The paid extras bought, in the order of `inputs.selectedServices`, each with a label such as `1 × 23 kg`.
-	SelectedServices []FlightPartnerSelectedService `json:"selectedServices,omitempty"`
+	SelectedServices []FlightSelectedService `json:"selectedServices,omitempty"`
 	// What the item cost, line by line, in the order currency; the amounts add up to its price.
-	PriceLines []FlightPartnerPriceLine `json:"priceLines,omitempty"`
+	PriceLines []FlightPriceLine `json:"priceLines,omitempty"`
 	// Flying and connection time across all slices.
 	TotalDurationMinutes *int32 `json:"totalDurationMinutes,omitempty"`
 	// Connections across all slices.
@@ -58,9 +58,9 @@ func NewFlightPurchasedProductDetailsWithDefaults() *FlightPurchasedProductDetai
 }
 
 // GetOwner returns the Owner field value if set, zero value otherwise.
-func (o *FlightPurchasedProductDetails) GetOwner() FlightPartnerAirline {
+func (o *FlightPurchasedProductDetails) GetOwner() FlightBookedAirline {
 	if o == nil || IsNil(o.Owner) {
-		var ret FlightPartnerAirline
+		var ret FlightBookedAirline
 		return ret
 	}
 	return *o.Owner
@@ -68,7 +68,7 @@ func (o *FlightPurchasedProductDetails) GetOwner() FlightPartnerAirline {
 
 // GetOwnerOk returns a tuple with the Owner field value if set, nil otherwise
 // and a boolean to check if the value has been set.
-func (o *FlightPurchasedProductDetails) GetOwnerOk() (*FlightPartnerAirline, bool) {
+func (o *FlightPurchasedProductDetails) GetOwnerOk() (*FlightBookedAirline, bool) {
 	if o == nil || IsNil(o.Owner) {
 		return nil, false
 	}
@@ -84,15 +84,15 @@ func (o *FlightPurchasedProductDetails) HasOwner() bool {
 	return false
 }
 
-// SetOwner gets a reference to the given FlightPartnerAirline and assigns it to the Owner field.
-func (o *FlightPurchasedProductDetails) SetOwner(v FlightPartnerAirline) {
+// SetOwner gets a reference to the given FlightBookedAirline and assigns it to the Owner field.
+func (o *FlightPurchasedProductDetails) SetOwner(v FlightBookedAirline) {
 	o.Owner = &v
 }
 
 // GetSlices returns the Slices field value if set, zero value otherwise.
-func (o *FlightPurchasedProductDetails) GetSlices() []FlightPartnerSlice {
+func (o *FlightPurchasedProductDetails) GetSlices() []FlightBookedSlice {
 	if o == nil || IsNil(o.Slices) {
-		var ret []FlightPartnerSlice
+		var ret []FlightBookedSlice
 		return ret
 	}
 	return o.Slices
@@ -100,7 +100,7 @@ func (o *FlightPurchasedProductDetails) GetSlices() []FlightPartnerSlice {
 
 // GetSlicesOk returns a tuple with the Slices field value if set, nil otherwise
 // and a boolean to check if the value has been set.
-func (o *FlightPurchasedProductDetails) GetSlicesOk() ([]FlightPartnerSlice, bool) {
+func (o *FlightPurchasedProductDetails) GetSlicesOk() ([]FlightBookedSlice, bool) {
 	if o == nil || IsNil(o.Slices) {
 		return nil, false
 	}
@@ -116,8 +116,8 @@ func (o *FlightPurchasedProductDetails) HasSlices() bool {
 	return false
 }
 
-// SetSlices gets a reference to the given []FlightPartnerSlice and assigns it to the Slices field.
-func (o *FlightPurchasedProductDetails) SetSlices(v []FlightPartnerSlice) {
+// SetSlices gets a reference to the given []FlightBookedSlice and assigns it to the Slices field.
+func (o *FlightPurchasedProductDetails) SetSlices(v []FlightBookedSlice) {
 	o.Slices = v
 }
 
@@ -186,9 +186,9 @@ func (o *FlightPurchasedProductDetails) SetTerms(v BookingTerms) {
 }
 
 // GetIncludedBaggage returns the IncludedBaggage field value if set, zero value otherwise.
-func (o *FlightPurchasedProductDetails) GetIncludedBaggage() []FlightPartnerBaggage {
+func (o *FlightPurchasedProductDetails) GetIncludedBaggage() []FlightBookedBaggage {
 	if o == nil || IsNil(o.IncludedBaggage) {
-		var ret []FlightPartnerBaggage
+		var ret []FlightBookedBaggage
 		return ret
 	}
 	return o.IncludedBaggage
@@ -196,7 +196,7 @@ func (o *FlightPurchasedProductDetails) GetIncludedBaggage() []FlightPartnerBagg
 
 // GetIncludedBaggageOk returns a tuple with the IncludedBaggage field value if set, nil otherwise
 // and a boolean to check if the value has been set.
-func (o *FlightPurchasedProductDetails) GetIncludedBaggageOk() ([]FlightPartnerBaggage, bool) {
+func (o *FlightPurchasedProductDetails) GetIncludedBaggageOk() ([]FlightBookedBaggage, bool) {
 	if o == nil || IsNil(o.IncludedBaggage) {
 		return nil, false
 	}
@@ -212,15 +212,15 @@ func (o *FlightPurchasedProductDetails) HasIncludedBaggage() bool {
 	return false
 }
 
-// SetIncludedBaggage gets a reference to the given []FlightPartnerBaggage and assigns it to the IncludedBaggage field.
-func (o *FlightPurchasedProductDetails) SetIncludedBaggage(v []FlightPartnerBaggage) {
+// SetIncludedBaggage gets a reference to the given []FlightBookedBaggage and assigns it to the IncludedBaggage field.
+func (o *FlightPurchasedProductDetails) SetIncludedBaggage(v []FlightBookedBaggage) {
 	o.IncludedBaggage = v
 }
 
 // GetSelectedServices returns the SelectedServices field value if set, zero value otherwise.
-func (o *FlightPurchasedProductDetails) GetSelectedServices() []FlightPartnerSelectedService {
+func (o *FlightPurchasedProductDetails) GetSelectedServices() []FlightSelectedService {
 	if o == nil || IsNil(o.SelectedServices) {
-		var ret []FlightPartnerSelectedService
+		var ret []FlightSelectedService
 		return ret
 	}
 	return o.SelectedServices
@@ -228,7 +228,7 @@ func (o *FlightPurchasedProductDetails) GetSelectedServices() []FlightPartnerSel
 
 // GetSelectedServicesOk returns a tuple with the SelectedServices field value if set, nil otherwise
 // and a boolean to check if the value has been set.
-func (o *FlightPurchasedProductDetails) GetSelectedServicesOk() ([]FlightPartnerSelectedService, bool) {
+func (o *FlightPurchasedProductDetails) GetSelectedServicesOk() ([]FlightSelectedService, bool) {
 	if o == nil || IsNil(o.SelectedServices) {
 		return nil, false
 	}
@@ -244,15 +244,15 @@ func (o *FlightPurchasedProductDetails) HasSelectedServices() bool {
 	return false
 }
 
-// SetSelectedServices gets a reference to the given []FlightPartnerSelectedService and assigns it to the SelectedServices field.
-func (o *FlightPurchasedProductDetails) SetSelectedServices(v []FlightPartnerSelectedService) {
+// SetSelectedServices gets a reference to the given []FlightSelectedService and assigns it to the SelectedServices field.
+func (o *FlightPurchasedProductDetails) SetSelectedServices(v []FlightSelectedService) {
 	o.SelectedServices = v
 }
 
 // GetPriceLines returns the PriceLines field value if set, zero value otherwise.
-func (o *FlightPurchasedProductDetails) GetPriceLines() []FlightPartnerPriceLine {
+func (o *FlightPurchasedProductDetails) GetPriceLines() []FlightPriceLine {
 	if o == nil || IsNil(o.PriceLines) {
-		var ret []FlightPartnerPriceLine
+		var ret []FlightPriceLine
 		return ret
 	}
 	return o.PriceLines
@@ -260,7 +260,7 @@ func (o *FlightPurchasedProductDetails) GetPriceLines() []FlightPartnerPriceLine
 
 // GetPriceLinesOk returns a tuple with the PriceLines field value if set, nil otherwise
 // and a boolean to check if the value has been set.
-func (o *FlightPurchasedProductDetails) GetPriceLinesOk() ([]FlightPartnerPriceLine, bool) {
+func (o *FlightPurchasedProductDetails) GetPriceLinesOk() ([]FlightPriceLine, bool) {
 	if o == nil || IsNil(o.PriceLines) {
 		return nil, false
 	}
@@ -276,8 +276,8 @@ func (o *FlightPurchasedProductDetails) HasPriceLines() bool {
 	return false
 }
 
-// SetPriceLines gets a reference to the given []FlightPartnerPriceLine and assigns it to the PriceLines field.
-func (o *FlightPurchasedProductDetails) SetPriceLines(v []FlightPartnerPriceLine) {
+// SetPriceLines gets a reference to the given []FlightPriceLine and assigns it to the PriceLines field.
+func (o *FlightPurchasedProductDetails) SetPriceLines(v []FlightPriceLine) {
 	o.PriceLines = v
 }
 

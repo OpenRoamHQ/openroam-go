@@ -50,7 +50,7 @@ func (r ApiAirtimeCatalogRequest) Limit(limit int32) ApiAirtimeCatalogRequest {
 	return r
 }
 
-func (r ApiAirtimeCatalogRequest) Execute() (*AirtimeCatalogResponse, *http.Response, error) {
+func (r ApiAirtimeCatalogRequest) Execute() (*AirtimeCatalogPage, *http.Response, error) {
 	return r.ApiService.AirtimeCatalogExecute(r)
 }
 
@@ -76,13 +76,13 @@ func (a *AirtimeAPIService) AirtimeCatalog(ctx context.Context) ApiAirtimeCatalo
 }
 
 // Execute executes the request
-//  @return AirtimeCatalogResponse
-func (a *AirtimeAPIService) AirtimeCatalogExecute(r ApiAirtimeCatalogRequest) (*AirtimeCatalogResponse, *http.Response, error) {
+//  @return AirtimeCatalogPage
+func (a *AirtimeAPIService) AirtimeCatalogExecute(r ApiAirtimeCatalogRequest) (*AirtimeCatalogPage, *http.Response, error) {
 	var (
 		localVarHTTPMethod   = http.MethodGet
 		localVarPostBody     interface{}
 		formFiles            []formFile
-		localVarReturnValue  *AirtimeCatalogResponse
+		localVarReturnValue  *AirtimeCatalogPage
 	)
 
 	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "AirtimeAPIService.AirtimeCatalog")
@@ -159,7 +159,7 @@ func (a *AirtimeAPIService) AirtimeCatalogExecute(r ApiAirtimeCatalogRequest) (*
 			error: localVarHTTPResponse.Status,
 		}
 		if localVarHTTPResponse.StatusCode == 400 {
-			var v PartnerErrorResponse
+			var v ErrorResponse
 			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -170,7 +170,7 @@ func (a *AirtimeAPIService) AirtimeCatalogExecute(r ApiAirtimeCatalogRequest) (*
 			return localVarReturnValue, localVarHTTPResponse, newErr
 		}
 		if localVarHTTPResponse.StatusCode == 429 {
-			var v PartnerErrorResponse
+			var v ErrorResponse
 			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -212,7 +212,7 @@ func (r ApiAirtimeCreateOrderRequest) AirtimeOrderRequest(airtimeOrderRequest Ai
 	return r
 }
 
-func (r ApiAirtimeCreateOrderRequest) Execute() (*AirtimeCreateOrder200Response, *http.Response, error) {
+func (r ApiAirtimeCreateOrderRequest) Execute() (*AirtimeOrder, *http.Response, error) {
 	return r.ApiService.AirtimeCreateOrderExecute(r)
 }
 
@@ -239,13 +239,13 @@ func (a *AirtimeAPIService) AirtimeCreateOrder(ctx context.Context) ApiAirtimeCr
 }
 
 // Execute executes the request
-//  @return AirtimeCreateOrder200Response
-func (a *AirtimeAPIService) AirtimeCreateOrderExecute(r ApiAirtimeCreateOrderRequest) (*AirtimeCreateOrder200Response, *http.Response, error) {
+//  @return AirtimeOrder
+func (a *AirtimeAPIService) AirtimeCreateOrderExecute(r ApiAirtimeCreateOrderRequest) (*AirtimeOrder, *http.Response, error) {
 	var (
 		localVarHTTPMethod   = http.MethodPost
 		localVarPostBody     interface{}
 		formFiles            []formFile
-		localVarReturnValue  *AirtimeCreateOrder200Response
+		localVarReturnValue  *AirtimeOrder
 	)
 
 	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "AirtimeAPIService.AirtimeCreateOrder")
@@ -319,7 +319,7 @@ func (a *AirtimeAPIService) AirtimeCreateOrderExecute(r ApiAirtimeCreateOrderReq
 			error: localVarHTTPResponse.Status,
 		}
 		if localVarHTTPResponse.StatusCode == 400 {
-			var v PartnerErrorResponse
+			var v ErrorResponse
 			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -330,7 +330,7 @@ func (a *AirtimeAPIService) AirtimeCreateOrderExecute(r ApiAirtimeCreateOrderReq
 			return localVarReturnValue, localVarHTTPResponse, newErr
 		}
 		if localVarHTTPResponse.StatusCode == 409 {
-			var v PartnerErrorResponse
+			var v ErrorResponse
 			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -341,7 +341,7 @@ func (a *AirtimeAPIService) AirtimeCreateOrderExecute(r ApiAirtimeCreateOrderReq
 			return localVarReturnValue, localVarHTTPResponse, newErr
 		}
 		if localVarHTTPResponse.StatusCode == 429 {
-			var v PartnerErrorResponse
+			var v ErrorResponse
 			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -352,7 +352,7 @@ func (a *AirtimeAPIService) AirtimeCreateOrderExecute(r ApiAirtimeCreateOrderReq
 			return localVarReturnValue, localVarHTTPResponse, newErr
 		}
 		if localVarHTTPResponse.StatusCode == 503 {
-			var v PartnerErrorResponse
+			var v ErrorResponse
 			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -438,7 +438,7 @@ func (r ApiAirtimeGetOperatorRequest) Currency(currency string) ApiAirtimeGetOpe
 	return r
 }
 
-func (r ApiAirtimeGetOperatorRequest) Execute() (*AirtimeOperatorItem, *http.Response, error) {
+func (r ApiAirtimeGetOperatorRequest) Execute() (*AirtimeOperator, *http.Response, error) {
 	return r.ApiService.AirtimeGetOperatorExecute(r)
 }
 
@@ -466,13 +466,13 @@ func (a *AirtimeAPIService) AirtimeGetOperator(ctx context.Context, id string) A
 }
 
 // Execute executes the request
-//  @return AirtimeOperatorItem
-func (a *AirtimeAPIService) AirtimeGetOperatorExecute(r ApiAirtimeGetOperatorRequest) (*AirtimeOperatorItem, *http.Response, error) {
+//  @return AirtimeOperator
+func (a *AirtimeAPIService) AirtimeGetOperatorExecute(r ApiAirtimeGetOperatorRequest) (*AirtimeOperator, *http.Response, error) {
 	var (
 		localVarHTTPMethod   = http.MethodGet
 		localVarPostBody     interface{}
 		formFiles            []formFile
-		localVarReturnValue  *AirtimeOperatorItem
+		localVarReturnValue  *AirtimeOperator
 	)
 
 	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "AirtimeAPIService.AirtimeGetOperator")
@@ -566,7 +566,7 @@ func (a *AirtimeAPIService) AirtimeGetOperatorExecute(r ApiAirtimeGetOperatorReq
 			error: localVarHTTPResponse.Status,
 		}
 		if localVarHTTPResponse.StatusCode == 400 {
-			var v PartnerErrorResponse
+			var v ErrorResponse
 			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -577,7 +577,7 @@ func (a *AirtimeAPIService) AirtimeGetOperatorExecute(r ApiAirtimeGetOperatorReq
 			return localVarReturnValue, localVarHTTPResponse, newErr
 		}
 		if localVarHTTPResponse.StatusCode == 429 {
-			var v PartnerErrorResponse
+			var v ErrorResponse
 			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -613,7 +613,7 @@ func (r ApiAirtimeGetOperatorsRequest) CountryCode(countryCode string) ApiAirtim
 	return r
 }
 
-func (r ApiAirtimeGetOperatorsRequest) Execute() (*AirtimeOperatorsResponse, *http.Response, error) {
+func (r ApiAirtimeGetOperatorsRequest) Execute() (*AirtimeOperatorList, *http.Response, error) {
 	return r.ApiService.AirtimeGetOperatorsExecute(r)
 }
 
@@ -638,13 +638,13 @@ func (a *AirtimeAPIService) AirtimeGetOperators(ctx context.Context) ApiAirtimeG
 }
 
 // Execute executes the request
-//  @return AirtimeOperatorsResponse
-func (a *AirtimeAPIService) AirtimeGetOperatorsExecute(r ApiAirtimeGetOperatorsRequest) (*AirtimeOperatorsResponse, *http.Response, error) {
+//  @return AirtimeOperatorList
+func (a *AirtimeAPIService) AirtimeGetOperatorsExecute(r ApiAirtimeGetOperatorsRequest) (*AirtimeOperatorList, *http.Response, error) {
 	var (
 		localVarHTTPMethod   = http.MethodGet
 		localVarPostBody     interface{}
 		formFiles            []formFile
-		localVarReturnValue  *AirtimeOperatorsResponse
+		localVarReturnValue  *AirtimeOperatorList
 	)
 
 	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "AirtimeAPIService.AirtimeGetOperators")
@@ -716,7 +716,7 @@ func (a *AirtimeAPIService) AirtimeGetOperatorsExecute(r ApiAirtimeGetOperatorsR
 			error: localVarHTTPResponse.Status,
 		}
 		if localVarHTTPResponse.StatusCode == 400 {
-			var v PartnerErrorResponse
+			var v ErrorResponse
 			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -727,7 +727,7 @@ func (a *AirtimeAPIService) AirtimeGetOperatorsExecute(r ApiAirtimeGetOperatorsR
 			return localVarReturnValue, localVarHTTPResponse, newErr
 		}
 		if localVarHTTPResponse.StatusCode == 429 {
-			var v PartnerErrorResponse
+			var v ErrorResponse
 			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -763,7 +763,7 @@ func (r ApiAirtimeLookupNumberRequest) PhoneNumber(phoneNumber string) ApiAirtim
 	return r
 }
 
-func (r ApiAirtimeLookupNumberRequest) Execute() (*AirtimeNumberLookupResponse, *http.Response, error) {
+func (r ApiAirtimeLookupNumberRequest) Execute() (*AirtimeNumberLookup, *http.Response, error) {
 	return r.ApiService.AirtimeLookupNumberExecute(r)
 }
 
@@ -789,13 +789,13 @@ func (a *AirtimeAPIService) AirtimeLookupNumber(ctx context.Context) ApiAirtimeL
 }
 
 // Execute executes the request
-//  @return AirtimeNumberLookupResponse
-func (a *AirtimeAPIService) AirtimeLookupNumberExecute(r ApiAirtimeLookupNumberRequest) (*AirtimeNumberLookupResponse, *http.Response, error) {
+//  @return AirtimeNumberLookup
+func (a *AirtimeAPIService) AirtimeLookupNumberExecute(r ApiAirtimeLookupNumberRequest) (*AirtimeNumberLookup, *http.Response, error) {
 	var (
 		localVarHTTPMethod   = http.MethodGet
 		localVarPostBody     interface{}
 		formFiles            []formFile
-		localVarReturnValue  *AirtimeNumberLookupResponse
+		localVarReturnValue  *AirtimeNumberLookup
 	)
 
 	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "AirtimeAPIService.AirtimeLookupNumber")
@@ -867,7 +867,7 @@ func (a *AirtimeAPIService) AirtimeLookupNumberExecute(r ApiAirtimeLookupNumberR
 			error: localVarHTTPResponse.Status,
 		}
 		if localVarHTTPResponse.StatusCode == 400 {
-			var v PartnerErrorResponse
+			var v ErrorResponse
 			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -878,7 +878,7 @@ func (a *AirtimeAPIService) AirtimeLookupNumberExecute(r ApiAirtimeLookupNumberR
 			return localVarReturnValue, localVarHTTPResponse, newErr
 		}
 		if localVarHTTPResponse.StatusCode == 429 {
-			var v PartnerErrorResponse
+			var v ErrorResponse
 			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -889,7 +889,7 @@ func (a *AirtimeAPIService) AirtimeLookupNumberExecute(r ApiAirtimeLookupNumberR
 			return localVarReturnValue, localVarHTTPResponse, newErr
 		}
 		if localVarHTTPResponse.StatusCode == 503 {
-			var v PartnerErrorResponse
+			var v ErrorResponse
 			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -924,7 +924,7 @@ func (r ApiAirtimeQuoteRequest) AirtimeOrderRequest(airtimeOrderRequest AirtimeO
 	return r
 }
 
-func (r ApiAirtimeQuoteRequest) Execute() (*AirtimeQuoteResponse, *http.Response, error) {
+func (r ApiAirtimeQuoteRequest) Execute() (*AirtimeQuote, *http.Response, error) {
 	return r.ApiService.AirtimeQuoteExecute(r)
 }
 
@@ -951,13 +951,13 @@ func (a *AirtimeAPIService) AirtimeQuote(ctx context.Context) ApiAirtimeQuoteReq
 }
 
 // Execute executes the request
-//  @return AirtimeQuoteResponse
-func (a *AirtimeAPIService) AirtimeQuoteExecute(r ApiAirtimeQuoteRequest) (*AirtimeQuoteResponse, *http.Response, error) {
+//  @return AirtimeQuote
+func (a *AirtimeAPIService) AirtimeQuoteExecute(r ApiAirtimeQuoteRequest) (*AirtimeQuote, *http.Response, error) {
 	var (
 		localVarHTTPMethod   = http.MethodPost
 		localVarPostBody     interface{}
 		formFiles            []formFile
-		localVarReturnValue  *AirtimeQuoteResponse
+		localVarReturnValue  *AirtimeQuote
 	)
 
 	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "AirtimeAPIService.AirtimeQuote")
@@ -1027,7 +1027,7 @@ func (a *AirtimeAPIService) AirtimeQuoteExecute(r ApiAirtimeQuoteRequest) (*Airt
 			error: localVarHTTPResponse.Status,
 		}
 		if localVarHTTPResponse.StatusCode == 400 {
-			var v PartnerErrorResponse
+			var v ErrorResponse
 			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -1038,7 +1038,7 @@ func (a *AirtimeAPIService) AirtimeQuoteExecute(r ApiAirtimeQuoteRequest) (*Airt
 			return localVarReturnValue, localVarHTTPResponse, newErr
 		}
 		if localVarHTTPResponse.StatusCode == 409 {
-			var v PartnerErrorResponse
+			var v ErrorResponse
 			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -1049,7 +1049,7 @@ func (a *AirtimeAPIService) AirtimeQuoteExecute(r ApiAirtimeQuoteRequest) (*Airt
 			return localVarReturnValue, localVarHTTPResponse, newErr
 		}
 		if localVarHTTPResponse.StatusCode == 429 {
-			var v PartnerErrorResponse
+			var v ErrorResponse
 			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -1148,7 +1148,7 @@ func (r ApiAirtimeSearchRequest) Limit(limit int32) ApiAirtimeSearchRequest {
 	return r
 }
 
-func (r ApiAirtimeSearchRequest) Execute() (*AirtimeSearchResponse, *http.Response, error) {
+func (r ApiAirtimeSearchRequest) Execute() (*AirtimeSearchResult, *http.Response, error) {
 	return r.ApiService.AirtimeSearchExecute(r)
 }
 
@@ -1175,13 +1175,13 @@ func (a *AirtimeAPIService) AirtimeSearch(ctx context.Context) ApiAirtimeSearchR
 }
 
 // Execute executes the request
-//  @return AirtimeSearchResponse
-func (a *AirtimeAPIService) AirtimeSearchExecute(r ApiAirtimeSearchRequest) (*AirtimeSearchResponse, *http.Response, error) {
+//  @return AirtimeSearchResult
+func (a *AirtimeAPIService) AirtimeSearchExecute(r ApiAirtimeSearchRequest) (*AirtimeSearchResult, *http.Response, error) {
 	var (
 		localVarHTTPMethod   = http.MethodGet
 		localVarPostBody     interface{}
 		formFiles            []formFile
-		localVarReturnValue  *AirtimeSearchResponse
+		localVarReturnValue  *AirtimeSearchResult
 	)
 
 	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "AirtimeAPIService.AirtimeSearch")
@@ -1280,7 +1280,7 @@ func (a *AirtimeAPIService) AirtimeSearchExecute(r ApiAirtimeSearchRequest) (*Ai
 			error: localVarHTTPResponse.Status,
 		}
 		if localVarHTTPResponse.StatusCode == 400 {
-			var v PartnerErrorResponse
+			var v ErrorResponse
 			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -1291,7 +1291,7 @@ func (a *AirtimeAPIService) AirtimeSearchExecute(r ApiAirtimeSearchRequest) (*Ai
 			return localVarReturnValue, localVarHTTPResponse, newErr
 		}
 		if localVarHTTPResponse.StatusCode == 429 {
-			var v PartnerErrorResponse
+			var v ErrorResponse
 			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()

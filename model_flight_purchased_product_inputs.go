@@ -21,9 +21,9 @@ var _ MappedNullable = &FlightPurchasedProductInputs{}
 // FlightPurchasedProductInputs The item's `inputs` under the request's keys, as applied. The price guard is not echoed.
 type FlightPurchasedProductInputs struct {
 	// Every passenger of the fare, in `passengerIndex` order.
-	Passengers []FlightPartnerPassenger `json:"passengers,omitempty"`
+	Passengers []FlightPassenger `json:"passengers,omitempty"`
 	// The paid extras chosen in `selectedServices`; seats are on the passengers.
-	SelectedServices []FlightPartnerSelectedServiceInput `json:"selectedServices,omitempty"`
+	SelectedServices []FlightSelectedServiceInput `json:"selectedServices,omitempty"`
 }
 
 // NewFlightPurchasedProductInputs instantiates a new FlightPurchasedProductInputs object
@@ -44,9 +44,9 @@ func NewFlightPurchasedProductInputsWithDefaults() *FlightPurchasedProductInputs
 }
 
 // GetPassengers returns the Passengers field value if set, zero value otherwise.
-func (o *FlightPurchasedProductInputs) GetPassengers() []FlightPartnerPassenger {
+func (o *FlightPurchasedProductInputs) GetPassengers() []FlightPassenger {
 	if o == nil || IsNil(o.Passengers) {
-		var ret []FlightPartnerPassenger
+		var ret []FlightPassenger
 		return ret
 	}
 	return o.Passengers
@@ -54,7 +54,7 @@ func (o *FlightPurchasedProductInputs) GetPassengers() []FlightPartnerPassenger 
 
 // GetPassengersOk returns a tuple with the Passengers field value if set, nil otherwise
 // and a boolean to check if the value has been set.
-func (o *FlightPurchasedProductInputs) GetPassengersOk() ([]FlightPartnerPassenger, bool) {
+func (o *FlightPurchasedProductInputs) GetPassengersOk() ([]FlightPassenger, bool) {
 	if o == nil || IsNil(o.Passengers) {
 		return nil, false
 	}
@@ -70,15 +70,15 @@ func (o *FlightPurchasedProductInputs) HasPassengers() bool {
 	return false
 }
 
-// SetPassengers gets a reference to the given []FlightPartnerPassenger and assigns it to the Passengers field.
-func (o *FlightPurchasedProductInputs) SetPassengers(v []FlightPartnerPassenger) {
+// SetPassengers gets a reference to the given []FlightPassenger and assigns it to the Passengers field.
+func (o *FlightPurchasedProductInputs) SetPassengers(v []FlightPassenger) {
 	o.Passengers = v
 }
 
 // GetSelectedServices returns the SelectedServices field value if set, zero value otherwise.
-func (o *FlightPurchasedProductInputs) GetSelectedServices() []FlightPartnerSelectedServiceInput {
+func (o *FlightPurchasedProductInputs) GetSelectedServices() []FlightSelectedServiceInput {
 	if o == nil || IsNil(o.SelectedServices) {
-		var ret []FlightPartnerSelectedServiceInput
+		var ret []FlightSelectedServiceInput
 		return ret
 	}
 	return o.SelectedServices
@@ -86,7 +86,7 @@ func (o *FlightPurchasedProductInputs) GetSelectedServices() []FlightPartnerSele
 
 // GetSelectedServicesOk returns a tuple with the SelectedServices field value if set, nil otherwise
 // and a boolean to check if the value has been set.
-func (o *FlightPurchasedProductInputs) GetSelectedServicesOk() ([]FlightPartnerSelectedServiceInput, bool) {
+func (o *FlightPurchasedProductInputs) GetSelectedServicesOk() ([]FlightSelectedServiceInput, bool) {
 	if o == nil || IsNil(o.SelectedServices) {
 		return nil, false
 	}
@@ -102,8 +102,8 @@ func (o *FlightPurchasedProductInputs) HasSelectedServices() bool {
 	return false
 }
 
-// SetSelectedServices gets a reference to the given []FlightPartnerSelectedServiceInput and assigns it to the SelectedServices field.
-func (o *FlightPurchasedProductInputs) SetSelectedServices(v []FlightPartnerSelectedServiceInput) {
+// SetSelectedServices gets a reference to the given []FlightSelectedServiceInput and assigns it to the SelectedServices field.
+func (o *FlightPurchasedProductInputs) SetSelectedServices(v []FlightSelectedServiceInput) {
 	o.SelectedServices = v
 }
 

@@ -42,7 +42,7 @@ func (r ApiGiftCardsCreateOrderRequest) GiftCardOrderRequest(giftCardOrderReques
 	return r
 }
 
-func (r ApiGiftCardsCreateOrderRequest) Execute() (*GiftCardsCreateOrder200Response, *http.Response, error) {
+func (r ApiGiftCardsCreateOrderRequest) Execute() (*GiftCardOrder, *http.Response, error) {
 	return r.ApiService.GiftCardsCreateOrderExecute(r)
 }
 
@@ -71,13 +71,13 @@ func (a *GiftCardsAPIService) GiftCardsCreateOrder(ctx context.Context) ApiGiftC
 }
 
 // Execute executes the request
-//  @return GiftCardsCreateOrder200Response
-func (a *GiftCardsAPIService) GiftCardsCreateOrderExecute(r ApiGiftCardsCreateOrderRequest) (*GiftCardsCreateOrder200Response, *http.Response, error) {
+//  @return GiftCardOrder
+func (a *GiftCardsAPIService) GiftCardsCreateOrderExecute(r ApiGiftCardsCreateOrderRequest) (*GiftCardOrder, *http.Response, error) {
 	var (
 		localVarHTTPMethod   = http.MethodPost
 		localVarPostBody     interface{}
 		formFiles            []formFile
-		localVarReturnValue  *GiftCardsCreateOrder200Response
+		localVarReturnValue  *GiftCardOrder
 	)
 
 	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "GiftCardsAPIService.GiftCardsCreateOrder")
@@ -151,7 +151,7 @@ func (a *GiftCardsAPIService) GiftCardsCreateOrderExecute(r ApiGiftCardsCreateOr
 			error: localVarHTTPResponse.Status,
 		}
 		if localVarHTTPResponse.StatusCode == 400 {
-			var v PartnerErrorResponse
+			var v ErrorResponse
 			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -162,7 +162,7 @@ func (a *GiftCardsAPIService) GiftCardsCreateOrderExecute(r ApiGiftCardsCreateOr
 			return localVarReturnValue, localVarHTTPResponse, newErr
 		}
 		if localVarHTTPResponse.StatusCode == 409 {
-			var v PartnerErrorResponse
+			var v ErrorResponse
 			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -173,7 +173,7 @@ func (a *GiftCardsAPIService) GiftCardsCreateOrderExecute(r ApiGiftCardsCreateOr
 			return localVarReturnValue, localVarHTTPResponse, newErr
 		}
 		if localVarHTTPResponse.StatusCode == 429 {
-			var v PartnerErrorResponse
+			var v ErrorResponse
 			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -184,7 +184,7 @@ func (a *GiftCardsAPIService) GiftCardsCreateOrderExecute(r ApiGiftCardsCreateOr
 			return localVarReturnValue, localVarHTTPResponse, newErr
 		}
 		if localVarHTTPResponse.StatusCode == 503 {
-			var v PartnerErrorResponse
+			var v ErrorResponse
 			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -221,7 +221,7 @@ func (r ApiGiftCardsGetCardRequest) Currency(currency string) ApiGiftCardsGetCar
 	return r
 }
 
-func (r ApiGiftCardsGetCardRequest) Execute() (*GiftCardItem, *http.Response, error) {
+func (r ApiGiftCardsGetCardRequest) Execute() (*GiftCard, *http.Response, error) {
 	return r.ApiService.GiftCardsGetCardExecute(r)
 }
 
@@ -245,13 +245,13 @@ func (a *GiftCardsAPIService) GiftCardsGetCard(ctx context.Context, id string) A
 }
 
 // Execute executes the request
-//  @return GiftCardItem
-func (a *GiftCardsAPIService) GiftCardsGetCardExecute(r ApiGiftCardsGetCardRequest) (*GiftCardItem, *http.Response, error) {
+//  @return GiftCard
+func (a *GiftCardsAPIService) GiftCardsGetCardExecute(r ApiGiftCardsGetCardRequest) (*GiftCard, *http.Response, error) {
 	var (
 		localVarHTTPMethod   = http.MethodGet
 		localVarPostBody     interface{}
 		formFiles            []formFile
-		localVarReturnValue  *GiftCardItem
+		localVarReturnValue  *GiftCard
 	)
 
 	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "GiftCardsAPIService.GiftCardsGetCard")
@@ -323,7 +323,7 @@ func (a *GiftCardsAPIService) GiftCardsGetCardExecute(r ApiGiftCardsGetCardReque
 			error: localVarHTTPResponse.Status,
 		}
 		if localVarHTTPResponse.StatusCode == 400 {
-			var v PartnerErrorResponse
+			var v ErrorResponse
 			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -334,7 +334,7 @@ func (a *GiftCardsAPIService) GiftCardsGetCardExecute(r ApiGiftCardsGetCardReque
 			return localVarReturnValue, localVarHTTPResponse, newErr
 		}
 		if localVarHTTPResponse.StatusCode == 429 {
-			var v PartnerErrorResponse
+			var v ErrorResponse
 			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -412,7 +412,7 @@ func (r ApiGiftCardsGetCatalogRequest) Limit(limit int32) ApiGiftCardsGetCatalog
 	return r
 }
 
-func (r ApiGiftCardsGetCatalogRequest) Execute() (*GiftCardCatalogResponse, *http.Response, error) {
+func (r ApiGiftCardsGetCatalogRequest) Execute() (*GiftCardCatalogPage, *http.Response, error) {
 	return r.ApiService.GiftCardsGetCatalogExecute(r)
 }
 
@@ -438,13 +438,13 @@ func (a *GiftCardsAPIService) GiftCardsGetCatalog(ctx context.Context) ApiGiftCa
 }
 
 // Execute executes the request
-//  @return GiftCardCatalogResponse
-func (a *GiftCardsAPIService) GiftCardsGetCatalogExecute(r ApiGiftCardsGetCatalogRequest) (*GiftCardCatalogResponse, *http.Response, error) {
+//  @return GiftCardCatalogPage
+func (a *GiftCardsAPIService) GiftCardsGetCatalogExecute(r ApiGiftCardsGetCatalogRequest) (*GiftCardCatalogPage, *http.Response, error) {
 	var (
 		localVarHTTPMethod   = http.MethodGet
 		localVarPostBody     interface{}
 		formFiles            []formFile
-		localVarReturnValue  *GiftCardCatalogResponse
+		localVarReturnValue  *GiftCardCatalogPage
 	)
 
 	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "GiftCardsAPIService.GiftCardsGetCatalog")
@@ -533,7 +533,7 @@ func (a *GiftCardsAPIService) GiftCardsGetCatalogExecute(r ApiGiftCardsGetCatalo
 			error: localVarHTTPResponse.Status,
 		}
 		if localVarHTTPResponse.StatusCode == 400 {
-			var v PartnerErrorResponse
+			var v ErrorResponse
 			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -544,7 +544,7 @@ func (a *GiftCardsAPIService) GiftCardsGetCatalogExecute(r ApiGiftCardsGetCatalo
 			return localVarReturnValue, localVarHTTPResponse, newErr
 		}
 		if localVarHTTPResponse.StatusCode == 429 {
-			var v PartnerErrorResponse
+			var v ErrorResponse
 			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -573,7 +573,7 @@ type ApiGiftCardsGetCategoriesRequest struct {
 	ApiService *GiftCardsAPIService
 }
 
-func (r ApiGiftCardsGetCategoriesRequest) Execute() (*GiftCardCategoryListResponse, *http.Response, error) {
+func (r ApiGiftCardsGetCategoriesRequest) Execute() (*GiftCardCategoryList, *http.Response, error) {
 	return r.ApiService.GiftCardsGetCategoriesExecute(r)
 }
 
@@ -596,13 +596,13 @@ func (a *GiftCardsAPIService) GiftCardsGetCategories(ctx context.Context) ApiGif
 }
 
 // Execute executes the request
-//  @return GiftCardCategoryListResponse
-func (a *GiftCardsAPIService) GiftCardsGetCategoriesExecute(r ApiGiftCardsGetCategoriesRequest) (*GiftCardCategoryListResponse, *http.Response, error) {
+//  @return GiftCardCategoryList
+func (a *GiftCardsAPIService) GiftCardsGetCategoriesExecute(r ApiGiftCardsGetCategoriesRequest) (*GiftCardCategoryList, *http.Response, error) {
 	var (
 		localVarHTTPMethod   = http.MethodGet
 		localVarPostBody     interface{}
 		formFiles            []formFile
-		localVarReturnValue  *GiftCardCategoryListResponse
+		localVarReturnValue  *GiftCardCategoryList
 	)
 
 	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "GiftCardsAPIService.GiftCardsGetCategories")
@@ -670,7 +670,7 @@ func (a *GiftCardsAPIService) GiftCardsGetCategoriesExecute(r ApiGiftCardsGetCat
 			error: localVarHTTPResponse.Status,
 		}
 		if localVarHTTPResponse.StatusCode == 400 {
-			var v PartnerErrorResponse
+			var v ErrorResponse
 			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -681,7 +681,7 @@ func (a *GiftCardsAPIService) GiftCardsGetCategoriesExecute(r ApiGiftCardsGetCat
 			return localVarReturnValue, localVarHTTPResponse, newErr
 		}
 		if localVarHTTPResponse.StatusCode == 429 {
-			var v PartnerErrorResponse
+			var v ErrorResponse
 			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -716,7 +716,7 @@ func (r ApiGiftCardsQuoteRequest) GiftCardOrderRequest(giftCardOrderRequest Gift
 	return r
 }
 
-func (r ApiGiftCardsQuoteRequest) Execute() (*GiftCardQuoteResponse, *http.Response, error) {
+func (r ApiGiftCardsQuoteRequest) Execute() (*GiftCardQuote, *http.Response, error) {
 	return r.ApiService.GiftCardsQuoteExecute(r)
 }
 
@@ -743,13 +743,13 @@ func (a *GiftCardsAPIService) GiftCardsQuote(ctx context.Context) ApiGiftCardsQu
 }
 
 // Execute executes the request
-//  @return GiftCardQuoteResponse
-func (a *GiftCardsAPIService) GiftCardsQuoteExecute(r ApiGiftCardsQuoteRequest) (*GiftCardQuoteResponse, *http.Response, error) {
+//  @return GiftCardQuote
+func (a *GiftCardsAPIService) GiftCardsQuoteExecute(r ApiGiftCardsQuoteRequest) (*GiftCardQuote, *http.Response, error) {
 	var (
 		localVarHTTPMethod   = http.MethodPost
 		localVarPostBody     interface{}
 		formFiles            []formFile
-		localVarReturnValue  *GiftCardQuoteResponse
+		localVarReturnValue  *GiftCardQuote
 	)
 
 	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "GiftCardsAPIService.GiftCardsQuote")
@@ -819,7 +819,7 @@ func (a *GiftCardsAPIService) GiftCardsQuoteExecute(r ApiGiftCardsQuoteRequest) 
 			error: localVarHTTPResponse.Status,
 		}
 		if localVarHTTPResponse.StatusCode == 400 {
-			var v PartnerErrorResponse
+			var v ErrorResponse
 			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -830,7 +830,7 @@ func (a *GiftCardsAPIService) GiftCardsQuoteExecute(r ApiGiftCardsQuoteRequest) 
 			return localVarReturnValue, localVarHTTPResponse, newErr
 		}
 		if localVarHTTPResponse.StatusCode == 409 {
-			var v PartnerErrorResponse
+			var v ErrorResponse
 			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -841,7 +841,7 @@ func (a *GiftCardsAPIService) GiftCardsQuoteExecute(r ApiGiftCardsQuoteRequest) 
 			return localVarReturnValue, localVarHTTPResponse, newErr
 		}
 		if localVarHTTPResponse.StatusCode == 429 {
-			var v PartnerErrorResponse
+			var v ErrorResponse
 			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -926,7 +926,7 @@ func (r ApiGiftCardsSearchRequest) Limit(limit int32) ApiGiftCardsSearchRequest 
 	return r
 }
 
-func (r ApiGiftCardsSearchRequest) Execute() (*GiftCardSearchResponse, *http.Response, error) {
+func (r ApiGiftCardsSearchRequest) Execute() (*GiftCardSearchResult, *http.Response, error) {
 	return r.ApiService.GiftCardsSearchExecute(r)
 }
 
@@ -952,13 +952,13 @@ func (a *GiftCardsAPIService) GiftCardsSearch(ctx context.Context) ApiGiftCardsS
 }
 
 // Execute executes the request
-//  @return GiftCardSearchResponse
-func (a *GiftCardsAPIService) GiftCardsSearchExecute(r ApiGiftCardsSearchRequest) (*GiftCardSearchResponse, *http.Response, error) {
+//  @return GiftCardSearchResult
+func (a *GiftCardsAPIService) GiftCardsSearchExecute(r ApiGiftCardsSearchRequest) (*GiftCardSearchResult, *http.Response, error) {
 	var (
 		localVarHTTPMethod   = http.MethodGet
 		localVarPostBody     interface{}
 		formFiles            []formFile
-		localVarReturnValue  *GiftCardSearchResponse
+		localVarReturnValue  *GiftCardSearchResult
 	)
 
 	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "GiftCardsAPIService.GiftCardsSearch")
@@ -1050,7 +1050,7 @@ func (a *GiftCardsAPIService) GiftCardsSearchExecute(r ApiGiftCardsSearchRequest
 			error: localVarHTTPResponse.Status,
 		}
 		if localVarHTTPResponse.StatusCode == 400 {
-			var v PartnerErrorResponse
+			var v ErrorResponse
 			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -1061,7 +1061,7 @@ func (a *GiftCardsAPIService) GiftCardsSearchExecute(r ApiGiftCardsSearchRequest
 			return localVarReturnValue, localVarHTTPResponse, newErr
 		}
 		if localVarHTTPResponse.StatusCode == 429 {
-			var v PartnerErrorResponse
+			var v ErrorResponse
 			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()

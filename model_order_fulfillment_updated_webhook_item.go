@@ -19,53 +19,53 @@ import (
 
 // OrderFulfillmentUpdatedWebhookItem - struct for OrderFulfillmentUpdatedWebhookItem
 type OrderFulfillmentUpdatedWebhookItem struct {
-	OrderFulfillmentUpdatedWebhookItemAirtime *OrderFulfillmentUpdatedWebhookItemAirtime
-	OrderFulfillmentUpdatedWebhookItemEsim *OrderFulfillmentUpdatedWebhookItemEsim
-	OrderFulfillmentUpdatedWebhookItemFlight *OrderFulfillmentUpdatedWebhookItemFlight
-	OrderFulfillmentUpdatedWebhookItemGiftCard *OrderFulfillmentUpdatedWebhookItemGiftCard
-	OrderFulfillmentUpdatedWebhookItemHotel *OrderFulfillmentUpdatedWebhookItemHotel
-	OrderFulfillmentUpdatedWebhookItemUtility *OrderFulfillmentUpdatedWebhookItemUtility
+	AirtimeOrderFulfillmentUpdatedWebhookItem *AirtimeOrderFulfillmentUpdatedWebhookItem
+	EsimOrderFulfillmentUpdatedWebhookItem *EsimOrderFulfillmentUpdatedWebhookItem
+	FlightOrderFulfillmentUpdatedWebhookItem *FlightOrderFulfillmentUpdatedWebhookItem
+	GiftCardOrderFulfillmentUpdatedWebhookItem *GiftCardOrderFulfillmentUpdatedWebhookItem
+	HotelOrderFulfillmentUpdatedWebhookItem *HotelOrderFulfillmentUpdatedWebhookItem
+	UtilityOrderFulfillmentUpdatedWebhookItem *UtilityOrderFulfillmentUpdatedWebhookItem
 }
 
-// OrderFulfillmentUpdatedWebhookItemAirtimeAsOrderFulfillmentUpdatedWebhookItem is a convenience function that returns OrderFulfillmentUpdatedWebhookItemAirtime wrapped in OrderFulfillmentUpdatedWebhookItem
-func OrderFulfillmentUpdatedWebhookItemAirtimeAsOrderFulfillmentUpdatedWebhookItem(v *OrderFulfillmentUpdatedWebhookItemAirtime) OrderFulfillmentUpdatedWebhookItem {
+// AirtimeOrderFulfillmentUpdatedWebhookItemAsOrderFulfillmentUpdatedWebhookItem is a convenience function that returns AirtimeOrderFulfillmentUpdatedWebhookItem wrapped in OrderFulfillmentUpdatedWebhookItem
+func AirtimeOrderFulfillmentUpdatedWebhookItemAsOrderFulfillmentUpdatedWebhookItem(v *AirtimeOrderFulfillmentUpdatedWebhookItem) OrderFulfillmentUpdatedWebhookItem {
 	return OrderFulfillmentUpdatedWebhookItem{
-		OrderFulfillmentUpdatedWebhookItemAirtime: v,
+		AirtimeOrderFulfillmentUpdatedWebhookItem: v,
 	}
 }
 
-// OrderFulfillmentUpdatedWebhookItemEsimAsOrderFulfillmentUpdatedWebhookItem is a convenience function that returns OrderFulfillmentUpdatedWebhookItemEsim wrapped in OrderFulfillmentUpdatedWebhookItem
-func OrderFulfillmentUpdatedWebhookItemEsimAsOrderFulfillmentUpdatedWebhookItem(v *OrderFulfillmentUpdatedWebhookItemEsim) OrderFulfillmentUpdatedWebhookItem {
+// EsimOrderFulfillmentUpdatedWebhookItemAsOrderFulfillmentUpdatedWebhookItem is a convenience function that returns EsimOrderFulfillmentUpdatedWebhookItem wrapped in OrderFulfillmentUpdatedWebhookItem
+func EsimOrderFulfillmentUpdatedWebhookItemAsOrderFulfillmentUpdatedWebhookItem(v *EsimOrderFulfillmentUpdatedWebhookItem) OrderFulfillmentUpdatedWebhookItem {
 	return OrderFulfillmentUpdatedWebhookItem{
-		OrderFulfillmentUpdatedWebhookItemEsim: v,
+		EsimOrderFulfillmentUpdatedWebhookItem: v,
 	}
 }
 
-// OrderFulfillmentUpdatedWebhookItemFlightAsOrderFulfillmentUpdatedWebhookItem is a convenience function that returns OrderFulfillmentUpdatedWebhookItemFlight wrapped in OrderFulfillmentUpdatedWebhookItem
-func OrderFulfillmentUpdatedWebhookItemFlightAsOrderFulfillmentUpdatedWebhookItem(v *OrderFulfillmentUpdatedWebhookItemFlight) OrderFulfillmentUpdatedWebhookItem {
+// FlightOrderFulfillmentUpdatedWebhookItemAsOrderFulfillmentUpdatedWebhookItem is a convenience function that returns FlightOrderFulfillmentUpdatedWebhookItem wrapped in OrderFulfillmentUpdatedWebhookItem
+func FlightOrderFulfillmentUpdatedWebhookItemAsOrderFulfillmentUpdatedWebhookItem(v *FlightOrderFulfillmentUpdatedWebhookItem) OrderFulfillmentUpdatedWebhookItem {
 	return OrderFulfillmentUpdatedWebhookItem{
-		OrderFulfillmentUpdatedWebhookItemFlight: v,
+		FlightOrderFulfillmentUpdatedWebhookItem: v,
 	}
 }
 
-// OrderFulfillmentUpdatedWebhookItemGiftCardAsOrderFulfillmentUpdatedWebhookItem is a convenience function that returns OrderFulfillmentUpdatedWebhookItemGiftCard wrapped in OrderFulfillmentUpdatedWebhookItem
-func OrderFulfillmentUpdatedWebhookItemGiftCardAsOrderFulfillmentUpdatedWebhookItem(v *OrderFulfillmentUpdatedWebhookItemGiftCard) OrderFulfillmentUpdatedWebhookItem {
+// GiftCardOrderFulfillmentUpdatedWebhookItemAsOrderFulfillmentUpdatedWebhookItem is a convenience function that returns GiftCardOrderFulfillmentUpdatedWebhookItem wrapped in OrderFulfillmentUpdatedWebhookItem
+func GiftCardOrderFulfillmentUpdatedWebhookItemAsOrderFulfillmentUpdatedWebhookItem(v *GiftCardOrderFulfillmentUpdatedWebhookItem) OrderFulfillmentUpdatedWebhookItem {
 	return OrderFulfillmentUpdatedWebhookItem{
-		OrderFulfillmentUpdatedWebhookItemGiftCard: v,
+		GiftCardOrderFulfillmentUpdatedWebhookItem: v,
 	}
 }
 
-// OrderFulfillmentUpdatedWebhookItemHotelAsOrderFulfillmentUpdatedWebhookItem is a convenience function that returns OrderFulfillmentUpdatedWebhookItemHotel wrapped in OrderFulfillmentUpdatedWebhookItem
-func OrderFulfillmentUpdatedWebhookItemHotelAsOrderFulfillmentUpdatedWebhookItem(v *OrderFulfillmentUpdatedWebhookItemHotel) OrderFulfillmentUpdatedWebhookItem {
+// HotelOrderFulfillmentUpdatedWebhookItemAsOrderFulfillmentUpdatedWebhookItem is a convenience function that returns HotelOrderFulfillmentUpdatedWebhookItem wrapped in OrderFulfillmentUpdatedWebhookItem
+func HotelOrderFulfillmentUpdatedWebhookItemAsOrderFulfillmentUpdatedWebhookItem(v *HotelOrderFulfillmentUpdatedWebhookItem) OrderFulfillmentUpdatedWebhookItem {
 	return OrderFulfillmentUpdatedWebhookItem{
-		OrderFulfillmentUpdatedWebhookItemHotel: v,
+		HotelOrderFulfillmentUpdatedWebhookItem: v,
 	}
 }
 
-// OrderFulfillmentUpdatedWebhookItemUtilityAsOrderFulfillmentUpdatedWebhookItem is a convenience function that returns OrderFulfillmentUpdatedWebhookItemUtility wrapped in OrderFulfillmentUpdatedWebhookItem
-func OrderFulfillmentUpdatedWebhookItemUtilityAsOrderFulfillmentUpdatedWebhookItem(v *OrderFulfillmentUpdatedWebhookItemUtility) OrderFulfillmentUpdatedWebhookItem {
+// UtilityOrderFulfillmentUpdatedWebhookItemAsOrderFulfillmentUpdatedWebhookItem is a convenience function that returns UtilityOrderFulfillmentUpdatedWebhookItem wrapped in OrderFulfillmentUpdatedWebhookItem
+func UtilityOrderFulfillmentUpdatedWebhookItemAsOrderFulfillmentUpdatedWebhookItem(v *UtilityOrderFulfillmentUpdatedWebhookItem) OrderFulfillmentUpdatedWebhookItem {
 	return OrderFulfillmentUpdatedWebhookItem{
-		OrderFulfillmentUpdatedWebhookItemUtility: v,
+		UtilityOrderFulfillmentUpdatedWebhookItem: v,
 	}
 }
 
@@ -73,12 +73,12 @@ func OrderFulfillmentUpdatedWebhookItemUtilityAsOrderFulfillmentUpdatedWebhookIt
 // Unmarshal JSON data into the variant that the property "productType" names. Patched in by scripts/sdk.cjs:
 // the generated version tries every variant and fails when more than one fits.
 func (dst *OrderFulfillmentUpdatedWebhookItem) UnmarshalJSON(data []byte) error {
-	dst.OrderFulfillmentUpdatedWebhookItemEsim = nil
-	dst.OrderFulfillmentUpdatedWebhookItemHotel = nil
-	dst.OrderFulfillmentUpdatedWebhookItemFlight = nil
-	dst.OrderFulfillmentUpdatedWebhookItemGiftCard = nil
-	dst.OrderFulfillmentUpdatedWebhookItemAirtime = nil
-	dst.OrderFulfillmentUpdatedWebhookItemUtility = nil
+	dst.EsimOrderFulfillmentUpdatedWebhookItem = nil
+	dst.HotelOrderFulfillmentUpdatedWebhookItem = nil
+	dst.FlightOrderFulfillmentUpdatedWebhookItem = nil
+	dst.GiftCardOrderFulfillmentUpdatedWebhookItem = nil
+	dst.AirtimeOrderFulfillmentUpdatedWebhookItem = nil
+	dst.UtilityOrderFulfillmentUpdatedWebhookItem = nil
 	if string(data) == "null" {
 		return nil
 	}
@@ -90,64 +90,64 @@ func (dst *OrderFulfillmentUpdatedWebhookItem) UnmarshalJSON(data []byte) error 
 	}
 	switch discriminator.Value {
 	case "esim":
-		var v OrderFulfillmentUpdatedWebhookItemEsim
+		var v EsimOrderFulfillmentUpdatedWebhookItem
 		if err := json.Unmarshal(data, &v); err != nil {
-			return fmt.Errorf("data failed to match OrderFulfillmentUpdatedWebhookItemEsim in oneOf(OrderFulfillmentUpdatedWebhookItem): %w", err)
+			return fmt.Errorf("data failed to match EsimOrderFulfillmentUpdatedWebhookItem in oneOf(OrderFulfillmentUpdatedWebhookItem): %w", err)
 		}
 		if err := validator.Validate(&v); err != nil {
-			return fmt.Errorf("data failed validation as OrderFulfillmentUpdatedWebhookItemEsim in oneOf(OrderFulfillmentUpdatedWebhookItem): %w", err)
+			return fmt.Errorf("data failed validation as EsimOrderFulfillmentUpdatedWebhookItem in oneOf(OrderFulfillmentUpdatedWebhookItem): %w", err)
 		}
-		dst.OrderFulfillmentUpdatedWebhookItemEsim = &v
+		dst.EsimOrderFulfillmentUpdatedWebhookItem = &v
 		return nil
 	case "hotel":
-		var v OrderFulfillmentUpdatedWebhookItemHotel
+		var v HotelOrderFulfillmentUpdatedWebhookItem
 		if err := json.Unmarshal(data, &v); err != nil {
-			return fmt.Errorf("data failed to match OrderFulfillmentUpdatedWebhookItemHotel in oneOf(OrderFulfillmentUpdatedWebhookItem): %w", err)
+			return fmt.Errorf("data failed to match HotelOrderFulfillmentUpdatedWebhookItem in oneOf(OrderFulfillmentUpdatedWebhookItem): %w", err)
 		}
 		if err := validator.Validate(&v); err != nil {
-			return fmt.Errorf("data failed validation as OrderFulfillmentUpdatedWebhookItemHotel in oneOf(OrderFulfillmentUpdatedWebhookItem): %w", err)
+			return fmt.Errorf("data failed validation as HotelOrderFulfillmentUpdatedWebhookItem in oneOf(OrderFulfillmentUpdatedWebhookItem): %w", err)
 		}
-		dst.OrderFulfillmentUpdatedWebhookItemHotel = &v
+		dst.HotelOrderFulfillmentUpdatedWebhookItem = &v
 		return nil
 	case "flight":
-		var v OrderFulfillmentUpdatedWebhookItemFlight
+		var v FlightOrderFulfillmentUpdatedWebhookItem
 		if err := json.Unmarshal(data, &v); err != nil {
-			return fmt.Errorf("data failed to match OrderFulfillmentUpdatedWebhookItemFlight in oneOf(OrderFulfillmentUpdatedWebhookItem): %w", err)
+			return fmt.Errorf("data failed to match FlightOrderFulfillmentUpdatedWebhookItem in oneOf(OrderFulfillmentUpdatedWebhookItem): %w", err)
 		}
 		if err := validator.Validate(&v); err != nil {
-			return fmt.Errorf("data failed validation as OrderFulfillmentUpdatedWebhookItemFlight in oneOf(OrderFulfillmentUpdatedWebhookItem): %w", err)
+			return fmt.Errorf("data failed validation as FlightOrderFulfillmentUpdatedWebhookItem in oneOf(OrderFulfillmentUpdatedWebhookItem): %w", err)
 		}
-		dst.OrderFulfillmentUpdatedWebhookItemFlight = &v
+		dst.FlightOrderFulfillmentUpdatedWebhookItem = &v
 		return nil
 	case "giftCard":
-		var v OrderFulfillmentUpdatedWebhookItemGiftCard
+		var v GiftCardOrderFulfillmentUpdatedWebhookItem
 		if err := json.Unmarshal(data, &v); err != nil {
-			return fmt.Errorf("data failed to match OrderFulfillmentUpdatedWebhookItemGiftCard in oneOf(OrderFulfillmentUpdatedWebhookItem): %w", err)
+			return fmt.Errorf("data failed to match GiftCardOrderFulfillmentUpdatedWebhookItem in oneOf(OrderFulfillmentUpdatedWebhookItem): %w", err)
 		}
 		if err := validator.Validate(&v); err != nil {
-			return fmt.Errorf("data failed validation as OrderFulfillmentUpdatedWebhookItemGiftCard in oneOf(OrderFulfillmentUpdatedWebhookItem): %w", err)
+			return fmt.Errorf("data failed validation as GiftCardOrderFulfillmentUpdatedWebhookItem in oneOf(OrderFulfillmentUpdatedWebhookItem): %w", err)
 		}
-		dst.OrderFulfillmentUpdatedWebhookItemGiftCard = &v
+		dst.GiftCardOrderFulfillmentUpdatedWebhookItem = &v
 		return nil
 	case "airtime":
-		var v OrderFulfillmentUpdatedWebhookItemAirtime
+		var v AirtimeOrderFulfillmentUpdatedWebhookItem
 		if err := json.Unmarshal(data, &v); err != nil {
-			return fmt.Errorf("data failed to match OrderFulfillmentUpdatedWebhookItemAirtime in oneOf(OrderFulfillmentUpdatedWebhookItem): %w", err)
+			return fmt.Errorf("data failed to match AirtimeOrderFulfillmentUpdatedWebhookItem in oneOf(OrderFulfillmentUpdatedWebhookItem): %w", err)
 		}
 		if err := validator.Validate(&v); err != nil {
-			return fmt.Errorf("data failed validation as OrderFulfillmentUpdatedWebhookItemAirtime in oneOf(OrderFulfillmentUpdatedWebhookItem): %w", err)
+			return fmt.Errorf("data failed validation as AirtimeOrderFulfillmentUpdatedWebhookItem in oneOf(OrderFulfillmentUpdatedWebhookItem): %w", err)
 		}
-		dst.OrderFulfillmentUpdatedWebhookItemAirtime = &v
+		dst.AirtimeOrderFulfillmentUpdatedWebhookItem = &v
 		return nil
 	case "utility":
-		var v OrderFulfillmentUpdatedWebhookItemUtility
+		var v UtilityOrderFulfillmentUpdatedWebhookItem
 		if err := json.Unmarshal(data, &v); err != nil {
-			return fmt.Errorf("data failed to match OrderFulfillmentUpdatedWebhookItemUtility in oneOf(OrderFulfillmentUpdatedWebhookItem): %w", err)
+			return fmt.Errorf("data failed to match UtilityOrderFulfillmentUpdatedWebhookItem in oneOf(OrderFulfillmentUpdatedWebhookItem): %w", err)
 		}
 		if err := validator.Validate(&v); err != nil {
-			return fmt.Errorf("data failed validation as OrderFulfillmentUpdatedWebhookItemUtility in oneOf(OrderFulfillmentUpdatedWebhookItem): %w", err)
+			return fmt.Errorf("data failed validation as UtilityOrderFulfillmentUpdatedWebhookItem in oneOf(OrderFulfillmentUpdatedWebhookItem): %w", err)
 		}
-		dst.OrderFulfillmentUpdatedWebhookItemUtility = &v
+		dst.UtilityOrderFulfillmentUpdatedWebhookItem = &v
 		return nil
 	}
 	return fmt.Errorf("unknown productType %q in oneOf(OrderFulfillmentUpdatedWebhookItem)", discriminator.Value)
@@ -155,28 +155,28 @@ func (dst *OrderFulfillmentUpdatedWebhookItem) UnmarshalJSON(data []byte) error 
 
 // Marshal data from the first non-nil pointers in the struct to JSON
 func (src OrderFulfillmentUpdatedWebhookItem) MarshalJSON() ([]byte, error) {
-	if src.OrderFulfillmentUpdatedWebhookItemAirtime != nil {
-		return json.Marshal(&src.OrderFulfillmentUpdatedWebhookItemAirtime)
+	if src.AirtimeOrderFulfillmentUpdatedWebhookItem != nil {
+		return json.Marshal(&src.AirtimeOrderFulfillmentUpdatedWebhookItem)
 	}
 
-	if src.OrderFulfillmentUpdatedWebhookItemEsim != nil {
-		return json.Marshal(&src.OrderFulfillmentUpdatedWebhookItemEsim)
+	if src.EsimOrderFulfillmentUpdatedWebhookItem != nil {
+		return json.Marshal(&src.EsimOrderFulfillmentUpdatedWebhookItem)
 	}
 
-	if src.OrderFulfillmentUpdatedWebhookItemFlight != nil {
-		return json.Marshal(&src.OrderFulfillmentUpdatedWebhookItemFlight)
+	if src.FlightOrderFulfillmentUpdatedWebhookItem != nil {
+		return json.Marshal(&src.FlightOrderFulfillmentUpdatedWebhookItem)
 	}
 
-	if src.OrderFulfillmentUpdatedWebhookItemGiftCard != nil {
-		return json.Marshal(&src.OrderFulfillmentUpdatedWebhookItemGiftCard)
+	if src.GiftCardOrderFulfillmentUpdatedWebhookItem != nil {
+		return json.Marshal(&src.GiftCardOrderFulfillmentUpdatedWebhookItem)
 	}
 
-	if src.OrderFulfillmentUpdatedWebhookItemHotel != nil {
-		return json.Marshal(&src.OrderFulfillmentUpdatedWebhookItemHotel)
+	if src.HotelOrderFulfillmentUpdatedWebhookItem != nil {
+		return json.Marshal(&src.HotelOrderFulfillmentUpdatedWebhookItem)
 	}
 
-	if src.OrderFulfillmentUpdatedWebhookItemUtility != nil {
-		return json.Marshal(&src.OrderFulfillmentUpdatedWebhookItemUtility)
+	if src.UtilityOrderFulfillmentUpdatedWebhookItem != nil {
+		return json.Marshal(&src.UtilityOrderFulfillmentUpdatedWebhookItem)
 	}
 
 	return nil, nil // no data in oneOf schemas
@@ -187,28 +187,28 @@ func (obj *OrderFulfillmentUpdatedWebhookItem) GetActualInstance() (interface{})
 	if obj == nil {
 		return nil
 	}
-	if obj.OrderFulfillmentUpdatedWebhookItemAirtime != nil {
-		return obj.OrderFulfillmentUpdatedWebhookItemAirtime
+	if obj.AirtimeOrderFulfillmentUpdatedWebhookItem != nil {
+		return obj.AirtimeOrderFulfillmentUpdatedWebhookItem
 	}
 
-	if obj.OrderFulfillmentUpdatedWebhookItemEsim != nil {
-		return obj.OrderFulfillmentUpdatedWebhookItemEsim
+	if obj.EsimOrderFulfillmentUpdatedWebhookItem != nil {
+		return obj.EsimOrderFulfillmentUpdatedWebhookItem
 	}
 
-	if obj.OrderFulfillmentUpdatedWebhookItemFlight != nil {
-		return obj.OrderFulfillmentUpdatedWebhookItemFlight
+	if obj.FlightOrderFulfillmentUpdatedWebhookItem != nil {
+		return obj.FlightOrderFulfillmentUpdatedWebhookItem
 	}
 
-	if obj.OrderFulfillmentUpdatedWebhookItemGiftCard != nil {
-		return obj.OrderFulfillmentUpdatedWebhookItemGiftCard
+	if obj.GiftCardOrderFulfillmentUpdatedWebhookItem != nil {
+		return obj.GiftCardOrderFulfillmentUpdatedWebhookItem
 	}
 
-	if obj.OrderFulfillmentUpdatedWebhookItemHotel != nil {
-		return obj.OrderFulfillmentUpdatedWebhookItemHotel
+	if obj.HotelOrderFulfillmentUpdatedWebhookItem != nil {
+		return obj.HotelOrderFulfillmentUpdatedWebhookItem
 	}
 
-	if obj.OrderFulfillmentUpdatedWebhookItemUtility != nil {
-		return obj.OrderFulfillmentUpdatedWebhookItemUtility
+	if obj.UtilityOrderFulfillmentUpdatedWebhookItem != nil {
+		return obj.UtilityOrderFulfillmentUpdatedWebhookItem
 	}
 
 	// all schemas are nil
@@ -217,28 +217,28 @@ func (obj *OrderFulfillmentUpdatedWebhookItem) GetActualInstance() (interface{})
 
 // Get the actual instance value
 func (obj OrderFulfillmentUpdatedWebhookItem) GetActualInstanceValue() (interface{}) {
-	if obj.OrderFulfillmentUpdatedWebhookItemAirtime != nil {
-		return *obj.OrderFulfillmentUpdatedWebhookItemAirtime
+	if obj.AirtimeOrderFulfillmentUpdatedWebhookItem != nil {
+		return *obj.AirtimeOrderFulfillmentUpdatedWebhookItem
 	}
 
-	if obj.OrderFulfillmentUpdatedWebhookItemEsim != nil {
-		return *obj.OrderFulfillmentUpdatedWebhookItemEsim
+	if obj.EsimOrderFulfillmentUpdatedWebhookItem != nil {
+		return *obj.EsimOrderFulfillmentUpdatedWebhookItem
 	}
 
-	if obj.OrderFulfillmentUpdatedWebhookItemFlight != nil {
-		return *obj.OrderFulfillmentUpdatedWebhookItemFlight
+	if obj.FlightOrderFulfillmentUpdatedWebhookItem != nil {
+		return *obj.FlightOrderFulfillmentUpdatedWebhookItem
 	}
 
-	if obj.OrderFulfillmentUpdatedWebhookItemGiftCard != nil {
-		return *obj.OrderFulfillmentUpdatedWebhookItemGiftCard
+	if obj.GiftCardOrderFulfillmentUpdatedWebhookItem != nil {
+		return *obj.GiftCardOrderFulfillmentUpdatedWebhookItem
 	}
 
-	if obj.OrderFulfillmentUpdatedWebhookItemHotel != nil {
-		return *obj.OrderFulfillmentUpdatedWebhookItemHotel
+	if obj.HotelOrderFulfillmentUpdatedWebhookItem != nil {
+		return *obj.HotelOrderFulfillmentUpdatedWebhookItem
 	}
 
-	if obj.OrderFulfillmentUpdatedWebhookItemUtility != nil {
-		return *obj.OrderFulfillmentUpdatedWebhookItemUtility
+	if obj.UtilityOrderFulfillmentUpdatedWebhookItem != nil {
+		return *obj.UtilityOrderFulfillmentUpdatedWebhookItem
 	}
 
 	// all schemas are nil

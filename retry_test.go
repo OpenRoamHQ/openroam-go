@@ -411,7 +411,7 @@ func TestRetryThroughTheGeneratedClient(t *testing.T) {
 	client := NewAPIClient(cfg)
 	ctx := context.WithValue(context.Background(), ContextAPIKeys, map[string]APIKey{"PartnerApiKey": {Key: "key"}})
 
-	item := NewAirtimeOrderRequestItem("offer_1", *NewAirtimeCartInputs("+15550000000"))
+	item := NewAirtimeOrderRequestItem("offer_1", *NewAirtimeInputs("+15550000000"))
 	_, httpResp, _ := client.AirtimeAPI.AirtimeCreateOrder(ctx).
 		IdempotencyKey(NewIdempotencyKey()).
 		AirtimeOrderRequest(*NewAirtimeOrderRequest([]AirtimeOrderRequestItem{*item})).

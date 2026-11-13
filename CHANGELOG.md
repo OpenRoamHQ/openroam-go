@@ -3,6 +3,50 @@
 All OpenRoam SDKs share one version and one changelog. Entries are written by the release process from the
 changes in the Partner API description.
 
+## 0.1.0-rc.5
+
+Fifth release candidate. The API, its routes, its JSON and the client methods are the same as 0.1.0-rc.4; the type names
+change (below). Use the exact version (a release candidate is not picked up by a plain install); report problems to
+support@openroam.com.
+
+**Breaking: type names.** The request and response types now have names that say what they are, in every SDK. Nothing on
+the wire changes: the API, its routes and its JSON are the same, and so are the client methods. Code that names a type (an
+import, a type annotation, `new SearchHotelQuery(...)`) needs the new name.
+
+- Backend words are gone from the names: `B2B`, `Partner`, `Command`, `Query`, `Api`, `Model`, `Cart`, and verbs such as `Get`.
+- One type per product and concept, product first: `HotelOffer`, `HotelQuoteItem`, `HotelOrderItem`, `HotelFulfillment`.
+- Request bodies are `<Subject><Action>Request`; a response is named for what it is, without `Response`.
+- Types that had two names for the same shape are now one: `Order`, `Currency`, `EsimAddon`, `FlightAircraft`,
+  `FlightSelectedServiceInput`, `ManualAmendmentResult`.
+
+| Before | Now |
+|---|---|
+| `B2BOrderResponse`, `B2BOrderAcceptedResponse` | `Order` |
+| `AirtimeCreateOrder200Response` (and the five other products) | `AirtimeOrder` (`EsimOrder`, `FlightOrder`...) |
+| `B2BOrderListResponse`, `B2BOrderSummaryResponse` | `OrderList`, `OrderSummary` |
+| `PartnerOrderItem`, `PartnerOrderItemHotel` | `OrderItem`, `HotelOrderItem` |
+| `ItemHotelFulfillment` | `HotelFulfillment` |
+| `CreateB2BOrderCommand`, `CreateB2BOrderItemCommand` | `OrderRequest`, `OrderRequestItem` |
+| `CreateB2BOrderItemCommandHotel` | `HotelMixedOrderRequestItem` |
+| `B2BMixedQuoteResponse`, `B2BMixedQuoteItem`, `B2BMixedQuoteItemHotel` | `OrderQuote`, `OrderQuoteItem`, `HotelMixedQuoteItem` |
+| `HotelPartnerQuoteResponse`, `HotelPartnerQuoteItem`; `AirtimeQuoteResponse` | `HotelQuote`, `HotelQuoteItem`; `AirtimeQuote` |
+| `AirtimeSearchResponse`, `HotelPropertySearchResponse`, `FlightSearchApiResponse` | `AirtimeSearchResult`, `HotelPropertySearchResult`, `FlightSearchResult` |
+| `SearchHotelQuery`, `SearchB2BFlightsQuery` | `HotelSearchRequest`, `FlightSearchRequest` |
+| `HotelCartInputs` (and the other products) | `HotelInputs` |
+| `FlightFareOfferApi` and every other `…Api` flight type | `FlightOffer`, and the name without `Api` |
+| `FlightPartnerSlice`, `FlightPartnerSegment` (as booked) | `FlightBookedSlice`, `FlightBookedSegment` |
+| `AirtimeCatalogResponse` (and the other products) | `AirtimeCatalogPage` |
+| `GiftCardItem`, `AirtimeOperatorItem` | `GiftCard`, `AirtimeOperator` |
+| `B2BOrderItemAmendment`, `QuoteB2BAmendmentQuery`, `ConfirmB2BAmendmentRequest` | `OrderItemAmendment`, `AmendmentQuoteRequest`, `AmendmentConfirmRequest` |
+| `CreateB2BManualAmendmentCommand` | `ManualAmendmentCreateRequest` |
+| `RefundOrderItemRequest`, `UpdateB2BOrderItemRequest` | `OrderItemCancelRequest`, `OrderItemUpdateRequest` |
+| `B2BEsimProfile`, `B2BEsimUsageResponse`, `B2BEsimUsageHistoryResponse` | `EsimProfile`, `EsimCurrentUsage`, `EsimUsageReadingList` |
+| `GetWalletItem`, `GetWalletWithStatistics` | `WalletSummary`, `Wallet` |
+| `CreateB2BWalletCommand`, `TransferB2BWalletsCommand` | `WalletCreateRequest`, `WalletTransferRequest` |
+| `GetB2BAllCurrenciesCommandResponse` | `CurrencyList` |
+| `PartnerErrorResponse`, `PartnerErrorDetail` | `ErrorResponse`, `ErrorDetail` |
+| `B2BOrderItemRefundedWebhook`, `B2BPartnerBalanceLowWebhook` | `OrderItemRefundedWebhook`, `BalanceLowWebhook` |
+
 ## 0.1.0-rc.4
 
 Fourth release candidate. Every SDK now has a single client for all products, and the API changes in a few places that break calls

@@ -42,7 +42,7 @@ func (r ApiHotelsCreateOrderRequest) HotelOrderRequest(hotelOrderRequest HotelOr
 	return r
 }
 
-func (r ApiHotelsCreateOrderRequest) Execute() (*HotelsCreateOrder200Response, *http.Response, error) {
+func (r ApiHotelsCreateOrderRequest) Execute() (*HotelOrder, *http.Response, error) {
 	return r.ApiService.HotelsCreateOrderExecute(r)
 }
 
@@ -87,13 +87,13 @@ func (a *HotelsAPIService) HotelsCreateOrder(ctx context.Context) ApiHotelsCreat
 }
 
 // Execute executes the request
-//  @return HotelsCreateOrder200Response
-func (a *HotelsAPIService) HotelsCreateOrderExecute(r ApiHotelsCreateOrderRequest) (*HotelsCreateOrder200Response, *http.Response, error) {
+//  @return HotelOrder
+func (a *HotelsAPIService) HotelsCreateOrderExecute(r ApiHotelsCreateOrderRequest) (*HotelOrder, *http.Response, error) {
 	var (
 		localVarHTTPMethod   = http.MethodPost
 		localVarPostBody     interface{}
 		formFiles            []formFile
-		localVarReturnValue  *HotelsCreateOrder200Response
+		localVarReturnValue  *HotelOrder
 	)
 
 	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "HotelsAPIService.HotelsCreateOrder")
@@ -167,7 +167,7 @@ func (a *HotelsAPIService) HotelsCreateOrderExecute(r ApiHotelsCreateOrderReques
 			error: localVarHTTPResponse.Status,
 		}
 		if localVarHTTPResponse.StatusCode == 400 {
-			var v PartnerErrorResponse
+			var v ErrorResponse
 			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -178,7 +178,7 @@ func (a *HotelsAPIService) HotelsCreateOrderExecute(r ApiHotelsCreateOrderReques
 			return localVarReturnValue, localVarHTTPResponse, newErr
 		}
 		if localVarHTTPResponse.StatusCode == 409 {
-			var v PartnerErrorResponse
+			var v ErrorResponse
 			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -189,7 +189,7 @@ func (a *HotelsAPIService) HotelsCreateOrderExecute(r ApiHotelsCreateOrderReques
 			return localVarReturnValue, localVarHTTPResponse, newErr
 		}
 		if localVarHTTPResponse.StatusCode == 429 {
-			var v PartnerErrorResponse
+			var v ErrorResponse
 			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -200,7 +200,7 @@ func (a *HotelsAPIService) HotelsCreateOrderExecute(r ApiHotelsCreateOrderReques
 			return localVarReturnValue, localVarHTTPResponse, newErr
 		}
 		if localVarHTTPResponse.StatusCode == 503 {
-			var v PartnerErrorResponse
+			var v ErrorResponse
 			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -229,7 +229,7 @@ type ApiHotelsGetAmenityCatalogRequest struct {
 	ApiService *HotelsAPIService
 }
 
-func (r ApiHotelsGetAmenityCatalogRequest) Execute() (*GetAmenityCatalogQueryResponse, *http.Response, error) {
+func (r ApiHotelsGetAmenityCatalogRequest) Execute() (*HotelAmenityCatalog, *http.Response, error) {
 	return r.ApiService.HotelsGetAmenityCatalogExecute(r)
 }
 
@@ -254,13 +254,13 @@ func (a *HotelsAPIService) HotelsGetAmenityCatalog(ctx context.Context) ApiHotel
 }
 
 // Execute executes the request
-//  @return GetAmenityCatalogQueryResponse
-func (a *HotelsAPIService) HotelsGetAmenityCatalogExecute(r ApiHotelsGetAmenityCatalogRequest) (*GetAmenityCatalogQueryResponse, *http.Response, error) {
+//  @return HotelAmenityCatalog
+func (a *HotelsAPIService) HotelsGetAmenityCatalogExecute(r ApiHotelsGetAmenityCatalogRequest) (*HotelAmenityCatalog, *http.Response, error) {
 	var (
 		localVarHTTPMethod   = http.MethodGet
 		localVarPostBody     interface{}
 		formFiles            []formFile
-		localVarReturnValue  *GetAmenityCatalogQueryResponse
+		localVarReturnValue  *HotelAmenityCatalog
 	)
 
 	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "HotelsAPIService.HotelsGetAmenityCatalog")
@@ -328,7 +328,7 @@ func (a *HotelsAPIService) HotelsGetAmenityCatalogExecute(r ApiHotelsGetAmenityC
 			error: localVarHTTPResponse.Status,
 		}
 		if localVarHTTPResponse.StatusCode == 400 {
-			var v PartnerErrorResponse
+			var v ErrorResponse
 			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -339,7 +339,7 @@ func (a *HotelsAPIService) HotelsGetAmenityCatalogExecute(r ApiHotelsGetAmenityC
 			return localVarReturnValue, localVarHTTPResponse, newErr
 		}
 		if localVarHTTPResponse.StatusCode == 429 {
-			var v PartnerErrorResponse
+			var v ErrorResponse
 			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -368,7 +368,7 @@ type ApiHotelsGetCatalogFilesRequest struct {
 	ApiService *HotelsAPIService
 }
 
-func (r ApiHotelsGetCatalogFilesRequest) Execute() (*GetHotelCatalogFilesQueryResponse, *http.Response, error) {
+func (r ApiHotelsGetCatalogFilesRequest) Execute() (*HotelCatalogExport, *http.Response, error) {
 	return r.ApiService.HotelsGetCatalogFilesExecute(r)
 }
 
@@ -396,13 +396,13 @@ func (a *HotelsAPIService) HotelsGetCatalogFiles(ctx context.Context) ApiHotelsG
 }
 
 // Execute executes the request
-//  @return GetHotelCatalogFilesQueryResponse
-func (a *HotelsAPIService) HotelsGetCatalogFilesExecute(r ApiHotelsGetCatalogFilesRequest) (*GetHotelCatalogFilesQueryResponse, *http.Response, error) {
+//  @return HotelCatalogExport
+func (a *HotelsAPIService) HotelsGetCatalogFilesExecute(r ApiHotelsGetCatalogFilesRequest) (*HotelCatalogExport, *http.Response, error) {
 	var (
 		localVarHTTPMethod   = http.MethodGet
 		localVarPostBody     interface{}
 		formFiles            []formFile
-		localVarReturnValue  *GetHotelCatalogFilesQueryResponse
+		localVarReturnValue  *HotelCatalogExport
 	)
 
 	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "HotelsAPIService.HotelsGetCatalogFiles")
@@ -470,7 +470,7 @@ func (a *HotelsAPIService) HotelsGetCatalogFilesExecute(r ApiHotelsGetCatalogFil
 			error: localVarHTTPResponse.Status,
 		}
 		if localVarHTTPResponse.StatusCode == 400 {
-			var v PartnerErrorResponse
+			var v ErrorResponse
 			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -481,7 +481,7 @@ func (a *HotelsAPIService) HotelsGetCatalogFilesExecute(r ApiHotelsGetCatalogFil
 			return localVarReturnValue, localVarHTTPResponse, newErr
 		}
 		if localVarHTTPResponse.StatusCode == 429 {
-			var v PartnerErrorResponse
+			var v ErrorResponse
 			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -531,7 +531,7 @@ func (r ApiHotelsGetDestinationsRequest) Limit(limit int32) ApiHotelsGetDestinat
 	return r
 }
 
-func (r ApiHotelsGetDestinationsRequest) Execute() (*HotelDestinationListResponse, *http.Response, error) {
+func (r ApiHotelsGetDestinationsRequest) Execute() (*HotelDestinationList, *http.Response, error) {
 	return r.ApiService.HotelsGetDestinationsExecute(r)
 }
 
@@ -562,13 +562,13 @@ func (a *HotelsAPIService) HotelsGetDestinations(ctx context.Context) ApiHotelsG
 }
 
 // Execute executes the request
-//  @return HotelDestinationListResponse
-func (a *HotelsAPIService) HotelsGetDestinationsExecute(r ApiHotelsGetDestinationsRequest) (*HotelDestinationListResponse, *http.Response, error) {
+//  @return HotelDestinationList
+func (a *HotelsAPIService) HotelsGetDestinationsExecute(r ApiHotelsGetDestinationsRequest) (*HotelDestinationList, *http.Response, error) {
 	var (
 		localVarHTTPMethod   = http.MethodGet
 		localVarPostBody     interface{}
 		formFiles            []formFile
-		localVarReturnValue  *HotelDestinationListResponse
+		localVarReturnValue  *HotelDestinationList
 	)
 
 	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "HotelsAPIService.HotelsGetDestinations")
@@ -646,7 +646,7 @@ func (a *HotelsAPIService) HotelsGetDestinationsExecute(r ApiHotelsGetDestinatio
 			error: localVarHTTPResponse.Status,
 		}
 		if localVarHTTPResponse.StatusCode == 400 {
-			var v PartnerErrorResponse
+			var v ErrorResponse
 			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -657,7 +657,7 @@ func (a *HotelsAPIService) HotelsGetDestinationsExecute(r ApiHotelsGetDestinatio
 			return localVarReturnValue, localVarHTTPResponse, newErr
 		}
 		if localVarHTTPResponse.StatusCode == 429 {
-			var v PartnerErrorResponse
+			var v ErrorResponse
 			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -668,7 +668,7 @@ func (a *HotelsAPIService) HotelsGetDestinationsExecute(r ApiHotelsGetDestinatio
 			return localVarReturnValue, localVarHTTPResponse, newErr
 		}
 		if localVarHTTPResponse.StatusCode == 503 {
-			var v PartnerErrorResponse
+			var v ErrorResponse
 			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -802,7 +802,7 @@ func (a *HotelsAPIService) HotelsGetPropertyExecute(r ApiHotelsGetPropertyReques
 			error: localVarHTTPResponse.Status,
 		}
 		if localVarHTTPResponse.StatusCode == 400 {
-			var v PartnerErrorResponse
+			var v ErrorResponse
 			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -813,7 +813,7 @@ func (a *HotelsAPIService) HotelsGetPropertyExecute(r ApiHotelsGetPropertyReques
 			return localVarReturnValue, localVarHTTPResponse, newErr
 		}
 		if localVarHTTPResponse.StatusCode == 404 {
-			var v PartnerErrorResponse
+			var v ErrorResponse
 			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -824,7 +824,7 @@ func (a *HotelsAPIService) HotelsGetPropertyExecute(r ApiHotelsGetPropertyReques
 			return localVarReturnValue, localVarHTTPResponse, newErr
 		}
 		if localVarHTTPResponse.StatusCode == 429 {
-			var v PartnerErrorResponse
+			var v ErrorResponse
 			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -859,7 +859,7 @@ func (r ApiHotelsQuoteRequest) HotelOrderRequest(hotelOrderRequest HotelOrderReq
 	return r
 }
 
-func (r ApiHotelsQuoteRequest) Execute() (*HotelPartnerQuoteResponse, *http.Response, error) {
+func (r ApiHotelsQuoteRequest) Execute() (*HotelQuote, *http.Response, error) {
 	return r.ApiService.HotelsQuoteExecute(r)
 }
 
@@ -900,13 +900,13 @@ func (a *HotelsAPIService) HotelsQuote(ctx context.Context) ApiHotelsQuoteReques
 }
 
 // Execute executes the request
-//  @return HotelPartnerQuoteResponse
-func (a *HotelsAPIService) HotelsQuoteExecute(r ApiHotelsQuoteRequest) (*HotelPartnerQuoteResponse, *http.Response, error) {
+//  @return HotelQuote
+func (a *HotelsAPIService) HotelsQuoteExecute(r ApiHotelsQuoteRequest) (*HotelQuote, *http.Response, error) {
 	var (
 		localVarHTTPMethod   = http.MethodPost
 		localVarPostBody     interface{}
 		formFiles            []formFile
-		localVarReturnValue  *HotelPartnerQuoteResponse
+		localVarReturnValue  *HotelQuote
 	)
 
 	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "HotelsAPIService.HotelsQuote")
@@ -976,7 +976,7 @@ func (a *HotelsAPIService) HotelsQuoteExecute(r ApiHotelsQuoteRequest) (*HotelPa
 			error: localVarHTTPResponse.Status,
 		}
 		if localVarHTTPResponse.StatusCode == 400 {
-			var v PartnerErrorResponse
+			var v ErrorResponse
 			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -987,7 +987,7 @@ func (a *HotelsAPIService) HotelsQuoteExecute(r ApiHotelsQuoteRequest) (*HotelPa
 			return localVarReturnValue, localVarHTTPResponse, newErr
 		}
 		if localVarHTTPResponse.StatusCode == 409 {
-			var v PartnerErrorResponse
+			var v ErrorResponse
 			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -998,7 +998,7 @@ func (a *HotelsAPIService) HotelsQuoteExecute(r ApiHotelsQuoteRequest) (*HotelPa
 			return localVarReturnValue, localVarHTTPResponse, newErr
 		}
 		if localVarHTTPResponse.StatusCode == 429 {
-			var v PartnerErrorResponse
+			var v ErrorResponse
 			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -1009,7 +1009,7 @@ func (a *HotelsAPIService) HotelsQuoteExecute(r ApiHotelsQuoteRequest) (*HotelPa
 			return localVarReturnValue, localVarHTTPResponse, newErr
 		}
 		if localVarHTTPResponse.StatusCode == 503 {
-			var v PartnerErrorResponse
+			var v ErrorResponse
 			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -1036,15 +1036,15 @@ func (a *HotelsAPIService) HotelsQuoteExecute(r ApiHotelsQuoteRequest) (*HotelPa
 type ApiHotelsSearchRequest struct {
 	ctx context.Context
 	ApiService *HotelsAPIService
-	searchHotelQuery *SearchHotelQuery
+	hotelSearchRequest *HotelSearchRequest
 }
 
-func (r ApiHotelsSearchRequest) SearchHotelQuery(searchHotelQuery SearchHotelQuery) ApiHotelsSearchRequest {
-	r.searchHotelQuery = &searchHotelQuery
+func (r ApiHotelsSearchRequest) HotelSearchRequest(hotelSearchRequest HotelSearchRequest) ApiHotelsSearchRequest {
+	r.hotelSearchRequest = &hotelSearchRequest
 	return r
 }
 
-func (r ApiHotelsSearchRequest) Execute() (*HotelPropertySearchResponse, *http.Response, error) {
+func (r ApiHotelsSearchRequest) Execute() (*HotelPropertySearchResult, *http.Response, error) {
 	return r.ApiService.HotelsSearchExecute(r)
 }
 
@@ -1094,13 +1094,13 @@ func (a *HotelsAPIService) HotelsSearch(ctx context.Context) ApiHotelsSearchRequ
 }
 
 // Execute executes the request
-//  @return HotelPropertySearchResponse
-func (a *HotelsAPIService) HotelsSearchExecute(r ApiHotelsSearchRequest) (*HotelPropertySearchResponse, *http.Response, error) {
+//  @return HotelPropertySearchResult
+func (a *HotelsAPIService) HotelsSearchExecute(r ApiHotelsSearchRequest) (*HotelPropertySearchResult, *http.Response, error) {
 	var (
 		localVarHTTPMethod   = http.MethodPost
 		localVarPostBody     interface{}
 		formFiles            []formFile
-		localVarReturnValue  *HotelPropertySearchResponse
+		localVarReturnValue  *HotelPropertySearchResult
 	)
 
 	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "HotelsAPIService.HotelsSearch")
@@ -1132,7 +1132,7 @@ func (a *HotelsAPIService) HotelsSearchExecute(r ApiHotelsSearchRequest) (*Hotel
 		localVarHeaderParams["Accept"] = localVarHTTPHeaderAccept
 	}
 	// body params
-	localVarPostBody = r.searchHotelQuery
+	localVarPostBody = r.hotelSearchRequest
 	if r.ctx != nil {
 		// API Key Authentication
 		if auth, ok := r.ctx.Value(ContextAPIKeys).(map[string]APIKey); ok {
@@ -1170,7 +1170,7 @@ func (a *HotelsAPIService) HotelsSearchExecute(r ApiHotelsSearchRequest) (*Hotel
 			error: localVarHTTPResponse.Status,
 		}
 		if localVarHTTPResponse.StatusCode == 400 {
-			var v PartnerErrorResponse
+			var v ErrorResponse
 			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -1181,7 +1181,7 @@ func (a *HotelsAPIService) HotelsSearchExecute(r ApiHotelsSearchRequest) (*Hotel
 			return localVarReturnValue, localVarHTTPResponse, newErr
 		}
 		if localVarHTTPResponse.StatusCode == 429 {
-			var v PartnerErrorResponse
+			var v ErrorResponse
 			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
@@ -1192,7 +1192,7 @@ func (a *HotelsAPIService) HotelsSearchExecute(r ApiHotelsSearchRequest) (*Hotel
 			return localVarReturnValue, localVarHTTPResponse, newErr
 		}
 		if localVarHTTPResponse.StatusCode == 503 {
-			var v PartnerErrorResponse
+			var v ErrorResponse
 			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()

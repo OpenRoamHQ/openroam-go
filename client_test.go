@@ -350,7 +350,7 @@ func TestAQueryValueCannotReplaceAPositionalId(t *testing.T) {
 func TestTheNestedOrderItemsManualAmendmentsResourcePostsWithAKey(t *testing.T) {
 	baseURL, requests := scriptedServer(t, okReply)
 	_, _ = mustNew(t, "k", WithBaseURL(baseURL)).OrderItems.ManualAmendments.Create(context.Background(), "item-1",
-		&CreateB2BManualAmendmentCommand{Attributes: map[string]any{"checkInDate": "2026-01-02"}})
+		&ManualAmendmentCreateRequest{Attributes: map[string]any{"checkInDate": "2026-01-02"}})
 	r := requests()[0]
 	if r.method != "POST" || r.url != "/api/v1/b2b/order-items/item-1/manual-amendments" || r.header.Get("Idempotency-Key") == "" {
 		t.Errorf("request %s %s, key %q", r.method, r.url, r.header.Get("Idempotency-Key"))

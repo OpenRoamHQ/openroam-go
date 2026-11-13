@@ -25,13 +25,13 @@ type HotelPurchasedProductDetails struct {
 	// The check-out date bought.
 	CheckOutDate *string `json:"checkOutDate,omitempty"`
 	// The rooms bought, in room order: adults, children and child ages, in the quote's `requestedRooms` shape.
-	RequestedRooms []HotelRoomOccupancySimple `json:"requestedRooms,omitempty"`
+	RequestedRooms []HotelRoomOccupancy `json:"requestedRooms,omitempty"`
 	// The hotel of the stay.
 	Hotel *HotelPurchasedProductHotel `json:"hotel,omitempty"`
 	// The terms the stay was bought on, as quoted: they do not change when a free window later closes.
 	Terms *BookingTerms `json:"terms,omitempty"`
 	// The rate bought: rooms, board, taxes, nightly prices and surcharges, as on the quote.
-	Rate *HotelPartnerQuotedRate `json:"rate,omitempty"`
+	Rate *HotelQuotedRate `json:"rate,omitempty"`
 }
 
 // NewHotelPurchasedProductDetails instantiates a new HotelPurchasedProductDetails object
@@ -116,9 +116,9 @@ func (o *HotelPurchasedProductDetails) SetCheckOutDate(v string) {
 }
 
 // GetRequestedRooms returns the RequestedRooms field value if set, zero value otherwise.
-func (o *HotelPurchasedProductDetails) GetRequestedRooms() []HotelRoomOccupancySimple {
+func (o *HotelPurchasedProductDetails) GetRequestedRooms() []HotelRoomOccupancy {
 	if o == nil || IsNil(o.RequestedRooms) {
-		var ret []HotelRoomOccupancySimple
+		var ret []HotelRoomOccupancy
 		return ret
 	}
 	return o.RequestedRooms
@@ -126,7 +126,7 @@ func (o *HotelPurchasedProductDetails) GetRequestedRooms() []HotelRoomOccupancyS
 
 // GetRequestedRoomsOk returns a tuple with the RequestedRooms field value if set, nil otherwise
 // and a boolean to check if the value has been set.
-func (o *HotelPurchasedProductDetails) GetRequestedRoomsOk() ([]HotelRoomOccupancySimple, bool) {
+func (o *HotelPurchasedProductDetails) GetRequestedRoomsOk() ([]HotelRoomOccupancy, bool) {
 	if o == nil || IsNil(o.RequestedRooms) {
 		return nil, false
 	}
@@ -142,8 +142,8 @@ func (o *HotelPurchasedProductDetails) HasRequestedRooms() bool {
 	return false
 }
 
-// SetRequestedRooms gets a reference to the given []HotelRoomOccupancySimple and assigns it to the RequestedRooms field.
-func (o *HotelPurchasedProductDetails) SetRequestedRooms(v []HotelRoomOccupancySimple) {
+// SetRequestedRooms gets a reference to the given []HotelRoomOccupancy and assigns it to the RequestedRooms field.
+func (o *HotelPurchasedProductDetails) SetRequestedRooms(v []HotelRoomOccupancy) {
 	o.RequestedRooms = v
 }
 
@@ -212,9 +212,9 @@ func (o *HotelPurchasedProductDetails) SetTerms(v BookingTerms) {
 }
 
 // GetRate returns the Rate field value if set, zero value otherwise.
-func (o *HotelPurchasedProductDetails) GetRate() HotelPartnerQuotedRate {
+func (o *HotelPurchasedProductDetails) GetRate() HotelQuotedRate {
 	if o == nil || IsNil(o.Rate) {
-		var ret HotelPartnerQuotedRate
+		var ret HotelQuotedRate
 		return ret
 	}
 	return *o.Rate
@@ -222,7 +222,7 @@ func (o *HotelPurchasedProductDetails) GetRate() HotelPartnerQuotedRate {
 
 // GetRateOk returns a tuple with the Rate field value if set, nil otherwise
 // and a boolean to check if the value has been set.
-func (o *HotelPurchasedProductDetails) GetRateOk() (*HotelPartnerQuotedRate, bool) {
+func (o *HotelPurchasedProductDetails) GetRateOk() (*HotelQuotedRate, bool) {
 	if o == nil || IsNil(o.Rate) {
 		return nil, false
 	}
@@ -238,8 +238,8 @@ func (o *HotelPurchasedProductDetails) HasRate() bool {
 	return false
 }
 
-// SetRate gets a reference to the given HotelPartnerQuotedRate and assigns it to the Rate field.
-func (o *HotelPurchasedProductDetails) SetRate(v HotelPartnerQuotedRate) {
+// SetRate gets a reference to the given HotelQuotedRate and assigns it to the Rate field.
+func (o *HotelPurchasedProductDetails) SetRate(v HotelQuotedRate) {
 	o.Rate = &v
 }
 

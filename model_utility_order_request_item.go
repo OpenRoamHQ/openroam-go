@@ -27,7 +27,7 @@ type UtilityOrderRequestItem struct {
 	// Always 1: one bill payment per item.
 	Quantity *int32 `json:"quantity,omitempty"`
 	// The inputs the offer's `requiredInputs` list, plus `value` and `maxPrice`. May be omitted only when the offer lists no inputs and is not a range.
-	Inputs NullableUtilityCartInputs `json:"inputs,omitempty"`
+	Inputs NullableUtilityInputs `json:"inputs,omitempty"`
 }
 
 type _UtilityOrderRequestItem UtilityOrderRequestItem
@@ -107,9 +107,9 @@ func (o *UtilityOrderRequestItem) SetQuantity(v int32) {
 }
 
 // GetInputs returns the Inputs field value if set, zero value otherwise (both if not set or set to explicit null).
-func (o *UtilityOrderRequestItem) GetInputs() UtilityCartInputs {
+func (o *UtilityOrderRequestItem) GetInputs() UtilityInputs {
 	if o == nil || IsNil(o.Inputs.Get()) {
-		var ret UtilityCartInputs
+		var ret UtilityInputs
 		return ret
 	}
 	return *o.Inputs.Get()
@@ -118,7 +118,7 @@ func (o *UtilityOrderRequestItem) GetInputs() UtilityCartInputs {
 // GetInputsOk returns a tuple with the Inputs field value if set, nil otherwise
 // and a boolean to check if the value has been set.
 // NOTE: If the value is an explicit nil, `nil, true` will be returned
-func (o *UtilityOrderRequestItem) GetInputsOk() (*UtilityCartInputs, bool) {
+func (o *UtilityOrderRequestItem) GetInputsOk() (*UtilityInputs, bool) {
 	if o == nil {
 		return nil, false
 	}
@@ -134,8 +134,8 @@ func (o *UtilityOrderRequestItem) HasInputs() bool {
 	return false
 }
 
-// SetInputs gets a reference to the given NullableUtilityCartInputs and assigns it to the Inputs field.
-func (o *UtilityOrderRequestItem) SetInputs(v UtilityCartInputs) {
+// SetInputs gets a reference to the given NullableUtilityInputs and assigns it to the Inputs field.
+func (o *UtilityOrderRequestItem) SetInputs(v UtilityInputs) {
 	o.Inputs.Set(&v)
 }
 // SetInputsNil sets the value for Inputs to be an explicit nil

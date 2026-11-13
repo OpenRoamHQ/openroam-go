@@ -606,7 +606,7 @@
     "query": [],
     "idempotent": true,
     "body": true,
-    "bodyModel": "ProvisionB2BEsimRequest",
+    "bodyModel": "EsimProvisionRequest",
     "bodySample": {}
   },
   {
@@ -619,7 +619,7 @@
     "query": [],
     "idempotent": false,
     "body": true,
-    "bodyModel": "SendB2BEsimSmsCommand",
+    "bodyModel": "EsimSendSmsRequest",
     "bodySample": {
       "message": "sample"
     }
@@ -632,7 +632,7 @@
     "query": [],
     "idempotent": false,
     "body": true,
-    "bodyModel": "SearchB2BFlightsQuery",
+    "bodyModel": "FlightSearchRequest",
     "bodySample": {
       "passengers": [
         {
@@ -868,7 +868,7 @@
     "query": [],
     "idempotent": true,
     "body": true,
-    "bodyModel": "CreateB2BManualAmendmentCommand",
+    "bodyModel": "ManualAmendmentCreateRequest",
     "bodySample": {}
   },
   {
@@ -896,7 +896,7 @@
     "query": [],
     "idempotent": true,
     "body": true,
-    "bodyModel": "ApproveB2BManualAmendmentCommand",
+    "bodyModel": "ManualAmendmentApproveRequest",
     "bodySample": {}
   },
   {
@@ -921,7 +921,7 @@
     "query": [],
     "idempotent": false,
     "body": true,
-    "bodyModel": "SearchHotelQuery",
+    "bodyModel": "HotelSearchRequest",
     "bodySample": {
       "checkIn": "2026-01-02",
       "checkOut": "2026-01-02",
@@ -1122,7 +1122,7 @@
     "query": [],
     "idempotent": true,
     "body": true,
-    "bodyModel": "QuoteB2BAmendmentQuery",
+    "bodyModel": "AmendmentQuoteRequest",
     "bodySample": {}
   },
   {
@@ -1162,7 +1162,7 @@
     "query": [],
     "idempotent": true,
     "body": true,
-    "bodyModel": "RefundOrderItemRequest",
+    "bodyModel": "OrderItemCancelRequest",
     "bodySample": {
       "reason": "requestedByCustomer"
     }
@@ -1177,7 +1177,7 @@
     "query": [],
     "idempotent": true,
     "body": true,
-    "bodyModel": "UpdateB2BOrderItemRequest",
+    "bodyModel": "OrderItemUpdateRequest",
     "bodySample": {
       "inputs": {}
     }
@@ -1192,7 +1192,7 @@
     "query": [],
     "idempotent": true,
     "body": true,
-    "bodyModel": "ConfirmB2BAmendmentRequest",
+    "bodyModel": "AmendmentConfirmRequest",
     "bodySample": {
       "amendmentRequestId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
       "paymentMethod": "balance"
@@ -1273,7 +1273,7 @@
     "query": [],
     "idempotent": true,
     "body": true,
-    "bodyModel": "CreateB2BOrderCommand",
+    "bodyModel": "OrderRequest",
     "bodySample": {
       "items": [
         {
@@ -1304,7 +1304,7 @@
     "query": [],
     "idempotent": false,
     "body": true,
-    "bodyModel": "CreateB2BOrderCommand",
+    "bodyModel": "OrderRequest",
     "bodySample": {
       "items": [
         {
@@ -1527,7 +1527,7 @@
     "query": [],
     "idempotent": false,
     "body": true,
-    "bodyModel": "CreateB2BWalletCommand",
+    "bodyModel": "WalletCreateRequest",
     "bodySample": {}
   },
   {
@@ -1553,7 +1553,7 @@
     "query": [],
     "idempotent": false,
     "body": true,
-    "bodyModel": "UpdateB2BWalletCommand",
+    "bodyModel": "WalletUpdateRequest",
     "bodySample": {}
   },
   {
@@ -1577,7 +1577,7 @@
     "query": [],
     "idempotent": true,
     "body": true,
-    "bodyModel": "TransferB2BWalletsCommand",
+    "bodyModel": "WalletTransferRequest",
     "bodySample": {
       "amount": 1.5,
       "fromWalletId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",

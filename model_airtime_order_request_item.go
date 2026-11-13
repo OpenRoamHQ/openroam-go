@@ -27,7 +27,7 @@ type AirtimeOrderRequestItem struct {
 	// Always 1: an airtime item tops up one number once.
 	Quantity *int32 `json:"quantity,omitempty"`
 	// The recipient's number, any operator settings the offer lists, and the purchase fields.
-	Inputs AirtimeCartInputs `json:"inputs"`
+	Inputs AirtimeInputs `json:"inputs"`
 }
 
 type _AirtimeOrderRequestItem AirtimeOrderRequestItem
@@ -36,7 +36,7 @@ type _AirtimeOrderRequestItem AirtimeOrderRequestItem
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewAirtimeOrderRequestItem(publicId string, inputs AirtimeCartInputs) *AirtimeOrderRequestItem {
+func NewAirtimeOrderRequestItem(publicId string, inputs AirtimeInputs) *AirtimeOrderRequestItem {
 	this := AirtimeOrderRequestItem{}
 	this.PublicId = publicId
 	this.Inputs = inputs
@@ -108,9 +108,9 @@ func (o *AirtimeOrderRequestItem) SetQuantity(v int32) {
 }
 
 // GetInputs returns the Inputs field value
-func (o *AirtimeOrderRequestItem) GetInputs() AirtimeCartInputs {
+func (o *AirtimeOrderRequestItem) GetInputs() AirtimeInputs {
 	if o == nil {
-		var ret AirtimeCartInputs
+		var ret AirtimeInputs
 		return ret
 	}
 
@@ -119,7 +119,7 @@ func (o *AirtimeOrderRequestItem) GetInputs() AirtimeCartInputs {
 
 // GetInputsOk returns a tuple with the Inputs field value
 // and a boolean to check if the value has been set.
-func (o *AirtimeOrderRequestItem) GetInputsOk() (*AirtimeCartInputs, bool) {
+func (o *AirtimeOrderRequestItem) GetInputsOk() (*AirtimeInputs, bool) {
 	if o == nil {
 		return nil, false
 	}
@@ -127,7 +127,7 @@ func (o *AirtimeOrderRequestItem) GetInputsOk() (*AirtimeCartInputs, bool) {
 }
 
 // SetInputs sets field value
-func (o *AirtimeOrderRequestItem) SetInputs(v AirtimeCartInputs) {
+func (o *AirtimeOrderRequestItem) SetInputs(v AirtimeInputs) {
 	o.Inputs = v
 }
 
