@@ -27,9 +27,9 @@ type HotelPurchasedProduct struct {
 	// The hotel's main image; null when it has none.
 	LogoUrl NullableString `json:"logoUrl,omitempty"`
 	// The item's inputs, with the holder's email and phone masked.
-	Inputs *HotelPurchasedProductInputs `json:"inputs,omitempty"`
+	Inputs *HotelPurchasedInputs `json:"inputs,omitempty"`
 	// The stay, the hotel and the rate bought.
-	Details *HotelPurchasedProductDetails `json:"details,omitempty"`
+	Details *HotelPurchasedDetails `json:"details,omitempty"`
 }
 
 // NewHotelPurchasedProduct instantiates a new HotelPurchasedProduct object
@@ -166,9 +166,9 @@ func (o *HotelPurchasedProduct) UnsetLogoUrl() {
 }
 
 // GetInputs returns the Inputs field value if set, zero value otherwise.
-func (o *HotelPurchasedProduct) GetInputs() HotelPurchasedProductInputs {
+func (o *HotelPurchasedProduct) GetInputs() HotelPurchasedInputs {
 	if o == nil || IsNil(o.Inputs) {
-		var ret HotelPurchasedProductInputs
+		var ret HotelPurchasedInputs
 		return ret
 	}
 	return *o.Inputs
@@ -176,7 +176,7 @@ func (o *HotelPurchasedProduct) GetInputs() HotelPurchasedProductInputs {
 
 // GetInputsOk returns a tuple with the Inputs field value if set, nil otherwise
 // and a boolean to check if the value has been set.
-func (o *HotelPurchasedProduct) GetInputsOk() (*HotelPurchasedProductInputs, bool) {
+func (o *HotelPurchasedProduct) GetInputsOk() (*HotelPurchasedInputs, bool) {
 	if o == nil || IsNil(o.Inputs) {
 		return nil, false
 	}
@@ -192,15 +192,15 @@ func (o *HotelPurchasedProduct) HasInputs() bool {
 	return false
 }
 
-// SetInputs gets a reference to the given HotelPurchasedProductInputs and assigns it to the Inputs field.
-func (o *HotelPurchasedProduct) SetInputs(v HotelPurchasedProductInputs) {
+// SetInputs gets a reference to the given HotelPurchasedInputs and assigns it to the Inputs field.
+func (o *HotelPurchasedProduct) SetInputs(v HotelPurchasedInputs) {
 	o.Inputs = &v
 }
 
 // GetDetails returns the Details field value if set, zero value otherwise.
-func (o *HotelPurchasedProduct) GetDetails() HotelPurchasedProductDetails {
+func (o *HotelPurchasedProduct) GetDetails() HotelPurchasedDetails {
 	if o == nil || IsNil(o.Details) {
-		var ret HotelPurchasedProductDetails
+		var ret HotelPurchasedDetails
 		return ret
 	}
 	return *o.Details
@@ -208,7 +208,7 @@ func (o *HotelPurchasedProduct) GetDetails() HotelPurchasedProductDetails {
 
 // GetDetailsOk returns a tuple with the Details field value if set, nil otherwise
 // and a boolean to check if the value has been set.
-func (o *HotelPurchasedProduct) GetDetailsOk() (*HotelPurchasedProductDetails, bool) {
+func (o *HotelPurchasedProduct) GetDetailsOk() (*HotelPurchasedDetails, bool) {
 	if o == nil || IsNil(o.Details) {
 		return nil, false
 	}
@@ -224,8 +224,8 @@ func (o *HotelPurchasedProduct) HasDetails() bool {
 	return false
 }
 
-// SetDetails gets a reference to the given HotelPurchasedProductDetails and assigns it to the Details field.
-func (o *HotelPurchasedProduct) SetDetails(v HotelPurchasedProductDetails) {
+// SetDetails gets a reference to the given HotelPurchasedDetails and assigns it to the Details field.
+func (o *HotelPurchasedProduct) SetDetails(v HotelPurchasedDetails) {
 	o.Details = &v
 }
 

@@ -20,7 +20,7 @@ var _ MappedNullable = &ManualAmendmentResult{}
 
 // ManualAmendmentResult struct for ManualAmendmentResult
 type ManualAmendmentResult struct {
-	// ID of the approved amendment request.
+	// ID of the amendment request.
 	AmendmentId *string `json:"amendmentId,omitempty"`
 }
 

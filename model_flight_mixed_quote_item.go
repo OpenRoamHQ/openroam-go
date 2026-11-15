@@ -30,7 +30,7 @@ type FlightMixedQuoteItem struct {
 	// \"{route} · {dates} · {fare}\", for example \"LHR ⇄ JFK · 12–19 Dec · Economy Basic\".
 	Name *string `json:"name,omitempty"`
 	// The unit price the order charges now for all passengers: the fare with its taxes, plus the paid extras in the item's `inputs` when they are sent.
-	Price *MoneyAmount `json:"price,omitempty"`
+	Price *Money `json:"price,omitempty"`
 	// The fare's terms, its bookable extras and the other fares on the same flights.
 	Details *FlightQuoteItemDetails `json:"details,omitempty"`
 }
@@ -169,9 +169,9 @@ func (o *FlightMixedQuoteItem) SetName(v string) {
 }
 
 // GetPrice returns the Price field value if set, zero value otherwise.
-func (o *FlightMixedQuoteItem) GetPrice() MoneyAmount {
+func (o *FlightMixedQuoteItem) GetPrice() Money {
 	if o == nil || IsNil(o.Price) {
-		var ret MoneyAmount
+		var ret Money
 		return ret
 	}
 	return *o.Price
@@ -179,7 +179,7 @@ func (o *FlightMixedQuoteItem) GetPrice() MoneyAmount {
 
 // GetPriceOk returns a tuple with the Price field value if set, nil otherwise
 // and a boolean to check if the value has been set.
-func (o *FlightMixedQuoteItem) GetPriceOk() (*MoneyAmount, bool) {
+func (o *FlightMixedQuoteItem) GetPriceOk() (*Money, bool) {
 	if o == nil || IsNil(o.Price) {
 		return nil, false
 	}
@@ -195,8 +195,8 @@ func (o *FlightMixedQuoteItem) HasPrice() bool {
 	return false
 }
 
-// SetPrice gets a reference to the given MoneyAmount and assigns it to the Price field.
-func (o *FlightMixedQuoteItem) SetPrice(v MoneyAmount) {
+// SetPrice gets a reference to the given Money and assigns it to the Price field.
+func (o *FlightMixedQuoteItem) SetPrice(v Money) {
 	o.Price = &v
 }
 

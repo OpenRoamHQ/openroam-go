@@ -23,7 +23,7 @@ type HotelSearchCriteria struct {
 	// Up to 50 hotel `publicId` values (`hotel_…`) from an earlier search, to get every rate of those hotels with full rate detail.
 	HotelIds []string `json:"hotelIds,omitempty"`
 	// The area to search, by `geoNodeId`, `cityCode` or `coordinates`. Results are paged.
-	Location NullableHotelLocationSearch `json:"location,omitempty"`
+	Location NullableHotelSearchArea `json:"location,omitempty"`
 }
 
 // NewHotelSearchCriteria instantiates a new HotelSearchCriteria object
@@ -77,9 +77,9 @@ func (o *HotelSearchCriteria) SetHotelIds(v []string) {
 }
 
 // GetLocation returns the Location field value if set, zero value otherwise (both if not set or set to explicit null).
-func (o *HotelSearchCriteria) GetLocation() HotelLocationSearch {
+func (o *HotelSearchCriteria) GetLocation() HotelSearchArea {
 	if o == nil || IsNil(o.Location.Get()) {
-		var ret HotelLocationSearch
+		var ret HotelSearchArea
 		return ret
 	}
 	return *o.Location.Get()
@@ -88,7 +88,7 @@ func (o *HotelSearchCriteria) GetLocation() HotelLocationSearch {
 // GetLocationOk returns a tuple with the Location field value if set, nil otherwise
 // and a boolean to check if the value has been set.
 // NOTE: If the value is an explicit nil, `nil, true` will be returned
-func (o *HotelSearchCriteria) GetLocationOk() (*HotelLocationSearch, bool) {
+func (o *HotelSearchCriteria) GetLocationOk() (*HotelSearchArea, bool) {
 	if o == nil {
 		return nil, false
 	}
@@ -104,8 +104,8 @@ func (o *HotelSearchCriteria) HasLocation() bool {
 	return false
 }
 
-// SetLocation gets a reference to the given NullableHotelLocationSearch and assigns it to the Location field.
-func (o *HotelSearchCriteria) SetLocation(v HotelLocationSearch) {
+// SetLocation gets a reference to the given NullableHotelSearchArea and assigns it to the Location field.
+func (o *HotelSearchCriteria) SetLocation(v HotelSearchArea) {
 	o.Location.Set(&v)
 }
 // SetLocationNil sets the value for Location to be an explicit nil

@@ -28,7 +28,7 @@ type OrderSummary struct {
 	// Current order status.
 	Status *string `json:"status,omitempty"`
 	// What the order costs, in the order's currency.
-	Total *MoneyAmount `json:"total,omitempty"`
+	Total *Money `json:"total,omitempty"`
 	// The latest payment attempt; `null` when none was made.
 	Payment NullableOrderPayment `json:"payment,omitempty"`
 	// Number of order items.
@@ -155,9 +155,9 @@ func (o *OrderSummary) SetStatus(v string) {
 }
 
 // GetTotal returns the Total field value if set, zero value otherwise.
-func (o *OrderSummary) GetTotal() MoneyAmount {
+func (o *OrderSummary) GetTotal() Money {
 	if o == nil || IsNil(o.Total) {
-		var ret MoneyAmount
+		var ret Money
 		return ret
 	}
 	return *o.Total
@@ -165,7 +165,7 @@ func (o *OrderSummary) GetTotal() MoneyAmount {
 
 // GetTotalOk returns a tuple with the Total field value if set, nil otherwise
 // and a boolean to check if the value has been set.
-func (o *OrderSummary) GetTotalOk() (*MoneyAmount, bool) {
+func (o *OrderSummary) GetTotalOk() (*Money, bool) {
 	if o == nil || IsNil(o.Total) {
 		return nil, false
 	}
@@ -181,8 +181,8 @@ func (o *OrderSummary) HasTotal() bool {
 	return false
 }
 
-// SetTotal gets a reference to the given MoneyAmount and assigns it to the Total field.
-func (o *OrderSummary) SetTotal(v MoneyAmount) {
+// SetTotal gets a reference to the given Money and assigns it to the Total field.
+func (o *OrderSummary) SetTotal(v Money) {
 	o.Total = &v
 }
 

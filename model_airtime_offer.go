@@ -25,7 +25,7 @@ type AirtimeOffer struct {
 	Description NullableString `json:"description,omitempty"`
 	Value *OfferValue `json:"value,omitempty"`
 	Price *OfferPrice `json:"price,omitempty"`
-	RequiredInputs []RequiredInput `json:"requiredInputs,omitempty"`
+	RequiredInputs []InputField `json:"requiredInputs,omitempty"`
 	// Airtime offer facts outside the offer keys every partner service shares. `redemptionType` is null when the offer's route does not declare how the top-up is delivered; `readMore` is stored Markdown.
 	Details *AirtimeOfferDetails `json:"details,omitempty"`
 }
@@ -218,9 +218,9 @@ func (o *AirtimeOffer) SetPrice(v OfferPrice) {
 }
 
 // GetRequiredInputs returns the RequiredInputs field value if set, zero value otherwise.
-func (o *AirtimeOffer) GetRequiredInputs() []RequiredInput {
+func (o *AirtimeOffer) GetRequiredInputs() []InputField {
 	if o == nil || IsNil(o.RequiredInputs) {
-		var ret []RequiredInput
+		var ret []InputField
 		return ret
 	}
 	return o.RequiredInputs
@@ -228,7 +228,7 @@ func (o *AirtimeOffer) GetRequiredInputs() []RequiredInput {
 
 // GetRequiredInputsOk returns a tuple with the RequiredInputs field value if set, nil otherwise
 // and a boolean to check if the value has been set.
-func (o *AirtimeOffer) GetRequiredInputsOk() ([]RequiredInput, bool) {
+func (o *AirtimeOffer) GetRequiredInputsOk() ([]InputField, bool) {
 	if o == nil || IsNil(o.RequiredInputs) {
 		return nil, false
 	}
@@ -244,8 +244,8 @@ func (o *AirtimeOffer) HasRequiredInputs() bool {
 	return false
 }
 
-// SetRequiredInputs gets a reference to the given []RequiredInput and assigns it to the RequiredInputs field.
-func (o *AirtimeOffer) SetRequiredInputs(v []RequiredInput) {
+// SetRequiredInputs gets a reference to the given []InputField and assigns it to the RequiredInputs field.
+func (o *AirtimeOffer) SetRequiredInputs(v []InputField) {
 	o.RequiredInputs = v
 }
 

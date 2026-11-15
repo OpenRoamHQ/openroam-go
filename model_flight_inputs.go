@@ -23,11 +23,11 @@ var _ MappedNullable = &FlightInputs{}
 // FlightInputs struct for FlightInputs
 type FlightInputs struct {
 	// Every passenger of the offer exactly once, in `passengerIndex` order 1 to N.
-	Passengers []FlightPassengerInput `json:"passengers"`
+	Passengers []PassengerInput `json:"passengers"`
 	// Paid services such as extra baggage, from the quote item's `details.availableServices`. Seats are chosen in `passengers[].selectedSeats`, not here.
-	SelectedServices []FlightSelectedServiceInput `json:"selectedServices,omitempty"`
+	SelectedServices []SelectedServiceInput `json:"selectedServices,omitempty"`
 	// Optional highest accepted unit price, in the order or cart currency; a higher current unit price gives 409 / 11002.
-	MaxPrice NullableMoneyAmountInput `json:"maxPrice,omitempty"`
+	MaxPrice NullableMoneyInput `json:"maxPrice,omitempty"`
 }
 
 type _FlightInputs FlightInputs
@@ -36,7 +36,7 @@ type _FlightInputs FlightInputs
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewFlightInputs(passengers []FlightPassengerInput) *FlightInputs {
+func NewFlightInputs(passengers []PassengerInput) *FlightInputs {
 	this := FlightInputs{}
 	this.Passengers = passengers
 	return &this
@@ -51,9 +51,9 @@ func NewFlightInputsWithDefaults() *FlightInputs {
 }
 
 // GetPassengers returns the Passengers field value
-func (o *FlightInputs) GetPassengers() []FlightPassengerInput {
+func (o *FlightInputs) GetPassengers() []PassengerInput {
 	if o == nil {
-		var ret []FlightPassengerInput
+		var ret []PassengerInput
 		return ret
 	}
 
@@ -62,7 +62,7 @@ func (o *FlightInputs) GetPassengers() []FlightPassengerInput {
 
 // GetPassengersOk returns a tuple with the Passengers field value
 // and a boolean to check if the value has been set.
-func (o *FlightInputs) GetPassengersOk() ([]FlightPassengerInput, bool) {
+func (o *FlightInputs) GetPassengersOk() ([]PassengerInput, bool) {
 	if o == nil {
 		return nil, false
 	}
@@ -70,14 +70,14 @@ func (o *FlightInputs) GetPassengersOk() ([]FlightPassengerInput, bool) {
 }
 
 // SetPassengers sets field value
-func (o *FlightInputs) SetPassengers(v []FlightPassengerInput) {
+func (o *FlightInputs) SetPassengers(v []PassengerInput) {
 	o.Passengers = v
 }
 
 // GetSelectedServices returns the SelectedServices field value if set, zero value otherwise.
-func (o *FlightInputs) GetSelectedServices() []FlightSelectedServiceInput {
+func (o *FlightInputs) GetSelectedServices() []SelectedServiceInput {
 	if o == nil || IsNil(o.SelectedServices) {
-		var ret []FlightSelectedServiceInput
+		var ret []SelectedServiceInput
 		return ret
 	}
 	return o.SelectedServices
@@ -85,7 +85,7 @@ func (o *FlightInputs) GetSelectedServices() []FlightSelectedServiceInput {
 
 // GetSelectedServicesOk returns a tuple with the SelectedServices field value if set, nil otherwise
 // and a boolean to check if the value has been set.
-func (o *FlightInputs) GetSelectedServicesOk() ([]FlightSelectedServiceInput, bool) {
+func (o *FlightInputs) GetSelectedServicesOk() ([]SelectedServiceInput, bool) {
 	if o == nil || IsNil(o.SelectedServices) {
 		return nil, false
 	}
@@ -101,15 +101,15 @@ func (o *FlightInputs) HasSelectedServices() bool {
 	return false
 }
 
-// SetSelectedServices gets a reference to the given []FlightSelectedServiceInput and assigns it to the SelectedServices field.
-func (o *FlightInputs) SetSelectedServices(v []FlightSelectedServiceInput) {
+// SetSelectedServices gets a reference to the given []SelectedServiceInput and assigns it to the SelectedServices field.
+func (o *FlightInputs) SetSelectedServices(v []SelectedServiceInput) {
 	o.SelectedServices = v
 }
 
 // GetMaxPrice returns the MaxPrice field value if set, zero value otherwise (both if not set or set to explicit null).
-func (o *FlightInputs) GetMaxPrice() MoneyAmountInput {
+func (o *FlightInputs) GetMaxPrice() MoneyInput {
 	if o == nil || IsNil(o.MaxPrice.Get()) {
-		var ret MoneyAmountInput
+		var ret MoneyInput
 		return ret
 	}
 	return *o.MaxPrice.Get()
@@ -118,7 +118,7 @@ func (o *FlightInputs) GetMaxPrice() MoneyAmountInput {
 // GetMaxPriceOk returns a tuple with the MaxPrice field value if set, nil otherwise
 // and a boolean to check if the value has been set.
 // NOTE: If the value is an explicit nil, `nil, true` will be returned
-func (o *FlightInputs) GetMaxPriceOk() (*MoneyAmountInput, bool) {
+func (o *FlightInputs) GetMaxPriceOk() (*MoneyInput, bool) {
 	if o == nil {
 		return nil, false
 	}
@@ -134,8 +134,8 @@ func (o *FlightInputs) HasMaxPrice() bool {
 	return false
 }
 
-// SetMaxPrice gets a reference to the given NullableMoneyAmountInput and assigns it to the MaxPrice field.
-func (o *FlightInputs) SetMaxPrice(v MoneyAmountInput) {
+// SetMaxPrice gets a reference to the given NullableMoneyInput and assigns it to the MaxPrice field.
+func (o *FlightInputs) SetMaxPrice(v MoneyInput) {
 	o.MaxPrice.Set(&v)
 }
 // SetMaxPriceNil sets the value for MaxPrice to be an explicit nil

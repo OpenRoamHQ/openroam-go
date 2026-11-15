@@ -25,7 +25,7 @@ type GiftCardOffer struct {
 	Description NullableString `json:"description,omitempty"`
 	Value *OfferValue `json:"value,omitempty"`
 	Price *OfferPrice `json:"price,omitempty"`
-	RequiredInputs []RequiredInput `json:"requiredInputs,omitempty"`
+	RequiredInputs []InputField `json:"requiredInputs,omitempty"`
 }
 
 // NewGiftCardOffer instantiates a new GiftCardOffer object
@@ -216,9 +216,9 @@ func (o *GiftCardOffer) SetPrice(v OfferPrice) {
 }
 
 // GetRequiredInputs returns the RequiredInputs field value if set, zero value otherwise.
-func (o *GiftCardOffer) GetRequiredInputs() []RequiredInput {
+func (o *GiftCardOffer) GetRequiredInputs() []InputField {
 	if o == nil || IsNil(o.RequiredInputs) {
-		var ret []RequiredInput
+		var ret []InputField
 		return ret
 	}
 	return o.RequiredInputs
@@ -226,7 +226,7 @@ func (o *GiftCardOffer) GetRequiredInputs() []RequiredInput {
 
 // GetRequiredInputsOk returns a tuple with the RequiredInputs field value if set, nil otherwise
 // and a boolean to check if the value has been set.
-func (o *GiftCardOffer) GetRequiredInputsOk() ([]RequiredInput, bool) {
+func (o *GiftCardOffer) GetRequiredInputsOk() ([]InputField, bool) {
 	if o == nil || IsNil(o.RequiredInputs) {
 		return nil, false
 	}
@@ -242,8 +242,8 @@ func (o *GiftCardOffer) HasRequiredInputs() bool {
 	return false
 }
 
-// SetRequiredInputs gets a reference to the given []RequiredInput and assigns it to the RequiredInputs field.
-func (o *GiftCardOffer) SetRequiredInputs(v []RequiredInput) {
+// SetRequiredInputs gets a reference to the given []InputField and assigns it to the RequiredInputs field.
+func (o *GiftCardOffer) SetRequiredInputs(v []InputField) {
 	o.RequiredInputs = v
 }
 

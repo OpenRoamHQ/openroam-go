@@ -27,9 +27,9 @@ type GiftCardInputs struct {
 	// Message for the gift email, at most 500 characters; allowed only with `recipientEmail`.
 	GiftMessage NullableString `json:"giftMessage,omitempty"`
 	// Required for a range offer, within its min and max and on its step; optional for a fixed offer, where it must equal the offer's amount; in the offer's value currency.
-	Value NullableMoneyAmountInput `json:"value,omitempty"`
+	Value NullableMoneyInput `json:"value,omitempty"`
 	// Optional highest accepted unit price, in the order or cart currency; a higher current unit price gives 409 / 11002.
-	MaxPrice NullableMoneyAmountInput `json:"maxPrice,omitempty"`
+	MaxPrice NullableMoneyInput `json:"maxPrice,omitempty"`
 }
 
 // NewGiftCardInputs instantiates a new GiftCardInputs object
@@ -176,9 +176,9 @@ func (o *GiftCardInputs) UnsetGiftMessage() {
 }
 
 // GetValue returns the Value field value if set, zero value otherwise (both if not set or set to explicit null).
-func (o *GiftCardInputs) GetValue() MoneyAmountInput {
+func (o *GiftCardInputs) GetValue() MoneyInput {
 	if o == nil || IsNil(o.Value.Get()) {
-		var ret MoneyAmountInput
+		var ret MoneyInput
 		return ret
 	}
 	return *o.Value.Get()
@@ -187,7 +187,7 @@ func (o *GiftCardInputs) GetValue() MoneyAmountInput {
 // GetValueOk returns a tuple with the Value field value if set, nil otherwise
 // and a boolean to check if the value has been set.
 // NOTE: If the value is an explicit nil, `nil, true` will be returned
-func (o *GiftCardInputs) GetValueOk() (*MoneyAmountInput, bool) {
+func (o *GiftCardInputs) GetValueOk() (*MoneyInput, bool) {
 	if o == nil {
 		return nil, false
 	}
@@ -203,8 +203,8 @@ func (o *GiftCardInputs) HasValue() bool {
 	return false
 }
 
-// SetValue gets a reference to the given NullableMoneyAmountInput and assigns it to the Value field.
-func (o *GiftCardInputs) SetValue(v MoneyAmountInput) {
+// SetValue gets a reference to the given NullableMoneyInput and assigns it to the Value field.
+func (o *GiftCardInputs) SetValue(v MoneyInput) {
 	o.Value.Set(&v)
 }
 // SetValueNil sets the value for Value to be an explicit nil
@@ -218,9 +218,9 @@ func (o *GiftCardInputs) UnsetValue() {
 }
 
 // GetMaxPrice returns the MaxPrice field value if set, zero value otherwise (both if not set or set to explicit null).
-func (o *GiftCardInputs) GetMaxPrice() MoneyAmountInput {
+func (o *GiftCardInputs) GetMaxPrice() MoneyInput {
 	if o == nil || IsNil(o.MaxPrice.Get()) {
-		var ret MoneyAmountInput
+		var ret MoneyInput
 		return ret
 	}
 	return *o.MaxPrice.Get()
@@ -229,7 +229,7 @@ func (o *GiftCardInputs) GetMaxPrice() MoneyAmountInput {
 // GetMaxPriceOk returns a tuple with the MaxPrice field value if set, nil otherwise
 // and a boolean to check if the value has been set.
 // NOTE: If the value is an explicit nil, `nil, true` will be returned
-func (o *GiftCardInputs) GetMaxPriceOk() (*MoneyAmountInput, bool) {
+func (o *GiftCardInputs) GetMaxPriceOk() (*MoneyInput, bool) {
 	if o == nil {
 		return nil, false
 	}
@@ -245,8 +245,8 @@ func (o *GiftCardInputs) HasMaxPrice() bool {
 	return false
 }
 
-// SetMaxPrice gets a reference to the given NullableMoneyAmountInput and assigns it to the MaxPrice field.
-func (o *GiftCardInputs) SetMaxPrice(v MoneyAmountInput) {
+// SetMaxPrice gets a reference to the given NullableMoneyInput and assigns it to the MaxPrice field.
+func (o *GiftCardInputs) SetMaxPrice(v MoneyInput) {
 	o.MaxPrice.Set(&v)
 }
 // SetMaxPriceNil sets the value for MaxPrice to be an explicit nil

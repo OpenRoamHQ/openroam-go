@@ -24,7 +24,7 @@ type OrderItemRefund struct {
 	// `pending`, `processing`, `refunded` or `failed`.
 	Status *string `json:"status,omitempty"`
 	// The recorded refund amount in its currency; settled only when `refunded`.
-	Amount *MoneyAmount `json:"amount,omitempty"`
+	Amount *Money `json:"amount,omitempty"`
 	// When the refund was last updated (UTC).
 	UpdatedAt *time.Time `json:"updatedAt,omitempty"`
 }
@@ -79,9 +79,9 @@ func (o *OrderItemRefund) SetStatus(v string) {
 }
 
 // GetAmount returns the Amount field value if set, zero value otherwise.
-func (o *OrderItemRefund) GetAmount() MoneyAmount {
+func (o *OrderItemRefund) GetAmount() Money {
 	if o == nil || IsNil(o.Amount) {
-		var ret MoneyAmount
+		var ret Money
 		return ret
 	}
 	return *o.Amount
@@ -89,7 +89,7 @@ func (o *OrderItemRefund) GetAmount() MoneyAmount {
 
 // GetAmountOk returns a tuple with the Amount field value if set, nil otherwise
 // and a boolean to check if the value has been set.
-func (o *OrderItemRefund) GetAmountOk() (*MoneyAmount, bool) {
+func (o *OrderItemRefund) GetAmountOk() (*Money, bool) {
 	if o == nil || IsNil(o.Amount) {
 		return nil, false
 	}
@@ -105,8 +105,8 @@ func (o *OrderItemRefund) HasAmount() bool {
 	return false
 }
 
-// SetAmount gets a reference to the given MoneyAmount and assigns it to the Amount field.
-func (o *OrderItemRefund) SetAmount(v MoneyAmount) {
+// SetAmount gets a reference to the given Money and assigns it to the Amount field.
+func (o *OrderItemRefund) SetAmount(v Money) {
 	o.Amount = &v
 }
 

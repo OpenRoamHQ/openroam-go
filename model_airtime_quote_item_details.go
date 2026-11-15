@@ -20,7 +20,7 @@ var _ MappedNullable = &AirtimeQuoteItemDetails{}
 
 // AirtimeQuoteItemDetails Airtime quote facts outside the quote item keys every partner service shares. `estimatedDeliveredValue` is what the selected route expects the recipient to receive, which a range item with a `minDeliveredValue` may set below the ordered value.
 type AirtimeQuoteItemDetails struct {
-	EstimatedDeliveredValue *MoneyAmount `json:"estimatedDeliveredValue,omitempty"`
+	EstimatedDeliveredValue *Money `json:"estimatedDeliveredValue,omitempty"`
 }
 
 // NewAirtimeQuoteItemDetails instantiates a new AirtimeQuoteItemDetails object
@@ -41,9 +41,9 @@ func NewAirtimeQuoteItemDetailsWithDefaults() *AirtimeQuoteItemDetails {
 }
 
 // GetEstimatedDeliveredValue returns the EstimatedDeliveredValue field value if set, zero value otherwise.
-func (o *AirtimeQuoteItemDetails) GetEstimatedDeliveredValue() MoneyAmount {
+func (o *AirtimeQuoteItemDetails) GetEstimatedDeliveredValue() Money {
 	if o == nil || IsNil(o.EstimatedDeliveredValue) {
-		var ret MoneyAmount
+		var ret Money
 		return ret
 	}
 	return *o.EstimatedDeliveredValue
@@ -51,7 +51,7 @@ func (o *AirtimeQuoteItemDetails) GetEstimatedDeliveredValue() MoneyAmount {
 
 // GetEstimatedDeliveredValueOk returns a tuple with the EstimatedDeliveredValue field value if set, nil otherwise
 // and a boolean to check if the value has been set.
-func (o *AirtimeQuoteItemDetails) GetEstimatedDeliveredValueOk() (*MoneyAmount, bool) {
+func (o *AirtimeQuoteItemDetails) GetEstimatedDeliveredValueOk() (*Money, bool) {
 	if o == nil || IsNil(o.EstimatedDeliveredValue) {
 		return nil, false
 	}
@@ -67,8 +67,8 @@ func (o *AirtimeQuoteItemDetails) HasEstimatedDeliveredValue() bool {
 	return false
 }
 
-// SetEstimatedDeliveredValue gets a reference to the given MoneyAmount and assigns it to the EstimatedDeliveredValue field.
-func (o *AirtimeQuoteItemDetails) SetEstimatedDeliveredValue(v MoneyAmount) {
+// SetEstimatedDeliveredValue gets a reference to the given Money and assigns it to the EstimatedDeliveredValue field.
+func (o *AirtimeQuoteItemDetails) SetEstimatedDeliveredValue(v Money) {
 	o.EstimatedDeliveredValue = &v
 }
 

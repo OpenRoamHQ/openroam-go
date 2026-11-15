@@ -20,9 +20,9 @@ var _ MappedNullable = &UtilityFulfillmentResult{}
 
 // UtilityFulfillmentResult What a fulfilled bill payment delivered. `deliveredValue` is the amount that reached the customer, null until it is known; a later confirmation advances `fulfillmentVersion`. Order reads and the `order.fulfillment.updated` webhook carry the same result.
 type UtilityFulfillmentResult struct {
-	DeliveredValue NullableMoneyAmount `json:"deliveredValue,omitempty"`
+	DeliveredValue NullableMoney `json:"deliveredValue,omitempty"`
 	// The prepaid token a token biller delivered, once the payment is ready. Null for direct-credit billers.
-	Details *UtilityFulfillmentResultDetails `json:"details,omitempty"`
+	Details *UtilityFulfillmentDetails `json:"details,omitempty"`
 }
 
 // NewUtilityFulfillmentResult instantiates a new UtilityFulfillmentResult object
@@ -43,9 +43,9 @@ func NewUtilityFulfillmentResultWithDefaults() *UtilityFulfillmentResult {
 }
 
 // GetDeliveredValue returns the DeliveredValue field value if set, zero value otherwise (both if not set or set to explicit null).
-func (o *UtilityFulfillmentResult) GetDeliveredValue() MoneyAmount {
+func (o *UtilityFulfillmentResult) GetDeliveredValue() Money {
 	if o == nil || IsNil(o.DeliveredValue.Get()) {
-		var ret MoneyAmount
+		var ret Money
 		return ret
 	}
 	return *o.DeliveredValue.Get()
@@ -54,7 +54,7 @@ func (o *UtilityFulfillmentResult) GetDeliveredValue() MoneyAmount {
 // GetDeliveredValueOk returns a tuple with the DeliveredValue field value if set, nil otherwise
 // and a boolean to check if the value has been set.
 // NOTE: If the value is an explicit nil, `nil, true` will be returned
-func (o *UtilityFulfillmentResult) GetDeliveredValueOk() (*MoneyAmount, bool) {
+func (o *UtilityFulfillmentResult) GetDeliveredValueOk() (*Money, bool) {
 	if o == nil {
 		return nil, false
 	}
@@ -70,8 +70,8 @@ func (o *UtilityFulfillmentResult) HasDeliveredValue() bool {
 	return false
 }
 
-// SetDeliveredValue gets a reference to the given NullableMoneyAmount and assigns it to the DeliveredValue field.
-func (o *UtilityFulfillmentResult) SetDeliveredValue(v MoneyAmount) {
+// SetDeliveredValue gets a reference to the given NullableMoney and assigns it to the DeliveredValue field.
+func (o *UtilityFulfillmentResult) SetDeliveredValue(v Money) {
 	o.DeliveredValue.Set(&v)
 }
 // SetDeliveredValueNil sets the value for DeliveredValue to be an explicit nil
@@ -85,9 +85,9 @@ func (o *UtilityFulfillmentResult) UnsetDeliveredValue() {
 }
 
 // GetDetails returns the Details field value if set, zero value otherwise.
-func (o *UtilityFulfillmentResult) GetDetails() UtilityFulfillmentResultDetails {
+func (o *UtilityFulfillmentResult) GetDetails() UtilityFulfillmentDetails {
 	if o == nil || IsNil(o.Details) {
-		var ret UtilityFulfillmentResultDetails
+		var ret UtilityFulfillmentDetails
 		return ret
 	}
 	return *o.Details
@@ -95,7 +95,7 @@ func (o *UtilityFulfillmentResult) GetDetails() UtilityFulfillmentResultDetails 
 
 // GetDetailsOk returns a tuple with the Details field value if set, nil otherwise
 // and a boolean to check if the value has been set.
-func (o *UtilityFulfillmentResult) GetDetailsOk() (*UtilityFulfillmentResultDetails, bool) {
+func (o *UtilityFulfillmentResult) GetDetailsOk() (*UtilityFulfillmentDetails, bool) {
 	if o == nil || IsNil(o.Details) {
 		return nil, false
 	}
@@ -111,8 +111,8 @@ func (o *UtilityFulfillmentResult) HasDetails() bool {
 	return false
 }
 
-// SetDetails gets a reference to the given UtilityFulfillmentResultDetails and assigns it to the Details field.
-func (o *UtilityFulfillmentResult) SetDetails(v UtilityFulfillmentResultDetails) {
+// SetDetails gets a reference to the given UtilityFulfillmentDetails and assigns it to the Details field.
+func (o *UtilityFulfillmentResult) SetDetails(v UtilityFulfillmentDetails) {
 	o.Details = &v
 }
 

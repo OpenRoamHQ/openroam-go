@@ -30,7 +30,7 @@ type HotelMixedQuoteItem struct {
 	// `\"{hotel} · {offer}\"`, the hotel's name and the offer's name, for example `Hotel Arts Barcelona · Deluxe King, Breakfast, Free cancellation`.
 	Name *string `json:"name,omitempty"`
 	// Price for the whole stay, all rooms and nights, in the quote currency. An order of the returned `publicId` without `inputs.maxPrice` is refused if the rate then costs more.
-	Price *MoneyAmount `json:"price,omitempty"`
+	Price *Money `json:"price,omitempty"`
 	// The quoted stay and the rate's terms.
 	Details *HotelQuoteItemDetails `json:"details,omitempty"`
 }
@@ -169,9 +169,9 @@ func (o *HotelMixedQuoteItem) SetName(v string) {
 }
 
 // GetPrice returns the Price field value if set, zero value otherwise.
-func (o *HotelMixedQuoteItem) GetPrice() MoneyAmount {
+func (o *HotelMixedQuoteItem) GetPrice() Money {
 	if o == nil || IsNil(o.Price) {
-		var ret MoneyAmount
+		var ret Money
 		return ret
 	}
 	return *o.Price
@@ -179,7 +179,7 @@ func (o *HotelMixedQuoteItem) GetPrice() MoneyAmount {
 
 // GetPriceOk returns a tuple with the Price field value if set, nil otherwise
 // and a boolean to check if the value has been set.
-func (o *HotelMixedQuoteItem) GetPriceOk() (*MoneyAmount, bool) {
+func (o *HotelMixedQuoteItem) GetPriceOk() (*Money, bool) {
 	if o == nil || IsNil(o.Price) {
 		return nil, false
 	}
@@ -195,8 +195,8 @@ func (o *HotelMixedQuoteItem) HasPrice() bool {
 	return false
 }
 
-// SetPrice gets a reference to the given MoneyAmount and assigns it to the Price field.
-func (o *HotelMixedQuoteItem) SetPrice(v MoneyAmount) {
+// SetPrice gets a reference to the given Money and assigns it to the Price field.
+func (o *HotelMixedQuoteItem) SetPrice(v Money) {
 	o.Price = &v
 }
 

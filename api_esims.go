@@ -433,7 +433,7 @@ type ApiEsimsGetCompatibleDevicesRequest struct {
 	ApiService *EsimsAPIService
 }
 
-func (r ApiEsimsGetCompatibleDevicesRequest) Execute() ([]CompatibleDevice, *http.Response, error) {
+func (r ApiEsimsGetCompatibleDevicesRequest) Execute() ([]EsimCompatibleDevice, *http.Response, error) {
 	return r.ApiService.EsimsGetCompatibleDevicesExecute(r)
 }
 
@@ -455,13 +455,13 @@ func (a *EsimsAPIService) EsimsGetCompatibleDevices(ctx context.Context) ApiEsim
 }
 
 // Execute executes the request
-//  @return []CompatibleDevice
-func (a *EsimsAPIService) EsimsGetCompatibleDevicesExecute(r ApiEsimsGetCompatibleDevicesRequest) ([]CompatibleDevice, *http.Response, error) {
+//  @return []EsimCompatibleDevice
+func (a *EsimsAPIService) EsimsGetCompatibleDevicesExecute(r ApiEsimsGetCompatibleDevicesRequest) ([]EsimCompatibleDevice, *http.Response, error) {
 	var (
 		localVarHTTPMethod   = http.MethodGet
 		localVarPostBody     interface{}
 		formFiles            []formFile
-		localVarReturnValue  []CompatibleDevice
+		localVarReturnValue  []EsimCompatibleDevice
 	)
 
 	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "EsimsAPIService.EsimsGetCompatibleDevices")
@@ -2038,7 +2038,7 @@ type ApiEsimsProvisionRequest struct {
 	ApiService *EsimsAPIService
 	id string
 	idempotencyKey *string
-	esimProvisionRequest *EsimProvisionRequest
+	esimProvisioningRequest *EsimProvisioningRequest
 }
 
 // UUID idempotency key for safe retries of this operation.
@@ -2048,8 +2048,8 @@ func (r ApiEsimsProvisionRequest) IdempotencyKey(idempotencyKey string) ApiEsims
 }
 
 // Optional: &#x60;{ travelStartDate }&#x60;, the first day of travel.
-func (r ApiEsimsProvisionRequest) EsimProvisionRequest(esimProvisionRequest EsimProvisionRequest) ApiEsimsProvisionRequest {
-	r.esimProvisionRequest = &esimProvisionRequest
+func (r ApiEsimsProvisionRequest) EsimProvisioningRequest(esimProvisioningRequest EsimProvisioningRequest) ApiEsimsProvisionRequest {
+	r.esimProvisioningRequest = &esimProvisioningRequest
 	return r
 }
 
@@ -2127,7 +2127,7 @@ func (a *EsimsAPIService) EsimsProvisionExecute(r ApiEsimsProvisionRequest) (*Es
 	}
 	parameterAddToHeaderOrQuery(localVarHeaderParams, "Idempotency-Key", r.idempotencyKey, "simple", "")
 	// body params
-	localVarPostBody = r.esimProvisionRequest
+	localVarPostBody = r.esimProvisioningRequest
 	if r.ctx != nil {
 		// API Key Authentication
 		if auth, ok := r.ctx.Value(ContextAPIKeys).(map[string]APIKey); ok {
@@ -2628,16 +2628,16 @@ type ApiEsimsSendSmsRequest struct {
 	ctx context.Context
 	ApiService *EsimsAPIService
 	iccid string
-	esimSendSmsRequest *EsimSendSmsRequest
+	esimSmsRequest *EsimSmsRequest
 }
 
 // The message to send.
-func (r ApiEsimsSendSmsRequest) EsimSendSmsRequest(esimSendSmsRequest EsimSendSmsRequest) ApiEsimsSendSmsRequest {
-	r.esimSendSmsRequest = &esimSendSmsRequest
+func (r ApiEsimsSendSmsRequest) EsimSmsRequest(esimSmsRequest EsimSmsRequest) ApiEsimsSendSmsRequest {
+	r.esimSmsRequest = &esimSmsRequest
 	return r
 }
 
-func (r ApiEsimsSendSmsRequest) Execute() (*EsimSendSmsResult, *http.Response, error) {
+func (r ApiEsimsSendSmsRequest) Execute() (*EsimSmsResult, *http.Response, error) {
 	return r.ApiService.EsimsSendSmsExecute(r)
 }
 
@@ -2663,13 +2663,13 @@ func (a *EsimsAPIService) EsimsSendSms(ctx context.Context, iccid string) ApiEsi
 }
 
 // Execute executes the request
-//  @return EsimSendSmsResult
-func (a *EsimsAPIService) EsimsSendSmsExecute(r ApiEsimsSendSmsRequest) (*EsimSendSmsResult, *http.Response, error) {
+//  @return EsimSmsResult
+func (a *EsimsAPIService) EsimsSendSmsExecute(r ApiEsimsSendSmsRequest) (*EsimSmsResult, *http.Response, error) {
 	var (
 		localVarHTTPMethod   = http.MethodPost
 		localVarPostBody     interface{}
 		formFiles            []formFile
-		localVarReturnValue  *EsimSendSmsResult
+		localVarReturnValue  *EsimSmsResult
 	)
 
 	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "EsimsAPIService.EsimsSendSms")
@@ -2702,7 +2702,7 @@ func (a *EsimsAPIService) EsimsSendSmsExecute(r ApiEsimsSendSmsRequest) (*EsimSe
 		localVarHeaderParams["Accept"] = localVarHTTPHeaderAccept
 	}
 	// body params
-	localVarPostBody = r.esimSendSmsRequest
+	localVarPostBody = r.esimSmsRequest
 	if r.ctx != nil {
 		// API Key Authentication
 		if auth, ok := r.ctx.Value(ContextAPIKeys).(map[string]APIKey); ok {

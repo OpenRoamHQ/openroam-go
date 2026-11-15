@@ -24,15 +24,15 @@ var _ MappedNullable = &OrderItemCancellationPreview{}
 // OrderItemCancellationPreview A preview of cancelling an order item now. It changes nothing and does not lock the amounts.
 type OrderItemCancellationPreview struct {
 	// The penalty that would be kept, in the order currency.
-	PenaltyAmount MoneyAmount `json:"penaltyAmount"`
+	PenaltyAmount Money `json:"penaltyAmount"`
 	// A cancellation fee taken in addition to the penalty, in the order currency; `null` when none applies. It comes out of what the penalty leaves, so it never makes the refund negative.
-	CancellationFee NullableMoneyAmount `json:"cancellationFee,omitempty"`
+	CancellationFee NullableMoney `json:"cancellationFee,omitempty"`
 	// The amount that would be refunded, in the order currency: what was paid less the penalty and the             cancellation fee.
-	RefundAmount MoneyAmount `json:"refundAmount"`
+	RefundAmount Money `json:"refundAmount"`
 	// Whether anything would be refunded; `false` is not an error.
 	IsRefundable bool `json:"isRefundable"`
 	// The cancellation band in effect now, priced at `penaltyAmount`: at most one entry. Empty when the item's bands have not started yet; `null` when it states none.
-	AppliedPenalties []CancellationPenaltyDetail `json:"appliedPenalties,omitempty"`
+	AppliedPenalties []CancellationPenalty `json:"appliedPenalties,omitempty"`
 	// The cancellation time the preview is calculated for (UTC).
 	EffectiveCancellationDate *time.Time `json:"effectiveCancellationDate,omitempty"`
 	// The check-in date of the booked stay.
@@ -45,7 +45,7 @@ type _OrderItemCancellationPreview OrderItemCancellationPreview
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewOrderItemCancellationPreview(penaltyAmount MoneyAmount, refundAmount MoneyAmount, isRefundable bool) *OrderItemCancellationPreview {
+func NewOrderItemCancellationPreview(penaltyAmount Money, refundAmount Money, isRefundable bool) *OrderItemCancellationPreview {
 	this := OrderItemCancellationPreview{}
 	this.PenaltyAmount = penaltyAmount
 	this.RefundAmount = refundAmount
@@ -62,9 +62,9 @@ func NewOrderItemCancellationPreviewWithDefaults() *OrderItemCancellationPreview
 }
 
 // GetPenaltyAmount returns the PenaltyAmount field value
-func (o *OrderItemCancellationPreview) GetPenaltyAmount() MoneyAmount {
+func (o *OrderItemCancellationPreview) GetPenaltyAmount() Money {
 	if o == nil {
-		var ret MoneyAmount
+		var ret Money
 		return ret
 	}
 
@@ -73,7 +73,7 @@ func (o *OrderItemCancellationPreview) GetPenaltyAmount() MoneyAmount {
 
 // GetPenaltyAmountOk returns a tuple with the PenaltyAmount field value
 // and a boolean to check if the value has been set.
-func (o *OrderItemCancellationPreview) GetPenaltyAmountOk() (*MoneyAmount, bool) {
+func (o *OrderItemCancellationPreview) GetPenaltyAmountOk() (*Money, bool) {
 	if o == nil {
 		return nil, false
 	}
@@ -81,14 +81,14 @@ func (o *OrderItemCancellationPreview) GetPenaltyAmountOk() (*MoneyAmount, bool)
 }
 
 // SetPenaltyAmount sets field value
-func (o *OrderItemCancellationPreview) SetPenaltyAmount(v MoneyAmount) {
+func (o *OrderItemCancellationPreview) SetPenaltyAmount(v Money) {
 	o.PenaltyAmount = v
 }
 
 // GetCancellationFee returns the CancellationFee field value if set, zero value otherwise (both if not set or set to explicit null).
-func (o *OrderItemCancellationPreview) GetCancellationFee() MoneyAmount {
+func (o *OrderItemCancellationPreview) GetCancellationFee() Money {
 	if o == nil || IsNil(o.CancellationFee.Get()) {
-		var ret MoneyAmount
+		var ret Money
 		return ret
 	}
 	return *o.CancellationFee.Get()
@@ -97,7 +97,7 @@ func (o *OrderItemCancellationPreview) GetCancellationFee() MoneyAmount {
 // GetCancellationFeeOk returns a tuple with the CancellationFee field value if set, nil otherwise
 // and a boolean to check if the value has been set.
 // NOTE: If the value is an explicit nil, `nil, true` will be returned
-func (o *OrderItemCancellationPreview) GetCancellationFeeOk() (*MoneyAmount, bool) {
+func (o *OrderItemCancellationPreview) GetCancellationFeeOk() (*Money, bool) {
 	if o == nil {
 		return nil, false
 	}
@@ -113,8 +113,8 @@ func (o *OrderItemCancellationPreview) HasCancellationFee() bool {
 	return false
 }
 
-// SetCancellationFee gets a reference to the given NullableMoneyAmount and assigns it to the CancellationFee field.
-func (o *OrderItemCancellationPreview) SetCancellationFee(v MoneyAmount) {
+// SetCancellationFee gets a reference to the given NullableMoney and assigns it to the CancellationFee field.
+func (o *OrderItemCancellationPreview) SetCancellationFee(v Money) {
 	o.CancellationFee.Set(&v)
 }
 // SetCancellationFeeNil sets the value for CancellationFee to be an explicit nil
@@ -128,9 +128,9 @@ func (o *OrderItemCancellationPreview) UnsetCancellationFee() {
 }
 
 // GetRefundAmount returns the RefundAmount field value
-func (o *OrderItemCancellationPreview) GetRefundAmount() MoneyAmount {
+func (o *OrderItemCancellationPreview) GetRefundAmount() Money {
 	if o == nil {
-		var ret MoneyAmount
+		var ret Money
 		return ret
 	}
 
@@ -139,7 +139,7 @@ func (o *OrderItemCancellationPreview) GetRefundAmount() MoneyAmount {
 
 // GetRefundAmountOk returns a tuple with the RefundAmount field value
 // and a boolean to check if the value has been set.
-func (o *OrderItemCancellationPreview) GetRefundAmountOk() (*MoneyAmount, bool) {
+func (o *OrderItemCancellationPreview) GetRefundAmountOk() (*Money, bool) {
 	if o == nil {
 		return nil, false
 	}
@@ -147,7 +147,7 @@ func (o *OrderItemCancellationPreview) GetRefundAmountOk() (*MoneyAmount, bool) 
 }
 
 // SetRefundAmount sets field value
-func (o *OrderItemCancellationPreview) SetRefundAmount(v MoneyAmount) {
+func (o *OrderItemCancellationPreview) SetRefundAmount(v Money) {
 	o.RefundAmount = v
 }
 
@@ -176,9 +176,9 @@ func (o *OrderItemCancellationPreview) SetIsRefundable(v bool) {
 }
 
 // GetAppliedPenalties returns the AppliedPenalties field value if set, zero value otherwise (both if not set or set to explicit null).
-func (o *OrderItemCancellationPreview) GetAppliedPenalties() []CancellationPenaltyDetail {
+func (o *OrderItemCancellationPreview) GetAppliedPenalties() []CancellationPenalty {
 	if o == nil {
-		var ret []CancellationPenaltyDetail
+		var ret []CancellationPenalty
 		return ret
 	}
 	return o.AppliedPenalties
@@ -187,7 +187,7 @@ func (o *OrderItemCancellationPreview) GetAppliedPenalties() []CancellationPenal
 // GetAppliedPenaltiesOk returns a tuple with the AppliedPenalties field value if set, nil otherwise
 // and a boolean to check if the value has been set.
 // NOTE: If the value is an explicit nil, `nil, true` will be returned
-func (o *OrderItemCancellationPreview) GetAppliedPenaltiesOk() ([]CancellationPenaltyDetail, bool) {
+func (o *OrderItemCancellationPreview) GetAppliedPenaltiesOk() ([]CancellationPenalty, bool) {
 	if o == nil || IsNil(o.AppliedPenalties) {
 		return nil, false
 	}
@@ -203,8 +203,8 @@ func (o *OrderItemCancellationPreview) HasAppliedPenalties() bool {
 	return false
 }
 
-// SetAppliedPenalties gets a reference to the given []CancellationPenaltyDetail and assigns it to the AppliedPenalties field.
-func (o *OrderItemCancellationPreview) SetAppliedPenalties(v []CancellationPenaltyDetail) {
+// SetAppliedPenalties gets a reference to the given []CancellationPenalty and assigns it to the AppliedPenalties field.
+func (o *OrderItemCancellationPreview) SetAppliedPenalties(v []CancellationPenalty) {
 	o.AppliedPenalties = v
 }
 

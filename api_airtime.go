@@ -763,7 +763,7 @@ func (r ApiAirtimeLookupNumberRequest) PhoneNumber(phoneNumber string) ApiAirtim
 	return r
 }
 
-func (r ApiAirtimeLookupNumberRequest) Execute() (*AirtimeNumberLookup, *http.Response, error) {
+func (r ApiAirtimeLookupNumberRequest) Execute() (*NumberLookup, *http.Response, error) {
 	return r.ApiService.AirtimeLookupNumberExecute(r)
 }
 
@@ -789,13 +789,13 @@ func (a *AirtimeAPIService) AirtimeLookupNumber(ctx context.Context) ApiAirtimeL
 }
 
 // Execute executes the request
-//  @return AirtimeNumberLookup
-func (a *AirtimeAPIService) AirtimeLookupNumberExecute(r ApiAirtimeLookupNumberRequest) (*AirtimeNumberLookup, *http.Response, error) {
+//  @return NumberLookup
+func (a *AirtimeAPIService) AirtimeLookupNumberExecute(r ApiAirtimeLookupNumberRequest) (*NumberLookup, *http.Response, error) {
 	var (
 		localVarHTTPMethod   = http.MethodGet
 		localVarPostBody     interface{}
 		formFiles            []formFile
-		localVarReturnValue  *AirtimeNumberLookup
+		localVarReturnValue  *NumberLookup
 	)
 
 	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "AirtimeAPIService.AirtimeLookupNumber")

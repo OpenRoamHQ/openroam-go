@@ -21,9 +21,9 @@ var _ MappedNullable = &HotelAmendmentCapabilities{}
 // HotelAmendmentCapabilities Which parts of the booked room and guest <b>composition</b> an amendment can change for this booking. Dates and the holder are not covered here.
 type HotelAmendmentCapabilities struct {
 	// What may change about the guests inside a room.
-	Guests *HotelGuestCapabilities `json:"guests,omitempty"`
+	Guests *GuestAmendmentCapabilities `json:"guests,omitempty"`
 	// What may change about the rooms themselves. Adding or removing rooms is not offered today, so both are false.
-	Rooms *HotelRoomCapabilities `json:"rooms,omitempty"`
+	Rooms *RoomAmendmentCapabilities `json:"rooms,omitempty"`
 }
 
 // NewHotelAmendmentCapabilities instantiates a new HotelAmendmentCapabilities object
@@ -44,9 +44,9 @@ func NewHotelAmendmentCapabilitiesWithDefaults() *HotelAmendmentCapabilities {
 }
 
 // GetGuests returns the Guests field value if set, zero value otherwise.
-func (o *HotelAmendmentCapabilities) GetGuests() HotelGuestCapabilities {
+func (o *HotelAmendmentCapabilities) GetGuests() GuestAmendmentCapabilities {
 	if o == nil || IsNil(o.Guests) {
-		var ret HotelGuestCapabilities
+		var ret GuestAmendmentCapabilities
 		return ret
 	}
 	return *o.Guests
@@ -54,7 +54,7 @@ func (o *HotelAmendmentCapabilities) GetGuests() HotelGuestCapabilities {
 
 // GetGuestsOk returns a tuple with the Guests field value if set, nil otherwise
 // and a boolean to check if the value has been set.
-func (o *HotelAmendmentCapabilities) GetGuestsOk() (*HotelGuestCapabilities, bool) {
+func (o *HotelAmendmentCapabilities) GetGuestsOk() (*GuestAmendmentCapabilities, bool) {
 	if o == nil || IsNil(o.Guests) {
 		return nil, false
 	}
@@ -70,15 +70,15 @@ func (o *HotelAmendmentCapabilities) HasGuests() bool {
 	return false
 }
 
-// SetGuests gets a reference to the given HotelGuestCapabilities and assigns it to the Guests field.
-func (o *HotelAmendmentCapabilities) SetGuests(v HotelGuestCapabilities) {
+// SetGuests gets a reference to the given GuestAmendmentCapabilities and assigns it to the Guests field.
+func (o *HotelAmendmentCapabilities) SetGuests(v GuestAmendmentCapabilities) {
 	o.Guests = &v
 }
 
 // GetRooms returns the Rooms field value if set, zero value otherwise.
-func (o *HotelAmendmentCapabilities) GetRooms() HotelRoomCapabilities {
+func (o *HotelAmendmentCapabilities) GetRooms() RoomAmendmentCapabilities {
 	if o == nil || IsNil(o.Rooms) {
-		var ret HotelRoomCapabilities
+		var ret RoomAmendmentCapabilities
 		return ret
 	}
 	return *o.Rooms
@@ -86,7 +86,7 @@ func (o *HotelAmendmentCapabilities) GetRooms() HotelRoomCapabilities {
 
 // GetRoomsOk returns a tuple with the Rooms field value if set, nil otherwise
 // and a boolean to check if the value has been set.
-func (o *HotelAmendmentCapabilities) GetRoomsOk() (*HotelRoomCapabilities, bool) {
+func (o *HotelAmendmentCapabilities) GetRoomsOk() (*RoomAmendmentCapabilities, bool) {
 	if o == nil || IsNil(o.Rooms) {
 		return nil, false
 	}
@@ -102,8 +102,8 @@ func (o *HotelAmendmentCapabilities) HasRooms() bool {
 	return false
 }
 
-// SetRooms gets a reference to the given HotelRoomCapabilities and assigns it to the Rooms field.
-func (o *HotelAmendmentCapabilities) SetRooms(v HotelRoomCapabilities) {
+// SetRooms gets a reference to the given RoomAmendmentCapabilities and assigns it to the Rooms field.
+func (o *HotelAmendmentCapabilities) SetRooms(v RoomAmendmentCapabilities) {
 	o.Rooms = &v
 }
 

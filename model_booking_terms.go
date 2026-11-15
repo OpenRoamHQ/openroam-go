@@ -21,11 +21,11 @@ var _ MappedNullable = &BookingTerms{}
 // BookingTerms How a booked product is paid, what cancelling it gives back and whether it can be changed, in the same shape on the offer, the quote item and the purchased product. Every amount is in the partner's currency and in what the partner pays; OpenRoam's own fees are already included.
 type BookingTerms struct {
 	// What the partner's wallet is charged at order, and what the guest pays later.
-	Payment *BookingTermsPayment `json:"payment,omitempty"`
+	Payment *PaymentTerms `json:"payment,omitempty"`
 	// What cancelling gives back, and from when.
-	Cancellation *BookingTermsCancellation `json:"cancellation,omitempty"`
+	Cancellation *CancellationTerms `json:"cancellation,omitempty"`
 	// Whether the booking can be changed, and OpenRoam's fee for a change.
-	Changes *BookingTermsChanges `json:"changes,omitempty"`
+	Changes *ChangeTerms `json:"changes,omitempty"`
 }
 
 // NewBookingTerms instantiates a new BookingTerms object
@@ -46,9 +46,9 @@ func NewBookingTermsWithDefaults() *BookingTerms {
 }
 
 // GetPayment returns the Payment field value if set, zero value otherwise.
-func (o *BookingTerms) GetPayment() BookingTermsPayment {
+func (o *BookingTerms) GetPayment() PaymentTerms {
 	if o == nil || IsNil(o.Payment) {
-		var ret BookingTermsPayment
+		var ret PaymentTerms
 		return ret
 	}
 	return *o.Payment
@@ -56,7 +56,7 @@ func (o *BookingTerms) GetPayment() BookingTermsPayment {
 
 // GetPaymentOk returns a tuple with the Payment field value if set, nil otherwise
 // and a boolean to check if the value has been set.
-func (o *BookingTerms) GetPaymentOk() (*BookingTermsPayment, bool) {
+func (o *BookingTerms) GetPaymentOk() (*PaymentTerms, bool) {
 	if o == nil || IsNil(o.Payment) {
 		return nil, false
 	}
@@ -72,15 +72,15 @@ func (o *BookingTerms) HasPayment() bool {
 	return false
 }
 
-// SetPayment gets a reference to the given BookingTermsPayment and assigns it to the Payment field.
-func (o *BookingTerms) SetPayment(v BookingTermsPayment) {
+// SetPayment gets a reference to the given PaymentTerms and assigns it to the Payment field.
+func (o *BookingTerms) SetPayment(v PaymentTerms) {
 	o.Payment = &v
 }
 
 // GetCancellation returns the Cancellation field value if set, zero value otherwise.
-func (o *BookingTerms) GetCancellation() BookingTermsCancellation {
+func (o *BookingTerms) GetCancellation() CancellationTerms {
 	if o == nil || IsNil(o.Cancellation) {
-		var ret BookingTermsCancellation
+		var ret CancellationTerms
 		return ret
 	}
 	return *o.Cancellation
@@ -88,7 +88,7 @@ func (o *BookingTerms) GetCancellation() BookingTermsCancellation {
 
 // GetCancellationOk returns a tuple with the Cancellation field value if set, nil otherwise
 // and a boolean to check if the value has been set.
-func (o *BookingTerms) GetCancellationOk() (*BookingTermsCancellation, bool) {
+func (o *BookingTerms) GetCancellationOk() (*CancellationTerms, bool) {
 	if o == nil || IsNil(o.Cancellation) {
 		return nil, false
 	}
@@ -104,15 +104,15 @@ func (o *BookingTerms) HasCancellation() bool {
 	return false
 }
 
-// SetCancellation gets a reference to the given BookingTermsCancellation and assigns it to the Cancellation field.
-func (o *BookingTerms) SetCancellation(v BookingTermsCancellation) {
+// SetCancellation gets a reference to the given CancellationTerms and assigns it to the Cancellation field.
+func (o *BookingTerms) SetCancellation(v CancellationTerms) {
 	o.Cancellation = &v
 }
 
 // GetChanges returns the Changes field value if set, zero value otherwise.
-func (o *BookingTerms) GetChanges() BookingTermsChanges {
+func (o *BookingTerms) GetChanges() ChangeTerms {
 	if o == nil || IsNil(o.Changes) {
-		var ret BookingTermsChanges
+		var ret ChangeTerms
 		return ret
 	}
 	return *o.Changes
@@ -120,7 +120,7 @@ func (o *BookingTerms) GetChanges() BookingTermsChanges {
 
 // GetChangesOk returns a tuple with the Changes field value if set, nil otherwise
 // and a boolean to check if the value has been set.
-func (o *BookingTerms) GetChangesOk() (*BookingTermsChanges, bool) {
+func (o *BookingTerms) GetChangesOk() (*ChangeTerms, bool) {
 	if o == nil || IsNil(o.Changes) {
 		return nil, false
 	}
@@ -136,8 +136,8 @@ func (o *BookingTerms) HasChanges() bool {
 	return false
 }
 
-// SetChanges gets a reference to the given BookingTermsChanges and assigns it to the Changes field.
-func (o *BookingTerms) SetChanges(v BookingTermsChanges) {
+// SetChanges gets a reference to the given ChangeTerms and assigns it to the Changes field.
+func (o *BookingTerms) SetChanges(v ChangeTerms) {
 	o.Changes = &v
 }
 

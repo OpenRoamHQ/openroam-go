@@ -24,7 +24,7 @@ type EsimOffer struct {
 	Name *string `json:"name,omitempty"`
 	Description NullableString `json:"description,omitempty"`
 	Price *OfferPrice `json:"price,omitempty"`
-	RequiredInputs []RequiredInput `json:"requiredInputs,omitempty"`
+	RequiredInputs []InputField `json:"requiredInputs,omitempty"`
 	// eSIM plan facts outside the offer keys every partner service shares.
 	Details *EsimOfferDetails `json:"details,omitempty"`
 }
@@ -185,9 +185,9 @@ func (o *EsimOffer) SetPrice(v OfferPrice) {
 }
 
 // GetRequiredInputs returns the RequiredInputs field value if set, zero value otherwise.
-func (o *EsimOffer) GetRequiredInputs() []RequiredInput {
+func (o *EsimOffer) GetRequiredInputs() []InputField {
 	if o == nil || IsNil(o.RequiredInputs) {
-		var ret []RequiredInput
+		var ret []InputField
 		return ret
 	}
 	return o.RequiredInputs
@@ -195,7 +195,7 @@ func (o *EsimOffer) GetRequiredInputs() []RequiredInput {
 
 // GetRequiredInputsOk returns a tuple with the RequiredInputs field value if set, nil otherwise
 // and a boolean to check if the value has been set.
-func (o *EsimOffer) GetRequiredInputsOk() ([]RequiredInput, bool) {
+func (o *EsimOffer) GetRequiredInputsOk() ([]InputField, bool) {
 	if o == nil || IsNil(o.RequiredInputs) {
 		return nil, false
 	}
@@ -211,8 +211,8 @@ func (o *EsimOffer) HasRequiredInputs() bool {
 	return false
 }
 
-// SetRequiredInputs gets a reference to the given []RequiredInput and assigns it to the RequiredInputs field.
-func (o *EsimOffer) SetRequiredInputs(v []RequiredInput) {
+// SetRequiredInputs gets a reference to the given []InputField and assigns it to the RequiredInputs field.
+func (o *EsimOffer) SetRequiredInputs(v []InputField) {
 	o.RequiredInputs = v
 }
 

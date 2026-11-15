@@ -29,7 +29,7 @@ type GiftCardOrderItem struct {
 	OrderId *string `json:"orderId,omitempty"`
 	ProductType string `json:"productType"`
 	// The price paid for the item at purchase, in the order's currency.
-	Price *MoneyAmount `json:"price,omitempty"`
+	Price *Money `json:"price,omitempty"`
 	PurchasedProduct *GiftCardPurchasedProduct `json:"purchasedProduct,omitempty"`
 	Fulfillment *GiftCardFulfillment `json:"fulfillment,omitempty"`
 	// Whether the item can be amended or cancelled now.
@@ -37,7 +37,7 @@ type GiftCardOrderItem struct {
 	// When the item was created (UTC).
 	CreatedAt *time.Time `json:"createdAt,omitempty"`
 	// What has been paid for the item so far: `price` plus completed amendment             charges, less completed amendment credits.
-	EffectivePaidAmount *MoneyAmount `json:"effectivePaidAmount,omitempty"`
+	EffectivePaidAmount *Money `json:"effectivePaidAmount,omitempty"`
 	// The recorded refund, or `null` when no refund has been started.
 	Refund NullableOrderItemRefund `json:"refund,omitempty"`
 }
@@ -151,9 +151,9 @@ func (o *GiftCardOrderItem) SetProductType(v string) {
 }
 
 // GetPrice returns the Price field value if set, zero value otherwise.
-func (o *GiftCardOrderItem) GetPrice() MoneyAmount {
+func (o *GiftCardOrderItem) GetPrice() Money {
 	if o == nil || IsNil(o.Price) {
-		var ret MoneyAmount
+		var ret Money
 		return ret
 	}
 	return *o.Price
@@ -161,7 +161,7 @@ func (o *GiftCardOrderItem) GetPrice() MoneyAmount {
 
 // GetPriceOk returns a tuple with the Price field value if set, nil otherwise
 // and a boolean to check if the value has been set.
-func (o *GiftCardOrderItem) GetPriceOk() (*MoneyAmount, bool) {
+func (o *GiftCardOrderItem) GetPriceOk() (*Money, bool) {
 	if o == nil || IsNil(o.Price) {
 		return nil, false
 	}
@@ -177,8 +177,8 @@ func (o *GiftCardOrderItem) HasPrice() bool {
 	return false
 }
 
-// SetPrice gets a reference to the given MoneyAmount and assigns it to the Price field.
-func (o *GiftCardOrderItem) SetPrice(v MoneyAmount) {
+// SetPrice gets a reference to the given Money and assigns it to the Price field.
+func (o *GiftCardOrderItem) SetPrice(v Money) {
 	o.Price = &v
 }
 
@@ -311,9 +311,9 @@ func (o *GiftCardOrderItem) SetCreatedAt(v time.Time) {
 }
 
 // GetEffectivePaidAmount returns the EffectivePaidAmount field value if set, zero value otherwise.
-func (o *GiftCardOrderItem) GetEffectivePaidAmount() MoneyAmount {
+func (o *GiftCardOrderItem) GetEffectivePaidAmount() Money {
 	if o == nil || IsNil(o.EffectivePaidAmount) {
-		var ret MoneyAmount
+		var ret Money
 		return ret
 	}
 	return *o.EffectivePaidAmount
@@ -321,7 +321,7 @@ func (o *GiftCardOrderItem) GetEffectivePaidAmount() MoneyAmount {
 
 // GetEffectivePaidAmountOk returns a tuple with the EffectivePaidAmount field value if set, nil otherwise
 // and a boolean to check if the value has been set.
-func (o *GiftCardOrderItem) GetEffectivePaidAmountOk() (*MoneyAmount, bool) {
+func (o *GiftCardOrderItem) GetEffectivePaidAmountOk() (*Money, bool) {
 	if o == nil || IsNil(o.EffectivePaidAmount) {
 		return nil, false
 	}
@@ -337,8 +337,8 @@ func (o *GiftCardOrderItem) HasEffectivePaidAmount() bool {
 	return false
 }
 
-// SetEffectivePaidAmount gets a reference to the given MoneyAmount and assigns it to the EffectivePaidAmount field.
-func (o *GiftCardOrderItem) SetEffectivePaidAmount(v MoneyAmount) {
+// SetEffectivePaidAmount gets a reference to the given Money and assigns it to the EffectivePaidAmount field.
+func (o *GiftCardOrderItem) SetEffectivePaidAmount(v Money) {
 	o.EffectivePaidAmount = &v
 }
 

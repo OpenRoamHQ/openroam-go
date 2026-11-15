@@ -21,7 +21,7 @@ var _ MappedNullable = &HotelFulfillmentResult{}
 // HotelFulfillmentResult What a fulfilled hotel order item booked. A hotel stay has no monetary value, so there is no `deliveredValue`; the booking facts sit under `details`. Order reads and the `order.fulfillment.updated` webhook carry the same result.
 type HotelFulfillmentResult struct {
 	// The booking's status, confirmation number, amendable composition and current stay.
-	Details *HotelFulfillmentResultDetails `json:"details,omitempty"`
+	Details *HotelFulfillmentDetails `json:"details,omitempty"`
 }
 
 // NewHotelFulfillmentResult instantiates a new HotelFulfillmentResult object
@@ -42,9 +42,9 @@ func NewHotelFulfillmentResultWithDefaults() *HotelFulfillmentResult {
 }
 
 // GetDetails returns the Details field value if set, zero value otherwise.
-func (o *HotelFulfillmentResult) GetDetails() HotelFulfillmentResultDetails {
+func (o *HotelFulfillmentResult) GetDetails() HotelFulfillmentDetails {
 	if o == nil || IsNil(o.Details) {
-		var ret HotelFulfillmentResultDetails
+		var ret HotelFulfillmentDetails
 		return ret
 	}
 	return *o.Details
@@ -52,7 +52,7 @@ func (o *HotelFulfillmentResult) GetDetails() HotelFulfillmentResultDetails {
 
 // GetDetailsOk returns a tuple with the Details field value if set, nil otherwise
 // and a boolean to check if the value has been set.
-func (o *HotelFulfillmentResult) GetDetailsOk() (*HotelFulfillmentResultDetails, bool) {
+func (o *HotelFulfillmentResult) GetDetailsOk() (*HotelFulfillmentDetails, bool) {
 	if o == nil || IsNil(o.Details) {
 		return nil, false
 	}
@@ -68,8 +68,8 @@ func (o *HotelFulfillmentResult) HasDetails() bool {
 	return false
 }
 
-// SetDetails gets a reference to the given HotelFulfillmentResultDetails and assigns it to the Details field.
-func (o *HotelFulfillmentResult) SetDetails(v HotelFulfillmentResultDetails) {
+// SetDetails gets a reference to the given HotelFulfillmentDetails and assigns it to the Details field.
+func (o *HotelFulfillmentResult) SetDetails(v HotelFulfillmentDetails) {
 	o.Details = &v
 }
 

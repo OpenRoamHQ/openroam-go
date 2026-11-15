@@ -23,11 +23,11 @@ type GiftCardPurchasedProduct struct {
 	Name *string `json:"name,omitempty"`
 	CountryCode NullableString `json:"countryCode,omitempty"`
 	LogoUrl NullableString `json:"logoUrl,omitempty"`
-	Value NullableMoneyAmount `json:"value,omitempty"`
+	Value NullableMoney `json:"value,omitempty"`
 	// The item's `inputs` under the request's keys. `recipientIdentifier` and `recipientEmail` are masked; `giftMessage` is returned as given. The identifier is echoed only when the card required it.
-	Inputs *GiftCardPurchasedProductInputs `json:"inputs,omitempty"`
+	Inputs *GiftCardPurchasedInputs `json:"inputs,omitempty"`
 	// Gift card facts outside the purchased-product keys every partner service shares, as captured when the card was added. `redemptionInstructions` is the detailed text, or the summary when the card has only that.
-	Details *GiftCardPurchasedProductDetails `json:"details,omitempty"`
+	Details *GiftCardPurchasedDetails `json:"details,omitempty"`
 }
 
 // NewGiftCardPurchasedProduct instantiates a new GiftCardPurchasedProduct object
@@ -164,9 +164,9 @@ func (o *GiftCardPurchasedProduct) UnsetLogoUrl() {
 }
 
 // GetValue returns the Value field value if set, zero value otherwise (both if not set or set to explicit null).
-func (o *GiftCardPurchasedProduct) GetValue() MoneyAmount {
+func (o *GiftCardPurchasedProduct) GetValue() Money {
 	if o == nil || IsNil(o.Value.Get()) {
-		var ret MoneyAmount
+		var ret Money
 		return ret
 	}
 	return *o.Value.Get()
@@ -175,7 +175,7 @@ func (o *GiftCardPurchasedProduct) GetValue() MoneyAmount {
 // GetValueOk returns a tuple with the Value field value if set, nil otherwise
 // and a boolean to check if the value has been set.
 // NOTE: If the value is an explicit nil, `nil, true` will be returned
-func (o *GiftCardPurchasedProduct) GetValueOk() (*MoneyAmount, bool) {
+func (o *GiftCardPurchasedProduct) GetValueOk() (*Money, bool) {
 	if o == nil {
 		return nil, false
 	}
@@ -191,8 +191,8 @@ func (o *GiftCardPurchasedProduct) HasValue() bool {
 	return false
 }
 
-// SetValue gets a reference to the given NullableMoneyAmount and assigns it to the Value field.
-func (o *GiftCardPurchasedProduct) SetValue(v MoneyAmount) {
+// SetValue gets a reference to the given NullableMoney and assigns it to the Value field.
+func (o *GiftCardPurchasedProduct) SetValue(v Money) {
 	o.Value.Set(&v)
 }
 // SetValueNil sets the value for Value to be an explicit nil
@@ -206,9 +206,9 @@ func (o *GiftCardPurchasedProduct) UnsetValue() {
 }
 
 // GetInputs returns the Inputs field value if set, zero value otherwise.
-func (o *GiftCardPurchasedProduct) GetInputs() GiftCardPurchasedProductInputs {
+func (o *GiftCardPurchasedProduct) GetInputs() GiftCardPurchasedInputs {
 	if o == nil || IsNil(o.Inputs) {
-		var ret GiftCardPurchasedProductInputs
+		var ret GiftCardPurchasedInputs
 		return ret
 	}
 	return *o.Inputs
@@ -216,7 +216,7 @@ func (o *GiftCardPurchasedProduct) GetInputs() GiftCardPurchasedProductInputs {
 
 // GetInputsOk returns a tuple with the Inputs field value if set, nil otherwise
 // and a boolean to check if the value has been set.
-func (o *GiftCardPurchasedProduct) GetInputsOk() (*GiftCardPurchasedProductInputs, bool) {
+func (o *GiftCardPurchasedProduct) GetInputsOk() (*GiftCardPurchasedInputs, bool) {
 	if o == nil || IsNil(o.Inputs) {
 		return nil, false
 	}
@@ -232,15 +232,15 @@ func (o *GiftCardPurchasedProduct) HasInputs() bool {
 	return false
 }
 
-// SetInputs gets a reference to the given GiftCardPurchasedProductInputs and assigns it to the Inputs field.
-func (o *GiftCardPurchasedProduct) SetInputs(v GiftCardPurchasedProductInputs) {
+// SetInputs gets a reference to the given GiftCardPurchasedInputs and assigns it to the Inputs field.
+func (o *GiftCardPurchasedProduct) SetInputs(v GiftCardPurchasedInputs) {
 	o.Inputs = &v
 }
 
 // GetDetails returns the Details field value if set, zero value otherwise.
-func (o *GiftCardPurchasedProduct) GetDetails() GiftCardPurchasedProductDetails {
+func (o *GiftCardPurchasedProduct) GetDetails() GiftCardPurchasedDetails {
 	if o == nil || IsNil(o.Details) {
-		var ret GiftCardPurchasedProductDetails
+		var ret GiftCardPurchasedDetails
 		return ret
 	}
 	return *o.Details
@@ -248,7 +248,7 @@ func (o *GiftCardPurchasedProduct) GetDetails() GiftCardPurchasedProductDetails 
 
 // GetDetailsOk returns a tuple with the Details field value if set, nil otherwise
 // and a boolean to check if the value has been set.
-func (o *GiftCardPurchasedProduct) GetDetailsOk() (*GiftCardPurchasedProductDetails, bool) {
+func (o *GiftCardPurchasedProduct) GetDetailsOk() (*GiftCardPurchasedDetails, bool) {
 	if o == nil || IsNil(o.Details) {
 		return nil, false
 	}
@@ -264,8 +264,8 @@ func (o *GiftCardPurchasedProduct) HasDetails() bool {
 	return false
 }
 
-// SetDetails gets a reference to the given GiftCardPurchasedProductDetails and assigns it to the Details field.
-func (o *GiftCardPurchasedProduct) SetDetails(v GiftCardPurchasedProductDetails) {
+// SetDetails gets a reference to the given GiftCardPurchasedDetails and assigns it to the Details field.
+func (o *GiftCardPurchasedProduct) SetDetails(v GiftCardPurchasedDetails) {
 	o.Details = &v
 }
 

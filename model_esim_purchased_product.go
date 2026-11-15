@@ -25,9 +25,9 @@ type EsimPurchasedProduct struct {
 	CountryCode NullableString `json:"countryCode,omitempty"`
 	LogoUrl NullableString `json:"logoUrl,omitempty"`
 	// The item's `inputs` under the request's keys. `eid`, `imei2` and `iccid` are masked; `travelStartDate` and `isInstant` are returned as applied, so a new eSIM ordered without `isInstant` reads `true`. An input the item did not take is null: a new eSIM has no `iccid`, and a top-up takes no `isInstant`.
-	Inputs *EsimPurchasedProductInputs `json:"inputs,omitempty"`
+	Inputs *EsimPurchasedInputs `json:"inputs,omitempty"`
 	// eSIM facts outside the purchased-product keys every partner service shares. `isInstant` says whether the eSIM is provisioned when the item is fulfilled; a deferred one waits for `POST /esims/{id}/provisioning`. A top-up is always instant.
-	Details *EsimPurchasedProductDetails `json:"details,omitempty"`
+	Details *EsimPurchasedDetails `json:"details,omitempty"`
 }
 
 // NewEsimPurchasedProduct instantiates a new EsimPurchasedProduct object
@@ -164,9 +164,9 @@ func (o *EsimPurchasedProduct) UnsetLogoUrl() {
 }
 
 // GetInputs returns the Inputs field value if set, zero value otherwise.
-func (o *EsimPurchasedProduct) GetInputs() EsimPurchasedProductInputs {
+func (o *EsimPurchasedProduct) GetInputs() EsimPurchasedInputs {
 	if o == nil || IsNil(o.Inputs) {
-		var ret EsimPurchasedProductInputs
+		var ret EsimPurchasedInputs
 		return ret
 	}
 	return *o.Inputs
@@ -174,7 +174,7 @@ func (o *EsimPurchasedProduct) GetInputs() EsimPurchasedProductInputs {
 
 // GetInputsOk returns a tuple with the Inputs field value if set, nil otherwise
 // and a boolean to check if the value has been set.
-func (o *EsimPurchasedProduct) GetInputsOk() (*EsimPurchasedProductInputs, bool) {
+func (o *EsimPurchasedProduct) GetInputsOk() (*EsimPurchasedInputs, bool) {
 	if o == nil || IsNil(o.Inputs) {
 		return nil, false
 	}
@@ -190,15 +190,15 @@ func (o *EsimPurchasedProduct) HasInputs() bool {
 	return false
 }
 
-// SetInputs gets a reference to the given EsimPurchasedProductInputs and assigns it to the Inputs field.
-func (o *EsimPurchasedProduct) SetInputs(v EsimPurchasedProductInputs) {
+// SetInputs gets a reference to the given EsimPurchasedInputs and assigns it to the Inputs field.
+func (o *EsimPurchasedProduct) SetInputs(v EsimPurchasedInputs) {
 	o.Inputs = &v
 }
 
 // GetDetails returns the Details field value if set, zero value otherwise.
-func (o *EsimPurchasedProduct) GetDetails() EsimPurchasedProductDetails {
+func (o *EsimPurchasedProduct) GetDetails() EsimPurchasedDetails {
 	if o == nil || IsNil(o.Details) {
-		var ret EsimPurchasedProductDetails
+		var ret EsimPurchasedDetails
 		return ret
 	}
 	return *o.Details
@@ -206,7 +206,7 @@ func (o *EsimPurchasedProduct) GetDetails() EsimPurchasedProductDetails {
 
 // GetDetailsOk returns a tuple with the Details field value if set, nil otherwise
 // and a boolean to check if the value has been set.
-func (o *EsimPurchasedProduct) GetDetailsOk() (*EsimPurchasedProductDetails, bool) {
+func (o *EsimPurchasedProduct) GetDetailsOk() (*EsimPurchasedDetails, bool) {
 	if o == nil || IsNil(o.Details) {
 		return nil, false
 	}
@@ -222,8 +222,8 @@ func (o *EsimPurchasedProduct) HasDetails() bool {
 	return false
 }
 
-// SetDetails gets a reference to the given EsimPurchasedProductDetails and assigns it to the Details field.
-func (o *EsimPurchasedProduct) SetDetails(v EsimPurchasedProductDetails) {
+// SetDetails gets a reference to the given EsimPurchasedDetails and assigns it to the Details field.
+func (o *EsimPurchasedProduct) SetDetails(v EsimPurchasedDetails) {
 	o.Details = &v
 }
 

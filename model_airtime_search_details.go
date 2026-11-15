@@ -21,7 +21,7 @@ var _ MappedNullable = &AirtimeSearchDetails{}
 // AirtimeSearchDetails Airtime search facts outside the root keys every partner service shares.
 type AirtimeSearchDetails struct {
 	// Outcome of the search's carrier lookup. `carrierName` is the carrier the lookup reported, for display only; it is present for any status when the lookup returned one and is never an operator ID. `countryCode` is the number's country as ISO 3166-1 alpha-2, derived from the number itself and never from the lookup; it is present for every status, so a partner can list that country's operators for the manual flow.
-	PhoneLookup *AirtimePhoneLookup `json:"phoneLookup,omitempty"`
+	PhoneLookup *CarrierDetection `json:"phoneLookup,omitempty"`
 }
 
 // NewAirtimeSearchDetails instantiates a new AirtimeSearchDetails object
@@ -42,9 +42,9 @@ func NewAirtimeSearchDetailsWithDefaults() *AirtimeSearchDetails {
 }
 
 // GetPhoneLookup returns the PhoneLookup field value if set, zero value otherwise.
-func (o *AirtimeSearchDetails) GetPhoneLookup() AirtimePhoneLookup {
+func (o *AirtimeSearchDetails) GetPhoneLookup() CarrierDetection {
 	if o == nil || IsNil(o.PhoneLookup) {
-		var ret AirtimePhoneLookup
+		var ret CarrierDetection
 		return ret
 	}
 	return *o.PhoneLookup
@@ -52,7 +52,7 @@ func (o *AirtimeSearchDetails) GetPhoneLookup() AirtimePhoneLookup {
 
 // GetPhoneLookupOk returns a tuple with the PhoneLookup field value if set, nil otherwise
 // and a boolean to check if the value has been set.
-func (o *AirtimeSearchDetails) GetPhoneLookupOk() (*AirtimePhoneLookup, bool) {
+func (o *AirtimeSearchDetails) GetPhoneLookupOk() (*CarrierDetection, bool) {
 	if o == nil || IsNil(o.PhoneLookup) {
 		return nil, false
 	}
@@ -68,8 +68,8 @@ func (o *AirtimeSearchDetails) HasPhoneLookup() bool {
 	return false
 }
 
-// SetPhoneLookup gets a reference to the given AirtimePhoneLookup and assigns it to the PhoneLookup field.
-func (o *AirtimeSearchDetails) SetPhoneLookup(v AirtimePhoneLookup) {
+// SetPhoneLookup gets a reference to the given CarrierDetection and assigns it to the PhoneLookup field.
+func (o *AirtimeSearchDetails) SetPhoneLookup(v CarrierDetection) {
 	o.PhoneLookup = &v
 }
 

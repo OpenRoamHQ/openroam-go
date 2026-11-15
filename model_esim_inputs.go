@@ -31,7 +31,7 @@ type EsimInputs struct {
 	// The ICCID (18 to 22 digits) of your eSIM that a top-up offer from `search?iccid=` tops up. It alone makes the item a top-up: a top-up offer has the publicId of the plan's purchase offer, so without it the item is a new eSIM.
 	Iccid NullableString `json:"iccid,omitempty"`
 	// Optional highest accepted unit price, in the order or cart currency; a higher current unit price gives 409 / 11002.
-	MaxPrice NullableMoneyAmountInput `json:"maxPrice,omitempty"`
+	MaxPrice NullableMoneyInput `json:"maxPrice,omitempty"`
 }
 
 // NewEsimInputs instantiates a new EsimInputs object
@@ -262,9 +262,9 @@ func (o *EsimInputs) UnsetIccid() {
 }
 
 // GetMaxPrice returns the MaxPrice field value if set, zero value otherwise (both if not set or set to explicit null).
-func (o *EsimInputs) GetMaxPrice() MoneyAmountInput {
+func (o *EsimInputs) GetMaxPrice() MoneyInput {
 	if o == nil || IsNil(o.MaxPrice.Get()) {
-		var ret MoneyAmountInput
+		var ret MoneyInput
 		return ret
 	}
 	return *o.MaxPrice.Get()
@@ -273,7 +273,7 @@ func (o *EsimInputs) GetMaxPrice() MoneyAmountInput {
 // GetMaxPriceOk returns a tuple with the MaxPrice field value if set, nil otherwise
 // and a boolean to check if the value has been set.
 // NOTE: If the value is an explicit nil, `nil, true` will be returned
-func (o *EsimInputs) GetMaxPriceOk() (*MoneyAmountInput, bool) {
+func (o *EsimInputs) GetMaxPriceOk() (*MoneyInput, bool) {
 	if o == nil {
 		return nil, false
 	}
@@ -289,8 +289,8 @@ func (o *EsimInputs) HasMaxPrice() bool {
 	return false
 }
 
-// SetMaxPrice gets a reference to the given NullableMoneyAmountInput and assigns it to the MaxPrice field.
-func (o *EsimInputs) SetMaxPrice(v MoneyAmountInput) {
+// SetMaxPrice gets a reference to the given NullableMoneyInput and assigns it to the MaxPrice field.
+func (o *EsimInputs) SetMaxPrice(v MoneyInput) {
 	o.MaxPrice.Set(&v)
 }
 // SetMaxPriceNil sets the value for MaxPrice to be an explicit nil

@@ -30,7 +30,7 @@ type ApiOrdersCreateOrderRequest struct {
 	ctx context.Context
 	ApiService *OrdersAPIService
 	idempotencyKey *string
-	orderRequest *OrderRequest
+	mixedOrderRequest *MixedOrderRequest
 }
 
 // UUID idempotency key for safe retries of this operation.
@@ -40,8 +40,8 @@ func (r ApiOrdersCreateOrderRequest) IdempotencyKey(idempotencyKey string) ApiOr
 }
 
 // The order to place.
-func (r ApiOrdersCreateOrderRequest) OrderRequest(orderRequest OrderRequest) ApiOrdersCreateOrderRequest {
-	r.orderRequest = &orderRequest
+func (r ApiOrdersCreateOrderRequest) MixedOrderRequest(mixedOrderRequest MixedOrderRequest) ApiOrdersCreateOrderRequest {
+	r.mixedOrderRequest = &mixedOrderRequest
 	return r
 }
 
@@ -138,7 +138,7 @@ func (a *OrdersAPIService) OrdersCreateOrderExecute(r ApiOrdersCreateOrderReques
 	}
 	parameterAddToHeaderOrQuery(localVarHeaderParams, "Idempotency-Key", r.idempotencyKey, "simple", "")
 	// body params
-	localVarPostBody = r.orderRequest
+	localVarPostBody = r.mixedOrderRequest
 	if r.ctx != nil {
 		// API Key Authentication
 		if auth, ok := r.ctx.Value(ContextAPIKeys).(map[string]APIKey); ok {
@@ -1094,16 +1094,16 @@ func (a *OrdersAPIService) OrdersGetFulfillmentStatusExecute(r ApiOrdersGetFulfi
 type ApiOrdersQuoteOrderRequest struct {
 	ctx context.Context
 	ApiService *OrdersAPIService
-	orderRequest *OrderRequest
+	mixedOrderRequest *MixedOrderRequest
 }
 
 // The order to price.
-func (r ApiOrdersQuoteOrderRequest) OrderRequest(orderRequest OrderRequest) ApiOrdersQuoteOrderRequest {
-	r.orderRequest = &orderRequest
+func (r ApiOrdersQuoteOrderRequest) MixedOrderRequest(mixedOrderRequest MixedOrderRequest) ApiOrdersQuoteOrderRequest {
+	r.mixedOrderRequest = &mixedOrderRequest
 	return r
 }
 
-func (r ApiOrdersQuoteOrderRequest) Execute() (*OrderQuote, *http.Response, error) {
+func (r ApiOrdersQuoteOrderRequest) Execute() (*MixedQuote, *http.Response, error) {
 	return r.ApiService.OrdersQuoteOrderExecute(r)
 }
 
@@ -1138,13 +1138,13 @@ func (a *OrdersAPIService) OrdersQuoteOrder(ctx context.Context) ApiOrdersQuoteO
 }
 
 // Execute executes the request
-//  @return OrderQuote
-func (a *OrdersAPIService) OrdersQuoteOrderExecute(r ApiOrdersQuoteOrderRequest) (*OrderQuote, *http.Response, error) {
+//  @return MixedQuote
+func (a *OrdersAPIService) OrdersQuoteOrderExecute(r ApiOrdersQuoteOrderRequest) (*MixedQuote, *http.Response, error) {
 	var (
 		localVarHTTPMethod   = http.MethodPost
 		localVarPostBody     interface{}
 		formFiles            []formFile
-		localVarReturnValue  *OrderQuote
+		localVarReturnValue  *MixedQuote
 	)
 
 	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "OrdersAPIService.OrdersQuoteOrder")
@@ -1176,7 +1176,7 @@ func (a *OrdersAPIService) OrdersQuoteOrderExecute(r ApiOrdersQuoteOrderRequest)
 		localVarHeaderParams["Accept"] = localVarHTTPHeaderAccept
 	}
 	// body params
-	localVarPostBody = r.orderRequest
+	localVarPostBody = r.mixedOrderRequest
 	if r.ctx != nil {
 		// API Key Authentication
 		if auth, ok := r.ctx.Value(ContextAPIKeys).(map[string]APIKey); ok {

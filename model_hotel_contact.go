@@ -27,7 +27,7 @@ type HotelContact struct {
 	// Website URL.
 	Website NullableString `json:"website,omitempty"`
 	// Postal address.
-	Address NullableHotelAddress `json:"address,omitempty"`
+	Address NullableAddress `json:"address,omitempty"`
 }
 
 // NewHotelContact instantiates a new HotelContact object
@@ -174,9 +174,9 @@ func (o *HotelContact) UnsetWebsite() {
 }
 
 // GetAddress returns the Address field value if set, zero value otherwise (both if not set or set to explicit null).
-func (o *HotelContact) GetAddress() HotelAddress {
+func (o *HotelContact) GetAddress() Address {
 	if o == nil || IsNil(o.Address.Get()) {
-		var ret HotelAddress
+		var ret Address
 		return ret
 	}
 	return *o.Address.Get()
@@ -185,7 +185,7 @@ func (o *HotelContact) GetAddress() HotelAddress {
 // GetAddressOk returns a tuple with the Address field value if set, nil otherwise
 // and a boolean to check if the value has been set.
 // NOTE: If the value is an explicit nil, `nil, true` will be returned
-func (o *HotelContact) GetAddressOk() (*HotelAddress, bool) {
+func (o *HotelContact) GetAddressOk() (*Address, bool) {
 	if o == nil {
 		return nil, false
 	}
@@ -201,8 +201,8 @@ func (o *HotelContact) HasAddress() bool {
 	return false
 }
 
-// SetAddress gets a reference to the given NullableHotelAddress and assigns it to the Address field.
-func (o *HotelContact) SetAddress(v HotelAddress) {
+// SetAddress gets a reference to the given NullableAddress and assigns it to the Address field.
+func (o *HotelContact) SetAddress(v Address) {
 	o.Address.Set(&v)
 }
 // SetAddressNil sets the value for Address to be an explicit nil

@@ -221,7 +221,7 @@ func (r ApiUtilityGetBillerRequest) Currency(currency string) ApiUtilityGetBille
 	return r
 }
 
-func (r ApiUtilityGetBillerRequest) Execute() (*UtilityBiller, *http.Response, error) {
+func (r ApiUtilityGetBillerRequest) Execute() (*Biller, *http.Response, error) {
 	return r.ApiService.UtilityGetBillerExecute(r)
 }
 
@@ -246,13 +246,13 @@ func (a *UtilityAPIService) UtilityGetBiller(ctx context.Context, id string) Api
 }
 
 // Execute executes the request
-//  @return UtilityBiller
-func (a *UtilityAPIService) UtilityGetBillerExecute(r ApiUtilityGetBillerRequest) (*UtilityBiller, *http.Response, error) {
+//  @return Biller
+func (a *UtilityAPIService) UtilityGetBillerExecute(r ApiUtilityGetBillerRequest) (*Biller, *http.Response, error) {
 	var (
 		localVarHTTPMethod   = http.MethodGet
 		localVarPostBody     interface{}
 		formFiles            []formFile
-		localVarReturnValue  *UtilityBiller
+		localVarReturnValue  *Biller
 	)
 
 	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "UtilityAPIService.UtilityGetBiller")

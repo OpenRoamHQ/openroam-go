@@ -17,23 +17,23 @@ import (
 	"gopkg.in/validator.v2"
 )
 
-// OfferValue - Monetary value an offer delivers to the partner's customer: one fixed amount or a range. The discriminator literals are spelled out because the webhook serializer does not camel-case discriminators the way the API hosts do. Declare members as OfferValueDto: a member typed as a variant is written without its `type`.
+// OfferValue - Monetary value an offer delivers to the partner's customer: one fixed amount or a range. The discriminator literals are spelled out because the webhook serializer does not camel-case discriminators the way the API hosts do. Declare members as OfferValue: a member typed as a variant is written without its `type`.
 type OfferValue struct {
-	OfferFixedValue *OfferFixedValue
-	OfferRangeValue *OfferRangeValue
+	FixedValue *FixedValue
+	ValueRange *ValueRange
 }
 
-// OfferFixedValueAsOfferValue is a convenience function that returns OfferFixedValue wrapped in OfferValue
-func OfferFixedValueAsOfferValue(v *OfferFixedValue) OfferValue {
+// FixedValueAsOfferValue is a convenience function that returns FixedValue wrapped in OfferValue
+func FixedValueAsOfferValue(v *FixedValue) OfferValue {
 	return OfferValue{
-		OfferFixedValue: v,
+		FixedValue: v,
 	}
 }
 
-// OfferRangeValueAsOfferValue is a convenience function that returns OfferRangeValue wrapped in OfferValue
-func OfferRangeValueAsOfferValue(v *OfferRangeValue) OfferValue {
+// ValueRangeAsOfferValue is a convenience function that returns ValueRange wrapped in OfferValue
+func ValueRangeAsOfferValue(v *ValueRange) OfferValue {
 	return OfferValue{
-		OfferRangeValue: v,
+		ValueRange: v,
 	}
 }
 
@@ -41,8 +41,8 @@ func OfferRangeValueAsOfferValue(v *OfferRangeValue) OfferValue {
 // Unmarshal JSON data into the variant that the property "type" names. Patched in by scripts/sdk.cjs:
 // the generated version tries every variant and fails when more than one fits.
 func (dst *OfferValue) UnmarshalJSON(data []byte) error {
-	dst.OfferFixedValue = nil
-	dst.OfferRangeValue = nil
+	dst.FixedValue = nil
+	dst.ValueRange = nil
 	if string(data) == "null" {
 		return nil
 	}
@@ -54,24 +54,24 @@ func (dst *OfferValue) UnmarshalJSON(data []byte) error {
 	}
 	switch discriminator.Value {
 	case "fixed":
-		var v OfferFixedValue
+		var v FixedValue
 		if err := json.Unmarshal(data, &v); err != nil {
-			return fmt.Errorf("data failed to match OfferFixedValue in oneOf(OfferValue): %w", err)
+			return fmt.Errorf("data failed to match FixedValue in oneOf(OfferValue): %w", err)
 		}
 		if err := validator.Validate(&v); err != nil {
-			return fmt.Errorf("data failed validation as OfferFixedValue in oneOf(OfferValue): %w", err)
+			return fmt.Errorf("data failed validation as FixedValue in oneOf(OfferValue): %w", err)
 		}
-		dst.OfferFixedValue = &v
+		dst.FixedValue = &v
 		return nil
 	case "range":
-		var v OfferRangeValue
+		var v ValueRange
 		if err := json.Unmarshal(data, &v); err != nil {
-			return fmt.Errorf("data failed to match OfferRangeValue in oneOf(OfferValue): %w", err)
+			return fmt.Errorf("data failed to match ValueRange in oneOf(OfferValue): %w", err)
 		}
 		if err := validator.Validate(&v); err != nil {
-			return fmt.Errorf("data failed validation as OfferRangeValue in oneOf(OfferValue): %w", err)
+			return fmt.Errorf("data failed validation as ValueRange in oneOf(OfferValue): %w", err)
 		}
-		dst.OfferRangeValue = &v
+		dst.ValueRange = &v
 		return nil
 	}
 	return fmt.Errorf("unknown type %q in oneOf(OfferValue)", discriminator.Value)
@@ -79,12 +79,12 @@ func (dst *OfferValue) UnmarshalJSON(data []byte) error {
 
 // Marshal data from the first non-nil pointers in the struct to JSON
 func (src OfferValue) MarshalJSON() ([]byte, error) {
-	if src.OfferFixedValue != nil {
-		return json.Marshal(&src.OfferFixedValue)
+	if src.FixedValue != nil {
+		return json.Marshal(&src.FixedValue)
 	}
 
-	if src.OfferRangeValue != nil {
-		return json.Marshal(&src.OfferRangeValue)
+	if src.ValueRange != nil {
+		return json.Marshal(&src.ValueRange)
 	}
 
 	return nil, nil // no data in oneOf schemas
@@ -95,12 +95,12 @@ func (obj *OfferValue) GetActualInstance() (interface{}) {
 	if obj == nil {
 		return nil
 	}
-	if obj.OfferFixedValue != nil {
-		return obj.OfferFixedValue
+	if obj.FixedValue != nil {
+		return obj.FixedValue
 	}
 
-	if obj.OfferRangeValue != nil {
-		return obj.OfferRangeValue
+	if obj.ValueRange != nil {
+		return obj.ValueRange
 	}
 
 	// all schemas are nil
@@ -109,12 +109,12 @@ func (obj *OfferValue) GetActualInstance() (interface{}) {
 
 // Get the actual instance value
 func (obj OfferValue) GetActualInstanceValue() (interface{}) {
-	if obj.OfferFixedValue != nil {
-		return *obj.OfferFixedValue
+	if obj.FixedValue != nil {
+		return *obj.FixedValue
 	}
 
-	if obj.OfferRangeValue != nil {
-		return *obj.OfferRangeValue
+	if obj.ValueRange != nil {
+		return *obj.ValueRange
 	}
 
 	// all schemas are nil

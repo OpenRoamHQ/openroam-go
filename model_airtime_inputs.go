@@ -27,11 +27,11 @@ type AirtimeInputs struct {
 	// Operator settings, keyed by the names the offer lists as `settings.{name}`.
 	Settings map[string]string `json:"settings,omitempty"`
 	// Optional lowest accepted delivered value, for a range offer only: in the inputs.value currency and at most inputs.value. Without it, the exact value must be delivered.
-	MinDeliveredValue NullableMoneyAmountInput `json:"minDeliveredValue,omitempty"`
+	MinDeliveredValue NullableMoneyInput `json:"minDeliveredValue,omitempty"`
 	// Required for a range offer, within its min and max and on its step; optional for a fixed offer, where it must equal the offer's amount; in the offer's value currency.
-	Value NullableMoneyAmountInput `json:"value,omitempty"`
+	Value NullableMoneyInput `json:"value,omitempty"`
 	// Optional highest accepted unit price, in the order or cart currency; a higher current unit price gives 409 / 11002.
-	MaxPrice NullableMoneyAmountInput `json:"maxPrice,omitempty"`
+	MaxPrice NullableMoneyInput `json:"maxPrice,omitempty"`
 }
 
 type _AirtimeInputs AirtimeInputs
@@ -112,9 +112,9 @@ func (o *AirtimeInputs) SetSettings(v map[string]string) {
 }
 
 // GetMinDeliveredValue returns the MinDeliveredValue field value if set, zero value otherwise (both if not set or set to explicit null).
-func (o *AirtimeInputs) GetMinDeliveredValue() MoneyAmountInput {
+func (o *AirtimeInputs) GetMinDeliveredValue() MoneyInput {
 	if o == nil || IsNil(o.MinDeliveredValue.Get()) {
-		var ret MoneyAmountInput
+		var ret MoneyInput
 		return ret
 	}
 	return *o.MinDeliveredValue.Get()
@@ -123,7 +123,7 @@ func (o *AirtimeInputs) GetMinDeliveredValue() MoneyAmountInput {
 // GetMinDeliveredValueOk returns a tuple with the MinDeliveredValue field value if set, nil otherwise
 // and a boolean to check if the value has been set.
 // NOTE: If the value is an explicit nil, `nil, true` will be returned
-func (o *AirtimeInputs) GetMinDeliveredValueOk() (*MoneyAmountInput, bool) {
+func (o *AirtimeInputs) GetMinDeliveredValueOk() (*MoneyInput, bool) {
 	if o == nil {
 		return nil, false
 	}
@@ -139,8 +139,8 @@ func (o *AirtimeInputs) HasMinDeliveredValue() bool {
 	return false
 }
 
-// SetMinDeliveredValue gets a reference to the given NullableMoneyAmountInput and assigns it to the MinDeliveredValue field.
-func (o *AirtimeInputs) SetMinDeliveredValue(v MoneyAmountInput) {
+// SetMinDeliveredValue gets a reference to the given NullableMoneyInput and assigns it to the MinDeliveredValue field.
+func (o *AirtimeInputs) SetMinDeliveredValue(v MoneyInput) {
 	o.MinDeliveredValue.Set(&v)
 }
 // SetMinDeliveredValueNil sets the value for MinDeliveredValue to be an explicit nil
@@ -154,9 +154,9 @@ func (o *AirtimeInputs) UnsetMinDeliveredValue() {
 }
 
 // GetValue returns the Value field value if set, zero value otherwise (both if not set or set to explicit null).
-func (o *AirtimeInputs) GetValue() MoneyAmountInput {
+func (o *AirtimeInputs) GetValue() MoneyInput {
 	if o == nil || IsNil(o.Value.Get()) {
-		var ret MoneyAmountInput
+		var ret MoneyInput
 		return ret
 	}
 	return *o.Value.Get()
@@ -165,7 +165,7 @@ func (o *AirtimeInputs) GetValue() MoneyAmountInput {
 // GetValueOk returns a tuple with the Value field value if set, nil otherwise
 // and a boolean to check if the value has been set.
 // NOTE: If the value is an explicit nil, `nil, true` will be returned
-func (o *AirtimeInputs) GetValueOk() (*MoneyAmountInput, bool) {
+func (o *AirtimeInputs) GetValueOk() (*MoneyInput, bool) {
 	if o == nil {
 		return nil, false
 	}
@@ -181,8 +181,8 @@ func (o *AirtimeInputs) HasValue() bool {
 	return false
 }
 
-// SetValue gets a reference to the given NullableMoneyAmountInput and assigns it to the Value field.
-func (o *AirtimeInputs) SetValue(v MoneyAmountInput) {
+// SetValue gets a reference to the given NullableMoneyInput and assigns it to the Value field.
+func (o *AirtimeInputs) SetValue(v MoneyInput) {
 	o.Value.Set(&v)
 }
 // SetValueNil sets the value for Value to be an explicit nil
@@ -196,9 +196,9 @@ func (o *AirtimeInputs) UnsetValue() {
 }
 
 // GetMaxPrice returns the MaxPrice field value if set, zero value otherwise (both if not set or set to explicit null).
-func (o *AirtimeInputs) GetMaxPrice() MoneyAmountInput {
+func (o *AirtimeInputs) GetMaxPrice() MoneyInput {
 	if o == nil || IsNil(o.MaxPrice.Get()) {
-		var ret MoneyAmountInput
+		var ret MoneyInput
 		return ret
 	}
 	return *o.MaxPrice.Get()
@@ -207,7 +207,7 @@ func (o *AirtimeInputs) GetMaxPrice() MoneyAmountInput {
 // GetMaxPriceOk returns a tuple with the MaxPrice field value if set, nil otherwise
 // and a boolean to check if the value has been set.
 // NOTE: If the value is an explicit nil, `nil, true` will be returned
-func (o *AirtimeInputs) GetMaxPriceOk() (*MoneyAmountInput, bool) {
+func (o *AirtimeInputs) GetMaxPriceOk() (*MoneyInput, bool) {
 	if o == nil {
 		return nil, false
 	}
@@ -223,8 +223,8 @@ func (o *AirtimeInputs) HasMaxPrice() bool {
 	return false
 }
 
-// SetMaxPrice gets a reference to the given NullableMoneyAmountInput and assigns it to the MaxPrice field.
-func (o *AirtimeInputs) SetMaxPrice(v MoneyAmountInput) {
+// SetMaxPrice gets a reference to the given NullableMoneyInput and assigns it to the MaxPrice field.
+func (o *AirtimeInputs) SetMaxPrice(v MoneyInput) {
 	o.MaxPrice.Set(&v)
 }
 // SetMaxPriceNil sets the value for MaxPrice to be an explicit nil

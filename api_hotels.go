@@ -229,7 +229,7 @@ type ApiHotelsGetAmenityCatalogRequest struct {
 	ApiService *HotelsAPIService
 }
 
-func (r ApiHotelsGetAmenityCatalogRequest) Execute() (*HotelAmenityCatalog, *http.Response, error) {
+func (r ApiHotelsGetAmenityCatalogRequest) Execute() (*AmenityCatalog, *http.Response, error) {
 	return r.ApiService.HotelsGetAmenityCatalogExecute(r)
 }
 
@@ -254,13 +254,13 @@ func (a *HotelsAPIService) HotelsGetAmenityCatalog(ctx context.Context) ApiHotel
 }
 
 // Execute executes the request
-//  @return HotelAmenityCatalog
-func (a *HotelsAPIService) HotelsGetAmenityCatalogExecute(r ApiHotelsGetAmenityCatalogRequest) (*HotelAmenityCatalog, *http.Response, error) {
+//  @return AmenityCatalog
+func (a *HotelsAPIService) HotelsGetAmenityCatalogExecute(r ApiHotelsGetAmenityCatalogRequest) (*AmenityCatalog, *http.Response, error) {
 	var (
 		localVarHTTPMethod   = http.MethodGet
 		localVarPostBody     interface{}
 		formFiles            []formFile
-		localVarReturnValue  *HotelAmenityCatalog
+		localVarReturnValue  *AmenityCatalog
 	)
 
 	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "HotelsAPIService.HotelsGetAmenityCatalog")
@@ -698,7 +698,7 @@ type ApiHotelsGetPropertyRequest struct {
 	id string
 }
 
-func (r ApiHotelsGetPropertyRequest) Execute() (*HotelCatalogProperty, *http.Response, error) {
+func (r ApiHotelsGetPropertyRequest) Execute() (*CatalogHotel, *http.Response, error) {
 	return r.ApiService.HotelsGetPropertyExecute(r)
 }
 
@@ -727,13 +727,13 @@ func (a *HotelsAPIService) HotelsGetProperty(ctx context.Context, id string) Api
 }
 
 // Execute executes the request
-//  @return HotelCatalogProperty
-func (a *HotelsAPIService) HotelsGetPropertyExecute(r ApiHotelsGetPropertyRequest) (*HotelCatalogProperty, *http.Response, error) {
+//  @return CatalogHotel
+func (a *HotelsAPIService) HotelsGetPropertyExecute(r ApiHotelsGetPropertyRequest) (*CatalogHotel, *http.Response, error) {
 	var (
 		localVarHTTPMethod   = http.MethodGet
 		localVarPostBody     interface{}
 		formFiles            []formFile
-		localVarReturnValue  *HotelCatalogProperty
+		localVarReturnValue  *CatalogHotel
 	)
 
 	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "HotelsAPIService.HotelsGetProperty")
@@ -1044,7 +1044,7 @@ func (r ApiHotelsSearchRequest) HotelSearchRequest(hotelSearchRequest HotelSearc
 	return r
 }
 
-func (r ApiHotelsSearchRequest) Execute() (*HotelPropertySearchResult, *http.Response, error) {
+func (r ApiHotelsSearchRequest) Execute() (*HotelSearchResult, *http.Response, error) {
 	return r.ApiService.HotelsSearchExecute(r)
 }
 
@@ -1094,13 +1094,13 @@ func (a *HotelsAPIService) HotelsSearch(ctx context.Context) ApiHotelsSearchRequ
 }
 
 // Execute executes the request
-//  @return HotelPropertySearchResult
-func (a *HotelsAPIService) HotelsSearchExecute(r ApiHotelsSearchRequest) (*HotelPropertySearchResult, *http.Response, error) {
+//  @return HotelSearchResult
+func (a *HotelsAPIService) HotelsSearchExecute(r ApiHotelsSearchRequest) (*HotelSearchResult, *http.Response, error) {
 	var (
 		localVarHTTPMethod   = http.MethodPost
 		localVarPostBody     interface{}
 		formFiles            []formFile
-		localVarReturnValue  *HotelPropertySearchResult
+		localVarReturnValue  *HotelSearchResult
 	)
 
 	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "HotelsAPIService.HotelsSearch")

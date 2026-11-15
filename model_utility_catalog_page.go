@@ -20,7 +20,7 @@ var _ MappedNullable = &UtilityCatalogPage{}
 
 // UtilityCatalogPage A page of the partner catalog walk, ordered by biller ID. Continue with `nextCursor`, the same filters and the same currency until it is null; a page may hold fewer items than the limit, even none.
 type UtilityCatalogPage struct {
-	Items []UtilityBiller `json:"items,omitempty"`
+	Items []Biller `json:"items,omitempty"`
 	NextCursor NullableString `json:"nextCursor,omitempty"`
 }
 
@@ -42,9 +42,9 @@ func NewUtilityCatalogPageWithDefaults() *UtilityCatalogPage {
 }
 
 // GetItems returns the Items field value if set, zero value otherwise.
-func (o *UtilityCatalogPage) GetItems() []UtilityBiller {
+func (o *UtilityCatalogPage) GetItems() []Biller {
 	if o == nil || IsNil(o.Items) {
-		var ret []UtilityBiller
+		var ret []Biller
 		return ret
 	}
 	return o.Items
@@ -52,7 +52,7 @@ func (o *UtilityCatalogPage) GetItems() []UtilityBiller {
 
 // GetItemsOk returns a tuple with the Items field value if set, nil otherwise
 // and a boolean to check if the value has been set.
-func (o *UtilityCatalogPage) GetItemsOk() ([]UtilityBiller, bool) {
+func (o *UtilityCatalogPage) GetItemsOk() ([]Biller, bool) {
 	if o == nil || IsNil(o.Items) {
 		return nil, false
 	}
@@ -68,8 +68,8 @@ func (o *UtilityCatalogPage) HasItems() bool {
 	return false
 }
 
-// SetItems gets a reference to the given []UtilityBiller and assigns it to the Items field.
-func (o *UtilityCatalogPage) SetItems(v []UtilityBiller) {
+// SetItems gets a reference to the given []Biller and assigns it to the Items field.
+func (o *UtilityCatalogPage) SetItems(v []Biller) {
 	o.Items = v
 }
 

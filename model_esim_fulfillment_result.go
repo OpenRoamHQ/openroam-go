@@ -21,7 +21,7 @@ var _ MappedNullable = &EsimFulfillmentResult{}
 // EsimFulfillmentResult What a fulfilled eSIM order item delivered. An eSIM has no monetary value, so there is no `deliveredValue`; everything sits under `details`. Order reads and the `order.fulfillment.updated` webhook carry the same result.
 type EsimFulfillmentResult struct {
 	// The eSIM an order item delivered: its ICCID and states, how to install it, and its plan. A top-up item reads the eSIM it topped up, with `mode` `topUp`.
-	Details *EsimFulfillmentResultDetails `json:"details,omitempty"`
+	Details *EsimFulfillmentDetails `json:"details,omitempty"`
 }
 
 // NewEsimFulfillmentResult instantiates a new EsimFulfillmentResult object
@@ -42,9 +42,9 @@ func NewEsimFulfillmentResultWithDefaults() *EsimFulfillmentResult {
 }
 
 // GetDetails returns the Details field value if set, zero value otherwise.
-func (o *EsimFulfillmentResult) GetDetails() EsimFulfillmentResultDetails {
+func (o *EsimFulfillmentResult) GetDetails() EsimFulfillmentDetails {
 	if o == nil || IsNil(o.Details) {
-		var ret EsimFulfillmentResultDetails
+		var ret EsimFulfillmentDetails
 		return ret
 	}
 	return *o.Details
@@ -52,7 +52,7 @@ func (o *EsimFulfillmentResult) GetDetails() EsimFulfillmentResultDetails {
 
 // GetDetailsOk returns a tuple with the Details field value if set, nil otherwise
 // and a boolean to check if the value has been set.
-func (o *EsimFulfillmentResult) GetDetailsOk() (*EsimFulfillmentResultDetails, bool) {
+func (o *EsimFulfillmentResult) GetDetailsOk() (*EsimFulfillmentDetails, bool) {
 	if o == nil || IsNil(o.Details) {
 		return nil, false
 	}
@@ -68,8 +68,8 @@ func (o *EsimFulfillmentResult) HasDetails() bool {
 	return false
 }
 
-// SetDetails gets a reference to the given EsimFulfillmentResultDetails and assigns it to the Details field.
-func (o *EsimFulfillmentResult) SetDetails(v EsimFulfillmentResultDetails) {
+// SetDetails gets a reference to the given EsimFulfillmentDetails and assigns it to the Details field.
+func (o *EsimFulfillmentResult) SetDetails(v EsimFulfillmentDetails) {
 	o.Details = &v
 }
 

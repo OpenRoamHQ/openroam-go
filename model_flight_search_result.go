@@ -20,7 +20,7 @@ var _ MappedNullable = &FlightSearchResult{}
 
 // FlightSearchResult A page of itineraries. `pagination.totalCount` counts the itineraries with at least one fare after the filters. Each page runs a new airline search, so offers can change between pages.
 type FlightSearchResult struct {
-	Items []FlightItinerary `json:"items,omitempty"`
+	Items []Itinerary `json:"items,omitempty"`
 	// Paging of a list response.
 	Pagination *Pagination `json:"pagination,omitempty"`
 }
@@ -43,9 +43,9 @@ func NewFlightSearchResultWithDefaults() *FlightSearchResult {
 }
 
 // GetItems returns the Items field value if set, zero value otherwise.
-func (o *FlightSearchResult) GetItems() []FlightItinerary {
+func (o *FlightSearchResult) GetItems() []Itinerary {
 	if o == nil || IsNil(o.Items) {
-		var ret []FlightItinerary
+		var ret []Itinerary
 		return ret
 	}
 	return o.Items
@@ -53,7 +53,7 @@ func (o *FlightSearchResult) GetItems() []FlightItinerary {
 
 // GetItemsOk returns a tuple with the Items field value if set, nil otherwise
 // and a boolean to check if the value has been set.
-func (o *FlightSearchResult) GetItemsOk() ([]FlightItinerary, bool) {
+func (o *FlightSearchResult) GetItemsOk() ([]Itinerary, bool) {
 	if o == nil || IsNil(o.Items) {
 		return nil, false
 	}
@@ -69,8 +69,8 @@ func (o *FlightSearchResult) HasItems() bool {
 	return false
 }
 
-// SetItems gets a reference to the given []FlightItinerary and assigns it to the Items field.
-func (o *FlightSearchResult) SetItems(v []FlightItinerary) {
+// SetItems gets a reference to the given []Itinerary and assigns it to the Items field.
+func (o *FlightSearchResult) SetItems(v []Itinerary) {
 	o.Items = v
 }
 

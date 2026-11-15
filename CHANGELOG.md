@@ -3,6 +3,263 @@
 All OpenRoam SDKs share one version and one changelog. Entries are written by the release process from the
 changes in the Partner API description.
 
+## 0.1.0-rc.6
+
+**Breaking: type names.** The API now publishes its types under the names partners read, and every SDK uses them as they
+are, so a type has the same name in the API reference and in each SDK. The names are shorter. Nothing on the wire changes:
+the routes, the JSON and the client methods are the same. Code that names a type (an import, a type annotation,
+`new HotelRoomGuestsInput(...)`) needs the new name. So does code that reads a union by its variant's name: in Java
+`getOfferFixedPrice()` is now `getFixedPrice()` (C#: `GetFixedPrice()`), and in Go the field `OfferFixedPrice` is
+`FixedPrice` and `EsimOrderFulfillmentUpdatedWebhookItem` is `EsimFulfillmentUpdate`. Dart's `fixed` and `range` stay.
+
+- A product prefix stays only where the type is that product's: `FlightAirline` is now `Airline` and `HotelRoom` is `Room`,
+  while `HotelOffer` keeps its prefix.
+- Words that repeated the type around it are gone: `HotelPurchasedProductGuest` is `Guest`, `EsimProductOptionApn` is
+  `EsimApn`.
+- Money and offers: `MoneyAmount` is `Money` and `MoneyAmountInput` is `MoneyInput`. An offer's price is a `FixedPrice` or a
+  `PriceRange`, and its value a `FixedValue` or a `ValueRange`.
+- The order of several products: `OrderRequest` is `MixedOrderRequest` and `OrderQuote` is `MixedQuote`.
+- The fulfillment webhook: `OrderFulfillmentUpdatedWebhook` is `OrderFulfillmentWebhook`, and its items are
+  `FulfillmentUpdate` (`HotelFulfillmentUpdate` and the other products).
+
+Every renamed type:
+
+| Before | Now |
+|---|---|
+| `AirtimeFulfillmentRedemption` | `AirtimeRedemption` |
+| `AirtimeFulfillmentResultDetails` | `AirtimeFulfillmentDetails` |
+| `AirtimeNumberCarrier` | `NumberCarrier` |
+| `AirtimeNumberLookup` | `NumberLookup` |
+| `AirtimeOrderFulfillmentUpdatedWebhookItem` | `AirtimeFulfillmentUpdate` |
+| `AirtimePhoneLookup` | `CarrierDetection` |
+| `AirtimePurchasedProductDetails` | `AirtimePurchasedDetails` |
+| `AirtimePurchasedProductInputs` | `AirtimePurchasedInputs` |
+| `AmendmentListItem` | `Amendment` |
+| `BookingTermsCancellation` | `CancellationTerms` |
+| `BookingTermsCancellationStep` | `CancellationStep` |
+| `BookingTermsChangeFee` | `ChangeFee` |
+| `BookingTermsChanges` | `ChangeTerms` |
+| `BookingTermsPayment` | `PaymentTerms` |
+| `CancellationPenaltyDetail` | `CancellationPenalty` |
+| `CompatibleDevice` | `EsimCompatibleDevice` |
+| `EsimFulfillmentInstallation` | `EsimInstallation` |
+| `EsimFulfillmentResultDetails` | `EsimFulfillmentDetails` |
+| `EsimOfferData` | `EsimDataAllowance` |
+| `EsimOrderFulfillmentUpdatedWebhookItem` | `EsimFulfillmentUpdate` |
+| `EsimProductOptionApn` | `EsimApn` |
+| `EsimProductOptionData` | `EsimProfileData` |
+| `EsimProductOptionProperties` | `EsimFeatures` |
+| `EsimProductOptionRestriction` | `EsimRestrictions` |
+| `EsimProductOptionSms` | `EsimSmsAllowance` |
+| `EsimProductOptionVoice` | `EsimVoiceAllowance` |
+| `EsimProvisionRequest` | `EsimProvisioningRequest` |
+| `EsimPurchasedProductDestination` | `EsimPurchasedDestination` |
+| `EsimPurchasedProductDetails` | `EsimPurchasedDetails` |
+| `EsimPurchasedProductInputs` | `EsimPurchasedInputs` |
+| `EsimSendSmsRequest` | `EsimSmsRequest` |
+| `EsimSendSmsResult` | `EsimSmsResult` |
+| `EsimSim` | `SimCard` |
+| `FlightAircraft` | `Aircraft` |
+| `FlightAirline` | `Airline` |
+| `FlightAirport` | `Airport` |
+| `FlightAvailableService` | `AvailableService` |
+| `FlightBaggage` | `Baggage` |
+| `FlightBookedAirline` | `BookedAirline` |
+| `FlightBookedAirport` | `BookedAirport` |
+| `FlightBookedBaggage` | `BookedBaggage` |
+| `FlightBookedSegment` | `BookedSegment` |
+| `FlightBookedSlice` | `BookedSlice` |
+| `FlightBookedStop` | `BookedStop` |
+| `FlightFare` | `Fare` |
+| `FlightFareOption` | `FareOption` |
+| `FlightFareSegment` | `SegmentFare` |
+| `FlightFulfillmentBooking` | `FlightBooking` |
+| `FlightFulfillmentResultDetails` | `FlightFulfillmentDetails` |
+| `FlightIdentityDocument` | `IdentityDocument` |
+| `FlightIdentityDocumentInput` | `IdentityDocumentInput` |
+| `FlightItinerary` | `Itinerary` |
+| `FlightItineraryDetails` | `ItineraryDetails` |
+| `FlightOfferPassenger` | `OfferPassenger` |
+| `FlightOrderFulfillmentUpdatedWebhookItem` | `FlightFulfillmentUpdate` |
+| `FlightPassenger` | `Passenger` |
+| `FlightPassengerInput` | `PassengerInput` |
+| `FlightPassengerPricing` | `PassengerPricing` |
+| `FlightPriceBreakdown` | `PriceBreakdown` |
+| `FlightPriceLine` | `PriceLine` |
+| `FlightPurchasedProductDetails` | `FlightPurchasedDetails` |
+| `FlightPurchasedProductInputs` | `FlightPurchasedInputs` |
+| `FlightSeatMap` | `SeatMap` |
+| `FlightSeatMapAvailability` | `SeatAvailability` |
+| `FlightSeatMapElement` | `SeatMapElement` |
+| `FlightSeatMapRow` | `SeatMapRow` |
+| `FlightSeatMapSection` | `SeatMapSection` |
+| `FlightSeatMapSegment` | `SeatMapSegment` |
+| `FlightSegment` | `Segment` |
+| `FlightSegmentReference` | `SegmentPosition` |
+| `FlightSelectedSeat` | `SelectedSeat` |
+| `FlightSelectedSeatInput` | `SelectedSeatInput` |
+| `FlightSelectedService` | `SelectedService` |
+| `FlightSelectedServiceInput` | `SelectedServiceInput` |
+| `FlightServiceBaggage` | `BaggageLimits` |
+| `FlightSlice` | `Slice` |
+| `FlightStop` | `Stop` |
+| `FlightTicketDocument` | `TicketDocument` |
+| `GeoCoordinates` | `Coordinates` |
+| `GiftCardFulfillmentDelivery` | `GiftCardDelivery` |
+| `GiftCardFulfillmentResultDetails` | `GiftCardFulfillmentDetails` |
+| `GiftCardIssuedCode` | `GiftCardCode` |
+| `GiftCardOrderFulfillmentUpdatedWebhookItem` | `GiftCardFulfillmentUpdate` |
+| `GiftCardPurchasedProductDetails` | `GiftCardPurchasedDetails` |
+| `GiftCardPurchasedProductInputs` | `GiftCardPurchasedInputs` |
+| `HotelAddress` | `Address` |
+| `HotelAmenity` | `Amenity` |
+| `HotelAmenityCatalog` | `AmenityCatalog` |
+| `HotelAmenityFacet` | `AmenityFacet` |
+| `HotelAmenityGroupFacet` | `AmenityGroup` |
+| `HotelBed` | `Bed` |
+| `HotelBoardType` | `MealPlan` |
+| `HotelBookingGuestInput` | `GuestInput` |
+| `HotelCatalogProperty` | `CatalogHotel` |
+| `HotelDestinationSummary` | `HotelDestination` |
+| `HotelDisplayGroup` | `UnitAvailability` |
+| `HotelFulfillmentBooking` | `HotelBooking` |
+| `HotelFulfillmentResultDetails` | `HotelFulfillmentDetails` |
+| `HotelGuestCapabilities` | `GuestAmendmentCapabilities` |
+| `HotelGuestNameRules` | `GuestNameRules` |
+| `HotelHolderInput` | `LeadGuestInput` |
+| `HotelLocationSearch` | `HotelSearchArea` |
+| `HotelNightlyPrice` | `NightlyPrice` |
+| `HotelOrderFulfillmentUpdatedWebhookItem` | `HotelFulfillmentUpdate` |
+| `HotelProperty` | `Hotel` |
+| `HotelPropertyDetails` | `HotelDetails` |
+| `HotelPropertySearchDetails` | `HotelSearchDetails` |
+| `HotelPropertySearchResult` | `HotelSearchResult` |
+| `HotelPurchasedProductDetails` | `HotelPurchasedDetails` |
+| `HotelPurchasedProductGuest` | `Guest` |
+| `HotelPurchasedProductHolder` | `LeadGuest` |
+| `HotelPurchasedProductHotel` | `BookedHotel` |
+| `HotelPurchasedProductInputs` | `HotelPurchasedInputs` |
+| `HotelPurchasedProductRoomGuests` | `RoomGuests` |
+| `HotelQuotedRate` | `QuotedRate` |
+| `HotelRoom` | `Room` |
+| `HotelRoomCapabilities` | `RoomAmendmentCapabilities` |
+| `HotelRoomGuestsInput` | `RoomGuestsInput` |
+| `HotelRoomOccupancy` | `RoomOccupancy` |
+| `HotelSearchCoordinates` | `CoordinatesInput` |
+| `HotelSearchRoom` | `RoomOccupancyInput` |
+| `HotelSpecialRequestOption` | `SpecialRequestOption` |
+| `HotelSurcharge` | `Surcharge` |
+| `HotelTaxBreakdown` | `TaxBreakdown` |
+| `HotelTaxItem` | `Tax` |
+| `MoneyAmount` | `Money` |
+| `MoneyAmountInput` | `MoneyInput` |
+| `OfferFixedPrice` | `FixedPrice` |
+| `OfferFixedValue` | `FixedValue` |
+| `OfferRangePrice` | `PriceRange` |
+| `OfferRangeValue` | `ValueRange` |
+| `OrderFulfillmentUpdatedWebhook` | `OrderFulfillmentWebhook` |
+| `OrderFulfillmentUpdatedWebhookData` | `OrderFulfillmentWebhookData` |
+| `OrderFulfillmentUpdatedWebhookItem` | `FulfillmentUpdate` |
+| `OrderItemManualAmendmentStatusWebhook` | `ManualAmendmentStatusWebhook` |
+| `OrderItemManualAmendmentStatusWebhookData` | `ManualAmendmentStatusWebhookData` |
+| `OrderQuote` | `MixedQuote` |
+| `OrderQuoteItem` | `MixedQuoteItem` |
+| `OrderRequest` | `MixedOrderRequest` |
+| `OrderRequestItem` | `MixedOrderRequestItem` |
+| `RequiredInput` | `InputField` |
+| `UtilityBiller` | `Biller` |
+| `UtilityBillerDetails` | `BillerDetails` |
+| `UtilityFulfillmentResultDetails` | `UtilityFulfillmentDetails` |
+| `UtilityOrderFulfillmentUpdatedWebhookItem` | `UtilityFulfillmentUpdate` |
+| `UtilityPurchasedProductDetails` | `UtilityPurchasedDetails` |
+| `UtilityPurchasedProductInputs` | `UtilityPurchasedInputs` |
+
+**Breaking** (108)
+- `GET /api/v1/b2b/airtime/operators/{id}`: added `#/components/schemas/FixedPrice, #/components/schemas/PriceRange` to the `offers/items/price` response property `oneOf` list for the response status `200` (media type: application/json)
+- `GET /api/v1/b2b/airtime/operators/{id}`: added `#/components/schemas/FixedPrice, #/components/schemas/PriceRange` to the `offers/items/price` response property `oneOf` list for the response status `200` (media type: text/json)
+- `GET /api/v1/b2b/airtime/operators/{id}`: added `#/components/schemas/FixedPrice, #/components/schemas/PriceRange` to the `offers/items/price` response property `oneOf` list for the response status `200` (media type: text/plain)
+- `GET /api/v1/b2b/airtime/operators/{id}`: added `#/components/schemas/FixedValue, #/components/schemas/ValueRange` to the `offers/items/value` response property `oneOf` list for the response status `200` (media type: application/json)
+- `GET /api/v1/b2b/airtime/operators/{id}`: added `#/components/schemas/FixedValue, #/components/schemas/ValueRange` to the `offers/items/value` response property `oneOf` list for the response status `200` (media type: text/json)
+- `GET /api/v1/b2b/airtime/operators/{id}`: added `#/components/schemas/FixedValue, #/components/schemas/ValueRange` to the `offers/items/value` response property `oneOf` list for the response status `200` (media type: text/plain)
+- `POST /api/v1/b2b/airtime/order`: added `#/components/schemas/AirtimeFulfillmentResult` to the `items/items/fulfillment/result` response property `oneOf` list for the response status `200` (media type: application/json)
+- `POST /api/v1/b2b/airtime/order`: added `#/components/schemas/AirtimeFulfillmentResult` to the `items/items/fulfillment/result` response property `oneOf` list for the response status `200` (media type: text/json)
+- `POST /api/v1/b2b/airtime/order`: added `#/components/schemas/AirtimeFulfillmentResult` to the `items/items/fulfillment/result` response property `oneOf` list for the response status `200` (media type: text/plain)
+- `GET /api/v1/b2b/airtime/search`: added `#/components/schemas/FixedPrice, #/components/schemas/PriceRange` to the `items/items/offers/items/price` response property `oneOf` list for the response status `200` (media type: application/json)
+- `GET /api/v1/b2b/airtime/search`: added `#/components/schemas/FixedPrice, #/components/schemas/PriceRange` to the `items/items/offers/items/price` response property `oneOf` list for the response status `200` (media type: text/json)
+- `GET /api/v1/b2b/airtime/search`: added `#/components/schemas/FixedPrice, #/components/schemas/PriceRange` to the `items/items/offers/items/price` response property `oneOf` list for the response status `200` (media type: text/plain)
+- `GET /api/v1/b2b/airtime/search`: added `#/components/schemas/FixedValue, #/components/schemas/ValueRange` to the `items/items/offers/items/value` response property `oneOf` list for the response status `200` (media type: application/json)
+- `GET /api/v1/b2b/airtime/search`: added `#/components/schemas/FixedValue, #/components/schemas/ValueRange` to the `items/items/offers/items/value` response property `oneOf` list for the response status `200` (media type: text/json)
+- `GET /api/v1/b2b/airtime/search`: added `#/components/schemas/FixedValue, #/components/schemas/ValueRange` to the `items/items/offers/items/value` response property `oneOf` list for the response status `200` (media type: text/plain)
+- `GET /api/v1/b2b/esims/catalog`: added `#/components/schemas/FixedPrice, #/components/schemas/PriceRange` to the `items/items/offers/items/price` response property `oneOf` list for the response status `200` (media type: application/json)
+- `GET /api/v1/b2b/esims/catalog`: added `#/components/schemas/FixedPrice, #/components/schemas/PriceRange` to the `items/items/offers/items/price` response property `oneOf` list for the response status `200` (media type: text/json)
+- `GET /api/v1/b2b/esims/catalog`: added `#/components/schemas/FixedPrice, #/components/schemas/PriceRange` to the `items/items/offers/items/price` response property `oneOf` list for the response status `200` (media type: text/plain)
+- `GET /api/v1/b2b/esims/destinations/{id}`: added `#/components/schemas/FixedPrice, #/components/schemas/PriceRange` to the `offers/items/price` response property `oneOf` list for the response status `200` (media type: application/json)
+- `GET /api/v1/b2b/esims/destinations/{id}`: added `#/components/schemas/FixedPrice, #/components/schemas/PriceRange` to the `offers/items/price` response property `oneOf` list for the response status `200` (media type: text/json)
+- `GET /api/v1/b2b/esims/destinations/{id}`: added `#/components/schemas/FixedPrice, #/components/schemas/PriceRange` to the `offers/items/price` response property `oneOf` list for the response status `200` (media type: text/plain)
+- `POST /api/v1/b2b/esims/order`: added `#/components/schemas/EsimFulfillmentResult` to the `items/items/fulfillment/result` response property `oneOf` list for the response status `200` (media type: application/json)
+- `POST /api/v1/b2b/esims/order`: added `#/components/schemas/EsimFulfillmentResult` to the `items/items/fulfillment/result` response property `oneOf` list for the response status `200` (media type: text/json)
+- `POST /api/v1/b2b/esims/order`: added `#/components/schemas/EsimFulfillmentResult` to the `items/items/fulfillment/result` response property `oneOf` list for the response status `200` (media type: text/plain)
+- `GET /api/v1/b2b/esims/search`: added `#/components/schemas/FixedPrice, #/components/schemas/PriceRange` to the `items/items/offers/items/price` response property `oneOf` list for the response status `200` (media type: application/json)
+- `GET /api/v1/b2b/esims/search`: added `#/components/schemas/FixedPrice, #/components/schemas/PriceRange` to the `items/items/offers/items/price` response property `oneOf` list for the response status `200` (media type: text/json)
+- `GET /api/v1/b2b/esims/search`: added `#/components/schemas/FixedPrice, #/components/schemas/PriceRange` to the `items/items/offers/items/price` response property `oneOf` list for the response status `200` (media type: text/plain)
+- `POST /api/v1/b2b/flights/order`: added `#/components/schemas/FlightFulfillmentResult` to the `items/items/fulfillment/result` response property `oneOf` list for the response status `200` (media type: application/json)
+- `POST /api/v1/b2b/flights/order`: added `#/components/schemas/FlightFulfillmentResult` to the `items/items/fulfillment/result` response property `oneOf` list for the response status `200` (media type: text/json)
+- `POST /api/v1/b2b/flights/order`: added `#/components/schemas/FlightFulfillmentResult` to the `items/items/fulfillment/result` response property `oneOf` list for the response status `200` (media type: text/plain)
+- `POST /api/v1/b2b/flights/search`: added `#/components/schemas/FixedPrice, #/components/schemas/PriceRange` to the `items/items/offers/items/price` response property `oneOf` list for the response status `200` (media type: application/json)
+- `POST /api/v1/b2b/flights/search`: added `#/components/schemas/FixedPrice, #/components/schemas/PriceRange` to the `items/items/offers/items/price` response property `oneOf` list for the response status `200` (media type: text/json)
+- `POST /api/v1/b2b/flights/search`: added `#/components/schemas/FixedPrice, #/components/schemas/PriceRange` to the `items/items/offers/items/price` response property `oneOf` list for the response status `200` (media type: text/plain)
+- `GET /api/v1/b2b/giftcards/cards/{id}`: added `#/components/schemas/FixedPrice, #/components/schemas/PriceRange` to the `offers/items/price` response property `oneOf` list for the response status `200` (media type: application/json)
+- `GET /api/v1/b2b/giftcards/cards/{id}`: added `#/components/schemas/FixedPrice, #/components/schemas/PriceRange` to the `offers/items/price` response property `oneOf` list for the response status `200` (media type: text/json)
+- `GET /api/v1/b2b/giftcards/cards/{id}`: added `#/components/schemas/FixedPrice, #/components/schemas/PriceRange` to the `offers/items/price` response property `oneOf` list for the response status `200` (media type: text/plain)
+- `GET /api/v1/b2b/giftcards/cards/{id}`: added `#/components/schemas/FixedValue, #/components/schemas/ValueRange` to the `offers/items/value` response property `oneOf` list for the response status `200` (media type: application/json)
+- `GET /api/v1/b2b/giftcards/cards/{id}`: added `#/components/schemas/FixedValue, #/components/schemas/ValueRange` to the `offers/items/value` response property `oneOf` list for the response status `200` (media type: text/json)
+- `GET /api/v1/b2b/giftcards/cards/{id}`: added `#/components/schemas/FixedValue, #/components/schemas/ValueRange` to the `offers/items/value` response property `oneOf` list for the response status `200` (media type: text/plain)
+- `GET /api/v1/b2b/giftcards/catalog`: added `#/components/schemas/FixedPrice, #/components/schemas/PriceRange` to the `items/items/offers/items/price` response property `oneOf` list for the response status `200` (media type: application/json)
+- ...and 68 more
+
+**Other API changes** (649)
+- removed the schema `OpenRoamBackend.Application.Shared.Commerce.DTOs.Currencies.CurrencyDto`
+- removed the schema `OpenRoamBackend.Application.Shared.Commerce.DTOs.OrderItems.Amendments.B2B.B2BAmendmentPaymentDto`
+- removed the schema `OpenRoamBackend.Application.Shared.Commerce.DTOs.OrderItems.Amendments.B2B.B2BAmendmentQuoteOptionDto`
+- removed the schema `OpenRoamBackend.Application.Shared.Commerce.DTOs.OrderItems.Amendments.B2B.B2BAmendmentRefundDto`
+- removed the schema `OpenRoamBackend.Application.Shared.Commerce.DTOs.OrderItems.Amendments.B2B.B2BOrderItemAmendmentDto`
+- removed the schema `OpenRoamBackend.Application.Shared.Commerce.DTOs.OrderItems.Amendments.B2B.B2BPartnerAmendmentItemDto`
+- removed the schema `OpenRoamBackend.Application.Shared.Commerce.DTOs.OrderItems.Amendments.B2B.B2BPartnerAmendmentListDto`
+- removed the schema `OpenRoamBackend.Application.Shared.Commerce.DTOs.OrderItems.Amendments.B2B.ConfirmB2BAmendmentRequestDto`
+- removed the schema `OpenRoamBackend.Application.Shared.Commerce.DTOs.OrderItems.Amendments.B2B.ConfirmB2BAmendmentResponseDto`
+- removed the schema `OpenRoamBackend.Application.Shared.Commerce.DTOs.OrderItems.Amendments.B2B.QuoteB2BAmendmentResponseDto`
+- removed the schema `OpenRoamBackend.Application.Shared.Commerce.DTOs.OrderItems.Refunds.B2B.B2BCancellationPreviewResponseDto`
+- removed the schema `OpenRoamBackend.Application.Shared.Commerce.DTOs.OrderItems.Refunds.B2B.B2BOrderItemRefundResponseDto`
+- removed the schema `OpenRoamBackend.Application.Shared.Commerce.DTOs.OrderItems.Refunds.CancellationPenaltyDetailDto`
+- removed the schema `OpenRoamBackend.Application.Shared.Commerce.DTOs.OrderItems.Updates.B2B.UpdateB2BOrderItemRequestDto`
+- removed the schema `OpenRoamBackend.Application.Shared.Commerce.DTOs.Orders.B2B.B2BOrderAcceptedResponseDto`
+- removed the schema `OpenRoamBackend.Application.Shared.Commerce.DTOs.Orders.B2B.B2BOrderFulfillmentStatusResponseDto`
+- removed the schema `OpenRoamBackend.Application.Shared.Commerce.DTOs.Orders.B2B.B2BOrderListResponseDto`
+- removed the schema `OpenRoamBackend.Application.Shared.Commerce.DTOs.Orders.B2B.B2BOrderResponseDto`
+- removed the schema `OpenRoamBackend.Application.Shared.Commerce.DTOs.Orders.B2B.B2BOrderSummaryResponseDto`
+- removed the schema `OpenRoamBackend.Application.Shared.Commerce.DTOs.Orders.B2B.RetryB2BOrderFulfillmentResponseDto`
+- removed the schema `OpenRoamBackend.Application.Shared.Commerce.DTOs.Orders.B2B.RetryB2BOrderPaymentResponseDto`
+- removed the schema `OpenRoamBackend.Application.Shared.Commerce.DTOs.Orders.Fulfillment.PartnerFulfillmentFailureDto`
+- removed the schema `OpenRoamBackend.Application.Shared.Commerce.DTOs.Orders.Fulfillment.PartnerFulfillmentProgressDto`
+- removed the schema `OpenRoamBackend.Application.Shared.Commerce.DTOs.Orders.Partner.IPartnerFulfillmentResultDto`
+- removed the schema `OpenRoamBackend.Application.Shared.Commerce.DTOs.Orders.Partner.IPartnerPurchasedProductDto`
+- removed the schema `OpenRoamBackend.Application.Shared.Commerce.DTOs.Orders.Partner.PartnerActionDto`
+- removed the schema `OpenRoamBackend.Application.Shared.Commerce.DTOs.Orders.Partner.PartnerOrderActionsDto`
+- removed the schema `OpenRoamBackend.Application.Shared.Commerce.DTOs.Orders.Partner.PartnerOrderCancellationPreviewDto`
+- removed the schema `OpenRoamBackend.Application.Shared.Commerce.DTOs.Orders.Partner.PartnerOrderCancellationPreviewTotalsDto`
+- removed the schema `OpenRoamBackend.Application.Shared.Commerce.DTOs.Orders.Partner.PartnerOrderItemActionsDto`
+- removed the schema `OpenRoamBackend.Application.Shared.Commerce.DTOs.Orders.Partner.PartnerOrderItemCancellationPreviewDto`
+- removed the schema `OpenRoamBackend.Application.Shared.Commerce.DTOs.Orders.Partner.PartnerOrderItemDto`
+- removed the schema `OpenRoamBackend.Application.Shared.Commerce.DTOs.Orders.Partner.PartnerOrderItemDto.Airtime`
+- removed the schema `OpenRoamBackend.Application.Shared.Commerce.DTOs.Orders.Partner.PartnerOrderItemDto.Esim`
+- removed the schema `OpenRoamBackend.Application.Shared.Commerce.DTOs.Orders.Partner.PartnerOrderItemDto.Flight`
+- removed the schema `OpenRoamBackend.Application.Shared.Commerce.DTOs.Orders.Partner.PartnerOrderItemDto.GiftCard`
+- removed the schema `OpenRoamBackend.Application.Shared.Commerce.DTOs.Orders.Partner.PartnerOrderItemDto.Hotel`
+- removed the schema `OpenRoamBackend.Application.Shared.Commerce.DTOs.Orders.Partner.PartnerOrderItemDto.Utility`
+- removed the schema `OpenRoamBackend.Application.Shared.Commerce.DTOs.Orders.Partner.PartnerOrderItemRefundDto`
+- removed the schema `OpenRoamBackend.Application.Shared.Commerce.DTOs.Orders.Partner.PartnerOrderOriginDto`
+- ...and 609 more
+
 ## 0.1.0-rc.5
 
 Fifth release candidate. The API, its routes, its JSON and the client methods are the same as 0.1.0-rc.4; the type names

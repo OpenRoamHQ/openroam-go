@@ -25,7 +25,7 @@ type EsimQuoteItem struct {
 	PublicId string `json:"publicId"`
 	Quantity *int32 `json:"quantity,omitempty"`
 	Name *string `json:"name,omitempty"`
-	Price *MoneyAmount `json:"price,omitempty"`
+	Price *Money `json:"price,omitempty"`
 }
 
 type _EsimQuoteItem EsimQuoteItem
@@ -137,9 +137,9 @@ func (o *EsimQuoteItem) SetName(v string) {
 }
 
 // GetPrice returns the Price field value if set, zero value otherwise.
-func (o *EsimQuoteItem) GetPrice() MoneyAmount {
+func (o *EsimQuoteItem) GetPrice() Money {
 	if o == nil || IsNil(o.Price) {
-		var ret MoneyAmount
+		var ret Money
 		return ret
 	}
 	return *o.Price
@@ -147,7 +147,7 @@ func (o *EsimQuoteItem) GetPrice() MoneyAmount {
 
 // GetPriceOk returns a tuple with the Price field value if set, nil otherwise
 // and a boolean to check if the value has been set.
-func (o *EsimQuoteItem) GetPriceOk() (*MoneyAmount, bool) {
+func (o *EsimQuoteItem) GetPriceOk() (*Money, bool) {
 	if o == nil || IsNil(o.Price) {
 		return nil, false
 	}
@@ -163,8 +163,8 @@ func (o *EsimQuoteItem) HasPrice() bool {
 	return false
 }
 
-// SetPrice gets a reference to the given MoneyAmount and assigns it to the Price field.
-func (o *EsimQuoteItem) SetPrice(v MoneyAmount) {
+// SetPrice gets a reference to the given Money and assigns it to the Price field.
+func (o *EsimQuoteItem) SetPrice(v Money) {
 	o.Price = &v
 }
 

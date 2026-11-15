@@ -20,7 +20,7 @@ var _ MappedNullable = &AmendmentList{}
 
 // AmendmentList struct for AmendmentList
 type AmendmentList struct {
-	Items []AmendmentListItem `json:"items,omitempty"`
+	Items []Amendment `json:"items,omitempty"`
 	// Paging of a list response.
 	Pagination *Pagination `json:"pagination,omitempty"`
 }
@@ -43,9 +43,9 @@ func NewAmendmentListWithDefaults() *AmendmentList {
 }
 
 // GetItems returns the Items field value if set, zero value otherwise.
-func (o *AmendmentList) GetItems() []AmendmentListItem {
+func (o *AmendmentList) GetItems() []Amendment {
 	if o == nil || IsNil(o.Items) {
-		var ret []AmendmentListItem
+		var ret []Amendment
 		return ret
 	}
 	return o.Items
@@ -53,7 +53,7 @@ func (o *AmendmentList) GetItems() []AmendmentListItem {
 
 // GetItemsOk returns a tuple with the Items field value if set, nil otherwise
 // and a boolean to check if the value has been set.
-func (o *AmendmentList) GetItemsOk() ([]AmendmentListItem, bool) {
+func (o *AmendmentList) GetItemsOk() ([]Amendment, bool) {
 	if o == nil || IsNil(o.Items) {
 		return nil, false
 	}
@@ -69,8 +69,8 @@ func (o *AmendmentList) HasItems() bool {
 	return false
 }
 
-// SetItems gets a reference to the given []AmendmentListItem and assigns it to the Items field.
-func (o *AmendmentList) SetItems(v []AmendmentListItem) {
+// SetItems gets a reference to the given []Amendment and assigns it to the Items field.
+func (o *AmendmentList) SetItems(v []Amendment) {
 	o.Items = v
 }
 

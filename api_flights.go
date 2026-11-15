@@ -230,7 +230,7 @@ type ApiFlightsGetSeatMapRequest struct {
 	publicId string
 }
 
-func (r ApiFlightsGetSeatMapRequest) Execute() (*FlightSeatMap, *http.Response, error) {
+func (r ApiFlightsGetSeatMapRequest) Execute() (*SeatMap, *http.Response, error) {
 	return r.ApiService.FlightsGetSeatMapExecute(r)
 }
 
@@ -259,13 +259,13 @@ func (a *FlightsAPIService) FlightsGetSeatMap(ctx context.Context, publicId stri
 }
 
 // Execute executes the request
-//  @return FlightSeatMap
-func (a *FlightsAPIService) FlightsGetSeatMapExecute(r ApiFlightsGetSeatMapRequest) (*FlightSeatMap, *http.Response, error) {
+//  @return SeatMap
+func (a *FlightsAPIService) FlightsGetSeatMapExecute(r ApiFlightsGetSeatMapRequest) (*SeatMap, *http.Response, error) {
 	var (
 		localVarHTTPMethod   = http.MethodGet
 		localVarPostBody     interface{}
 		formFiles            []formFile
-		localVarReturnValue  *FlightSeatMap
+		localVarReturnValue  *SeatMap
 	)
 
 	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "FlightsAPIService.FlightsGetSeatMap")

@@ -29,7 +29,7 @@ type UtilityOrderItem struct {
 	OrderId *string `json:"orderId,omitempty"`
 	ProductType string `json:"productType"`
 	// The price paid for the item at purchase, in the order's currency.
-	Price *MoneyAmount `json:"price,omitempty"`
+	Price *Money `json:"price,omitempty"`
 	PurchasedProduct *UtilityPurchasedProduct `json:"purchasedProduct,omitempty"`
 	Fulfillment *UtilityFulfillment `json:"fulfillment,omitempty"`
 	// Whether the item can be amended or cancelled now.
@@ -37,7 +37,7 @@ type UtilityOrderItem struct {
 	// When the item was created (UTC).
 	CreatedAt *time.Time `json:"createdAt,omitempty"`
 	// What has been paid for the item so far: `price` plus completed amendment             charges, less completed amendment credits.
-	EffectivePaidAmount *MoneyAmount `json:"effectivePaidAmount,omitempty"`
+	EffectivePaidAmount *Money `json:"effectivePaidAmount,omitempty"`
 	// The recorded refund, or `null` when no refund has been started.
 	Refund NullableOrderItemRefund `json:"refund,omitempty"`
 }
@@ -151,9 +151,9 @@ func (o *UtilityOrderItem) SetProductType(v string) {
 }
 
 // GetPrice returns the Price field value if set, zero value otherwise.
-func (o *UtilityOrderItem) GetPrice() MoneyAmount {
+func (o *UtilityOrderItem) GetPrice() Money {
 	if o == nil || IsNil(o.Price) {
-		var ret MoneyAmount
+		var ret Money
 		return ret
 	}
 	return *o.Price
@@ -161,7 +161,7 @@ func (o *UtilityOrderItem) GetPrice() MoneyAmount {
 
 // GetPriceOk returns a tuple with the Price field value if set, nil otherwise
 // and a boolean to check if the value has been set.
-func (o *UtilityOrderItem) GetPriceOk() (*MoneyAmount, bool) {
+func (o *UtilityOrderItem) GetPriceOk() (*Money, bool) {
 	if o == nil || IsNil(o.Price) {
 		return nil, false
 	}
@@ -177,8 +177,8 @@ func (o *UtilityOrderItem) HasPrice() bool {
 	return false
 }
 
-// SetPrice gets a reference to the given MoneyAmount and assigns it to the Price field.
-func (o *UtilityOrderItem) SetPrice(v MoneyAmount) {
+// SetPrice gets a reference to the given Money and assigns it to the Price field.
+func (o *UtilityOrderItem) SetPrice(v Money) {
 	o.Price = &v
 }
 
@@ -311,9 +311,9 @@ func (o *UtilityOrderItem) SetCreatedAt(v time.Time) {
 }
 
 // GetEffectivePaidAmount returns the EffectivePaidAmount field value if set, zero value otherwise.
-func (o *UtilityOrderItem) GetEffectivePaidAmount() MoneyAmount {
+func (o *UtilityOrderItem) GetEffectivePaidAmount() Money {
 	if o == nil || IsNil(o.EffectivePaidAmount) {
-		var ret MoneyAmount
+		var ret Money
 		return ret
 	}
 	return *o.EffectivePaidAmount
@@ -321,7 +321,7 @@ func (o *UtilityOrderItem) GetEffectivePaidAmount() MoneyAmount {
 
 // GetEffectivePaidAmountOk returns a tuple with the EffectivePaidAmount field value if set, nil otherwise
 // and a boolean to check if the value has been set.
-func (o *UtilityOrderItem) GetEffectivePaidAmountOk() (*MoneyAmount, bool) {
+func (o *UtilityOrderItem) GetEffectivePaidAmountOk() (*Money, bool) {
 	if o == nil || IsNil(o.EffectivePaidAmount) {
 		return nil, false
 	}
@@ -337,8 +337,8 @@ func (o *UtilityOrderItem) HasEffectivePaidAmount() bool {
 	return false
 }
 
-// SetEffectivePaidAmount gets a reference to the given MoneyAmount and assigns it to the EffectivePaidAmount field.
-func (o *UtilityOrderItem) SetEffectivePaidAmount(v MoneyAmount) {
+// SetEffectivePaidAmount gets a reference to the given Money and assigns it to the EffectivePaidAmount field.
+func (o *UtilityOrderItem) SetEffectivePaidAmount(v Money) {
 	o.EffectivePaidAmount = &v
 }
 

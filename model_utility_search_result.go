@@ -20,7 +20,7 @@ var _ MappedNullable = &UtilitySearchResult{}
 
 // UtilitySearchResult A page of billers; `pagination.totalCount` counts billers that still have an offer after filtering.
 type UtilitySearchResult struct {
-	Items []UtilityBiller `json:"items,omitempty"`
+	Items []Biller `json:"items,omitempty"`
 	// Paging of a list response.
 	Pagination *Pagination `json:"pagination,omitempty"`
 }
@@ -43,9 +43,9 @@ func NewUtilitySearchResultWithDefaults() *UtilitySearchResult {
 }
 
 // GetItems returns the Items field value if set, zero value otherwise.
-func (o *UtilitySearchResult) GetItems() []UtilityBiller {
+func (o *UtilitySearchResult) GetItems() []Biller {
 	if o == nil || IsNil(o.Items) {
-		var ret []UtilityBiller
+		var ret []Biller
 		return ret
 	}
 	return o.Items
@@ -53,7 +53,7 @@ func (o *UtilitySearchResult) GetItems() []UtilityBiller {
 
 // GetItemsOk returns a tuple with the Items field value if set, nil otherwise
 // and a boolean to check if the value has been set.
-func (o *UtilitySearchResult) GetItemsOk() ([]UtilityBiller, bool) {
+func (o *UtilitySearchResult) GetItemsOk() ([]Biller, bool) {
 	if o == nil || IsNil(o.Items) {
 		return nil, false
 	}
@@ -69,8 +69,8 @@ func (o *UtilitySearchResult) HasItems() bool {
 	return false
 }
 
-// SetItems gets a reference to the given []UtilityBiller and assigns it to the Items field.
-func (o *UtilitySearchResult) SetItems(v []UtilityBiller) {
+// SetItems gets a reference to the given []Biller and assigns it to the Items field.
+func (o *UtilitySearchResult) SetItems(v []Biller) {
 	o.Items = v
 }
 

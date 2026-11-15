@@ -606,7 +606,7 @@
     "query": [],
     "idempotent": true,
     "body": true,
-    "bodyModel": "EsimProvisionRequest",
+    "bodyModel": "EsimProvisioningRequest",
     "bodySample": {}
   },
   {
@@ -619,7 +619,7 @@
     "query": [],
     "idempotent": false,
     "body": true,
-    "bodyModel": "EsimSendSmsRequest",
+    "bodyModel": "EsimSmsRequest",
     "bodySample": {
       "message": "sample"
     }
@@ -1273,7 +1273,7 @@
     "query": [],
     "idempotent": true,
     "body": true,
-    "bodyModel": "OrderRequest",
+    "bodyModel": "MixedOrderRequest",
     "bodySample": {
       "items": [
         {
@@ -1304,7 +1304,7 @@
     "query": [],
     "idempotent": false,
     "body": true,
-    "bodyModel": "OrderRequest",
+    "bodyModel": "MixedOrderRequest",
     "bodySample": {
       "items": [
         {

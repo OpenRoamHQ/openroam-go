@@ -27,9 +27,9 @@ type FlightPurchasedProduct struct {
 	// The owning airline's logo, an image OpenRoam hosts, or null.
 	LogoUrl NullableString `json:"logoUrl,omitempty"`
 	// The item's inputs as applied, with contacts and document numbers masked.
-	Inputs *FlightPurchasedProductInputs `json:"inputs,omitempty"`
+	Inputs *FlightPurchasedInputs `json:"inputs,omitempty"`
 	// The flights, the fare's terms, the paid extras and what the item cost.
-	Details *FlightPurchasedProductDetails `json:"details,omitempty"`
+	Details *FlightPurchasedDetails `json:"details,omitempty"`
 }
 
 // NewFlightPurchasedProduct instantiates a new FlightPurchasedProduct object
@@ -166,9 +166,9 @@ func (o *FlightPurchasedProduct) UnsetLogoUrl() {
 }
 
 // GetInputs returns the Inputs field value if set, zero value otherwise.
-func (o *FlightPurchasedProduct) GetInputs() FlightPurchasedProductInputs {
+func (o *FlightPurchasedProduct) GetInputs() FlightPurchasedInputs {
 	if o == nil || IsNil(o.Inputs) {
-		var ret FlightPurchasedProductInputs
+		var ret FlightPurchasedInputs
 		return ret
 	}
 	return *o.Inputs
@@ -176,7 +176,7 @@ func (o *FlightPurchasedProduct) GetInputs() FlightPurchasedProductInputs {
 
 // GetInputsOk returns a tuple with the Inputs field value if set, nil otherwise
 // and a boolean to check if the value has been set.
-func (o *FlightPurchasedProduct) GetInputsOk() (*FlightPurchasedProductInputs, bool) {
+func (o *FlightPurchasedProduct) GetInputsOk() (*FlightPurchasedInputs, bool) {
 	if o == nil || IsNil(o.Inputs) {
 		return nil, false
 	}
@@ -192,15 +192,15 @@ func (o *FlightPurchasedProduct) HasInputs() bool {
 	return false
 }
 
-// SetInputs gets a reference to the given FlightPurchasedProductInputs and assigns it to the Inputs field.
-func (o *FlightPurchasedProduct) SetInputs(v FlightPurchasedProductInputs) {
+// SetInputs gets a reference to the given FlightPurchasedInputs and assigns it to the Inputs field.
+func (o *FlightPurchasedProduct) SetInputs(v FlightPurchasedInputs) {
 	o.Inputs = &v
 }
 
 // GetDetails returns the Details field value if set, zero value otherwise.
-func (o *FlightPurchasedProduct) GetDetails() FlightPurchasedProductDetails {
+func (o *FlightPurchasedProduct) GetDetails() FlightPurchasedDetails {
 	if o == nil || IsNil(o.Details) {
-		var ret FlightPurchasedProductDetails
+		var ret FlightPurchasedDetails
 		return ret
 	}
 	return *o.Details
@@ -208,7 +208,7 @@ func (o *FlightPurchasedProduct) GetDetails() FlightPurchasedProductDetails {
 
 // GetDetailsOk returns a tuple with the Details field value if set, nil otherwise
 // and a boolean to check if the value has been set.
-func (o *FlightPurchasedProduct) GetDetailsOk() (*FlightPurchasedProductDetails, bool) {
+func (o *FlightPurchasedProduct) GetDetailsOk() (*FlightPurchasedDetails, bool) {
 	if o == nil || IsNil(o.Details) {
 		return nil, false
 	}
@@ -224,8 +224,8 @@ func (o *FlightPurchasedProduct) HasDetails() bool {
 	return false
 }
 
-// SetDetails gets a reference to the given FlightPurchasedProductDetails and assigns it to the Details field.
-func (o *FlightPurchasedProduct) SetDetails(v FlightPurchasedProductDetails) {
+// SetDetails gets a reference to the given FlightPurchasedDetails and assigns it to the Details field.
+func (o *FlightPurchasedProduct) SetDetails(v FlightPurchasedDetails) {
 	o.Details = &v
 }
 

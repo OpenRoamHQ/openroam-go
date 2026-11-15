@@ -19,7 +19,7 @@ import (
 // checks if the FlightOrder type satisfies the MappedNullable interface at compile time
 var _ MappedNullable = &FlightOrder{}
 
-// FlightOrder The accepted order. A repeat of the same request with the same idempotency key returns this order's current state.
+// FlightOrder The current state of an order.
 type FlightOrder struct {
 	// Order id.
 	Id *string `json:"id,omitempty"`
@@ -28,7 +28,7 @@ type FlightOrder struct {
 	// Current order status.
 	Status *string `json:"status,omitempty"`
 	// What the order costs, in the order's currency: the item prices plus completed amendment charges,             less completed amendment credits.
-	Total *MoneyAmount `json:"total,omitempty"`
+	Total *Money `json:"total,omitempty"`
 	// The latest payment attempt; `null` when none was made.
 	Payment NullableOrderPayment `json:"payment,omitempty"`
 	// Whether payment retry and fulfillment retry are available now.
@@ -161,9 +161,9 @@ func (o *FlightOrder) SetStatus(v string) {
 }
 
 // GetTotal returns the Total field value if set, zero value otherwise.
-func (o *FlightOrder) GetTotal() MoneyAmount {
+func (o *FlightOrder) GetTotal() Money {
 	if o == nil || IsNil(o.Total) {
-		var ret MoneyAmount
+		var ret Money
 		return ret
 	}
 	return *o.Total
@@ -171,7 +171,7 @@ func (o *FlightOrder) GetTotal() MoneyAmount {
 
 // GetTotalOk returns a tuple with the Total field value if set, nil otherwise
 // and a boolean to check if the value has been set.
-func (o *FlightOrder) GetTotalOk() (*MoneyAmount, bool) {
+func (o *FlightOrder) GetTotalOk() (*Money, bool) {
 	if o == nil || IsNil(o.Total) {
 		return nil, false
 	}
@@ -187,8 +187,8 @@ func (o *FlightOrder) HasTotal() bool {
 	return false
 }
 
-// SetTotal gets a reference to the given MoneyAmount and assigns it to the Total field.
-func (o *FlightOrder) SetTotal(v MoneyAmount) {
+// SetTotal gets a reference to the given Money and assigns it to the Total field.
+func (o *FlightOrder) SetTotal(v Money) {
 	o.Total = &v
 }
 

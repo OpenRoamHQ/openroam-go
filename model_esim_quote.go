@@ -22,7 +22,7 @@ var _ MappedNullable = &EsimQuote{}
 type EsimQuote struct {
 	Currency *string `json:"currency,omitempty"`
 	Items []EsimQuoteItem `json:"items,omitempty"`
-	Total *MoneyAmount `json:"total,omitempty"`
+	Total *Money `json:"total,omitempty"`
 }
 
 // NewEsimQuote instantiates a new EsimQuote object
@@ -107,9 +107,9 @@ func (o *EsimQuote) SetItems(v []EsimQuoteItem) {
 }
 
 // GetTotal returns the Total field value if set, zero value otherwise.
-func (o *EsimQuote) GetTotal() MoneyAmount {
+func (o *EsimQuote) GetTotal() Money {
 	if o == nil || IsNil(o.Total) {
-		var ret MoneyAmount
+		var ret Money
 		return ret
 	}
 	return *o.Total
@@ -117,7 +117,7 @@ func (o *EsimQuote) GetTotal() MoneyAmount {
 
 // GetTotalOk returns a tuple with the Total field value if set, nil otherwise
 // and a boolean to check if the value has been set.
-func (o *EsimQuote) GetTotalOk() (*MoneyAmount, bool) {
+func (o *EsimQuote) GetTotalOk() (*Money, bool) {
 	if o == nil || IsNil(o.Total) {
 		return nil, false
 	}
@@ -133,8 +133,8 @@ func (o *EsimQuote) HasTotal() bool {
 	return false
 }
 
-// SetTotal gets a reference to the given MoneyAmount and assigns it to the Total field.
-func (o *EsimQuote) SetTotal(v MoneyAmount) {
+// SetTotal gets a reference to the given Money and assigns it to the Total field.
+func (o *EsimQuote) SetTotal(v Money) {
 	o.Total = &v
 }
 

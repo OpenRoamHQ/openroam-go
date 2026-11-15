@@ -26,25 +26,25 @@ type FlightOfferDetails struct {
 	// `economy`, `premiumEconomy`, `business` or `first`.
 	CabinClass *string `json:"cabinClass,omitempty"`
 	// Fare basis, brand, fare family and validating carrier, as far as the airline gives them.
-	Fare NullableFlightFare `json:"fare,omitempty"`
+	Fare NullableFare `json:"fare,omitempty"`
 	// How the fare is paid (always `payNow`), what cancelling it gives back and whether it can be changed, at the fare's price in the search currency, OpenRoam's fees included.
 	Terms *BookingTerms `json:"terms,omitempty"`
 	// Baggage included for every passenger.
-	IncludedBaggage []FlightBaggage `json:"includedBaggage,omitempty"`
+	IncludedBaggage []Baggage `json:"includedBaggage,omitempty"`
 	// Base fare and taxes of `price`; null when the airline gives no split.
-	PriceBreakdown NullableFlightPriceBreakdown `json:"priceBreakdown,omitempty"`
+	PriceBreakdown NullablePriceBreakdown `json:"priceBreakdown,omitempty"`
 	// Price per passenger type.
-	PassengerPricing []FlightPassengerPricing `json:"passengerPricing,omitempty"`
+	PassengerPricing []PassengerPricing `json:"passengerPricing,omitempty"`
 	// The passengers the fare is priced for; `passengerIndex` names them in the order inputs.
-	OfferPassengers []FlightOfferPassenger `json:"offerPassengers,omitempty"`
+	OfferPassengers []OfferPassenger `json:"offerPassengers,omitempty"`
 	// Paid extras; empty in search. Quote the fare to list them.
-	AvailableServices []FlightAvailableService `json:"availableServices,omitempty"`
+	AvailableServices []AvailableService `json:"availableServices,omitempty"`
 	// Whether every passenger needs an identity document to book.
 	IdentityDocumentsRequired *bool `json:"identityDocumentsRequired,omitempty"`
 	// The document types the airline takes: `passport`, `taxId`, `knownTravelerNumber` or `passengerRedressNumber`.
 	SupportedDocumentTypes []string `json:"supportedDocumentTypes,omitempty"`
 	// Cabin and baggage on each segment of this fare, with 1-based slice and segment positions.
-	Segments []FlightFareSegment `json:"segments,omitempty"`
+	Segments []SegmentFare `json:"segments,omitempty"`
 }
 
 // NewFlightOfferDetails instantiates a new FlightOfferDetails object
@@ -129,9 +129,9 @@ func (o *FlightOfferDetails) SetCabinClass(v string) {
 }
 
 // GetFare returns the Fare field value if set, zero value otherwise (both if not set or set to explicit null).
-func (o *FlightOfferDetails) GetFare() FlightFare {
+func (o *FlightOfferDetails) GetFare() Fare {
 	if o == nil || IsNil(o.Fare.Get()) {
-		var ret FlightFare
+		var ret Fare
 		return ret
 	}
 	return *o.Fare.Get()
@@ -140,7 +140,7 @@ func (o *FlightOfferDetails) GetFare() FlightFare {
 // GetFareOk returns a tuple with the Fare field value if set, nil otherwise
 // and a boolean to check if the value has been set.
 // NOTE: If the value is an explicit nil, `nil, true` will be returned
-func (o *FlightOfferDetails) GetFareOk() (*FlightFare, bool) {
+func (o *FlightOfferDetails) GetFareOk() (*Fare, bool) {
 	if o == nil {
 		return nil, false
 	}
@@ -156,8 +156,8 @@ func (o *FlightOfferDetails) HasFare() bool {
 	return false
 }
 
-// SetFare gets a reference to the given NullableFlightFare and assigns it to the Fare field.
-func (o *FlightOfferDetails) SetFare(v FlightFare) {
+// SetFare gets a reference to the given NullableFare and assigns it to the Fare field.
+func (o *FlightOfferDetails) SetFare(v Fare) {
 	o.Fare.Set(&v)
 }
 // SetFareNil sets the value for Fare to be an explicit nil
@@ -203,9 +203,9 @@ func (o *FlightOfferDetails) SetTerms(v BookingTerms) {
 }
 
 // GetIncludedBaggage returns the IncludedBaggage field value if set, zero value otherwise.
-func (o *FlightOfferDetails) GetIncludedBaggage() []FlightBaggage {
+func (o *FlightOfferDetails) GetIncludedBaggage() []Baggage {
 	if o == nil || IsNil(o.IncludedBaggage) {
-		var ret []FlightBaggage
+		var ret []Baggage
 		return ret
 	}
 	return o.IncludedBaggage
@@ -213,7 +213,7 @@ func (o *FlightOfferDetails) GetIncludedBaggage() []FlightBaggage {
 
 // GetIncludedBaggageOk returns a tuple with the IncludedBaggage field value if set, nil otherwise
 // and a boolean to check if the value has been set.
-func (o *FlightOfferDetails) GetIncludedBaggageOk() ([]FlightBaggage, bool) {
+func (o *FlightOfferDetails) GetIncludedBaggageOk() ([]Baggage, bool) {
 	if o == nil || IsNil(o.IncludedBaggage) {
 		return nil, false
 	}
@@ -229,15 +229,15 @@ func (o *FlightOfferDetails) HasIncludedBaggage() bool {
 	return false
 }
 
-// SetIncludedBaggage gets a reference to the given []FlightBaggage and assigns it to the IncludedBaggage field.
-func (o *FlightOfferDetails) SetIncludedBaggage(v []FlightBaggage) {
+// SetIncludedBaggage gets a reference to the given []Baggage and assigns it to the IncludedBaggage field.
+func (o *FlightOfferDetails) SetIncludedBaggage(v []Baggage) {
 	o.IncludedBaggage = v
 }
 
 // GetPriceBreakdown returns the PriceBreakdown field value if set, zero value otherwise (both if not set or set to explicit null).
-func (o *FlightOfferDetails) GetPriceBreakdown() FlightPriceBreakdown {
+func (o *FlightOfferDetails) GetPriceBreakdown() PriceBreakdown {
 	if o == nil || IsNil(o.PriceBreakdown.Get()) {
-		var ret FlightPriceBreakdown
+		var ret PriceBreakdown
 		return ret
 	}
 	return *o.PriceBreakdown.Get()
@@ -246,7 +246,7 @@ func (o *FlightOfferDetails) GetPriceBreakdown() FlightPriceBreakdown {
 // GetPriceBreakdownOk returns a tuple with the PriceBreakdown field value if set, nil otherwise
 // and a boolean to check if the value has been set.
 // NOTE: If the value is an explicit nil, `nil, true` will be returned
-func (o *FlightOfferDetails) GetPriceBreakdownOk() (*FlightPriceBreakdown, bool) {
+func (o *FlightOfferDetails) GetPriceBreakdownOk() (*PriceBreakdown, bool) {
 	if o == nil {
 		return nil, false
 	}
@@ -262,8 +262,8 @@ func (o *FlightOfferDetails) HasPriceBreakdown() bool {
 	return false
 }
 
-// SetPriceBreakdown gets a reference to the given NullableFlightPriceBreakdown and assigns it to the PriceBreakdown field.
-func (o *FlightOfferDetails) SetPriceBreakdown(v FlightPriceBreakdown) {
+// SetPriceBreakdown gets a reference to the given NullablePriceBreakdown and assigns it to the PriceBreakdown field.
+func (o *FlightOfferDetails) SetPriceBreakdown(v PriceBreakdown) {
 	o.PriceBreakdown.Set(&v)
 }
 // SetPriceBreakdownNil sets the value for PriceBreakdown to be an explicit nil
@@ -277,9 +277,9 @@ func (o *FlightOfferDetails) UnsetPriceBreakdown() {
 }
 
 // GetPassengerPricing returns the PassengerPricing field value if set, zero value otherwise.
-func (o *FlightOfferDetails) GetPassengerPricing() []FlightPassengerPricing {
+func (o *FlightOfferDetails) GetPassengerPricing() []PassengerPricing {
 	if o == nil || IsNil(o.PassengerPricing) {
-		var ret []FlightPassengerPricing
+		var ret []PassengerPricing
 		return ret
 	}
 	return o.PassengerPricing
@@ -287,7 +287,7 @@ func (o *FlightOfferDetails) GetPassengerPricing() []FlightPassengerPricing {
 
 // GetPassengerPricingOk returns a tuple with the PassengerPricing field value if set, nil otherwise
 // and a boolean to check if the value has been set.
-func (o *FlightOfferDetails) GetPassengerPricingOk() ([]FlightPassengerPricing, bool) {
+func (o *FlightOfferDetails) GetPassengerPricingOk() ([]PassengerPricing, bool) {
 	if o == nil || IsNil(o.PassengerPricing) {
 		return nil, false
 	}
@@ -303,15 +303,15 @@ func (o *FlightOfferDetails) HasPassengerPricing() bool {
 	return false
 }
 
-// SetPassengerPricing gets a reference to the given []FlightPassengerPricing and assigns it to the PassengerPricing field.
-func (o *FlightOfferDetails) SetPassengerPricing(v []FlightPassengerPricing) {
+// SetPassengerPricing gets a reference to the given []PassengerPricing and assigns it to the PassengerPricing field.
+func (o *FlightOfferDetails) SetPassengerPricing(v []PassengerPricing) {
 	o.PassengerPricing = v
 }
 
 // GetOfferPassengers returns the OfferPassengers field value if set, zero value otherwise.
-func (o *FlightOfferDetails) GetOfferPassengers() []FlightOfferPassenger {
+func (o *FlightOfferDetails) GetOfferPassengers() []OfferPassenger {
 	if o == nil || IsNil(o.OfferPassengers) {
-		var ret []FlightOfferPassenger
+		var ret []OfferPassenger
 		return ret
 	}
 	return o.OfferPassengers
@@ -319,7 +319,7 @@ func (o *FlightOfferDetails) GetOfferPassengers() []FlightOfferPassenger {
 
 // GetOfferPassengersOk returns a tuple with the OfferPassengers field value if set, nil otherwise
 // and a boolean to check if the value has been set.
-func (o *FlightOfferDetails) GetOfferPassengersOk() ([]FlightOfferPassenger, bool) {
+func (o *FlightOfferDetails) GetOfferPassengersOk() ([]OfferPassenger, bool) {
 	if o == nil || IsNil(o.OfferPassengers) {
 		return nil, false
 	}
@@ -335,15 +335,15 @@ func (o *FlightOfferDetails) HasOfferPassengers() bool {
 	return false
 }
 
-// SetOfferPassengers gets a reference to the given []FlightOfferPassenger and assigns it to the OfferPassengers field.
-func (o *FlightOfferDetails) SetOfferPassengers(v []FlightOfferPassenger) {
+// SetOfferPassengers gets a reference to the given []OfferPassenger and assigns it to the OfferPassengers field.
+func (o *FlightOfferDetails) SetOfferPassengers(v []OfferPassenger) {
 	o.OfferPassengers = v
 }
 
 // GetAvailableServices returns the AvailableServices field value if set, zero value otherwise.
-func (o *FlightOfferDetails) GetAvailableServices() []FlightAvailableService {
+func (o *FlightOfferDetails) GetAvailableServices() []AvailableService {
 	if o == nil || IsNil(o.AvailableServices) {
-		var ret []FlightAvailableService
+		var ret []AvailableService
 		return ret
 	}
 	return o.AvailableServices
@@ -351,7 +351,7 @@ func (o *FlightOfferDetails) GetAvailableServices() []FlightAvailableService {
 
 // GetAvailableServicesOk returns a tuple with the AvailableServices field value if set, nil otherwise
 // and a boolean to check if the value has been set.
-func (o *FlightOfferDetails) GetAvailableServicesOk() ([]FlightAvailableService, bool) {
+func (o *FlightOfferDetails) GetAvailableServicesOk() ([]AvailableService, bool) {
 	if o == nil || IsNil(o.AvailableServices) {
 		return nil, false
 	}
@@ -367,8 +367,8 @@ func (o *FlightOfferDetails) HasAvailableServices() bool {
 	return false
 }
 
-// SetAvailableServices gets a reference to the given []FlightAvailableService and assigns it to the AvailableServices field.
-func (o *FlightOfferDetails) SetAvailableServices(v []FlightAvailableService) {
+// SetAvailableServices gets a reference to the given []AvailableService and assigns it to the AvailableServices field.
+func (o *FlightOfferDetails) SetAvailableServices(v []AvailableService) {
 	o.AvailableServices = v
 }
 
@@ -437,9 +437,9 @@ func (o *FlightOfferDetails) SetSupportedDocumentTypes(v []string) {
 }
 
 // GetSegments returns the Segments field value if set, zero value otherwise.
-func (o *FlightOfferDetails) GetSegments() []FlightFareSegment {
+func (o *FlightOfferDetails) GetSegments() []SegmentFare {
 	if o == nil || IsNil(o.Segments) {
-		var ret []FlightFareSegment
+		var ret []SegmentFare
 		return ret
 	}
 	return o.Segments
@@ -447,7 +447,7 @@ func (o *FlightOfferDetails) GetSegments() []FlightFareSegment {
 
 // GetSegmentsOk returns a tuple with the Segments field value if set, nil otherwise
 // and a boolean to check if the value has been set.
-func (o *FlightOfferDetails) GetSegmentsOk() ([]FlightFareSegment, bool) {
+func (o *FlightOfferDetails) GetSegmentsOk() ([]SegmentFare, bool) {
 	if o == nil || IsNil(o.Segments) {
 		return nil, false
 	}
@@ -463,8 +463,8 @@ func (o *FlightOfferDetails) HasSegments() bool {
 	return false
 }
 
-// SetSegments gets a reference to the given []FlightFareSegment and assigns it to the Segments field.
-func (o *FlightOfferDetails) SetSegments(v []FlightFareSegment) {
+// SetSegments gets a reference to the given []SegmentFare and assigns it to the Segments field.
+func (o *FlightOfferDetails) SetSegments(v []SegmentFare) {
 	o.Segments = v
 }
 

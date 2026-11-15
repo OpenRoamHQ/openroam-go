@@ -23,7 +23,7 @@ type OrderItemCancelResult struct {
 	// The refunded order item.
 	OrderItemId *string `json:"orderItemId,omitempty"`
 	// The amount refunded, in the order's currency.
-	Amount *MoneyAmount `json:"amount,omitempty"`
+	Amount *Money `json:"amount,omitempty"`
 	// How the amount is returned; `balance` returns it to the wallet that paid.
 	Method *string `json:"method,omitempty"`
 	// Refund status: `refunded` when complete; `pending` or `processing` while it             settles; `failed` when it did not complete.
@@ -80,9 +80,9 @@ func (o *OrderItemCancelResult) SetOrderItemId(v string) {
 }
 
 // GetAmount returns the Amount field value if set, zero value otherwise.
-func (o *OrderItemCancelResult) GetAmount() MoneyAmount {
+func (o *OrderItemCancelResult) GetAmount() Money {
 	if o == nil || IsNil(o.Amount) {
-		var ret MoneyAmount
+		var ret Money
 		return ret
 	}
 	return *o.Amount
@@ -90,7 +90,7 @@ func (o *OrderItemCancelResult) GetAmount() MoneyAmount {
 
 // GetAmountOk returns a tuple with the Amount field value if set, nil otherwise
 // and a boolean to check if the value has been set.
-func (o *OrderItemCancelResult) GetAmountOk() (*MoneyAmount, bool) {
+func (o *OrderItemCancelResult) GetAmountOk() (*Money, bool) {
 	if o == nil || IsNil(o.Amount) {
 		return nil, false
 	}
@@ -106,8 +106,8 @@ func (o *OrderItemCancelResult) HasAmount() bool {
 	return false
 }
 
-// SetAmount gets a reference to the given MoneyAmount and assigns it to the Amount field.
-func (o *OrderItemCancelResult) SetAmount(v MoneyAmount) {
+// SetAmount gets a reference to the given Money and assigns it to the Amount field.
+func (o *OrderItemCancelResult) SetAmount(v Money) {
 	o.Amount = &v
 }
 

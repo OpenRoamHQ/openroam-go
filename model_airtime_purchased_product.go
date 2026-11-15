@@ -23,11 +23,11 @@ type AirtimePurchasedProduct struct {
 	Name *string `json:"name,omitempty"`
 	CountryCode *string `json:"countryCode,omitempty"`
 	LogoUrl NullableString `json:"logoUrl,omitempty"`
-	Value NullableMoneyAmount `json:"value,omitempty"`
+	Value NullableMoney `json:"value,omitempty"`
 	// The item's `inputs` under the request's keys. `phoneNumber` is masked; `minDeliveredValue` is returned as accepted, in the value's currency, and is null when the item took no minimum. Operator settings are not echoed.
-	Inputs *AirtimePurchasedProductInputs `json:"inputs,omitempty"`
+	Inputs *AirtimePurchasedInputs `json:"inputs,omitempty"`
 	// Airtime facts outside the purchased-product keys every partner service shares, as captured at purchase. `redemptionType` is null when the selected route did not declare how the top-up is delivered. `estimatedDeliveredValue` is what the selected route expected the recipient to receive, null when it was not known. `readMore` is stored Markdown.
-	Details *AirtimePurchasedProductDetails `json:"details,omitempty"`
+	Details *AirtimePurchasedDetails `json:"details,omitempty"`
 }
 
 // NewAirtimePurchasedProduct instantiates a new AirtimePurchasedProduct object
@@ -154,9 +154,9 @@ func (o *AirtimePurchasedProduct) UnsetLogoUrl() {
 }
 
 // GetValue returns the Value field value if set, zero value otherwise (both if not set or set to explicit null).
-func (o *AirtimePurchasedProduct) GetValue() MoneyAmount {
+func (o *AirtimePurchasedProduct) GetValue() Money {
 	if o == nil || IsNil(o.Value.Get()) {
-		var ret MoneyAmount
+		var ret Money
 		return ret
 	}
 	return *o.Value.Get()
@@ -165,7 +165,7 @@ func (o *AirtimePurchasedProduct) GetValue() MoneyAmount {
 // GetValueOk returns a tuple with the Value field value if set, nil otherwise
 // and a boolean to check if the value has been set.
 // NOTE: If the value is an explicit nil, `nil, true` will be returned
-func (o *AirtimePurchasedProduct) GetValueOk() (*MoneyAmount, bool) {
+func (o *AirtimePurchasedProduct) GetValueOk() (*Money, bool) {
 	if o == nil {
 		return nil, false
 	}
@@ -181,8 +181,8 @@ func (o *AirtimePurchasedProduct) HasValue() bool {
 	return false
 }
 
-// SetValue gets a reference to the given NullableMoneyAmount and assigns it to the Value field.
-func (o *AirtimePurchasedProduct) SetValue(v MoneyAmount) {
+// SetValue gets a reference to the given NullableMoney and assigns it to the Value field.
+func (o *AirtimePurchasedProduct) SetValue(v Money) {
 	o.Value.Set(&v)
 }
 // SetValueNil sets the value for Value to be an explicit nil
@@ -196,9 +196,9 @@ func (o *AirtimePurchasedProduct) UnsetValue() {
 }
 
 // GetInputs returns the Inputs field value if set, zero value otherwise.
-func (o *AirtimePurchasedProduct) GetInputs() AirtimePurchasedProductInputs {
+func (o *AirtimePurchasedProduct) GetInputs() AirtimePurchasedInputs {
 	if o == nil || IsNil(o.Inputs) {
-		var ret AirtimePurchasedProductInputs
+		var ret AirtimePurchasedInputs
 		return ret
 	}
 	return *o.Inputs
@@ -206,7 +206,7 @@ func (o *AirtimePurchasedProduct) GetInputs() AirtimePurchasedProductInputs {
 
 // GetInputsOk returns a tuple with the Inputs field value if set, nil otherwise
 // and a boolean to check if the value has been set.
-func (o *AirtimePurchasedProduct) GetInputsOk() (*AirtimePurchasedProductInputs, bool) {
+func (o *AirtimePurchasedProduct) GetInputsOk() (*AirtimePurchasedInputs, bool) {
 	if o == nil || IsNil(o.Inputs) {
 		return nil, false
 	}
@@ -222,15 +222,15 @@ func (o *AirtimePurchasedProduct) HasInputs() bool {
 	return false
 }
 
-// SetInputs gets a reference to the given AirtimePurchasedProductInputs and assigns it to the Inputs field.
-func (o *AirtimePurchasedProduct) SetInputs(v AirtimePurchasedProductInputs) {
+// SetInputs gets a reference to the given AirtimePurchasedInputs and assigns it to the Inputs field.
+func (o *AirtimePurchasedProduct) SetInputs(v AirtimePurchasedInputs) {
 	o.Inputs = &v
 }
 
 // GetDetails returns the Details field value if set, zero value otherwise.
-func (o *AirtimePurchasedProduct) GetDetails() AirtimePurchasedProductDetails {
+func (o *AirtimePurchasedProduct) GetDetails() AirtimePurchasedDetails {
 	if o == nil || IsNil(o.Details) {
-		var ret AirtimePurchasedProductDetails
+		var ret AirtimePurchasedDetails
 		return ret
 	}
 	return *o.Details
@@ -238,7 +238,7 @@ func (o *AirtimePurchasedProduct) GetDetails() AirtimePurchasedProductDetails {
 
 // GetDetailsOk returns a tuple with the Details field value if set, nil otherwise
 // and a boolean to check if the value has been set.
-func (o *AirtimePurchasedProduct) GetDetailsOk() (*AirtimePurchasedProductDetails, bool) {
+func (o *AirtimePurchasedProduct) GetDetailsOk() (*AirtimePurchasedDetails, bool) {
 	if o == nil || IsNil(o.Details) {
 		return nil, false
 	}
@@ -254,8 +254,8 @@ func (o *AirtimePurchasedProduct) HasDetails() bool {
 	return false
 }
 
-// SetDetails gets a reference to the given AirtimePurchasedProductDetails and assigns it to the Details field.
-func (o *AirtimePurchasedProduct) SetDetails(v AirtimePurchasedProductDetails) {
+// SetDetails gets a reference to the given AirtimePurchasedDetails and assigns it to the Details field.
+func (o *AirtimePurchasedProduct) SetDetails(v AirtimePurchasedDetails) {
 	o.Details = &v
 }
 

@@ -26,8 +26,8 @@ type GiftCardMixedQuoteItem struct {
 	PublicId string `json:"publicId"`
 	Quantity *int32 `json:"quantity,omitempty"`
 	Name *string `json:"name,omitempty"`
-	Value *MoneyAmount `json:"value,omitempty"`
-	Price *MoneyAmount `json:"price,omitempty"`
+	Value *Money `json:"value,omitempty"`
+	Price *Money `json:"price,omitempty"`
 }
 
 type _GiftCardMixedQuoteItem GiftCardMixedQuoteItem
@@ -164,9 +164,9 @@ func (o *GiftCardMixedQuoteItem) SetName(v string) {
 }
 
 // GetValue returns the Value field value if set, zero value otherwise.
-func (o *GiftCardMixedQuoteItem) GetValue() MoneyAmount {
+func (o *GiftCardMixedQuoteItem) GetValue() Money {
 	if o == nil || IsNil(o.Value) {
-		var ret MoneyAmount
+		var ret Money
 		return ret
 	}
 	return *o.Value
@@ -174,7 +174,7 @@ func (o *GiftCardMixedQuoteItem) GetValue() MoneyAmount {
 
 // GetValueOk returns a tuple with the Value field value if set, nil otherwise
 // and a boolean to check if the value has been set.
-func (o *GiftCardMixedQuoteItem) GetValueOk() (*MoneyAmount, bool) {
+func (o *GiftCardMixedQuoteItem) GetValueOk() (*Money, bool) {
 	if o == nil || IsNil(o.Value) {
 		return nil, false
 	}
@@ -190,15 +190,15 @@ func (o *GiftCardMixedQuoteItem) HasValue() bool {
 	return false
 }
 
-// SetValue gets a reference to the given MoneyAmount and assigns it to the Value field.
-func (o *GiftCardMixedQuoteItem) SetValue(v MoneyAmount) {
+// SetValue gets a reference to the given Money and assigns it to the Value field.
+func (o *GiftCardMixedQuoteItem) SetValue(v Money) {
 	o.Value = &v
 }
 
 // GetPrice returns the Price field value if set, zero value otherwise.
-func (o *GiftCardMixedQuoteItem) GetPrice() MoneyAmount {
+func (o *GiftCardMixedQuoteItem) GetPrice() Money {
 	if o == nil || IsNil(o.Price) {
-		var ret MoneyAmount
+		var ret Money
 		return ret
 	}
 	return *o.Price
@@ -206,7 +206,7 @@ func (o *GiftCardMixedQuoteItem) GetPrice() MoneyAmount {
 
 // GetPriceOk returns a tuple with the Price field value if set, nil otherwise
 // and a boolean to check if the value has been set.
-func (o *GiftCardMixedQuoteItem) GetPriceOk() (*MoneyAmount, bool) {
+func (o *GiftCardMixedQuoteItem) GetPriceOk() (*Money, bool) {
 	if o == nil || IsNil(o.Price) {
 		return nil, false
 	}
@@ -222,8 +222,8 @@ func (o *GiftCardMixedQuoteItem) HasPrice() bool {
 	return false
 }
 
-// SetPrice gets a reference to the given MoneyAmount and assigns it to the Price field.
-func (o *GiftCardMixedQuoteItem) SetPrice(v MoneyAmount) {
+// SetPrice gets a reference to the given Money and assigns it to the Price field.
+func (o *GiftCardMixedQuoteItem) SetPrice(v Money) {
 	o.Price = &v
 }
 

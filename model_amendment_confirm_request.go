@@ -29,7 +29,7 @@ type AmendmentConfirmRequest struct {
 	// The `id` of the quote option to confirm. When omitted, the first option is used.
 	SelectedOptionId NullableString `json:"selectedOptionId,omitempty"`
 	// Optional. The most you accept to pay for this amendment, in the currency of the quoted amounts.             Above it the confirm answers 409 with code 11002 at `maxPrice` and nothing is charged. Without it the confirm             charges exactly the quoted amounts, and a price that changed since the quote needs a new quote.
-	MaxPrice NullableMoneyAmountInput `json:"maxPrice,omitempty"`
+	MaxPrice NullableMoneyInput `json:"maxPrice,omitempty"`
 }
 
 type _AmendmentConfirmRequest AmendmentConfirmRequest
@@ -144,9 +144,9 @@ func (o *AmendmentConfirmRequest) UnsetSelectedOptionId() {
 }
 
 // GetMaxPrice returns the MaxPrice field value if set, zero value otherwise (both if not set or set to explicit null).
-func (o *AmendmentConfirmRequest) GetMaxPrice() MoneyAmountInput {
+func (o *AmendmentConfirmRequest) GetMaxPrice() MoneyInput {
 	if o == nil || IsNil(o.MaxPrice.Get()) {
-		var ret MoneyAmountInput
+		var ret MoneyInput
 		return ret
 	}
 	return *o.MaxPrice.Get()
@@ -155,7 +155,7 @@ func (o *AmendmentConfirmRequest) GetMaxPrice() MoneyAmountInput {
 // GetMaxPriceOk returns a tuple with the MaxPrice field value if set, nil otherwise
 // and a boolean to check if the value has been set.
 // NOTE: If the value is an explicit nil, `nil, true` will be returned
-func (o *AmendmentConfirmRequest) GetMaxPriceOk() (*MoneyAmountInput, bool) {
+func (o *AmendmentConfirmRequest) GetMaxPriceOk() (*MoneyInput, bool) {
 	if o == nil {
 		return nil, false
 	}
@@ -171,8 +171,8 @@ func (o *AmendmentConfirmRequest) HasMaxPrice() bool {
 	return false
 }
 
-// SetMaxPrice gets a reference to the given NullableMoneyAmountInput and assigns it to the MaxPrice field.
-func (o *AmendmentConfirmRequest) SetMaxPrice(v MoneyAmountInput) {
+// SetMaxPrice gets a reference to the given NullableMoneyInput and assigns it to the MaxPrice field.
+func (o *AmendmentConfirmRequest) SetMaxPrice(v MoneyInput) {
 	o.MaxPrice.Set(&v)
 }
 // SetMaxPriceNil sets the value for MaxPrice to be an explicit nil

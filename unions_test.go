@@ -27,12 +27,12 @@ func TestOrderItemIsReadAsItsOwnProductVariant(t *testing.T) {
 }
 
 func TestEsimWebhookItemKeepsItsDeliveryDetails(t *testing.T) {
-	var item OrderFulfillmentUpdatedWebhookItem
+	var item FulfillmentUpdate
 	body := `{"id":"11111111-1111-1111-1111-111111111111","productType":"esim","fulfillment":{"status":"fulfilled","result":{"details":{"iccid":"8900000000000000001","mode":"instant"}}}}`
 	if err := json.Unmarshal([]byte(body), &item); err != nil {
 		t.Fatal(err)
 	}
-	if item.EsimOrderFulfillmentUpdatedWebhookItem == nil {
+	if item.EsimFulfillmentUpdate == nil {
 		t.Fatalf("not the eSIM variant: %+v", item)
 	}
 	out, err := json.Marshal(item)
@@ -42,12 +42,12 @@ func TestEsimWebhookItemKeepsItsDeliveryDetails(t *testing.T) {
 }
 
 func TestPendingWebhookItemHasNoResult(t *testing.T) {
-	var item OrderFulfillmentUpdatedWebhookItem
+	var item FulfillmentUpdate
 	body := `{"id":"11111111-1111-1111-1111-111111111111","productType":"airtime","fulfillment":{"status":"pending","result":null}}`
 	if err := json.Unmarshal([]byte(body), &item); err != nil {
 		t.Fatal(err)
 	}
-	if item.AirtimeOrderFulfillmentUpdatedWebhookItem == nil {
+	if item.AirtimeFulfillmentUpdate == nil {
 		t.Fatalf("not the airtime variant: %+v", item)
 	}
 }
@@ -61,7 +61,7 @@ func TestAnUnknownProductTypeIsAnErrorNotASilentGap(t *testing.T) {
 }
 
 func TestOrderCommandItemsKeepTheirVariant(t *testing.T) {
-	var command OrderRequest
+	var command MixedOrderRequest
 	if err := json.Unmarshal([]byte(`{"items":[{"productType":"esim","publicId":"esim_abc","quantity":1}]}`), &command); err != nil {
 		t.Fatal(err)
 	}
@@ -77,10 +77,10 @@ func TestOfferValueAndPriceAreReadByTheirShape(t *testing.T) {
 	if err := json.Unmarshal([]byte(body), &offer); err != nil {
 		t.Fatal(err)
 	}
-	if offer.Value == nil || offer.Value.OfferFixedValue == nil {
+	if offer.Value == nil || offer.Value.FixedValue == nil {
 		t.Fatalf("the value is not the fixed variant: %+v", offer.Value)
 	}
-	if offer.Price == nil || offer.Price.OfferFixedPrice == nil {
+	if offer.Price == nil || offer.Price.FixedPrice == nil {
 		t.Fatalf("the price is not the fixed variant: %+v", offer.Price)
 	}
 
@@ -89,7 +89,7 @@ func TestOfferValueAndPriceAreReadByTheirShape(t *testing.T) {
 	if err := json.Unmarshal([]byte(body), &ranged); err != nil {
 		t.Fatal(err)
 	}
-	if ranged.Value.OfferRangeValue == nil || ranged.Price.OfferRangePrice == nil {
+	if ranged.Value.ValueRange == nil || ranged.Price.PriceRange == nil {
 		t.Fatalf("the range variants were not read: %+v %+v", ranged.Value, ranged.Price)
 	}
 }

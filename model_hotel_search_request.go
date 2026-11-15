@@ -29,7 +29,7 @@ type HotelSearchRequest struct {
 	// Check-out date (`yyyy-MM-dd`); after `checkIn`, at most 30 nights later.
 	CheckOut string `json:"checkOut"`
 	// One entry per room, 1–9 rooms. Each room is matched by its 1-based position when ordering.
-	Rooms []HotelSearchRoom `json:"rooms"`
+	Rooms []RoomOccupancyInput `json:"rooms"`
 	// Guests' nationality as a two-letter ISO 3166-1 alpha-2 code, for example `AE`. Required: rates are priced for this market.
 	GuestNationality NullableString `json:"guestNationality"`
 	// Guests' country of residence as a two-letter ISO 3166-1 alpha-2 code. Optional; defaults to `guestNationality`.
@@ -50,7 +50,7 @@ type _HotelSearchRequest HotelSearchRequest
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewHotelSearchRequest(checkIn string, checkOut string, rooms []HotelSearchRoom, guestNationality NullableString) *HotelSearchRequest {
+func NewHotelSearchRequest(checkIn string, checkOut string, rooms []RoomOccupancyInput, guestNationality NullableString) *HotelSearchRequest {
 	this := HotelSearchRequest{}
 	this.CheckIn = checkIn
 	this.CheckOut = checkOut
@@ -158,9 +158,9 @@ func (o *HotelSearchRequest) SetCheckOut(v string) {
 }
 
 // GetRooms returns the Rooms field value
-func (o *HotelSearchRequest) GetRooms() []HotelSearchRoom {
+func (o *HotelSearchRequest) GetRooms() []RoomOccupancyInput {
 	if o == nil {
-		var ret []HotelSearchRoom
+		var ret []RoomOccupancyInput
 		return ret
 	}
 
@@ -169,7 +169,7 @@ func (o *HotelSearchRequest) GetRooms() []HotelSearchRoom {
 
 // GetRoomsOk returns a tuple with the Rooms field value
 // and a boolean to check if the value has been set.
-func (o *HotelSearchRequest) GetRoomsOk() ([]HotelSearchRoom, bool) {
+func (o *HotelSearchRequest) GetRoomsOk() ([]RoomOccupancyInput, bool) {
 	if o == nil {
 		return nil, false
 	}
@@ -177,7 +177,7 @@ func (o *HotelSearchRequest) GetRoomsOk() ([]HotelSearchRoom, bool) {
 }
 
 // SetRooms sets field value
-func (o *HotelSearchRequest) SetRooms(v []HotelSearchRoom) {
+func (o *HotelSearchRequest) SetRooms(v []RoomOccupancyInput) {
 	o.Rooms = v
 }
 

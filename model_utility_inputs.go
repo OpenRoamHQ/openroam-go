@@ -29,9 +29,9 @@ type UtilityInputs struct {
 	// The ID of the bill to pay, at most 64 characters, for an offer that lists it.
 	InvoiceId NullableString `json:"invoiceId,omitempty"`
 	// Required for a range offer, within its min and max and on its step; optional for a fixed offer, where it must equal the offer's amount; in the offer's value currency.
-	Value NullableMoneyAmountInput `json:"value,omitempty"`
+	Value NullableMoneyInput `json:"value,omitempty"`
 	// Optional highest accepted unit price, in the order or cart currency; a higher current unit price gives 409 / 11002.
-	MaxPrice NullableMoneyAmountInput `json:"maxPrice,omitempty"`
+	MaxPrice NullableMoneyInput `json:"maxPrice,omitempty"`
 }
 
 // NewUtilityInputs instantiates a new UtilityInputs object
@@ -220,9 +220,9 @@ func (o *UtilityInputs) UnsetInvoiceId() {
 }
 
 // GetValue returns the Value field value if set, zero value otherwise (both if not set or set to explicit null).
-func (o *UtilityInputs) GetValue() MoneyAmountInput {
+func (o *UtilityInputs) GetValue() MoneyInput {
 	if o == nil || IsNil(o.Value.Get()) {
-		var ret MoneyAmountInput
+		var ret MoneyInput
 		return ret
 	}
 	return *o.Value.Get()
@@ -231,7 +231,7 @@ func (o *UtilityInputs) GetValue() MoneyAmountInput {
 // GetValueOk returns a tuple with the Value field value if set, nil otherwise
 // and a boolean to check if the value has been set.
 // NOTE: If the value is an explicit nil, `nil, true` will be returned
-func (o *UtilityInputs) GetValueOk() (*MoneyAmountInput, bool) {
+func (o *UtilityInputs) GetValueOk() (*MoneyInput, bool) {
 	if o == nil {
 		return nil, false
 	}
@@ -247,8 +247,8 @@ func (o *UtilityInputs) HasValue() bool {
 	return false
 }
 
-// SetValue gets a reference to the given NullableMoneyAmountInput and assigns it to the Value field.
-func (o *UtilityInputs) SetValue(v MoneyAmountInput) {
+// SetValue gets a reference to the given NullableMoneyInput and assigns it to the Value field.
+func (o *UtilityInputs) SetValue(v MoneyInput) {
 	o.Value.Set(&v)
 }
 // SetValueNil sets the value for Value to be an explicit nil
@@ -262,9 +262,9 @@ func (o *UtilityInputs) UnsetValue() {
 }
 
 // GetMaxPrice returns the MaxPrice field value if set, zero value otherwise (both if not set or set to explicit null).
-func (o *UtilityInputs) GetMaxPrice() MoneyAmountInput {
+func (o *UtilityInputs) GetMaxPrice() MoneyInput {
 	if o == nil || IsNil(o.MaxPrice.Get()) {
-		var ret MoneyAmountInput
+		var ret MoneyInput
 		return ret
 	}
 	return *o.MaxPrice.Get()
@@ -273,7 +273,7 @@ func (o *UtilityInputs) GetMaxPrice() MoneyAmountInput {
 // GetMaxPriceOk returns a tuple with the MaxPrice field value if set, nil otherwise
 // and a boolean to check if the value has been set.
 // NOTE: If the value is an explicit nil, `nil, true` will be returned
-func (o *UtilityInputs) GetMaxPriceOk() (*MoneyAmountInput, bool) {
+func (o *UtilityInputs) GetMaxPriceOk() (*MoneyInput, bool) {
 	if o == nil {
 		return nil, false
 	}
@@ -289,8 +289,8 @@ func (o *UtilityInputs) HasMaxPrice() bool {
 	return false
 }
 
-// SetMaxPrice gets a reference to the given NullableMoneyAmountInput and assigns it to the MaxPrice field.
-func (o *UtilityInputs) SetMaxPrice(v MoneyAmountInput) {
+// SetMaxPrice gets a reference to the given NullableMoneyInput and assigns it to the MaxPrice field.
+func (o *UtilityInputs) SetMaxPrice(v MoneyInput) {
 	o.MaxPrice.Set(&v)
 }
 // SetMaxPriceNil sets the value for MaxPrice to be an explicit nil

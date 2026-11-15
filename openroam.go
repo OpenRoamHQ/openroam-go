@@ -537,7 +537,7 @@ func (r *EsimsResource) ListLocationHistory(ctx context.Context, iccid string, q
 }
 
 // Provision: Provision a deferred eSIM. POST /api/v1/b2b/esims/{id}/provisioning
-func (r *EsimsResource) Provision(ctx context.Context, id string, body *EsimProvisionRequest, opts ...CallOption) (*EsimProfile, error) {
+func (r *EsimsResource) Provision(ctx context.Context, id string, body *EsimProvisioningRequest, opts ...CallOption) (*EsimProfile, error) {
 	ctx, call, err := r.c.begin(ctx, opts)
 	if err != nil {
 		return nil, err
@@ -545,20 +545,20 @@ func (r *EsimsResource) Provision(ctx context.Context, id string, body *EsimProv
 	req := r.c.api.EsimsAPI.EsimsProvision(ctx, id)
 	req = req.IdempotencyKey(call.idempotencyKey())
 	if body != nil {
-		req = req.EsimProvisionRequest(*body)
+		req = req.EsimProvisioningRequest(*body)
 	}
 	return finish(req.Execute())
 }
 
 // SendSms: Send an SMS to an eSIM. POST /api/v1/b2b/esims/{iccid}/sms
-func (r *EsimsResource) SendSms(ctx context.Context, iccid string, body *EsimSendSmsRequest, opts ...CallOption) (*EsimSendSmsResult, error) {
+func (r *EsimsResource) SendSms(ctx context.Context, iccid string, body *EsimSmsRequest, opts ...CallOption) (*EsimSmsResult, error) {
 	ctx, _, err := r.c.begin(ctx, opts)
 	if err != nil {
 		return nil, err
 	}
 	req := r.c.api.EsimsAPI.EsimsSendSms(ctx, iccid)
 	if body != nil {
-		req = req.EsimSendSmsRequest(*body)
+		req = req.EsimSmsRequest(*body)
 	}
 	return finish(req.Execute())
 }
@@ -633,7 +633,7 @@ func (r *EsimsResource) ListCatalog(ctx context.Context, query *EsimsListCatalog
 }
 
 // ListCompatibleDevices: List compatible devices. GET /api/v1/b2b/esims/compatible-devices
-func (r *EsimsResource) ListCompatibleDevices(ctx context.Context, opts ...CallOption) ([]CompatibleDevice, error) {
+func (r *EsimsResource) ListCompatibleDevices(ctx context.Context, opts ...CallOption) ([]EsimCompatibleDevice, error) {
 	ctx, _, err := r.c.begin(ctx, opts)
 	if err != nil {
 		return nil, err
@@ -715,7 +715,7 @@ func (r *AirtimeResource) Order(ctx context.Context, body *AirtimeOrderRequest, 
 }
 
 // LookupNumber: Look up a phone number. GET /api/v1/b2b/airtime/number-lookup
-func (r *AirtimeResource) LookupNumber(ctx context.Context, query *AirtimeLookupNumberQuery, opts ...CallOption) (*AirtimeNumberLookup, error) {
+func (r *AirtimeResource) LookupNumber(ctx context.Context, query *AirtimeLookupNumberQuery, opts ...CallOption) (*NumberLookup, error) {
 	ctx, _, err := r.c.begin(ctx, opts)
 	if err != nil {
 		return nil, err
@@ -859,7 +859,7 @@ func (r *UtilitiesResource) Order(ctx context.Context, body *UtilityOrderRequest
 }
 
 // GetBiller: Get a biller. GET /api/v1/b2b/utility/billers/{id}
-func (r *UtilitiesResource) GetBiller(ctx context.Context, id string, query *UtilitiesGetBillerQuery, opts ...CallOption) (*UtilityBiller, error) {
+func (r *UtilitiesResource) GetBiller(ctx context.Context, id string, query *UtilitiesGetBillerQuery, opts ...CallOption) (*Biller, error) {
 	ctx, _, err := r.c.begin(ctx, opts)
 	if err != nil {
 		return nil, err
@@ -1035,7 +1035,7 @@ type HotelsResource struct {
 }
 
 // Search: Search hotels. POST /api/v1/b2b/hotels/search
-func (r *HotelsResource) Search(ctx context.Context, body *HotelSearchRequest, opts ...CallOption) (*HotelPropertySearchResult, error) {
+func (r *HotelsResource) Search(ctx context.Context, body *HotelSearchRequest, opts ...CallOption) (*HotelSearchResult, error) {
 	ctx, _, err := r.c.begin(ctx, opts)
 	if err != nil {
 		return nil, err
@@ -1075,7 +1075,7 @@ func (r *HotelsResource) Order(ctx context.Context, body *HotelOrderRequest, opt
 }
 
 // GetHotel: Get a hotel. GET /api/v1/b2b/hotels/properties/{id}
-func (r *HotelsResource) GetHotel(ctx context.Context, id string, opts ...CallOption) (*HotelCatalogProperty, error) {
+func (r *HotelsResource) GetHotel(ctx context.Context, id string, opts ...CallOption) (*CatalogHotel, error) {
 	ctx, _, err := r.c.begin(ctx, opts)
 	if err != nil {
 		return nil, err
@@ -1104,7 +1104,7 @@ func (r *HotelsResource) ListDestinations(ctx context.Context, query *HotelsList
 }
 
 // ListAmenities: List hotel amenities. GET /api/v1/b2b/hotels/amenities/catalog
-func (r *HotelsResource) ListAmenities(ctx context.Context, opts ...CallOption) (*HotelAmenityCatalog, error) {
+func (r *HotelsResource) ListAmenities(ctx context.Context, opts ...CallOption) (*AmenityCatalog, error) {
 	ctx, _, err := r.c.begin(ctx, opts)
 	if err != nil {
 		return nil, err
@@ -1222,7 +1222,7 @@ func (r *FlightsResource) Order(ctx context.Context, body *FlightOrderRequest, o
 }
 
 // GetSeatMap: Get a flight seat map. GET /api/v1/b2b/flights/offers/{publicId}/seat-map
-func (r *FlightsResource) GetSeatMap(ctx context.Context, publicId string, opts ...CallOption) (*FlightSeatMap, error) {
+func (r *FlightsResource) GetSeatMap(ctx context.Context, publicId string, opts ...CallOption) (*SeatMap, error) {
 	ctx, _, err := r.c.begin(ctx, opts)
 	if err != nil {
 		return nil, err
@@ -1292,20 +1292,20 @@ func (r *OrdersResource) Get(ctx context.Context, id string, opts ...CallOption)
 }
 
 // Quote: Quote an order. POST /api/v1/b2b/orders/quote
-func (r *OrdersResource) Quote(ctx context.Context, body *OrderRequest, opts ...CallOption) (*OrderQuote, error) {
+func (r *OrdersResource) Quote(ctx context.Context, body *MixedOrderRequest, opts ...CallOption) (*MixedQuote, error) {
 	ctx, _, err := r.c.begin(ctx, opts)
 	if err != nil {
 		return nil, err
 	}
 	req := r.c.api.OrdersAPI.OrdersQuoteOrder(ctx)
 	if body != nil {
-		req = req.OrderRequest(*body)
+		req = req.MixedOrderRequest(*body)
 	}
 	return finish(req.Execute())
 }
 
 // Order: Create an order. POST /api/v1/b2b/orders
-func (r *OrdersResource) Order(ctx context.Context, body *OrderRequest, opts ...CallOption) (*Order, error) {
+func (r *OrdersResource) Order(ctx context.Context, body *MixedOrderRequest, opts ...CallOption) (*Order, error) {
 	ctx, call, err := r.c.begin(ctx, opts)
 	if err != nil {
 		return nil, err
@@ -1313,7 +1313,7 @@ func (r *OrdersResource) Order(ctx context.Context, body *OrderRequest, opts ...
 	req := r.c.api.OrdersAPI.OrdersCreateOrder(ctx)
 	req = req.IdempotencyKey(call.idempotencyKey())
 	if body != nil {
-		req = req.OrderRequest(*body)
+		req = req.MixedOrderRequest(*body)
 	}
 	return finish(req.Execute())
 }

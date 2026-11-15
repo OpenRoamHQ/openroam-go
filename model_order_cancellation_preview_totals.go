@@ -21,11 +21,11 @@ var _ MappedNullable = &OrderCancellationPreviewTotals{}
 // OrderCancellationPreviewTotals The sums over the `previewable` items, in the order currency.
 type OrderCancellationPreviewTotals struct {
 	// The sum of the items' `penaltyAmount`.
-	PenaltyAmount *MoneyAmount `json:"penaltyAmount,omitempty"`
+	PenaltyAmount *Money `json:"penaltyAmount,omitempty"`
 	// The sum of the items' `cancellationFee`; 0 when none applies.
-	CancellationFee *MoneyAmount `json:"cancellationFee,omitempty"`
+	CancellationFee *Money `json:"cancellationFee,omitempty"`
 	// The sum of the items' `refundAmount`.
-	RefundAmount *MoneyAmount `json:"refundAmount,omitempty"`
+	RefundAmount *Money `json:"refundAmount,omitempty"`
 	// `true` only when every item is `previewable`.
 	IsComplete *bool `json:"isComplete,omitempty"`
 }
@@ -48,9 +48,9 @@ func NewOrderCancellationPreviewTotalsWithDefaults() *OrderCancellationPreviewTo
 }
 
 // GetPenaltyAmount returns the PenaltyAmount field value if set, zero value otherwise.
-func (o *OrderCancellationPreviewTotals) GetPenaltyAmount() MoneyAmount {
+func (o *OrderCancellationPreviewTotals) GetPenaltyAmount() Money {
 	if o == nil || IsNil(o.PenaltyAmount) {
-		var ret MoneyAmount
+		var ret Money
 		return ret
 	}
 	return *o.PenaltyAmount
@@ -58,7 +58,7 @@ func (o *OrderCancellationPreviewTotals) GetPenaltyAmount() MoneyAmount {
 
 // GetPenaltyAmountOk returns a tuple with the PenaltyAmount field value if set, nil otherwise
 // and a boolean to check if the value has been set.
-func (o *OrderCancellationPreviewTotals) GetPenaltyAmountOk() (*MoneyAmount, bool) {
+func (o *OrderCancellationPreviewTotals) GetPenaltyAmountOk() (*Money, bool) {
 	if o == nil || IsNil(o.PenaltyAmount) {
 		return nil, false
 	}
@@ -74,15 +74,15 @@ func (o *OrderCancellationPreviewTotals) HasPenaltyAmount() bool {
 	return false
 }
 
-// SetPenaltyAmount gets a reference to the given MoneyAmount and assigns it to the PenaltyAmount field.
-func (o *OrderCancellationPreviewTotals) SetPenaltyAmount(v MoneyAmount) {
+// SetPenaltyAmount gets a reference to the given Money and assigns it to the PenaltyAmount field.
+func (o *OrderCancellationPreviewTotals) SetPenaltyAmount(v Money) {
 	o.PenaltyAmount = &v
 }
 
 // GetCancellationFee returns the CancellationFee field value if set, zero value otherwise.
-func (o *OrderCancellationPreviewTotals) GetCancellationFee() MoneyAmount {
+func (o *OrderCancellationPreviewTotals) GetCancellationFee() Money {
 	if o == nil || IsNil(o.CancellationFee) {
-		var ret MoneyAmount
+		var ret Money
 		return ret
 	}
 	return *o.CancellationFee
@@ -90,7 +90,7 @@ func (o *OrderCancellationPreviewTotals) GetCancellationFee() MoneyAmount {
 
 // GetCancellationFeeOk returns a tuple with the CancellationFee field value if set, nil otherwise
 // and a boolean to check if the value has been set.
-func (o *OrderCancellationPreviewTotals) GetCancellationFeeOk() (*MoneyAmount, bool) {
+func (o *OrderCancellationPreviewTotals) GetCancellationFeeOk() (*Money, bool) {
 	if o == nil || IsNil(o.CancellationFee) {
 		return nil, false
 	}
@@ -106,15 +106,15 @@ func (o *OrderCancellationPreviewTotals) HasCancellationFee() bool {
 	return false
 }
 
-// SetCancellationFee gets a reference to the given MoneyAmount and assigns it to the CancellationFee field.
-func (o *OrderCancellationPreviewTotals) SetCancellationFee(v MoneyAmount) {
+// SetCancellationFee gets a reference to the given Money and assigns it to the CancellationFee field.
+func (o *OrderCancellationPreviewTotals) SetCancellationFee(v Money) {
 	o.CancellationFee = &v
 }
 
 // GetRefundAmount returns the RefundAmount field value if set, zero value otherwise.
-func (o *OrderCancellationPreviewTotals) GetRefundAmount() MoneyAmount {
+func (o *OrderCancellationPreviewTotals) GetRefundAmount() Money {
 	if o == nil || IsNil(o.RefundAmount) {
-		var ret MoneyAmount
+		var ret Money
 		return ret
 	}
 	return *o.RefundAmount
@@ -122,7 +122,7 @@ func (o *OrderCancellationPreviewTotals) GetRefundAmount() MoneyAmount {
 
 // GetRefundAmountOk returns a tuple with the RefundAmount field value if set, nil otherwise
 // and a boolean to check if the value has been set.
-func (o *OrderCancellationPreviewTotals) GetRefundAmountOk() (*MoneyAmount, bool) {
+func (o *OrderCancellationPreviewTotals) GetRefundAmountOk() (*Money, bool) {
 	if o == nil || IsNil(o.RefundAmount) {
 		return nil, false
 	}
@@ -138,8 +138,8 @@ func (o *OrderCancellationPreviewTotals) HasRefundAmount() bool {
 	return false
 }
 
-// SetRefundAmount gets a reference to the given MoneyAmount and assigns it to the RefundAmount field.
-func (o *OrderCancellationPreviewTotals) SetRefundAmount(v MoneyAmount) {
+// SetRefundAmount gets a reference to the given Money and assigns it to the RefundAmount field.
+func (o *OrderCancellationPreviewTotals) SetRefundAmount(v Money) {
 	o.RefundAmount = &v
 }
 

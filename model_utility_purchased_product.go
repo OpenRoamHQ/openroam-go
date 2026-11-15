@@ -23,11 +23,11 @@ type UtilityPurchasedProduct struct {
 	Name *string `json:"name,omitempty"`
 	CountryCode *string `json:"countryCode,omitempty"`
 	LogoUrl NullableString `json:"logoUrl,omitempty"`
-	Value *MoneyAmount `json:"value,omitempty"`
+	Value *Money `json:"value,omitempty"`
 	// The item's `inputs` under the request's keys, each masked: `mobileNumber` and `beneficiaryMobileNumber` as phone numbers, `accountNumber` and `invoiceId` (the biller's reference of the bill) as identifiers. An input is echoed only when the item stored it.
-	Inputs *UtilityPurchasedProductInputs `json:"inputs,omitempty"`
+	Inputs *UtilityPurchasedInputs `json:"inputs,omitempty"`
 	// Biller facts outside the purchased-product keys every partner service shares, as captured when the item was added. `deliveryType` is `unknown` for items added before it was captured.
-	Details *UtilityPurchasedProductDetails `json:"details,omitempty"`
+	Details *UtilityPurchasedDetails `json:"details,omitempty"`
 }
 
 // NewUtilityPurchasedProduct instantiates a new UtilityPurchasedProduct object
@@ -154,9 +154,9 @@ func (o *UtilityPurchasedProduct) UnsetLogoUrl() {
 }
 
 // GetValue returns the Value field value if set, zero value otherwise.
-func (o *UtilityPurchasedProduct) GetValue() MoneyAmount {
+func (o *UtilityPurchasedProduct) GetValue() Money {
 	if o == nil || IsNil(o.Value) {
-		var ret MoneyAmount
+		var ret Money
 		return ret
 	}
 	return *o.Value
@@ -164,7 +164,7 @@ func (o *UtilityPurchasedProduct) GetValue() MoneyAmount {
 
 // GetValueOk returns a tuple with the Value field value if set, nil otherwise
 // and a boolean to check if the value has been set.
-func (o *UtilityPurchasedProduct) GetValueOk() (*MoneyAmount, bool) {
+func (o *UtilityPurchasedProduct) GetValueOk() (*Money, bool) {
 	if o == nil || IsNil(o.Value) {
 		return nil, false
 	}
@@ -180,15 +180,15 @@ func (o *UtilityPurchasedProduct) HasValue() bool {
 	return false
 }
 
-// SetValue gets a reference to the given MoneyAmount and assigns it to the Value field.
-func (o *UtilityPurchasedProduct) SetValue(v MoneyAmount) {
+// SetValue gets a reference to the given Money and assigns it to the Value field.
+func (o *UtilityPurchasedProduct) SetValue(v Money) {
 	o.Value = &v
 }
 
 // GetInputs returns the Inputs field value if set, zero value otherwise.
-func (o *UtilityPurchasedProduct) GetInputs() UtilityPurchasedProductInputs {
+func (o *UtilityPurchasedProduct) GetInputs() UtilityPurchasedInputs {
 	if o == nil || IsNil(o.Inputs) {
-		var ret UtilityPurchasedProductInputs
+		var ret UtilityPurchasedInputs
 		return ret
 	}
 	return *o.Inputs
@@ -196,7 +196,7 @@ func (o *UtilityPurchasedProduct) GetInputs() UtilityPurchasedProductInputs {
 
 // GetInputsOk returns a tuple with the Inputs field value if set, nil otherwise
 // and a boolean to check if the value has been set.
-func (o *UtilityPurchasedProduct) GetInputsOk() (*UtilityPurchasedProductInputs, bool) {
+func (o *UtilityPurchasedProduct) GetInputsOk() (*UtilityPurchasedInputs, bool) {
 	if o == nil || IsNil(o.Inputs) {
 		return nil, false
 	}
@@ -212,15 +212,15 @@ func (o *UtilityPurchasedProduct) HasInputs() bool {
 	return false
 }
 
-// SetInputs gets a reference to the given UtilityPurchasedProductInputs and assigns it to the Inputs field.
-func (o *UtilityPurchasedProduct) SetInputs(v UtilityPurchasedProductInputs) {
+// SetInputs gets a reference to the given UtilityPurchasedInputs and assigns it to the Inputs field.
+func (o *UtilityPurchasedProduct) SetInputs(v UtilityPurchasedInputs) {
 	o.Inputs = &v
 }
 
 // GetDetails returns the Details field value if set, zero value otherwise.
-func (o *UtilityPurchasedProduct) GetDetails() UtilityPurchasedProductDetails {
+func (o *UtilityPurchasedProduct) GetDetails() UtilityPurchasedDetails {
 	if o == nil || IsNil(o.Details) {
-		var ret UtilityPurchasedProductDetails
+		var ret UtilityPurchasedDetails
 		return ret
 	}
 	return *o.Details
@@ -228,7 +228,7 @@ func (o *UtilityPurchasedProduct) GetDetails() UtilityPurchasedProductDetails {
 
 // GetDetailsOk returns a tuple with the Details field value if set, nil otherwise
 // and a boolean to check if the value has been set.
-func (o *UtilityPurchasedProduct) GetDetailsOk() (*UtilityPurchasedProductDetails, bool) {
+func (o *UtilityPurchasedProduct) GetDetailsOk() (*UtilityPurchasedDetails, bool) {
 	if o == nil || IsNil(o.Details) {
 		return nil, false
 	}
@@ -244,8 +244,8 @@ func (o *UtilityPurchasedProduct) HasDetails() bool {
 	return false
 }
 
-// SetDetails gets a reference to the given UtilityPurchasedProductDetails and assigns it to the Details field.
-func (o *UtilityPurchasedProduct) SetDetails(v UtilityPurchasedProductDetails) {
+// SetDetails gets a reference to the given UtilityPurchasedDetails and assigns it to the Details field.
+func (o *UtilityPurchasedProduct) SetDetails(v UtilityPurchasedDetails) {
 	o.Details = &v
 }
 

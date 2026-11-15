@@ -25,8 +25,8 @@ type AirtimeQuoteItem struct {
 	PublicId string `json:"publicId"`
 	Quantity *int32 `json:"quantity,omitempty"`
 	Name *string `json:"name,omitempty"`
-	Value *MoneyAmount `json:"value,omitempty"`
-	Price *MoneyAmount `json:"price,omitempty"`
+	Value *Money `json:"value,omitempty"`
+	Price *Money `json:"price,omitempty"`
 	// Airtime quote facts outside the quote item keys every partner service shares. `estimatedDeliveredValue` is what the selected route expects the recipient to receive, which a range item with a `minDeliveredValue` may set below the ordered value.
 	Details *AirtimeQuoteItemDetails `json:"details,omitempty"`
 }
@@ -140,9 +140,9 @@ func (o *AirtimeQuoteItem) SetName(v string) {
 }
 
 // GetValue returns the Value field value if set, zero value otherwise.
-func (o *AirtimeQuoteItem) GetValue() MoneyAmount {
+func (o *AirtimeQuoteItem) GetValue() Money {
 	if o == nil || IsNil(o.Value) {
-		var ret MoneyAmount
+		var ret Money
 		return ret
 	}
 	return *o.Value
@@ -150,7 +150,7 @@ func (o *AirtimeQuoteItem) GetValue() MoneyAmount {
 
 // GetValueOk returns a tuple with the Value field value if set, nil otherwise
 // and a boolean to check if the value has been set.
-func (o *AirtimeQuoteItem) GetValueOk() (*MoneyAmount, bool) {
+func (o *AirtimeQuoteItem) GetValueOk() (*Money, bool) {
 	if o == nil || IsNil(o.Value) {
 		return nil, false
 	}
@@ -166,15 +166,15 @@ func (o *AirtimeQuoteItem) HasValue() bool {
 	return false
 }
 
-// SetValue gets a reference to the given MoneyAmount and assigns it to the Value field.
-func (o *AirtimeQuoteItem) SetValue(v MoneyAmount) {
+// SetValue gets a reference to the given Money and assigns it to the Value field.
+func (o *AirtimeQuoteItem) SetValue(v Money) {
 	o.Value = &v
 }
 
 // GetPrice returns the Price field value if set, zero value otherwise.
-func (o *AirtimeQuoteItem) GetPrice() MoneyAmount {
+func (o *AirtimeQuoteItem) GetPrice() Money {
 	if o == nil || IsNil(o.Price) {
-		var ret MoneyAmount
+		var ret Money
 		return ret
 	}
 	return *o.Price
@@ -182,7 +182,7 @@ func (o *AirtimeQuoteItem) GetPrice() MoneyAmount {
 
 // GetPriceOk returns a tuple with the Price field value if set, nil otherwise
 // and a boolean to check if the value has been set.
-func (o *AirtimeQuoteItem) GetPriceOk() (*MoneyAmount, bool) {
+func (o *AirtimeQuoteItem) GetPriceOk() (*Money, bool) {
 	if o == nil || IsNil(o.Price) {
 		return nil, false
 	}
@@ -198,8 +198,8 @@ func (o *AirtimeQuoteItem) HasPrice() bool {
 	return false
 }
 
-// SetPrice gets a reference to the given MoneyAmount and assigns it to the Price field.
-func (o *AirtimeQuoteItem) SetPrice(v MoneyAmount) {
+// SetPrice gets a reference to the given Money and assigns it to the Price field.
+func (o *AirtimeQuoteItem) SetPrice(v Money) {
 	o.Price = &v
 }
 

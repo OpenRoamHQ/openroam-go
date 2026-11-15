@@ -21,7 +21,7 @@ var _ MappedNullable = &FlightFulfillmentResult{}
 // FlightFulfillmentResult What a fulfilled flight order item delivered: booking facts only, under `details`. A flight sells no monetary value, so there is no `deliveredValue`. Order reads, fulfillment status and streams, and the `order.fulfillment.updated` webhook carry the same result.
 type FlightFulfillmentResult struct {
 	// The booking as it stands now.
-	Details *FlightFulfillmentResultDetails `json:"details,omitempty"`
+	Details *FlightFulfillmentDetails `json:"details,omitempty"`
 }
 
 // NewFlightFulfillmentResult instantiates a new FlightFulfillmentResult object
@@ -42,9 +42,9 @@ func NewFlightFulfillmentResultWithDefaults() *FlightFulfillmentResult {
 }
 
 // GetDetails returns the Details field value if set, zero value otherwise.
-func (o *FlightFulfillmentResult) GetDetails() FlightFulfillmentResultDetails {
+func (o *FlightFulfillmentResult) GetDetails() FlightFulfillmentDetails {
 	if o == nil || IsNil(o.Details) {
-		var ret FlightFulfillmentResultDetails
+		var ret FlightFulfillmentDetails
 		return ret
 	}
 	return *o.Details
@@ -52,7 +52,7 @@ func (o *FlightFulfillmentResult) GetDetails() FlightFulfillmentResultDetails {
 
 // GetDetailsOk returns a tuple with the Details field value if set, nil otherwise
 // and a boolean to check if the value has been set.
-func (o *FlightFulfillmentResult) GetDetailsOk() (*FlightFulfillmentResultDetails, bool) {
+func (o *FlightFulfillmentResult) GetDetailsOk() (*FlightFulfillmentDetails, bool) {
 	if o == nil || IsNil(o.Details) {
 		return nil, false
 	}
@@ -68,8 +68,8 @@ func (o *FlightFulfillmentResult) HasDetails() bool {
 	return false
 }
 
-// SetDetails gets a reference to the given FlightFulfillmentResultDetails and assigns it to the Details field.
-func (o *FlightFulfillmentResult) SetDetails(v FlightFulfillmentResultDetails) {
+// SetDetails gets a reference to the given FlightFulfillmentDetails and assigns it to the Details field.
+func (o *FlightFulfillmentResult) SetDetails(v FlightFulfillmentDetails) {
 	o.Details = &v
 }
 

@@ -20,9 +20,9 @@ var _ MappedNullable = &GiftCardFulfillmentResult{}
 
 // GiftCardFulfillmentResult What a fulfilled gift card item delivered. `deliveredValue` is the issued card's face value, null until a card is issued. Order reads and the `order.fulfillment.updated` webhook carry the same result.
 type GiftCardFulfillmentResult struct {
-	DeliveredValue NullableMoneyAmount `json:"deliveredValue,omitempty"`
+	DeliveredValue NullableMoney `json:"deliveredValue,omitempty"`
 	// The issued codes and, for a gift, the email delivery. `codes` is empty while the order item does not release them, for example after a refund. `delivery` is null for a card that is not a gift.
-	Details *GiftCardFulfillmentResultDetails `json:"details,omitempty"`
+	Details *GiftCardFulfillmentDetails `json:"details,omitempty"`
 }
 
 // NewGiftCardFulfillmentResult instantiates a new GiftCardFulfillmentResult object
@@ -43,9 +43,9 @@ func NewGiftCardFulfillmentResultWithDefaults() *GiftCardFulfillmentResult {
 }
 
 // GetDeliveredValue returns the DeliveredValue field value if set, zero value otherwise (both if not set or set to explicit null).
-func (o *GiftCardFulfillmentResult) GetDeliveredValue() MoneyAmount {
+func (o *GiftCardFulfillmentResult) GetDeliveredValue() Money {
 	if o == nil || IsNil(o.DeliveredValue.Get()) {
-		var ret MoneyAmount
+		var ret Money
 		return ret
 	}
 	return *o.DeliveredValue.Get()
@@ -54,7 +54,7 @@ func (o *GiftCardFulfillmentResult) GetDeliveredValue() MoneyAmount {
 // GetDeliveredValueOk returns a tuple with the DeliveredValue field value if set, nil otherwise
 // and a boolean to check if the value has been set.
 // NOTE: If the value is an explicit nil, `nil, true` will be returned
-func (o *GiftCardFulfillmentResult) GetDeliveredValueOk() (*MoneyAmount, bool) {
+func (o *GiftCardFulfillmentResult) GetDeliveredValueOk() (*Money, bool) {
 	if o == nil {
 		return nil, false
 	}
@@ -70,8 +70,8 @@ func (o *GiftCardFulfillmentResult) HasDeliveredValue() bool {
 	return false
 }
 
-// SetDeliveredValue gets a reference to the given NullableMoneyAmount and assigns it to the DeliveredValue field.
-func (o *GiftCardFulfillmentResult) SetDeliveredValue(v MoneyAmount) {
+// SetDeliveredValue gets a reference to the given NullableMoney and assigns it to the DeliveredValue field.
+func (o *GiftCardFulfillmentResult) SetDeliveredValue(v Money) {
 	o.DeliveredValue.Set(&v)
 }
 // SetDeliveredValueNil sets the value for DeliveredValue to be an explicit nil
@@ -85,9 +85,9 @@ func (o *GiftCardFulfillmentResult) UnsetDeliveredValue() {
 }
 
 // GetDetails returns the Details field value if set, zero value otherwise.
-func (o *GiftCardFulfillmentResult) GetDetails() GiftCardFulfillmentResultDetails {
+func (o *GiftCardFulfillmentResult) GetDetails() GiftCardFulfillmentDetails {
 	if o == nil || IsNil(o.Details) {
-		var ret GiftCardFulfillmentResultDetails
+		var ret GiftCardFulfillmentDetails
 		return ret
 	}
 	return *o.Details
@@ -95,7 +95,7 @@ func (o *GiftCardFulfillmentResult) GetDetails() GiftCardFulfillmentResultDetail
 
 // GetDetailsOk returns a tuple with the Details field value if set, nil otherwise
 // and a boolean to check if the value has been set.
-func (o *GiftCardFulfillmentResult) GetDetailsOk() (*GiftCardFulfillmentResultDetails, bool) {
+func (o *GiftCardFulfillmentResult) GetDetailsOk() (*GiftCardFulfillmentDetails, bool) {
 	if o == nil || IsNil(o.Details) {
 		return nil, false
 	}
@@ -111,8 +111,8 @@ func (o *GiftCardFulfillmentResult) HasDetails() bool {
 	return false
 }
 
-// SetDetails gets a reference to the given GiftCardFulfillmentResultDetails and assigns it to the Details field.
-func (o *GiftCardFulfillmentResult) SetDetails(v GiftCardFulfillmentResultDetails) {
+// SetDetails gets a reference to the given GiftCardFulfillmentDetails and assigns it to the Details field.
+func (o *GiftCardFulfillmentResult) SetDetails(v GiftCardFulfillmentDetails) {
 	o.Details = &v
 }
 

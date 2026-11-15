@@ -20,9 +20,9 @@ var _ MappedNullable = &AirtimeFulfillmentResult{}
 
 // AirtimeFulfillmentResult What a fulfilled airtime item delivered. `deliveredValue` is the amount the recipient received, null until it is known. Order reads and the `order.fulfillment.updated` webhook carry the same result.
 type AirtimeFulfillmentResult struct {
-	DeliveredValue NullableMoneyAmount `json:"deliveredValue,omitempty"`
+	DeliveredValue NullableMoney `json:"deliveredValue,omitempty"`
 	// How the customer redeems the delivered top-up. `redemption` is null when the route does not declare its delivery.
-	Details *AirtimeFulfillmentResultDetails `json:"details,omitempty"`
+	Details *AirtimeFulfillmentDetails `json:"details,omitempty"`
 }
 
 // NewAirtimeFulfillmentResult instantiates a new AirtimeFulfillmentResult object
@@ -43,9 +43,9 @@ func NewAirtimeFulfillmentResultWithDefaults() *AirtimeFulfillmentResult {
 }
 
 // GetDeliveredValue returns the DeliveredValue field value if set, zero value otherwise (both if not set or set to explicit null).
-func (o *AirtimeFulfillmentResult) GetDeliveredValue() MoneyAmount {
+func (o *AirtimeFulfillmentResult) GetDeliveredValue() Money {
 	if o == nil || IsNil(o.DeliveredValue.Get()) {
-		var ret MoneyAmount
+		var ret Money
 		return ret
 	}
 	return *o.DeliveredValue.Get()
@@ -54,7 +54,7 @@ func (o *AirtimeFulfillmentResult) GetDeliveredValue() MoneyAmount {
 // GetDeliveredValueOk returns a tuple with the DeliveredValue field value if set, nil otherwise
 // and a boolean to check if the value has been set.
 // NOTE: If the value is an explicit nil, `nil, true` will be returned
-func (o *AirtimeFulfillmentResult) GetDeliveredValueOk() (*MoneyAmount, bool) {
+func (o *AirtimeFulfillmentResult) GetDeliveredValueOk() (*Money, bool) {
 	if o == nil {
 		return nil, false
 	}
@@ -70,8 +70,8 @@ func (o *AirtimeFulfillmentResult) HasDeliveredValue() bool {
 	return false
 }
 
-// SetDeliveredValue gets a reference to the given NullableMoneyAmount and assigns it to the DeliveredValue field.
-func (o *AirtimeFulfillmentResult) SetDeliveredValue(v MoneyAmount) {
+// SetDeliveredValue gets a reference to the given NullableMoney and assigns it to the DeliveredValue field.
+func (o *AirtimeFulfillmentResult) SetDeliveredValue(v Money) {
 	o.DeliveredValue.Set(&v)
 }
 // SetDeliveredValueNil sets the value for DeliveredValue to be an explicit nil
@@ -85,9 +85,9 @@ func (o *AirtimeFulfillmentResult) UnsetDeliveredValue() {
 }
 
 // GetDetails returns the Details field value if set, zero value otherwise.
-func (o *AirtimeFulfillmentResult) GetDetails() AirtimeFulfillmentResultDetails {
+func (o *AirtimeFulfillmentResult) GetDetails() AirtimeFulfillmentDetails {
 	if o == nil || IsNil(o.Details) {
-		var ret AirtimeFulfillmentResultDetails
+		var ret AirtimeFulfillmentDetails
 		return ret
 	}
 	return *o.Details
@@ -95,7 +95,7 @@ func (o *AirtimeFulfillmentResult) GetDetails() AirtimeFulfillmentResultDetails 
 
 // GetDetailsOk returns a tuple with the Details field value if set, nil otherwise
 // and a boolean to check if the value has been set.
-func (o *AirtimeFulfillmentResult) GetDetailsOk() (*AirtimeFulfillmentResultDetails, bool) {
+func (o *AirtimeFulfillmentResult) GetDetailsOk() (*AirtimeFulfillmentDetails, bool) {
 	if o == nil || IsNil(o.Details) {
 		return nil, false
 	}
@@ -111,8 +111,8 @@ func (o *AirtimeFulfillmentResult) HasDetails() bool {
 	return false
 }
 
-// SetDetails gets a reference to the given AirtimeFulfillmentResultDetails and assigns it to the Details field.
-func (o *AirtimeFulfillmentResult) SetDetails(v AirtimeFulfillmentResultDetails) {
+// SetDetails gets a reference to the given AirtimeFulfillmentDetails and assigns it to the Details field.
+func (o *AirtimeFulfillmentResult) SetDetails(v AirtimeFulfillmentDetails) {
 	o.Details = &v
 }
 

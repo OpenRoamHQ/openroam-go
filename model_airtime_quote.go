@@ -22,7 +22,7 @@ var _ MappedNullable = &AirtimeQuote{}
 type AirtimeQuote struct {
 	Currency *string `json:"currency,omitempty"`
 	Items []AirtimeQuoteItem `json:"items,omitempty"`
-	Total *MoneyAmount `json:"total,omitempty"`
+	Total *Money `json:"total,omitempty"`
 }
 
 // NewAirtimeQuote instantiates a new AirtimeQuote object
@@ -107,9 +107,9 @@ func (o *AirtimeQuote) SetItems(v []AirtimeQuoteItem) {
 }
 
 // GetTotal returns the Total field value if set, zero value otherwise.
-func (o *AirtimeQuote) GetTotal() MoneyAmount {
+func (o *AirtimeQuote) GetTotal() Money {
 	if o == nil || IsNil(o.Total) {
-		var ret MoneyAmount
+		var ret Money
 		return ret
 	}
 	return *o.Total
@@ -117,7 +117,7 @@ func (o *AirtimeQuote) GetTotal() MoneyAmount {
 
 // GetTotalOk returns a tuple with the Total field value if set, nil otherwise
 // and a boolean to check if the value has been set.
-func (o *AirtimeQuote) GetTotalOk() (*MoneyAmount, bool) {
+func (o *AirtimeQuote) GetTotalOk() (*Money, bool) {
 	if o == nil || IsNil(o.Total) {
 		return nil, false
 	}
@@ -133,8 +133,8 @@ func (o *AirtimeQuote) HasTotal() bool {
 	return false
 }
 
-// SetTotal gets a reference to the given MoneyAmount and assigns it to the Total field.
-func (o *AirtimeQuote) SetTotal(v MoneyAmount) {
+// SetTotal gets a reference to the given Money and assigns it to the Total field.
+func (o *AirtimeQuote) SetTotal(v Money) {
 	o.Total = &v
 }
 

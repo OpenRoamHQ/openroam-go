@@ -22,15 +22,15 @@ var _ MappedNullable = &EsimOfferDetails{}
 type EsimOfferDetails struct {
 	ValidityDays *int32 `json:"validityDays,omitempty"`
 	// The plan's data allowance as the catalogue stores it: amount, unit and display label.
-	Data *EsimOfferData `json:"data,omitempty"`
+	Data *EsimDataAllowance `json:"data,omitempty"`
 	IsUnlimited *bool `json:"isUnlimited,omitempty"`
 	// The plan's calling allowance; null when the plan includes no calls.
-	Voice NullableEsimProductOptionVoice `json:"voice,omitempty"`
+	Voice NullableEsimVoiceAllowance `json:"voice,omitempty"`
 	// The plan's SMS allowance; null when the plan includes no SMS.
-	Sms NullableEsimProductOptionSms `json:"sms,omitempty"`
-	Apn *EsimProductOptionApn `json:"apn,omitempty"`
-	Properties *EsimProductOptionProperties `json:"properties,omitempty"`
-	Restrictions *EsimProductOptionRestriction `json:"restrictions,omitempty"`
+	Sms NullableEsimSmsAllowance `json:"sms,omitempty"`
+	Apn *EsimApn `json:"apn,omitempty"`
+	Properties *EsimFeatures `json:"properties,omitempty"`
+	Restrictions *EsimRestrictions `json:"restrictions,omitempty"`
 	// Stored notes about the plan, shown verbatim.
 	Notes []string `json:"notes,omitempty"`
 	Plan NullableString `json:"plan,omitempty"`
@@ -86,9 +86,9 @@ func (o *EsimOfferDetails) SetValidityDays(v int32) {
 }
 
 // GetData returns the Data field value if set, zero value otherwise.
-func (o *EsimOfferDetails) GetData() EsimOfferData {
+func (o *EsimOfferDetails) GetData() EsimDataAllowance {
 	if o == nil || IsNil(o.Data) {
-		var ret EsimOfferData
+		var ret EsimDataAllowance
 		return ret
 	}
 	return *o.Data
@@ -96,7 +96,7 @@ func (o *EsimOfferDetails) GetData() EsimOfferData {
 
 // GetDataOk returns a tuple with the Data field value if set, nil otherwise
 // and a boolean to check if the value has been set.
-func (o *EsimOfferDetails) GetDataOk() (*EsimOfferData, bool) {
+func (o *EsimOfferDetails) GetDataOk() (*EsimDataAllowance, bool) {
 	if o == nil || IsNil(o.Data) {
 		return nil, false
 	}
@@ -112,8 +112,8 @@ func (o *EsimOfferDetails) HasData() bool {
 	return false
 }
 
-// SetData gets a reference to the given EsimOfferData and assigns it to the Data field.
-func (o *EsimOfferDetails) SetData(v EsimOfferData) {
+// SetData gets a reference to the given EsimDataAllowance and assigns it to the Data field.
+func (o *EsimOfferDetails) SetData(v EsimDataAllowance) {
 	o.Data = &v
 }
 
@@ -150,9 +150,9 @@ func (o *EsimOfferDetails) SetIsUnlimited(v bool) {
 }
 
 // GetVoice returns the Voice field value if set, zero value otherwise (both if not set or set to explicit null).
-func (o *EsimOfferDetails) GetVoice() EsimProductOptionVoice {
+func (o *EsimOfferDetails) GetVoice() EsimVoiceAllowance {
 	if o == nil || IsNil(o.Voice.Get()) {
-		var ret EsimProductOptionVoice
+		var ret EsimVoiceAllowance
 		return ret
 	}
 	return *o.Voice.Get()
@@ -161,7 +161,7 @@ func (o *EsimOfferDetails) GetVoice() EsimProductOptionVoice {
 // GetVoiceOk returns a tuple with the Voice field value if set, nil otherwise
 // and a boolean to check if the value has been set.
 // NOTE: If the value is an explicit nil, `nil, true` will be returned
-func (o *EsimOfferDetails) GetVoiceOk() (*EsimProductOptionVoice, bool) {
+func (o *EsimOfferDetails) GetVoiceOk() (*EsimVoiceAllowance, bool) {
 	if o == nil {
 		return nil, false
 	}
@@ -177,8 +177,8 @@ func (o *EsimOfferDetails) HasVoice() bool {
 	return false
 }
 
-// SetVoice gets a reference to the given NullableEsimProductOptionVoice and assigns it to the Voice field.
-func (o *EsimOfferDetails) SetVoice(v EsimProductOptionVoice) {
+// SetVoice gets a reference to the given NullableEsimVoiceAllowance and assigns it to the Voice field.
+func (o *EsimOfferDetails) SetVoice(v EsimVoiceAllowance) {
 	o.Voice.Set(&v)
 }
 // SetVoiceNil sets the value for Voice to be an explicit nil
@@ -192,9 +192,9 @@ func (o *EsimOfferDetails) UnsetVoice() {
 }
 
 // GetSms returns the Sms field value if set, zero value otherwise (both if not set or set to explicit null).
-func (o *EsimOfferDetails) GetSms() EsimProductOptionSms {
+func (o *EsimOfferDetails) GetSms() EsimSmsAllowance {
 	if o == nil || IsNil(o.Sms.Get()) {
-		var ret EsimProductOptionSms
+		var ret EsimSmsAllowance
 		return ret
 	}
 	return *o.Sms.Get()
@@ -203,7 +203,7 @@ func (o *EsimOfferDetails) GetSms() EsimProductOptionSms {
 // GetSmsOk returns a tuple with the Sms field value if set, nil otherwise
 // and a boolean to check if the value has been set.
 // NOTE: If the value is an explicit nil, `nil, true` will be returned
-func (o *EsimOfferDetails) GetSmsOk() (*EsimProductOptionSms, bool) {
+func (o *EsimOfferDetails) GetSmsOk() (*EsimSmsAllowance, bool) {
 	if o == nil {
 		return nil, false
 	}
@@ -219,8 +219,8 @@ func (o *EsimOfferDetails) HasSms() bool {
 	return false
 }
 
-// SetSms gets a reference to the given NullableEsimProductOptionSms and assigns it to the Sms field.
-func (o *EsimOfferDetails) SetSms(v EsimProductOptionSms) {
+// SetSms gets a reference to the given NullableEsimSmsAllowance and assigns it to the Sms field.
+func (o *EsimOfferDetails) SetSms(v EsimSmsAllowance) {
 	o.Sms.Set(&v)
 }
 // SetSmsNil sets the value for Sms to be an explicit nil
@@ -234,9 +234,9 @@ func (o *EsimOfferDetails) UnsetSms() {
 }
 
 // GetApn returns the Apn field value if set, zero value otherwise.
-func (o *EsimOfferDetails) GetApn() EsimProductOptionApn {
+func (o *EsimOfferDetails) GetApn() EsimApn {
 	if o == nil || IsNil(o.Apn) {
-		var ret EsimProductOptionApn
+		var ret EsimApn
 		return ret
 	}
 	return *o.Apn
@@ -244,7 +244,7 @@ func (o *EsimOfferDetails) GetApn() EsimProductOptionApn {
 
 // GetApnOk returns a tuple with the Apn field value if set, nil otherwise
 // and a boolean to check if the value has been set.
-func (o *EsimOfferDetails) GetApnOk() (*EsimProductOptionApn, bool) {
+func (o *EsimOfferDetails) GetApnOk() (*EsimApn, bool) {
 	if o == nil || IsNil(o.Apn) {
 		return nil, false
 	}
@@ -260,15 +260,15 @@ func (o *EsimOfferDetails) HasApn() bool {
 	return false
 }
 
-// SetApn gets a reference to the given EsimProductOptionApn and assigns it to the Apn field.
-func (o *EsimOfferDetails) SetApn(v EsimProductOptionApn) {
+// SetApn gets a reference to the given EsimApn and assigns it to the Apn field.
+func (o *EsimOfferDetails) SetApn(v EsimApn) {
 	o.Apn = &v
 }
 
 // GetProperties returns the Properties field value if set, zero value otherwise.
-func (o *EsimOfferDetails) GetProperties() EsimProductOptionProperties {
+func (o *EsimOfferDetails) GetProperties() EsimFeatures {
 	if o == nil || IsNil(o.Properties) {
-		var ret EsimProductOptionProperties
+		var ret EsimFeatures
 		return ret
 	}
 	return *o.Properties
@@ -276,7 +276,7 @@ func (o *EsimOfferDetails) GetProperties() EsimProductOptionProperties {
 
 // GetPropertiesOk returns a tuple with the Properties field value if set, nil otherwise
 // and a boolean to check if the value has been set.
-func (o *EsimOfferDetails) GetPropertiesOk() (*EsimProductOptionProperties, bool) {
+func (o *EsimOfferDetails) GetPropertiesOk() (*EsimFeatures, bool) {
 	if o == nil || IsNil(o.Properties) {
 		return nil, false
 	}
@@ -292,15 +292,15 @@ func (o *EsimOfferDetails) HasProperties() bool {
 	return false
 }
 
-// SetProperties gets a reference to the given EsimProductOptionProperties and assigns it to the Properties field.
-func (o *EsimOfferDetails) SetProperties(v EsimProductOptionProperties) {
+// SetProperties gets a reference to the given EsimFeatures and assigns it to the Properties field.
+func (o *EsimOfferDetails) SetProperties(v EsimFeatures) {
 	o.Properties = &v
 }
 
 // GetRestrictions returns the Restrictions field value if set, zero value otherwise.
-func (o *EsimOfferDetails) GetRestrictions() EsimProductOptionRestriction {
+func (o *EsimOfferDetails) GetRestrictions() EsimRestrictions {
 	if o == nil || IsNil(o.Restrictions) {
-		var ret EsimProductOptionRestriction
+		var ret EsimRestrictions
 		return ret
 	}
 	return *o.Restrictions
@@ -308,7 +308,7 @@ func (o *EsimOfferDetails) GetRestrictions() EsimProductOptionRestriction {
 
 // GetRestrictionsOk returns a tuple with the Restrictions field value if set, nil otherwise
 // and a boolean to check if the value has been set.
-func (o *EsimOfferDetails) GetRestrictionsOk() (*EsimProductOptionRestriction, bool) {
+func (o *EsimOfferDetails) GetRestrictionsOk() (*EsimRestrictions, bool) {
 	if o == nil || IsNil(o.Restrictions) {
 		return nil, false
 	}
@@ -324,8 +324,8 @@ func (o *EsimOfferDetails) HasRestrictions() bool {
 	return false
 }
 
-// SetRestrictions gets a reference to the given EsimProductOptionRestriction and assigns it to the Restrictions field.
-func (o *EsimOfferDetails) SetRestrictions(v EsimProductOptionRestriction) {
+// SetRestrictions gets a reference to the given EsimRestrictions and assigns it to the Restrictions field.
+func (o *EsimOfferDetails) SetRestrictions(v EsimRestrictions) {
 	o.Restrictions = &v
 }
 

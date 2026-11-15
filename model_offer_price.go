@@ -19,21 +19,21 @@ import (
 
 // OfferPrice - Price OpenRoam charges the partner for an offer: one amount, or bounds for a range offer. The variants carry no discriminator, so this type is written to responses and never bound.
 type OfferPrice struct {
-	OfferFixedPrice *OfferFixedPrice
-	OfferRangePrice *OfferRangePrice
+	FixedPrice *FixedPrice
+	PriceRange *PriceRange
 }
 
-// OfferFixedPriceAsOfferPrice is a convenience function that returns OfferFixedPrice wrapped in OfferPrice
-func OfferFixedPriceAsOfferPrice(v *OfferFixedPrice) OfferPrice {
+// FixedPriceAsOfferPrice is a convenience function that returns FixedPrice wrapped in OfferPrice
+func FixedPriceAsOfferPrice(v *FixedPrice) OfferPrice {
 	return OfferPrice{
-		OfferFixedPrice: v,
+		FixedPrice: v,
 	}
 }
 
-// OfferRangePriceAsOfferPrice is a convenience function that returns OfferRangePrice wrapped in OfferPrice
-func OfferRangePriceAsOfferPrice(v *OfferRangePrice) OfferPrice {
+// PriceRangeAsOfferPrice is a convenience function that returns PriceRange wrapped in OfferPrice
+func PriceRangeAsOfferPrice(v *PriceRange) OfferPrice {
 	return OfferPrice{
-		OfferRangePrice: v,
+		PriceRange: v,
 	}
 }
 
@@ -42,44 +42,44 @@ func OfferRangePriceAsOfferPrice(v *OfferRangePrice) OfferPrice {
 func (dst *OfferPrice) UnmarshalJSON(data []byte) error {
 	var err error
 	match := 0
-	// try to unmarshal data into OfferFixedPrice
-	err = newStrictDecoder(data).Decode(&dst.OfferFixedPrice)
+	// try to unmarshal data into FixedPrice
+	err = newStrictDecoder(data).Decode(&dst.FixedPrice)
 	if err == nil {
-		jsonOfferFixedPrice, _ := json.Marshal(dst.OfferFixedPrice)
-		if string(jsonOfferFixedPrice) == "{}" { // empty struct
-			dst.OfferFixedPrice = nil
+		jsonFixedPrice, _ := json.Marshal(dst.FixedPrice)
+		if string(jsonFixedPrice) == "{}" { // empty struct
+			dst.FixedPrice = nil
 		} else {
-			if err = validator.Validate(dst.OfferFixedPrice); err != nil {
-				dst.OfferFixedPrice = nil
+			if err = validator.Validate(dst.FixedPrice); err != nil {
+				dst.FixedPrice = nil
 			} else {
 				match++
 			}
 		}
 	} else {
-		dst.OfferFixedPrice = nil
+		dst.FixedPrice = nil
 	}
 
-	// try to unmarshal data into OfferRangePrice
-	err = newStrictDecoder(data).Decode(&dst.OfferRangePrice)
+	// try to unmarshal data into PriceRange
+	err = newStrictDecoder(data).Decode(&dst.PriceRange)
 	if err == nil {
-		jsonOfferRangePrice, _ := json.Marshal(dst.OfferRangePrice)
-		if string(jsonOfferRangePrice) == "{}" { // empty struct
-			dst.OfferRangePrice = nil
+		jsonPriceRange, _ := json.Marshal(dst.PriceRange)
+		if string(jsonPriceRange) == "{}" { // empty struct
+			dst.PriceRange = nil
 		} else {
-			if err = validator.Validate(dst.OfferRangePrice); err != nil {
-				dst.OfferRangePrice = nil
+			if err = validator.Validate(dst.PriceRange); err != nil {
+				dst.PriceRange = nil
 			} else {
 				match++
 			}
 		}
 	} else {
-		dst.OfferRangePrice = nil
+		dst.PriceRange = nil
 	}
 
 	if match > 1 { // more than 1 match
 		// reset to nil
-		dst.OfferFixedPrice = nil
-		dst.OfferRangePrice = nil
+		dst.FixedPrice = nil
+		dst.PriceRange = nil
 
 		return fmt.Errorf("data matches more than one schema in oneOf(OfferPrice)")
 	} else if match == 1 {
@@ -95,12 +95,12 @@ func (dst *OfferPrice) UnmarshalJSON(data []byte) error {
 
 // Marshal data from the first non-nil pointers in the struct to JSON
 func (src OfferPrice) MarshalJSON() ([]byte, error) {
-	if src.OfferFixedPrice != nil {
-		return json.Marshal(&src.OfferFixedPrice)
+	if src.FixedPrice != nil {
+		return json.Marshal(&src.FixedPrice)
 	}
 
-	if src.OfferRangePrice != nil {
-		return json.Marshal(&src.OfferRangePrice)
+	if src.PriceRange != nil {
+		return json.Marshal(&src.PriceRange)
 	}
 
 	return nil, nil // no data in oneOf schemas
@@ -111,12 +111,12 @@ func (obj *OfferPrice) GetActualInstance() (interface{}) {
 	if obj == nil {
 		return nil
 	}
-	if obj.OfferFixedPrice != nil {
-		return obj.OfferFixedPrice
+	if obj.FixedPrice != nil {
+		return obj.FixedPrice
 	}
 
-	if obj.OfferRangePrice != nil {
-		return obj.OfferRangePrice
+	if obj.PriceRange != nil {
+		return obj.PriceRange
 	}
 
 	// all schemas are nil
@@ -125,12 +125,12 @@ func (obj *OfferPrice) GetActualInstance() (interface{}) {
 
 // Get the actual instance value
 func (obj OfferPrice) GetActualInstanceValue() (interface{}) {
-	if obj.OfferFixedPrice != nil {
-		return *obj.OfferFixedPrice
+	if obj.FixedPrice != nil {
+		return *obj.FixedPrice
 	}
 
-	if obj.OfferRangePrice != nil {
-		return *obj.OfferRangePrice
+	if obj.PriceRange != nil {
+		return *obj.PriceRange
 	}
 
 	// all schemas are nil

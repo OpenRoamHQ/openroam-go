@@ -23,15 +23,15 @@ var _ MappedNullable = &HotelInputs{}
 // HotelInputs A hotel item's `inputs`: the people of the booking, optional special requests and the optional price guard `maxPrice`. Stay dates and rooms come from the selected rate, so they are not sent here. Unknown fields are rejected.
 type HotelInputs struct {
 	// The lead guest: the booking is made in this name and the hotel contacts this person.
-	Holder HotelHolderInput `json:"holder"`
+	Holder LeadGuestInput `json:"holder"`
 	// Exactly one entry per searched room, with `roomIndex` 1 to N. Each room's guests must match its searched adults, children and child ages.
-	RoomGuests []HotelRoomGuestsInput `json:"roomGuests"`
+	RoomGuests []RoomGuestsInput `json:"roomGuests"`
 	// Free-text requests for the hotel, up to 500 characters.
 	SpecialRequests NullableString `json:"specialRequests,omitempty"`
 	// Opaque codes from the rate's specialRequestOptions, applied to every room. Up to 32 distinct codes.
 	SpecialRequestCodes []string `json:"specialRequestCodes,omitempty"`
 	// Optional highest accepted unit price, in the order or cart currency; a higher current unit price gives 409 / 11002.
-	MaxPrice NullableMoneyAmountInput `json:"maxPrice,omitempty"`
+	MaxPrice NullableMoneyInput `json:"maxPrice,omitempty"`
 }
 
 type _HotelInputs HotelInputs
@@ -40,7 +40,7 @@ type _HotelInputs HotelInputs
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewHotelInputs(holder HotelHolderInput, roomGuests []HotelRoomGuestsInput) *HotelInputs {
+func NewHotelInputs(holder LeadGuestInput, roomGuests []RoomGuestsInput) *HotelInputs {
 	this := HotelInputs{}
 	this.Holder = holder
 	this.RoomGuests = roomGuests
@@ -56,9 +56,9 @@ func NewHotelInputsWithDefaults() *HotelInputs {
 }
 
 // GetHolder returns the Holder field value
-func (o *HotelInputs) GetHolder() HotelHolderInput {
+func (o *HotelInputs) GetHolder() LeadGuestInput {
 	if o == nil {
-		var ret HotelHolderInput
+		var ret LeadGuestInput
 		return ret
 	}
 
@@ -67,7 +67,7 @@ func (o *HotelInputs) GetHolder() HotelHolderInput {
 
 // GetHolderOk returns a tuple with the Holder field value
 // and a boolean to check if the value has been set.
-func (o *HotelInputs) GetHolderOk() (*HotelHolderInput, bool) {
+func (o *HotelInputs) GetHolderOk() (*LeadGuestInput, bool) {
 	if o == nil {
 		return nil, false
 	}
@@ -75,14 +75,14 @@ func (o *HotelInputs) GetHolderOk() (*HotelHolderInput, bool) {
 }
 
 // SetHolder sets field value
-func (o *HotelInputs) SetHolder(v HotelHolderInput) {
+func (o *HotelInputs) SetHolder(v LeadGuestInput) {
 	o.Holder = v
 }
 
 // GetRoomGuests returns the RoomGuests field value
-func (o *HotelInputs) GetRoomGuests() []HotelRoomGuestsInput {
+func (o *HotelInputs) GetRoomGuests() []RoomGuestsInput {
 	if o == nil {
-		var ret []HotelRoomGuestsInput
+		var ret []RoomGuestsInput
 		return ret
 	}
 
@@ -91,7 +91,7 @@ func (o *HotelInputs) GetRoomGuests() []HotelRoomGuestsInput {
 
 // GetRoomGuestsOk returns a tuple with the RoomGuests field value
 // and a boolean to check if the value has been set.
-func (o *HotelInputs) GetRoomGuestsOk() ([]HotelRoomGuestsInput, bool) {
+func (o *HotelInputs) GetRoomGuestsOk() ([]RoomGuestsInput, bool) {
 	if o == nil {
 		return nil, false
 	}
@@ -99,7 +99,7 @@ func (o *HotelInputs) GetRoomGuestsOk() ([]HotelRoomGuestsInput, bool) {
 }
 
 // SetRoomGuests sets field value
-func (o *HotelInputs) SetRoomGuests(v []HotelRoomGuestsInput) {
+func (o *HotelInputs) SetRoomGuests(v []RoomGuestsInput) {
 	o.RoomGuests = v
 }
 
@@ -179,9 +179,9 @@ func (o *HotelInputs) SetSpecialRequestCodes(v []string) {
 }
 
 // GetMaxPrice returns the MaxPrice field value if set, zero value otherwise (both if not set or set to explicit null).
-func (o *HotelInputs) GetMaxPrice() MoneyAmountInput {
+func (o *HotelInputs) GetMaxPrice() MoneyInput {
 	if o == nil || IsNil(o.MaxPrice.Get()) {
-		var ret MoneyAmountInput
+		var ret MoneyInput
 		return ret
 	}
 	return *o.MaxPrice.Get()
@@ -190,7 +190,7 @@ func (o *HotelInputs) GetMaxPrice() MoneyAmountInput {
 // GetMaxPriceOk returns a tuple with the MaxPrice field value if set, nil otherwise
 // and a boolean to check if the value has been set.
 // NOTE: If the value is an explicit nil, `nil, true` will be returned
-func (o *HotelInputs) GetMaxPriceOk() (*MoneyAmountInput, bool) {
+func (o *HotelInputs) GetMaxPriceOk() (*MoneyInput, bool) {
 	if o == nil {
 		return nil, false
 	}
@@ -206,8 +206,8 @@ func (o *HotelInputs) HasMaxPrice() bool {
 	return false
 }
 
-// SetMaxPrice gets a reference to the given NullableMoneyAmountInput and assigns it to the MaxPrice field.
-func (o *HotelInputs) SetMaxPrice(v MoneyAmountInput) {
+// SetMaxPrice gets a reference to the given NullableMoneyInput and assigns it to the MaxPrice field.
+func (o *HotelInputs) SetMaxPrice(v MoneyInput) {
 	o.MaxPrice.Set(&v)
 }
 // SetMaxPriceNil sets the value for MaxPrice to be an explicit nil

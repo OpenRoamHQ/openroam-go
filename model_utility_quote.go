@@ -22,7 +22,7 @@ var _ MappedNullable = &UtilityQuote{}
 type UtilityQuote struct {
 	Currency *string `json:"currency,omitempty"`
 	Items []UtilityQuoteItem `json:"items,omitempty"`
-	Total *MoneyAmount `json:"total,omitempty"`
+	Total *Money `json:"total,omitempty"`
 }
 
 // NewUtilityQuote instantiates a new UtilityQuote object
@@ -107,9 +107,9 @@ func (o *UtilityQuote) SetItems(v []UtilityQuoteItem) {
 }
 
 // GetTotal returns the Total field value if set, zero value otherwise.
-func (o *UtilityQuote) GetTotal() MoneyAmount {
+func (o *UtilityQuote) GetTotal() Money {
 	if o == nil || IsNil(o.Total) {
-		var ret MoneyAmount
+		var ret Money
 		return ret
 	}
 	return *o.Total
@@ -117,7 +117,7 @@ func (o *UtilityQuote) GetTotal() MoneyAmount {
 
 // GetTotalOk returns a tuple with the Total field value if set, nil otherwise
 // and a boolean to check if the value has been set.
-func (o *UtilityQuote) GetTotalOk() (*MoneyAmount, bool) {
+func (o *UtilityQuote) GetTotalOk() (*Money, bool) {
 	if o == nil || IsNil(o.Total) {
 		return nil, false
 	}
@@ -133,8 +133,8 @@ func (o *UtilityQuote) HasTotal() bool {
 	return false
 }
 
-// SetTotal gets a reference to the given MoneyAmount and assigns it to the Total field.
-func (o *UtilityQuote) SetTotal(v MoneyAmount) {
+// SetTotal gets a reference to the given Money and assigns it to the Total field.
+func (o *UtilityQuote) SetTotal(v Money) {
 	o.Total = &v
 }
 

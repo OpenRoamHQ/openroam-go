@@ -25,7 +25,7 @@ type OrderPayment struct {
 	// How the payment was made; `balance` for wallet payments.
 	Method *string `json:"method,omitempty"`
 	// The amount charged, in the order's currency.
-	Amount *MoneyAmount `json:"amount,omitempty"`
+	Amount *Money `json:"amount,omitempty"`
 	// The wallet charged by a balance payment, when known; otherwise `null`.
 	Wallet NullableOrderPaymentWallet `json:"wallet,omitempty"`
 	// Why the payment failed; `null` unless it failed.
@@ -114,9 +114,9 @@ func (o *OrderPayment) SetMethod(v string) {
 }
 
 // GetAmount returns the Amount field value if set, zero value otherwise.
-func (o *OrderPayment) GetAmount() MoneyAmount {
+func (o *OrderPayment) GetAmount() Money {
 	if o == nil || IsNil(o.Amount) {
-		var ret MoneyAmount
+		var ret Money
 		return ret
 	}
 	return *o.Amount
@@ -124,7 +124,7 @@ func (o *OrderPayment) GetAmount() MoneyAmount {
 
 // GetAmountOk returns a tuple with the Amount field value if set, nil otherwise
 // and a boolean to check if the value has been set.
-func (o *OrderPayment) GetAmountOk() (*MoneyAmount, bool) {
+func (o *OrderPayment) GetAmountOk() (*Money, bool) {
 	if o == nil || IsNil(o.Amount) {
 		return nil, false
 	}
@@ -140,8 +140,8 @@ func (o *OrderPayment) HasAmount() bool {
 	return false
 }
 
-// SetAmount gets a reference to the given MoneyAmount and assigns it to the Amount field.
-func (o *OrderPayment) SetAmount(v MoneyAmount) {
+// SetAmount gets a reference to the given Money and assigns it to the Amount field.
+func (o *OrderPayment) SetAmount(v Money) {
 	o.Amount = &v
 }
 

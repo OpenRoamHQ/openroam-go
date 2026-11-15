@@ -21,7 +21,7 @@ var _ MappedNullable = &HotelDestinationList{}
 // HotelDestinationList The places to search hotels in that best match `q`, most relevant first: at most `limit`, not paged.
 type HotelDestinationList struct {
 	// The matching places; empty when none matches.
-	Items []HotelDestinationSummary `json:"items,omitempty"`
+	Items []HotelDestination `json:"items,omitempty"`
 }
 
 // NewHotelDestinationList instantiates a new HotelDestinationList object
@@ -42,9 +42,9 @@ func NewHotelDestinationListWithDefaults() *HotelDestinationList {
 }
 
 // GetItems returns the Items field value if set, zero value otherwise.
-func (o *HotelDestinationList) GetItems() []HotelDestinationSummary {
+func (o *HotelDestinationList) GetItems() []HotelDestination {
 	if o == nil || IsNil(o.Items) {
-		var ret []HotelDestinationSummary
+		var ret []HotelDestination
 		return ret
 	}
 	return o.Items
@@ -52,7 +52,7 @@ func (o *HotelDestinationList) GetItems() []HotelDestinationSummary {
 
 // GetItemsOk returns a tuple with the Items field value if set, nil otherwise
 // and a boolean to check if the value has been set.
-func (o *HotelDestinationList) GetItemsOk() ([]HotelDestinationSummary, bool) {
+func (o *HotelDestinationList) GetItemsOk() ([]HotelDestination, bool) {
 	if o == nil || IsNil(o.Items) {
 		return nil, false
 	}
@@ -68,8 +68,8 @@ func (o *HotelDestinationList) HasItems() bool {
 	return false
 }
 
-// SetItems gets a reference to the given []HotelDestinationSummary and assigns it to the Items field.
-func (o *HotelDestinationList) SetItems(v []HotelDestinationSummary) {
+// SetItems gets a reference to the given []HotelDestination and assigns it to the Items field.
+func (o *HotelDestinationList) SetItems(v []HotelDestination) {
 	o.Items = v
 }
 

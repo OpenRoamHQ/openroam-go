@@ -25,7 +25,7 @@ type AmendmentPayment struct {
 	// How the surcharge was paid.
 	Method *string `json:"method,omitempty"`
 	// The amount charged.
-	Amount *MoneyAmount `json:"amount,omitempty"`
+	Amount *Money `json:"amount,omitempty"`
 	// Why the payment failed; `null` unless it failed.
 	Failure NullablePaymentFailure `json:"failure,omitempty"`
 }
@@ -112,9 +112,9 @@ func (o *AmendmentPayment) SetMethod(v string) {
 }
 
 // GetAmount returns the Amount field value if set, zero value otherwise.
-func (o *AmendmentPayment) GetAmount() MoneyAmount {
+func (o *AmendmentPayment) GetAmount() Money {
 	if o == nil || IsNil(o.Amount) {
-		var ret MoneyAmount
+		var ret Money
 		return ret
 	}
 	return *o.Amount
@@ -122,7 +122,7 @@ func (o *AmendmentPayment) GetAmount() MoneyAmount {
 
 // GetAmountOk returns a tuple with the Amount field value if set, nil otherwise
 // and a boolean to check if the value has been set.
-func (o *AmendmentPayment) GetAmountOk() (*MoneyAmount, bool) {
+func (o *AmendmentPayment) GetAmountOk() (*Money, bool) {
 	if o == nil || IsNil(o.Amount) {
 		return nil, false
 	}
@@ -138,8 +138,8 @@ func (o *AmendmentPayment) HasAmount() bool {
 	return false
 }
 
-// SetAmount gets a reference to the given MoneyAmount and assigns it to the Amount field.
-func (o *AmendmentPayment) SetAmount(v MoneyAmount) {
+// SetAmount gets a reference to the given Money and assigns it to the Amount field.
+func (o *AmendmentPayment) SetAmount(v Money) {
 	o.Amount = &v
 }
 

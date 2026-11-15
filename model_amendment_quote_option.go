@@ -23,11 +23,11 @@ type AmendmentQuoteOption struct {
 	// Option id, sent as `selectedOptionId` when confirming.
 	Id *string `json:"id,omitempty"`
 	// The surcharge charged on confirm, including any amendment fee.
-	AmountToPay *MoneyAmount `json:"amountToPay,omitempty"`
+	AmountToPay *Money `json:"amountToPay,omitempty"`
 	// The credit returned on confirm, after any amendment fee.
-	AmountToRefund *MoneyAmount `json:"amountToRefund,omitempty"`
+	AmountToRefund *Money `json:"amountToRefund,omitempty"`
 	// A fee for the change, already included in amountToPay or amountToRefund; null when none             applies.
-	AmendmentFee NullableMoneyAmount `json:"amendmentFee,omitempty"`
+	AmendmentFee NullableMoney `json:"amendmentFee,omitempty"`
 }
 
 // NewAmendmentQuoteOption instantiates a new AmendmentQuoteOption object
@@ -80,9 +80,9 @@ func (o *AmendmentQuoteOption) SetId(v string) {
 }
 
 // GetAmountToPay returns the AmountToPay field value if set, zero value otherwise.
-func (o *AmendmentQuoteOption) GetAmountToPay() MoneyAmount {
+func (o *AmendmentQuoteOption) GetAmountToPay() Money {
 	if o == nil || IsNil(o.AmountToPay) {
-		var ret MoneyAmount
+		var ret Money
 		return ret
 	}
 	return *o.AmountToPay
@@ -90,7 +90,7 @@ func (o *AmendmentQuoteOption) GetAmountToPay() MoneyAmount {
 
 // GetAmountToPayOk returns a tuple with the AmountToPay field value if set, nil otherwise
 // and a boolean to check if the value has been set.
-func (o *AmendmentQuoteOption) GetAmountToPayOk() (*MoneyAmount, bool) {
+func (o *AmendmentQuoteOption) GetAmountToPayOk() (*Money, bool) {
 	if o == nil || IsNil(o.AmountToPay) {
 		return nil, false
 	}
@@ -106,15 +106,15 @@ func (o *AmendmentQuoteOption) HasAmountToPay() bool {
 	return false
 }
 
-// SetAmountToPay gets a reference to the given MoneyAmount and assigns it to the AmountToPay field.
-func (o *AmendmentQuoteOption) SetAmountToPay(v MoneyAmount) {
+// SetAmountToPay gets a reference to the given Money and assigns it to the AmountToPay field.
+func (o *AmendmentQuoteOption) SetAmountToPay(v Money) {
 	o.AmountToPay = &v
 }
 
 // GetAmountToRefund returns the AmountToRefund field value if set, zero value otherwise.
-func (o *AmendmentQuoteOption) GetAmountToRefund() MoneyAmount {
+func (o *AmendmentQuoteOption) GetAmountToRefund() Money {
 	if o == nil || IsNil(o.AmountToRefund) {
-		var ret MoneyAmount
+		var ret Money
 		return ret
 	}
 	return *o.AmountToRefund
@@ -122,7 +122,7 @@ func (o *AmendmentQuoteOption) GetAmountToRefund() MoneyAmount {
 
 // GetAmountToRefundOk returns a tuple with the AmountToRefund field value if set, nil otherwise
 // and a boolean to check if the value has been set.
-func (o *AmendmentQuoteOption) GetAmountToRefundOk() (*MoneyAmount, bool) {
+func (o *AmendmentQuoteOption) GetAmountToRefundOk() (*Money, bool) {
 	if o == nil || IsNil(o.AmountToRefund) {
 		return nil, false
 	}
@@ -138,15 +138,15 @@ func (o *AmendmentQuoteOption) HasAmountToRefund() bool {
 	return false
 }
 
-// SetAmountToRefund gets a reference to the given MoneyAmount and assigns it to the AmountToRefund field.
-func (o *AmendmentQuoteOption) SetAmountToRefund(v MoneyAmount) {
+// SetAmountToRefund gets a reference to the given Money and assigns it to the AmountToRefund field.
+func (o *AmendmentQuoteOption) SetAmountToRefund(v Money) {
 	o.AmountToRefund = &v
 }
 
 // GetAmendmentFee returns the AmendmentFee field value if set, zero value otherwise (both if not set or set to explicit null).
-func (o *AmendmentQuoteOption) GetAmendmentFee() MoneyAmount {
+func (o *AmendmentQuoteOption) GetAmendmentFee() Money {
 	if o == nil || IsNil(o.AmendmentFee.Get()) {
-		var ret MoneyAmount
+		var ret Money
 		return ret
 	}
 	return *o.AmendmentFee.Get()
@@ -155,7 +155,7 @@ func (o *AmendmentQuoteOption) GetAmendmentFee() MoneyAmount {
 // GetAmendmentFeeOk returns a tuple with the AmendmentFee field value if set, nil otherwise
 // and a boolean to check if the value has been set.
 // NOTE: If the value is an explicit nil, `nil, true` will be returned
-func (o *AmendmentQuoteOption) GetAmendmentFeeOk() (*MoneyAmount, bool) {
+func (o *AmendmentQuoteOption) GetAmendmentFeeOk() (*Money, bool) {
 	if o == nil {
 		return nil, false
 	}
@@ -171,8 +171,8 @@ func (o *AmendmentQuoteOption) HasAmendmentFee() bool {
 	return false
 }
 
-// SetAmendmentFee gets a reference to the given NullableMoneyAmount and assigns it to the AmendmentFee field.
-func (o *AmendmentQuoteOption) SetAmendmentFee(v MoneyAmount) {
+// SetAmendmentFee gets a reference to the given NullableMoney and assigns it to the AmendmentFee field.
+func (o *AmendmentQuoteOption) SetAmendmentFee(v Money) {
 	o.AmendmentFee.Set(&v)
 }
 // SetAmendmentFeeNil sets the value for AmendmentFee to be an explicit nil

@@ -111,13 +111,13 @@ var routeCalls = map[string]func(t *testing.T, ctx context.Context, c *OpenRoam,
 		return err
 	},
 	"esims.provision": func(t *testing.T, ctx context.Context, c *OpenRoam, ids []string, body []byte, opts ...CallOption) error {
-		var b EsimProvisionRequest
+		var b EsimProvisioningRequest
 		readSample(t, body, &b)
 		_, err := c.Esims.Provision(ctx, ids[0], &b, opts...)
 		return err
 	},
 	"esims.sendSms": func(t *testing.T, ctx context.Context, c *OpenRoam, ids []string, body []byte, opts ...CallOption) error {
-		var b EsimSendSmsRequest
+		var b EsimSmsRequest
 		readSample(t, body, &b)
 		_, err := c.Esims.SendSms(ctx, ids[0], &b, opts...)
 		return err
@@ -275,7 +275,7 @@ var routeCalls = map[string]func(t *testing.T, ctx context.Context, c *OpenRoam,
 		return err
 	},
 	"orders.order": func(t *testing.T, ctx context.Context, c *OpenRoam, ids []string, body []byte, opts ...CallOption) error {
-		var b OrderRequest
+		var b MixedOrderRequest
 		readSample(t, body, &b)
 		_, err := c.Orders.Order(ctx, &b, opts...)
 		return err
@@ -285,7 +285,7 @@ var routeCalls = map[string]func(t *testing.T, ctx context.Context, c *OpenRoam,
 		return err
 	},
 	"orders.quote": func(t *testing.T, ctx context.Context, c *OpenRoam, ids []string, body []byte, opts ...CallOption) error {
-		var b OrderRequest
+		var b MixedOrderRequest
 		readSample(t, body, &b)
 		_, err := c.Orders.Quote(ctx, &b, opts...)
 		return err

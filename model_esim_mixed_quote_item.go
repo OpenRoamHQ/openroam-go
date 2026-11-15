@@ -26,7 +26,7 @@ type EsimMixedQuoteItem struct {
 	PublicId string `json:"publicId"`
 	Quantity *int32 `json:"quantity,omitempty"`
 	Name *string `json:"name,omitempty"`
-	Price *MoneyAmount `json:"price,omitempty"`
+	Price *Money `json:"price,omitempty"`
 }
 
 type _EsimMixedQuoteItem EsimMixedQuoteItem
@@ -163,9 +163,9 @@ func (o *EsimMixedQuoteItem) SetName(v string) {
 }
 
 // GetPrice returns the Price field value if set, zero value otherwise.
-func (o *EsimMixedQuoteItem) GetPrice() MoneyAmount {
+func (o *EsimMixedQuoteItem) GetPrice() Money {
 	if o == nil || IsNil(o.Price) {
-		var ret MoneyAmount
+		var ret Money
 		return ret
 	}
 	return *o.Price
@@ -173,7 +173,7 @@ func (o *EsimMixedQuoteItem) GetPrice() MoneyAmount {
 
 // GetPriceOk returns a tuple with the Price field value if set, nil otherwise
 // and a boolean to check if the value has been set.
-func (o *EsimMixedQuoteItem) GetPriceOk() (*MoneyAmount, bool) {
+func (o *EsimMixedQuoteItem) GetPriceOk() (*Money, bool) {
 	if o == nil || IsNil(o.Price) {
 		return nil, false
 	}
@@ -189,8 +189,8 @@ func (o *EsimMixedQuoteItem) HasPrice() bool {
 	return false
 }
 
-// SetPrice gets a reference to the given MoneyAmount and assigns it to the Price field.
-func (o *EsimMixedQuoteItem) SetPrice(v MoneyAmount) {
+// SetPrice gets a reference to the given Money and assigns it to the Price field.
+func (o *EsimMixedQuoteItem) SetPrice(v Money) {
 	o.Price = &v
 }
 

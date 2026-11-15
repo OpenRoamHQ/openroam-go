@@ -20,8 +20,8 @@ var _ MappedNullable = &HotelSearchFacets{}
 
 // HotelSearchFacets The filter values worth offering for this search, with how many hotels each would keep.
 type HotelSearchFacets struct {
-	Amenities []HotelAmenityFacet `json:"amenities,omitempty"`
-	AmenityGroups []HotelAmenityGroupFacet `json:"amenityGroups,omitempty"`
+	Amenities []AmenityFacet `json:"amenities,omitempty"`
+	AmenityGroups []AmenityGroup `json:"amenityGroups,omitempty"`
 }
 
 // NewHotelSearchFacets instantiates a new HotelSearchFacets object
@@ -42,9 +42,9 @@ func NewHotelSearchFacetsWithDefaults() *HotelSearchFacets {
 }
 
 // GetAmenities returns the Amenities field value if set, zero value otherwise.
-func (o *HotelSearchFacets) GetAmenities() []HotelAmenityFacet {
+func (o *HotelSearchFacets) GetAmenities() []AmenityFacet {
 	if o == nil || IsNil(o.Amenities) {
-		var ret []HotelAmenityFacet
+		var ret []AmenityFacet
 		return ret
 	}
 	return o.Amenities
@@ -52,7 +52,7 @@ func (o *HotelSearchFacets) GetAmenities() []HotelAmenityFacet {
 
 // GetAmenitiesOk returns a tuple with the Amenities field value if set, nil otherwise
 // and a boolean to check if the value has been set.
-func (o *HotelSearchFacets) GetAmenitiesOk() ([]HotelAmenityFacet, bool) {
+func (o *HotelSearchFacets) GetAmenitiesOk() ([]AmenityFacet, bool) {
 	if o == nil || IsNil(o.Amenities) {
 		return nil, false
 	}
@@ -68,15 +68,15 @@ func (o *HotelSearchFacets) HasAmenities() bool {
 	return false
 }
 
-// SetAmenities gets a reference to the given []HotelAmenityFacet and assigns it to the Amenities field.
-func (o *HotelSearchFacets) SetAmenities(v []HotelAmenityFacet) {
+// SetAmenities gets a reference to the given []AmenityFacet and assigns it to the Amenities field.
+func (o *HotelSearchFacets) SetAmenities(v []AmenityFacet) {
 	o.Amenities = v
 }
 
 // GetAmenityGroups returns the AmenityGroups field value if set, zero value otherwise.
-func (o *HotelSearchFacets) GetAmenityGroups() []HotelAmenityGroupFacet {
+func (o *HotelSearchFacets) GetAmenityGroups() []AmenityGroup {
 	if o == nil || IsNil(o.AmenityGroups) {
-		var ret []HotelAmenityGroupFacet
+		var ret []AmenityGroup
 		return ret
 	}
 	return o.AmenityGroups
@@ -84,7 +84,7 @@ func (o *HotelSearchFacets) GetAmenityGroups() []HotelAmenityGroupFacet {
 
 // GetAmenityGroupsOk returns a tuple with the AmenityGroups field value if set, nil otherwise
 // and a boolean to check if the value has been set.
-func (o *HotelSearchFacets) GetAmenityGroupsOk() ([]HotelAmenityGroupFacet, bool) {
+func (o *HotelSearchFacets) GetAmenityGroupsOk() ([]AmenityGroup, bool) {
 	if o == nil || IsNil(o.AmenityGroups) {
 		return nil, false
 	}
@@ -100,8 +100,8 @@ func (o *HotelSearchFacets) HasAmenityGroups() bool {
 	return false
 }
 
-// SetAmenityGroups gets a reference to the given []HotelAmenityGroupFacet and assigns it to the AmenityGroups field.
-func (o *HotelSearchFacets) SetAmenityGroups(v []HotelAmenityGroupFacet) {
+// SetAmenityGroups gets a reference to the given []AmenityGroup and assigns it to the AmenityGroups field.
+func (o *HotelSearchFacets) SetAmenityGroups(v []AmenityGroup) {
 	o.AmenityGroups = v
 }
 

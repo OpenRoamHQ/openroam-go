@@ -25,7 +25,7 @@ type HotelQuote struct {
 	// One quoted item per request item, in request order.
 	Items []HotelQuoteItem `json:"items,omitempty"`
 	// The sum of each item's `price` times its `quantity`, in the quote currency.
-	Total *MoneyAmount `json:"total,omitempty"`
+	Total *Money `json:"total,omitempty"`
 }
 
 // NewHotelQuote instantiates a new HotelQuote object
@@ -110,9 +110,9 @@ func (o *HotelQuote) SetItems(v []HotelQuoteItem) {
 }
 
 // GetTotal returns the Total field value if set, zero value otherwise.
-func (o *HotelQuote) GetTotal() MoneyAmount {
+func (o *HotelQuote) GetTotal() Money {
 	if o == nil || IsNil(o.Total) {
-		var ret MoneyAmount
+		var ret Money
 		return ret
 	}
 	return *o.Total
@@ -120,7 +120,7 @@ func (o *HotelQuote) GetTotal() MoneyAmount {
 
 // GetTotalOk returns a tuple with the Total field value if set, nil otherwise
 // and a boolean to check if the value has been set.
-func (o *HotelQuote) GetTotalOk() (*MoneyAmount, bool) {
+func (o *HotelQuote) GetTotalOk() (*Money, bool) {
 	if o == nil || IsNil(o.Total) {
 		return nil, false
 	}
@@ -136,8 +136,8 @@ func (o *HotelQuote) HasTotal() bool {
 	return false
 }
 
-// SetTotal gets a reference to the given MoneyAmount and assigns it to the Total field.
-func (o *HotelQuote) SetTotal(v MoneyAmount) {
+// SetTotal gets a reference to the given Money and assigns it to the Total field.
+func (o *HotelQuote) SetTotal(v Money) {
 	o.Total = &v
 }
 

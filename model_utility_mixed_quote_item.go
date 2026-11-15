@@ -26,8 +26,8 @@ type UtilityMixedQuoteItem struct {
 	PublicId string `json:"publicId"`
 	Quantity *int32 `json:"quantity,omitempty"`
 	Name *string `json:"name,omitempty"`
-	Value *MoneyAmount `json:"value,omitempty"`
-	Price *MoneyAmount `json:"price,omitempty"`
+	Value *Money `json:"value,omitempty"`
+	Price *Money `json:"price,omitempty"`
 	// Quoted item facts outside the quote item keys every partner service shares.
 	Details *UtilityQuoteItemDetails `json:"details,omitempty"`
 }
@@ -166,9 +166,9 @@ func (o *UtilityMixedQuoteItem) SetName(v string) {
 }
 
 // GetValue returns the Value field value if set, zero value otherwise.
-func (o *UtilityMixedQuoteItem) GetValue() MoneyAmount {
+func (o *UtilityMixedQuoteItem) GetValue() Money {
 	if o == nil || IsNil(o.Value) {
-		var ret MoneyAmount
+		var ret Money
 		return ret
 	}
 	return *o.Value
@@ -176,7 +176,7 @@ func (o *UtilityMixedQuoteItem) GetValue() MoneyAmount {
 
 // GetValueOk returns a tuple with the Value field value if set, nil otherwise
 // and a boolean to check if the value has been set.
-func (o *UtilityMixedQuoteItem) GetValueOk() (*MoneyAmount, bool) {
+func (o *UtilityMixedQuoteItem) GetValueOk() (*Money, bool) {
 	if o == nil || IsNil(o.Value) {
 		return nil, false
 	}
@@ -192,15 +192,15 @@ func (o *UtilityMixedQuoteItem) HasValue() bool {
 	return false
 }
 
-// SetValue gets a reference to the given MoneyAmount and assigns it to the Value field.
-func (o *UtilityMixedQuoteItem) SetValue(v MoneyAmount) {
+// SetValue gets a reference to the given Money and assigns it to the Value field.
+func (o *UtilityMixedQuoteItem) SetValue(v Money) {
 	o.Value = &v
 }
 
 // GetPrice returns the Price field value if set, zero value otherwise.
-func (o *UtilityMixedQuoteItem) GetPrice() MoneyAmount {
+func (o *UtilityMixedQuoteItem) GetPrice() Money {
 	if o == nil || IsNil(o.Price) {
-		var ret MoneyAmount
+		var ret Money
 		return ret
 	}
 	return *o.Price
@@ -208,7 +208,7 @@ func (o *UtilityMixedQuoteItem) GetPrice() MoneyAmount {
 
 // GetPriceOk returns a tuple with the Price field value if set, nil otherwise
 // and a boolean to check if the value has been set.
-func (o *UtilityMixedQuoteItem) GetPriceOk() (*MoneyAmount, bool) {
+func (o *UtilityMixedQuoteItem) GetPriceOk() (*Money, bool) {
 	if o == nil || IsNil(o.Price) {
 		return nil, false
 	}
@@ -224,8 +224,8 @@ func (o *UtilityMixedQuoteItem) HasPrice() bool {
 	return false
 }
 
-// SetPrice gets a reference to the given MoneyAmount and assigns it to the Price field.
-func (o *UtilityMixedQuoteItem) SetPrice(v MoneyAmount) {
+// SetPrice gets a reference to the given Money and assigns it to the Price field.
+func (o *UtilityMixedQuoteItem) SetPrice(v Money) {
 	o.Price = &v
 }
 

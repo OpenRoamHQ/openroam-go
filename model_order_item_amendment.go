@@ -32,9 +32,9 @@ type OrderItemAmendment struct {
 	// When the amendment was created (UTC).
 	CreatedAt *time.Time `json:"createdAt,omitempty"`
 	// The surcharge for the change.
-	AmountToPay *MoneyAmount `json:"amountToPay,omitempty"`
+	AmountToPay *Money `json:"amountToPay,omitempty"`
 	// The credit for the change.
-	AmountToRefund *MoneyAmount `json:"amountToRefund,omitempty"`
+	AmountToRefund *Money `json:"amountToRefund,omitempty"`
 }
 
 // NewOrderItemAmendment instantiates a new OrderItemAmendment object
@@ -215,9 +215,9 @@ func (o *OrderItemAmendment) SetCreatedAt(v time.Time) {
 }
 
 // GetAmountToPay returns the AmountToPay field value if set, zero value otherwise.
-func (o *OrderItemAmendment) GetAmountToPay() MoneyAmount {
+func (o *OrderItemAmendment) GetAmountToPay() Money {
 	if o == nil || IsNil(o.AmountToPay) {
-		var ret MoneyAmount
+		var ret Money
 		return ret
 	}
 	return *o.AmountToPay
@@ -225,7 +225,7 @@ func (o *OrderItemAmendment) GetAmountToPay() MoneyAmount {
 
 // GetAmountToPayOk returns a tuple with the AmountToPay field value if set, nil otherwise
 // and a boolean to check if the value has been set.
-func (o *OrderItemAmendment) GetAmountToPayOk() (*MoneyAmount, bool) {
+func (o *OrderItemAmendment) GetAmountToPayOk() (*Money, bool) {
 	if o == nil || IsNil(o.AmountToPay) {
 		return nil, false
 	}
@@ -241,15 +241,15 @@ func (o *OrderItemAmendment) HasAmountToPay() bool {
 	return false
 }
 
-// SetAmountToPay gets a reference to the given MoneyAmount and assigns it to the AmountToPay field.
-func (o *OrderItemAmendment) SetAmountToPay(v MoneyAmount) {
+// SetAmountToPay gets a reference to the given Money and assigns it to the AmountToPay field.
+func (o *OrderItemAmendment) SetAmountToPay(v Money) {
 	o.AmountToPay = &v
 }
 
 // GetAmountToRefund returns the AmountToRefund field value if set, zero value otherwise.
-func (o *OrderItemAmendment) GetAmountToRefund() MoneyAmount {
+func (o *OrderItemAmendment) GetAmountToRefund() Money {
 	if o == nil || IsNil(o.AmountToRefund) {
-		var ret MoneyAmount
+		var ret Money
 		return ret
 	}
 	return *o.AmountToRefund
@@ -257,7 +257,7 @@ func (o *OrderItemAmendment) GetAmountToRefund() MoneyAmount {
 
 // GetAmountToRefundOk returns a tuple with the AmountToRefund field value if set, nil otherwise
 // and a boolean to check if the value has been set.
-func (o *OrderItemAmendment) GetAmountToRefundOk() (*MoneyAmount, bool) {
+func (o *OrderItemAmendment) GetAmountToRefundOk() (*Money, bool) {
 	if o == nil || IsNil(o.AmountToRefund) {
 		return nil, false
 	}
@@ -273,8 +273,8 @@ func (o *OrderItemAmendment) HasAmountToRefund() bool {
 	return false
 }
 
-// SetAmountToRefund gets a reference to the given MoneyAmount and assigns it to the AmountToRefund field.
-func (o *OrderItemAmendment) SetAmountToRefund(v MoneyAmount) {
+// SetAmountToRefund gets a reference to the given Money and assigns it to the AmountToRefund field.
+func (o *OrderItemAmendment) SetAmountToRefund(v Money) {
 	o.AmountToRefund = &v
 }
 

@@ -23,7 +23,7 @@ type OrderPaymentWallet struct {
 	// The wallet's label.
 	Label *string `json:"label,omitempty"`
 	// The amount taken, in the wallet's currency.
-	Debited *MoneyAmount `json:"debited,omitempty"`
+	Debited *Money `json:"debited,omitempty"`
 }
 
 // NewOrderPaymentWallet instantiates a new OrderPaymentWallet object
@@ -76,9 +76,9 @@ func (o *OrderPaymentWallet) SetLabel(v string) {
 }
 
 // GetDebited returns the Debited field value if set, zero value otherwise.
-func (o *OrderPaymentWallet) GetDebited() MoneyAmount {
+func (o *OrderPaymentWallet) GetDebited() Money {
 	if o == nil || IsNil(o.Debited) {
-		var ret MoneyAmount
+		var ret Money
 		return ret
 	}
 	return *o.Debited
@@ -86,7 +86,7 @@ func (o *OrderPaymentWallet) GetDebited() MoneyAmount {
 
 // GetDebitedOk returns a tuple with the Debited field value if set, nil otherwise
 // and a boolean to check if the value has been set.
-func (o *OrderPaymentWallet) GetDebitedOk() (*MoneyAmount, bool) {
+func (o *OrderPaymentWallet) GetDebitedOk() (*Money, bool) {
 	if o == nil || IsNil(o.Debited) {
 		return nil, false
 	}
@@ -102,8 +102,8 @@ func (o *OrderPaymentWallet) HasDebited() bool {
 	return false
 }
 
-// SetDebited gets a reference to the given MoneyAmount and assigns it to the Debited field.
-func (o *OrderPaymentWallet) SetDebited(v MoneyAmount) {
+// SetDebited gets a reference to the given Money and assigns it to the Debited field.
+func (o *OrderPaymentWallet) SetDebited(v Money) {
 	o.Debited = &v
 }
 
