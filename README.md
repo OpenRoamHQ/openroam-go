@@ -1,7 +1,7 @@
 <p align="center">
   <picture>
-    <source media="(prefers-color-scheme: dark)" srcset="brand/lockup-color-on-dark.svg" />
-    <img src="brand/lockup-ink.svg" alt="OpenRoam" width="280" />
+    <source media="(prefers-color-scheme: dark)" srcset="brand/OpenRoam_Lockup_Color-On-Dark.svg">
+    <img alt="OpenRoam" src="brand/OpenRoam_Lockup_Ink.svg" width="320">
   </picture>
 </p>
 
