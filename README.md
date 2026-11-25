@@ -44,7 +44,7 @@ hotels, err := client.Hotels.Search(ctx, openroam.NewHotelSearchRequest( /* ... 
 ```
 
 Every product is a field of the client: `Esims`, `Airtime`, `Utilities`, `GiftCards`, `Hotels`, `Flights`, plus `Orders`, `OrderItems`,
-`Wallets`, `Account`, `BrowserSessions`, `Checkouts`, `Currencies`, `Countries` and `MobileNetworks`. Buying always reads `Search`, `Quote`, `Order`; `Get` fetches one thing you own,
+`Wallets`, `Currencies`, `Countries` and `MobileNetworks`. Buying always reads `Search`, `Quote`, `Order`; `Get` fetches one thing you own,
 `List...` returns many, everything else starts with a verb. Every method takes `ctx` first, then the path ids in path order, then the
 request body (a pointer to its model, passed as it is) or the query parameters (a pointer to the method's `...Query` struct; `nil` sends
 none, and a `nil` field is not sent). A client is safe for concurrent use: make one and share it.
