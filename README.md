@@ -1,8 +1,6 @@
 <p align="center">
-  <picture>
-    <source media="(prefers-color-scheme: dark)" srcset="brand/OpenRoam_Lockup_Color-On-Dark.svg">
-    <img alt="OpenRoam" src="brand/OpenRoam_Lockup_Ink.svg" width="320">
-  </picture>
+  <img alt="OpenRoam" src="brand/readme-lockup-light.svg#gh-light-mode-only" width="280" />
+  <img alt="OpenRoam" src="brand/readme-lockup-dark.svg#gh-dark-mode-only" width="280" />
 </p>
 
 # OpenRoam SDK for Go
