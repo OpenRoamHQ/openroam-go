@@ -1,3 +1,8 @@
+<p align="center">
+  <img alt="OpenRoam" src="brand/readme-lockup-light.svg#gh-light-mode-only" width="280" />
+  <img alt="OpenRoam" src="brand/readme-lockup-dark.svg#gh-dark-mode-only" width="280" />
+</p>
+
 # OpenRoam SDK for Go
 
 Official client for the OpenRoam Partner API: eSIMs, airtime, utility payments, gift cards, hotels and flights.
@@ -5,10 +10,17 @@ Official client for the OpenRoam Partner API: eSIMs, airtime, utility payments, 
 ## Install
 
 ```bash
-go get github.com/OpenRoamHQ/openroam-go@v0.1.0-rc.6
+go get github.com/OpenRoamHQ/openroam-go@v0.1.0-rc.7
 ```
 
 > This is a **release candidate**: install it by its exact version, as above; a plain install does not pick it up. Before 1.0 the API can change between minor versions; every change is listed in the [changelog](https://openroamhq.github.io/openroam-sdks/changelog/).
+
+## Environments
+
+Partners use **Sandbox** (`https://api.sandbox.openroam.com`) or **Production** (`https://api.openroam.com`).
+Default is Production. Pass `openroam.WithEnvironment(openroam.Sandbox)` for Sandbox. `WithBaseURL` is an unnamed
+override only — not a third environment. The SDK sends your key as `X-Partner-Key`; a key works only on the environment
+that issued it.
 
 ## Quick start
 
@@ -37,6 +49,9 @@ Every product is a field of the client: `Esims`, `Airtime`, `Utilities`, `GiftCa
 request body (a pointer to its model, passed as it is) or the query parameters (a pointer to the method's `...Query` struct; `nil` sends
 none, and a `nil` field is not sent). A client is safe for concurrent use: make one and share it.
 
+`Checkouts.Confirm` and `Checkouts.Fail` answer a checkout of a site that takes payment on your own page. Send them from your server
+with a client made with that site's confirmation key (`orck_...`): a partner API key gets `403`. No signature headers are sent.
+
 Options when you need them:
 
 ```go
@@ -44,11 +59,11 @@ client, err := openroam.New("key",
 	openroam.WithEnvironment(openroam.Sandbox), // default openroam.Production
 	openroam.WithMaxRetries(3),                 // default 0: no retries
 	openroam.WithHTTPClient(&http.Client{Timeout: 30 * time.Second}),
-	// openroam.WithBaseURL("https://...") to point anywhere else, for example a development host
+	// openroam.WithBaseURL("https://...") // optional unnamed override (not a named environment)
 )
 ```
 
-## Orders are safe to repeat
+## Idempotency
 
 An idempotency key means: if the same request arrives twice, OpenRoam makes one order, not two. `Order` creates a key for you on every call.
 To stay safe even if *your own* program crashes and asks again, pass a UUID generated once and persisted for that purchase, for example your order id if it is a UUID:
@@ -126,7 +141,7 @@ and an `OnRetry` callback for logging) and `NewIdempotencyKey` are also exported
 
 ## Good to know
 
-- **Amounts** are `{ amount, currency }`. `price` is what OpenRoam charges you, `value` what your customer receives.
-- Full API documentation: https://openroam.com (partner portal). Support: support@openroam.com.
+- **Amounts** are `{ amount, currency }`. `price` is what OpenRoam charges you, `value` what your customer receives. Do not do arithmetic on amounts (JSON numbers are floating point in this language).
+- API reference and partner portal: https://openroam.com. Support: support@openroam.com.
 
 The client is generated from the OpenRoam Partner API description, so it always matches the API; `webhooks`, `retry` and the errors are hand-written. MIT licensed.
