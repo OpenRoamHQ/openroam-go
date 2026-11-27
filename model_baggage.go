@@ -23,7 +23,7 @@ var _ MappedNullable = &Baggage{}
 // Baggage struct for Baggage
 type Baggage struct {
 	Type string `json:"type"`
-	Quantity *int32 `json:"quantity,omitempty"`
+	Quantity int32 `json:"quantity"`
 	WeightKg NullableFloat32 `json:"weightKg,omitempty"`
 	Description NullableString `json:"description,omitempty"`
 }
@@ -34,9 +34,10 @@ type _Baggage Baggage
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewBaggage(type_ string) *Baggage {
+func NewBaggage(type_ string, quantity int32) *Baggage {
 	this := Baggage{}
 	this.Type = type_
+	this.Quantity = quantity
 	return &this
 }
 
@@ -72,36 +73,28 @@ func (o *Baggage) SetType(v string) {
 	o.Type = v
 }
 
-// GetQuantity returns the Quantity field value if set, zero value otherwise.
+// GetQuantity returns the Quantity field value
 func (o *Baggage) GetQuantity() int32 {
-	if o == nil || IsNil(o.Quantity) {
+	if o == nil {
 		var ret int32
 		return ret
 	}
-	return *o.Quantity
+
+	return o.Quantity
 }
 
-// GetQuantityOk returns a tuple with the Quantity field value if set, nil otherwise
+// GetQuantityOk returns a tuple with the Quantity field value
 // and a boolean to check if the value has been set.
 func (o *Baggage) GetQuantityOk() (*int32, bool) {
-	if o == nil || IsNil(o.Quantity) {
+	if o == nil {
 		return nil, false
 	}
-	return o.Quantity, true
+	return &o.Quantity, true
 }
 
-// HasQuantity returns a boolean if a field has been set.
-func (o *Baggage) HasQuantity() bool {
-	if o != nil && !IsNil(o.Quantity) {
-		return true
-	}
-
-	return false
-}
-
-// SetQuantity gets a reference to the given int32 and assigns it to the Quantity field.
+// SetQuantity sets field value
 func (o *Baggage) SetQuantity(v int32) {
-	o.Quantity = &v
+	o.Quantity = v
 }
 
 // GetWeightKg returns the WeightKg field value if set, zero value otherwise (both if not set or set to explicit null).
@@ -199,9 +192,7 @@ func (o Baggage) MarshalJSON() ([]byte, error) {
 func (o Baggage) ToMap() (map[string]interface{}, error) {
 	toSerialize := map[string]interface{}{}
 	toSerialize["type"] = o.Type
-	if !IsNil(o.Quantity) {
-		toSerialize["quantity"] = o.Quantity
-	}
+	toSerialize["quantity"] = o.Quantity
 	if o.WeightKg.IsSet() {
 		toSerialize["weightKg"] = o.WeightKg.Get()
 	}
@@ -217,6 +208,7 @@ func (o *Baggage) UnmarshalJSON(data []byte) (err error) {
 	// that every required field exists as a key in the generic map.
 	requiredProperties := []string{
 		"type",
+		"quantity",
 	}
 
 	allProperties := make(map[string]interface{})
@@ -236,7 +228,6 @@ func (o *Baggage) UnmarshalJSON(data []byte) (err error) {
 	varBaggage := _Baggage{}
 
 	decoder := json.NewDecoder(bytes.NewReader(data))
-	decoder.DisallowUnknownFields()
 	err = decoder.Decode(&varBaggage)
 
 	if err != nil {

@@ -13,6 +13,7 @@ package openroam
 
 import (
 	"encoding/json"
+	"time"
 	"bytes"
 	"fmt"
 )
@@ -20,18 +21,32 @@ import (
 // checks if the HotelQuoteItem type satisfies the MappedNullable interface at compile time
 var _ MappedNullable = &HotelQuoteItem{}
 
-// HotelQuoteItem One quoted rate, at its current price. A hotel stay has no monetary value, so the item has no `value`.
+// HotelQuoteItem One quoted rate, at its current price, with the quoted stay and the rate's terms. A hotel stay has no monetary value, so the item has no `value`.
 type HotelQuoteItem struct {
-	// A new opaque offer ID (`hotel_…`) for the rate at this price, which replaces the one the request sent: order with it before `details.expiresAt`.
+	// A new opaque offer ID (`rate_…`) for the rate at this price, which replaces the one the request sent: order with it before `expiresAt`.
 	PublicId string `json:"publicId"`
 	// Always 1: an item books one rate.
-	Quantity *int32 `json:"quantity,omitempty"`
+	Quantity int32 `json:"quantity"`
 	// `\"{hotel} · {offer}\"`, the hotel's name and the offer's name, for example `Hotel Arts Barcelona · Deluxe King, Breakfast, Free cancellation`.
-	Name *string `json:"name,omitempty"`
+	Name string `json:"name"`
 	// Price for the whole stay, all rooms and nights, in the quote currency. An order of the returned `publicId` without `inputs.maxPrice` is refused if the rate then costs more.
-	Price *Money `json:"price,omitempty"`
-	// The quoted stay and the rate's terms.
-	Details *HotelQuoteItemDetails `json:"details,omitempty"`
+	Price Money `json:"price"`
+	// The rate's taxes: `included` in `price`, with the in-price total when the rate states it complete, and a line per tax it states, in the price (`prepaid`) or paid at the hotel (`onSite`).
+	Taxes TaxSummary `json:"taxes"`
+	// When the returned `publicId` stops being accepted (UTC): at most 30 minutes after the quote, and never after an expiry the hotel system states.
+	ExpiresAt time.Time `json:"expiresAt"`
+	// `confirmed` when the rate is confirmed; `onRequest` when it is held only on request, which an order refuses with 409 / 11003.
+	Availability string `json:"availability"`
+	// The searched check-in date.
+	CheckInDate string `json:"checkInDate"`
+	// The searched check-out date.
+	CheckOutDate string `json:"checkOutDate"`
+	// The searched rooms, in search order: adults, children and child ages.
+	RequestedRooms []RoomOccupancy `json:"requestedRooms"`
+	// How the stay is paid, what cancelling gives back and whether it can be changed, as quoted, in the quote currency and with OpenRoam's fees included. Each cancellation instant is also stated on the hotel's clock.
+	Terms BookingTerms `json:"terms"`
+	// The rate as quoted: rooms, board, nightly prices and surcharges. The quote's surcharges are the binding list.
+	Rate QuotedRate `json:"rate"`
 }
 
 type _HotelQuoteItem HotelQuoteItem
@@ -40,9 +55,20 @@ type _HotelQuoteItem HotelQuoteItem
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewHotelQuoteItem(publicId string) *HotelQuoteItem {
+func NewHotelQuoteItem(publicId string, quantity int32, name string, price Money, taxes TaxSummary, expiresAt time.Time, availability string, checkInDate string, checkOutDate string, requestedRooms []RoomOccupancy, terms BookingTerms, rate QuotedRate) *HotelQuoteItem {
 	this := HotelQuoteItem{}
 	this.PublicId = publicId
+	this.Quantity = quantity
+	this.Name = name
+	this.Price = price
+	this.Taxes = taxes
+	this.ExpiresAt = expiresAt
+	this.Availability = availability
+	this.CheckInDate = checkInDate
+	this.CheckOutDate = checkOutDate
+	this.RequestedRooms = requestedRooms
+	this.Terms = terms
+	this.Rate = rate
 	return &this
 }
 
@@ -78,132 +104,268 @@ func (o *HotelQuoteItem) SetPublicId(v string) {
 	o.PublicId = v
 }
 
-// GetQuantity returns the Quantity field value if set, zero value otherwise.
+// GetQuantity returns the Quantity field value
 func (o *HotelQuoteItem) GetQuantity() int32 {
-	if o == nil || IsNil(o.Quantity) {
+	if o == nil {
 		var ret int32
 		return ret
 	}
-	return *o.Quantity
+
+	return o.Quantity
 }
 
-// GetQuantityOk returns a tuple with the Quantity field value if set, nil otherwise
+// GetQuantityOk returns a tuple with the Quantity field value
 // and a boolean to check if the value has been set.
 func (o *HotelQuoteItem) GetQuantityOk() (*int32, bool) {
-	if o == nil || IsNil(o.Quantity) {
+	if o == nil {
 		return nil, false
 	}
-	return o.Quantity, true
+	return &o.Quantity, true
 }
 
-// HasQuantity returns a boolean if a field has been set.
-func (o *HotelQuoteItem) HasQuantity() bool {
-	if o != nil && !IsNil(o.Quantity) {
-		return true
-	}
-
-	return false
-}
-
-// SetQuantity gets a reference to the given int32 and assigns it to the Quantity field.
+// SetQuantity sets field value
 func (o *HotelQuoteItem) SetQuantity(v int32) {
-	o.Quantity = &v
+	o.Quantity = v
 }
 
-// GetName returns the Name field value if set, zero value otherwise.
+// GetName returns the Name field value
 func (o *HotelQuoteItem) GetName() string {
-	if o == nil || IsNil(o.Name) {
+	if o == nil {
 		var ret string
 		return ret
 	}
-	return *o.Name
+
+	return o.Name
 }
 
-// GetNameOk returns a tuple with the Name field value if set, nil otherwise
+// GetNameOk returns a tuple with the Name field value
 // and a boolean to check if the value has been set.
 func (o *HotelQuoteItem) GetNameOk() (*string, bool) {
-	if o == nil || IsNil(o.Name) {
+	if o == nil {
 		return nil, false
 	}
-	return o.Name, true
+	return &o.Name, true
 }
 
-// HasName returns a boolean if a field has been set.
-func (o *HotelQuoteItem) HasName() bool {
-	if o != nil && !IsNil(o.Name) {
-		return true
-	}
-
-	return false
-}
-
-// SetName gets a reference to the given string and assigns it to the Name field.
+// SetName sets field value
 func (o *HotelQuoteItem) SetName(v string) {
-	o.Name = &v
+	o.Name = v
 }
 
-// GetPrice returns the Price field value if set, zero value otherwise.
+// GetPrice returns the Price field value
 func (o *HotelQuoteItem) GetPrice() Money {
-	if o == nil || IsNil(o.Price) {
+	if o == nil {
 		var ret Money
 		return ret
 	}
-	return *o.Price
+
+	return o.Price
 }
 
-// GetPriceOk returns a tuple with the Price field value if set, nil otherwise
+// GetPriceOk returns a tuple with the Price field value
 // and a boolean to check if the value has been set.
 func (o *HotelQuoteItem) GetPriceOk() (*Money, bool) {
-	if o == nil || IsNil(o.Price) {
+	if o == nil {
 		return nil, false
 	}
-	return o.Price, true
+	return &o.Price, true
 }
 
-// HasPrice returns a boolean if a field has been set.
-func (o *HotelQuoteItem) HasPrice() bool {
-	if o != nil && !IsNil(o.Price) {
-		return true
-	}
-
-	return false
-}
-
-// SetPrice gets a reference to the given Money and assigns it to the Price field.
+// SetPrice sets field value
 func (o *HotelQuoteItem) SetPrice(v Money) {
-	o.Price = &v
+	o.Price = v
 }
 
-// GetDetails returns the Details field value if set, zero value otherwise.
-func (o *HotelQuoteItem) GetDetails() HotelQuoteItemDetails {
-	if o == nil || IsNil(o.Details) {
-		var ret HotelQuoteItemDetails
+// GetTaxes returns the Taxes field value
+func (o *HotelQuoteItem) GetTaxes() TaxSummary {
+	if o == nil {
+		var ret TaxSummary
 		return ret
 	}
-	return *o.Details
+
+	return o.Taxes
 }
 
-// GetDetailsOk returns a tuple with the Details field value if set, nil otherwise
+// GetTaxesOk returns a tuple with the Taxes field value
 // and a boolean to check if the value has been set.
-func (o *HotelQuoteItem) GetDetailsOk() (*HotelQuoteItemDetails, bool) {
-	if o == nil || IsNil(o.Details) {
+func (o *HotelQuoteItem) GetTaxesOk() (*TaxSummary, bool) {
+	if o == nil {
 		return nil, false
 	}
-	return o.Details, true
+	return &o.Taxes, true
 }
 
-// HasDetails returns a boolean if a field has been set.
-func (o *HotelQuoteItem) HasDetails() bool {
-	if o != nil && !IsNil(o.Details) {
-		return true
+// SetTaxes sets field value
+func (o *HotelQuoteItem) SetTaxes(v TaxSummary) {
+	o.Taxes = v
+}
+
+// GetExpiresAt returns the ExpiresAt field value
+func (o *HotelQuoteItem) GetExpiresAt() time.Time {
+	if o == nil {
+		var ret time.Time
+		return ret
 	}
 
-	return false
+	return o.ExpiresAt
 }
 
-// SetDetails gets a reference to the given HotelQuoteItemDetails and assigns it to the Details field.
-func (o *HotelQuoteItem) SetDetails(v HotelQuoteItemDetails) {
-	o.Details = &v
+// GetExpiresAtOk returns a tuple with the ExpiresAt field value
+// and a boolean to check if the value has been set.
+func (o *HotelQuoteItem) GetExpiresAtOk() (*time.Time, bool) {
+	if o == nil {
+		return nil, false
+	}
+	return &o.ExpiresAt, true
+}
+
+// SetExpiresAt sets field value
+func (o *HotelQuoteItem) SetExpiresAt(v time.Time) {
+	o.ExpiresAt = v
+}
+
+// GetAvailability returns the Availability field value
+func (o *HotelQuoteItem) GetAvailability() string {
+	if o == nil {
+		var ret string
+		return ret
+	}
+
+	return o.Availability
+}
+
+// GetAvailabilityOk returns a tuple with the Availability field value
+// and a boolean to check if the value has been set.
+func (o *HotelQuoteItem) GetAvailabilityOk() (*string, bool) {
+	if o == nil {
+		return nil, false
+	}
+	return &o.Availability, true
+}
+
+// SetAvailability sets field value
+func (o *HotelQuoteItem) SetAvailability(v string) {
+	o.Availability = v
+}
+
+// GetCheckInDate returns the CheckInDate field value
+func (o *HotelQuoteItem) GetCheckInDate() string {
+	if o == nil {
+		var ret string
+		return ret
+	}
+
+	return o.CheckInDate
+}
+
+// GetCheckInDateOk returns a tuple with the CheckInDate field value
+// and a boolean to check if the value has been set.
+func (o *HotelQuoteItem) GetCheckInDateOk() (*string, bool) {
+	if o == nil {
+		return nil, false
+	}
+	return &o.CheckInDate, true
+}
+
+// SetCheckInDate sets field value
+func (o *HotelQuoteItem) SetCheckInDate(v string) {
+	o.CheckInDate = v
+}
+
+// GetCheckOutDate returns the CheckOutDate field value
+func (o *HotelQuoteItem) GetCheckOutDate() string {
+	if o == nil {
+		var ret string
+		return ret
+	}
+
+	return o.CheckOutDate
+}
+
+// GetCheckOutDateOk returns a tuple with the CheckOutDate field value
+// and a boolean to check if the value has been set.
+func (o *HotelQuoteItem) GetCheckOutDateOk() (*string, bool) {
+	if o == nil {
+		return nil, false
+	}
+	return &o.CheckOutDate, true
+}
+
+// SetCheckOutDate sets field value
+func (o *HotelQuoteItem) SetCheckOutDate(v string) {
+	o.CheckOutDate = v
+}
+
+// GetRequestedRooms returns the RequestedRooms field value
+func (o *HotelQuoteItem) GetRequestedRooms() []RoomOccupancy {
+	if o == nil {
+		var ret []RoomOccupancy
+		return ret
+	}
+
+	return o.RequestedRooms
+}
+
+// GetRequestedRoomsOk returns a tuple with the RequestedRooms field value
+// and a boolean to check if the value has been set.
+func (o *HotelQuoteItem) GetRequestedRoomsOk() ([]RoomOccupancy, bool) {
+	if o == nil {
+		return nil, false
+	}
+	return o.RequestedRooms, true
+}
+
+// SetRequestedRooms sets field value
+func (o *HotelQuoteItem) SetRequestedRooms(v []RoomOccupancy) {
+	o.RequestedRooms = v
+}
+
+// GetTerms returns the Terms field value
+func (o *HotelQuoteItem) GetTerms() BookingTerms {
+	if o == nil {
+		var ret BookingTerms
+		return ret
+	}
+
+	return o.Terms
+}
+
+// GetTermsOk returns a tuple with the Terms field value
+// and a boolean to check if the value has been set.
+func (o *HotelQuoteItem) GetTermsOk() (*BookingTerms, bool) {
+	if o == nil {
+		return nil, false
+	}
+	return &o.Terms, true
+}
+
+// SetTerms sets field value
+func (o *HotelQuoteItem) SetTerms(v BookingTerms) {
+	o.Terms = v
+}
+
+// GetRate returns the Rate field value
+func (o *HotelQuoteItem) GetRate() QuotedRate {
+	if o == nil {
+		var ret QuotedRate
+		return ret
+	}
+
+	return o.Rate
+}
+
+// GetRateOk returns a tuple with the Rate field value
+// and a boolean to check if the value has been set.
+func (o *HotelQuoteItem) GetRateOk() (*QuotedRate, bool) {
+	if o == nil {
+		return nil, false
+	}
+	return &o.Rate, true
+}
+
+// SetRate sets field value
+func (o *HotelQuoteItem) SetRate(v QuotedRate) {
+	o.Rate = v
 }
 
 func (o HotelQuoteItem) MarshalJSON() ([]byte, error) {
@@ -217,18 +379,17 @@ func (o HotelQuoteItem) MarshalJSON() ([]byte, error) {
 func (o HotelQuoteItem) ToMap() (map[string]interface{}, error) {
 	toSerialize := map[string]interface{}{}
 	toSerialize["publicId"] = o.PublicId
-	if !IsNil(o.Quantity) {
-		toSerialize["quantity"] = o.Quantity
-	}
-	if !IsNil(o.Name) {
-		toSerialize["name"] = o.Name
-	}
-	if !IsNil(o.Price) {
-		toSerialize["price"] = o.Price
-	}
-	if !IsNil(o.Details) {
-		toSerialize["details"] = o.Details
-	}
+	toSerialize["quantity"] = o.Quantity
+	toSerialize["name"] = o.Name
+	toSerialize["price"] = o.Price
+	toSerialize["taxes"] = o.Taxes
+	toSerialize["expiresAt"] = o.ExpiresAt
+	toSerialize["availability"] = o.Availability
+	toSerialize["checkInDate"] = o.CheckInDate
+	toSerialize["checkOutDate"] = o.CheckOutDate
+	toSerialize["requestedRooms"] = o.RequestedRooms
+	toSerialize["terms"] = o.Terms
+	toSerialize["rate"] = o.Rate
 	return toSerialize, nil
 }
 
@@ -238,6 +399,17 @@ func (o *HotelQuoteItem) UnmarshalJSON(data []byte) (err error) {
 	// that every required field exists as a key in the generic map.
 	requiredProperties := []string{
 		"publicId",
+		"quantity",
+		"name",
+		"price",
+		"taxes",
+		"expiresAt",
+		"availability",
+		"checkInDate",
+		"checkOutDate",
+		"requestedRooms",
+		"terms",
+		"rate",
 	}
 
 	allProperties := make(map[string]interface{})
@@ -257,7 +429,6 @@ func (o *HotelQuoteItem) UnmarshalJSON(data []byte) (err error) {
 	varHotelQuoteItem := _HotelQuoteItem{}
 
 	decoder := json.NewDecoder(bytes.NewReader(data))
-	decoder.DisallowUnknownFields()
 	err = decoder.Decode(&varHotelQuoteItem)
 
 	if err != nil {

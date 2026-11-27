@@ -13,6 +13,8 @@ package openroam
 
 import (
 	"encoding/json"
+	"bytes"
+	"fmt"
 )
 
 // checks if the SeatMapSection type satisfies the MappedNullable interface at compile time
@@ -20,15 +22,18 @@ var _ MappedNullable = &SeatMapSection{}
 
 // SeatMapSection struct for SeatMapSection
 type SeatMapSection struct {
-	Elements []SeatMapElement `json:"elements,omitempty"`
+	Elements []SeatMapElement `json:"elements"`
 }
+
+type _SeatMapSection SeatMapSection
 
 // NewSeatMapSection instantiates a new SeatMapSection object
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewSeatMapSection() *SeatMapSection {
+func NewSeatMapSection(elements []SeatMapElement) *SeatMapSection {
 	this := SeatMapSection{}
+	this.Elements = elements
 	return &this
 }
 
@@ -40,34 +45,26 @@ func NewSeatMapSectionWithDefaults() *SeatMapSection {
 	return &this
 }
 
-// GetElements returns the Elements field value if set, zero value otherwise.
+// GetElements returns the Elements field value
 func (o *SeatMapSection) GetElements() []SeatMapElement {
-	if o == nil || IsNil(o.Elements) {
+	if o == nil {
 		var ret []SeatMapElement
 		return ret
 	}
+
 	return o.Elements
 }
 
-// GetElementsOk returns a tuple with the Elements field value if set, nil otherwise
+// GetElementsOk returns a tuple with the Elements field value
 // and a boolean to check if the value has been set.
 func (o *SeatMapSection) GetElementsOk() ([]SeatMapElement, bool) {
-	if o == nil || IsNil(o.Elements) {
+	if o == nil {
 		return nil, false
 	}
 	return o.Elements, true
 }
 
-// HasElements returns a boolean if a field has been set.
-func (o *SeatMapSection) HasElements() bool {
-	if o != nil && !IsNil(o.Elements) {
-		return true
-	}
-
-	return false
-}
-
-// SetElements gets a reference to the given []SeatMapElement and assigns it to the Elements field.
+// SetElements sets field value
 func (o *SeatMapSection) SetElements(v []SeatMapElement) {
 	o.Elements = v
 }
@@ -82,10 +79,44 @@ func (o SeatMapSection) MarshalJSON() ([]byte, error) {
 
 func (o SeatMapSection) ToMap() (map[string]interface{}, error) {
 	toSerialize := map[string]interface{}{}
-	if !IsNil(o.Elements) {
-		toSerialize["elements"] = o.Elements
-	}
+	toSerialize["elements"] = o.Elements
 	return toSerialize, nil
+}
+
+func (o *SeatMapSection) UnmarshalJSON(data []byte) (err error) {
+	// This validates that all required properties are included in the JSON object
+	// by unmarshalling the object into a generic map with string keys and checking
+	// that every required field exists as a key in the generic map.
+	requiredProperties := []string{
+		"elements",
+	}
+
+	allProperties := make(map[string]interface{})
+
+	err = json.Unmarshal(data, &allProperties)
+
+	if err != nil {
+		return err;
+	}
+
+	for _, requiredProperty := range(requiredProperties) {
+		if _, exists := allProperties[requiredProperty]; !exists {
+			return fmt.Errorf("no value given for required property %v", requiredProperty)
+		}
+	}
+
+	varSeatMapSection := _SeatMapSection{}
+
+	decoder := json.NewDecoder(bytes.NewReader(data))
+	err = decoder.Decode(&varSeatMapSection)
+
+	if err != nil {
+		return err
+	}
+
+	*o = SeatMapSection(varSeatMapSection)
+
+	return err
 }
 
 type NullableSeatMapSection struct {

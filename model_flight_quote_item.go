@@ -13,6 +13,7 @@ package openroam
 
 import (
 	"encoding/json"
+	"time"
 	"bytes"
 	"fmt"
 )
@@ -20,18 +21,32 @@ import (
 // checks if the FlightQuoteItem type satisfies the MappedNullable interface at compile time
 var _ MappedNullable = &FlightQuoteItem{}
 
-// FlightQuoteItem One quoted fare. Flights sell no monetary value, so the item has no `value`.
+// FlightQuoteItem One quoted fare, with its terms, its bookable extras and the other fares on the same flights. Flights sell no monetary value, so the item has no `value`. Positions (`passengerIndexes`, `sliceIndex`, `segmentIndex`) are 1-based, as in search.
 type FlightQuoteItem struct {
-	// The new `publicId` of the fare: it keeps `price`'s fare price, without paid extras, as the cap of an order without `inputs.maxPrice`, and expires at `details.expiresAt`.
+	// The new `publicId` of the fare: it keeps `price`'s fare price, without paid extras, as the cap of an order without `inputs.maxPrice`, and expires at `expiresAt`.
 	PublicId string `json:"publicId"`
 	// Always 1.
-	Quantity *int32 `json:"quantity,omitempty"`
+	Quantity int32 `json:"quantity"`
 	// \"{route} · {dates} · {fare}\", for example \"LHR ⇄ JFK · 12–19 Dec · Economy Basic\".
-	Name *string `json:"name,omitempty"`
+	Name string `json:"name"`
 	// The unit price the order charges now for all passengers: the fare with its taxes, plus the paid extras in the item's `inputs` when they are sent.
-	Price *Money `json:"price,omitempty"`
-	// The fare's terms, its bookable extras and the other fares on the same flights.
-	Details *FlightQuoteItemDetails `json:"details,omitempty"`
+	Price Money `json:"price"`
+	// The airline's taxes inside `price`: always `included`, with the fare's lines. The amount is the airline's tax when it states one and `price` holds no paid extra, whose tax it does not state; otherwise null.
+	Taxes TaxSummary `json:"taxes"`
+	// When the item's `publicId` and its services' ids expire; order before then.
+	ExpiresAt time.Time `json:"expiresAt"`
+	// When the airline priced the fare for this quote.
+	QuotedAt time.Time `json:"quotedAt"`
+	// Whether the seat map of the item's `publicId` offers seats to choose.
+	HasSeatMaps bool `json:"hasSeatMaps"`
+	// How the item is paid (always `payNow`), what cancelling it gives back and whether it can be changed, on the item's price (the fare and any paid extras) in the quote currency, OpenRoam's fees included. The order item keeps them. Each cancellation instant is also stated on the clock of the first departure airport.
+	Terms BookingTerms `json:"terms"`
+	// Baggage included for every passenger.
+	IncludedBaggage []Baggage `json:"includedBaggage"`
+	// Paid extras such as bags. Send a service's `id` in the order's `inputs.selectedServices`.
+	AvailableServices []AvailableService `json:"availableServices"`
+	// The fares on the same flights sold by the same airline, cheapest first and including the quoted one, each with its own `publicId` to quote or order.
+	FareOptions []FareOption `json:"fareOptions"`
 }
 
 type _FlightQuoteItem FlightQuoteItem
@@ -40,9 +55,20 @@ type _FlightQuoteItem FlightQuoteItem
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewFlightQuoteItem(publicId string) *FlightQuoteItem {
+func NewFlightQuoteItem(publicId string, quantity int32, name string, price Money, taxes TaxSummary, expiresAt time.Time, quotedAt time.Time, hasSeatMaps bool, terms BookingTerms, includedBaggage []Baggage, availableServices []AvailableService, fareOptions []FareOption) *FlightQuoteItem {
 	this := FlightQuoteItem{}
 	this.PublicId = publicId
+	this.Quantity = quantity
+	this.Name = name
+	this.Price = price
+	this.Taxes = taxes
+	this.ExpiresAt = expiresAt
+	this.QuotedAt = quotedAt
+	this.HasSeatMaps = hasSeatMaps
+	this.Terms = terms
+	this.IncludedBaggage = includedBaggage
+	this.AvailableServices = availableServices
+	this.FareOptions = fareOptions
 	return &this
 }
 
@@ -78,132 +104,268 @@ func (o *FlightQuoteItem) SetPublicId(v string) {
 	o.PublicId = v
 }
 
-// GetQuantity returns the Quantity field value if set, zero value otherwise.
+// GetQuantity returns the Quantity field value
 func (o *FlightQuoteItem) GetQuantity() int32 {
-	if o == nil || IsNil(o.Quantity) {
+	if o == nil {
 		var ret int32
 		return ret
 	}
-	return *o.Quantity
+
+	return o.Quantity
 }
 
-// GetQuantityOk returns a tuple with the Quantity field value if set, nil otherwise
+// GetQuantityOk returns a tuple with the Quantity field value
 // and a boolean to check if the value has been set.
 func (o *FlightQuoteItem) GetQuantityOk() (*int32, bool) {
-	if o == nil || IsNil(o.Quantity) {
+	if o == nil {
 		return nil, false
 	}
-	return o.Quantity, true
+	return &o.Quantity, true
 }
 
-// HasQuantity returns a boolean if a field has been set.
-func (o *FlightQuoteItem) HasQuantity() bool {
-	if o != nil && !IsNil(o.Quantity) {
-		return true
-	}
-
-	return false
-}
-
-// SetQuantity gets a reference to the given int32 and assigns it to the Quantity field.
+// SetQuantity sets field value
 func (o *FlightQuoteItem) SetQuantity(v int32) {
-	o.Quantity = &v
+	o.Quantity = v
 }
 
-// GetName returns the Name field value if set, zero value otherwise.
+// GetName returns the Name field value
 func (o *FlightQuoteItem) GetName() string {
-	if o == nil || IsNil(o.Name) {
+	if o == nil {
 		var ret string
 		return ret
 	}
-	return *o.Name
+
+	return o.Name
 }
 
-// GetNameOk returns a tuple with the Name field value if set, nil otherwise
+// GetNameOk returns a tuple with the Name field value
 // and a boolean to check if the value has been set.
 func (o *FlightQuoteItem) GetNameOk() (*string, bool) {
-	if o == nil || IsNil(o.Name) {
+	if o == nil {
 		return nil, false
 	}
-	return o.Name, true
+	return &o.Name, true
 }
 
-// HasName returns a boolean if a field has been set.
-func (o *FlightQuoteItem) HasName() bool {
-	if o != nil && !IsNil(o.Name) {
-		return true
-	}
-
-	return false
-}
-
-// SetName gets a reference to the given string and assigns it to the Name field.
+// SetName sets field value
 func (o *FlightQuoteItem) SetName(v string) {
-	o.Name = &v
+	o.Name = v
 }
 
-// GetPrice returns the Price field value if set, zero value otherwise.
+// GetPrice returns the Price field value
 func (o *FlightQuoteItem) GetPrice() Money {
-	if o == nil || IsNil(o.Price) {
+	if o == nil {
 		var ret Money
 		return ret
 	}
-	return *o.Price
+
+	return o.Price
 }
 
-// GetPriceOk returns a tuple with the Price field value if set, nil otherwise
+// GetPriceOk returns a tuple with the Price field value
 // and a boolean to check if the value has been set.
 func (o *FlightQuoteItem) GetPriceOk() (*Money, bool) {
-	if o == nil || IsNil(o.Price) {
+	if o == nil {
 		return nil, false
 	}
-	return o.Price, true
+	return &o.Price, true
 }
 
-// HasPrice returns a boolean if a field has been set.
-func (o *FlightQuoteItem) HasPrice() bool {
-	if o != nil && !IsNil(o.Price) {
-		return true
-	}
-
-	return false
-}
-
-// SetPrice gets a reference to the given Money and assigns it to the Price field.
+// SetPrice sets field value
 func (o *FlightQuoteItem) SetPrice(v Money) {
-	o.Price = &v
+	o.Price = v
 }
 
-// GetDetails returns the Details field value if set, zero value otherwise.
-func (o *FlightQuoteItem) GetDetails() FlightQuoteItemDetails {
-	if o == nil || IsNil(o.Details) {
-		var ret FlightQuoteItemDetails
+// GetTaxes returns the Taxes field value
+func (o *FlightQuoteItem) GetTaxes() TaxSummary {
+	if o == nil {
+		var ret TaxSummary
 		return ret
 	}
-	return *o.Details
+
+	return o.Taxes
 }
 
-// GetDetailsOk returns a tuple with the Details field value if set, nil otherwise
+// GetTaxesOk returns a tuple with the Taxes field value
 // and a boolean to check if the value has been set.
-func (o *FlightQuoteItem) GetDetailsOk() (*FlightQuoteItemDetails, bool) {
-	if o == nil || IsNil(o.Details) {
+func (o *FlightQuoteItem) GetTaxesOk() (*TaxSummary, bool) {
+	if o == nil {
 		return nil, false
 	}
-	return o.Details, true
+	return &o.Taxes, true
 }
 
-// HasDetails returns a boolean if a field has been set.
-func (o *FlightQuoteItem) HasDetails() bool {
-	if o != nil && !IsNil(o.Details) {
-		return true
+// SetTaxes sets field value
+func (o *FlightQuoteItem) SetTaxes(v TaxSummary) {
+	o.Taxes = v
+}
+
+// GetExpiresAt returns the ExpiresAt field value
+func (o *FlightQuoteItem) GetExpiresAt() time.Time {
+	if o == nil {
+		var ret time.Time
+		return ret
 	}
 
-	return false
+	return o.ExpiresAt
 }
 
-// SetDetails gets a reference to the given FlightQuoteItemDetails and assigns it to the Details field.
-func (o *FlightQuoteItem) SetDetails(v FlightQuoteItemDetails) {
-	o.Details = &v
+// GetExpiresAtOk returns a tuple with the ExpiresAt field value
+// and a boolean to check if the value has been set.
+func (o *FlightQuoteItem) GetExpiresAtOk() (*time.Time, bool) {
+	if o == nil {
+		return nil, false
+	}
+	return &o.ExpiresAt, true
+}
+
+// SetExpiresAt sets field value
+func (o *FlightQuoteItem) SetExpiresAt(v time.Time) {
+	o.ExpiresAt = v
+}
+
+// GetQuotedAt returns the QuotedAt field value
+func (o *FlightQuoteItem) GetQuotedAt() time.Time {
+	if o == nil {
+		var ret time.Time
+		return ret
+	}
+
+	return o.QuotedAt
+}
+
+// GetQuotedAtOk returns a tuple with the QuotedAt field value
+// and a boolean to check if the value has been set.
+func (o *FlightQuoteItem) GetQuotedAtOk() (*time.Time, bool) {
+	if o == nil {
+		return nil, false
+	}
+	return &o.QuotedAt, true
+}
+
+// SetQuotedAt sets field value
+func (o *FlightQuoteItem) SetQuotedAt(v time.Time) {
+	o.QuotedAt = v
+}
+
+// GetHasSeatMaps returns the HasSeatMaps field value
+func (o *FlightQuoteItem) GetHasSeatMaps() bool {
+	if o == nil {
+		var ret bool
+		return ret
+	}
+
+	return o.HasSeatMaps
+}
+
+// GetHasSeatMapsOk returns a tuple with the HasSeatMaps field value
+// and a boolean to check if the value has been set.
+func (o *FlightQuoteItem) GetHasSeatMapsOk() (*bool, bool) {
+	if o == nil {
+		return nil, false
+	}
+	return &o.HasSeatMaps, true
+}
+
+// SetHasSeatMaps sets field value
+func (o *FlightQuoteItem) SetHasSeatMaps(v bool) {
+	o.HasSeatMaps = v
+}
+
+// GetTerms returns the Terms field value
+func (o *FlightQuoteItem) GetTerms() BookingTerms {
+	if o == nil {
+		var ret BookingTerms
+		return ret
+	}
+
+	return o.Terms
+}
+
+// GetTermsOk returns a tuple with the Terms field value
+// and a boolean to check if the value has been set.
+func (o *FlightQuoteItem) GetTermsOk() (*BookingTerms, bool) {
+	if o == nil {
+		return nil, false
+	}
+	return &o.Terms, true
+}
+
+// SetTerms sets field value
+func (o *FlightQuoteItem) SetTerms(v BookingTerms) {
+	o.Terms = v
+}
+
+// GetIncludedBaggage returns the IncludedBaggage field value
+func (o *FlightQuoteItem) GetIncludedBaggage() []Baggage {
+	if o == nil {
+		var ret []Baggage
+		return ret
+	}
+
+	return o.IncludedBaggage
+}
+
+// GetIncludedBaggageOk returns a tuple with the IncludedBaggage field value
+// and a boolean to check if the value has been set.
+func (o *FlightQuoteItem) GetIncludedBaggageOk() ([]Baggage, bool) {
+	if o == nil {
+		return nil, false
+	}
+	return o.IncludedBaggage, true
+}
+
+// SetIncludedBaggage sets field value
+func (o *FlightQuoteItem) SetIncludedBaggage(v []Baggage) {
+	o.IncludedBaggage = v
+}
+
+// GetAvailableServices returns the AvailableServices field value
+func (o *FlightQuoteItem) GetAvailableServices() []AvailableService {
+	if o == nil {
+		var ret []AvailableService
+		return ret
+	}
+
+	return o.AvailableServices
+}
+
+// GetAvailableServicesOk returns a tuple with the AvailableServices field value
+// and a boolean to check if the value has been set.
+func (o *FlightQuoteItem) GetAvailableServicesOk() ([]AvailableService, bool) {
+	if o == nil {
+		return nil, false
+	}
+	return o.AvailableServices, true
+}
+
+// SetAvailableServices sets field value
+func (o *FlightQuoteItem) SetAvailableServices(v []AvailableService) {
+	o.AvailableServices = v
+}
+
+// GetFareOptions returns the FareOptions field value
+func (o *FlightQuoteItem) GetFareOptions() []FareOption {
+	if o == nil {
+		var ret []FareOption
+		return ret
+	}
+
+	return o.FareOptions
+}
+
+// GetFareOptionsOk returns a tuple with the FareOptions field value
+// and a boolean to check if the value has been set.
+func (o *FlightQuoteItem) GetFareOptionsOk() ([]FareOption, bool) {
+	if o == nil {
+		return nil, false
+	}
+	return o.FareOptions, true
+}
+
+// SetFareOptions sets field value
+func (o *FlightQuoteItem) SetFareOptions(v []FareOption) {
+	o.FareOptions = v
 }
 
 func (o FlightQuoteItem) MarshalJSON() ([]byte, error) {
@@ -217,18 +379,17 @@ func (o FlightQuoteItem) MarshalJSON() ([]byte, error) {
 func (o FlightQuoteItem) ToMap() (map[string]interface{}, error) {
 	toSerialize := map[string]interface{}{}
 	toSerialize["publicId"] = o.PublicId
-	if !IsNil(o.Quantity) {
-		toSerialize["quantity"] = o.Quantity
-	}
-	if !IsNil(o.Name) {
-		toSerialize["name"] = o.Name
-	}
-	if !IsNil(o.Price) {
-		toSerialize["price"] = o.Price
-	}
-	if !IsNil(o.Details) {
-		toSerialize["details"] = o.Details
-	}
+	toSerialize["quantity"] = o.Quantity
+	toSerialize["name"] = o.Name
+	toSerialize["price"] = o.Price
+	toSerialize["taxes"] = o.Taxes
+	toSerialize["expiresAt"] = o.ExpiresAt
+	toSerialize["quotedAt"] = o.QuotedAt
+	toSerialize["hasSeatMaps"] = o.HasSeatMaps
+	toSerialize["terms"] = o.Terms
+	toSerialize["includedBaggage"] = o.IncludedBaggage
+	toSerialize["availableServices"] = o.AvailableServices
+	toSerialize["fareOptions"] = o.FareOptions
 	return toSerialize, nil
 }
 
@@ -238,6 +399,17 @@ func (o *FlightQuoteItem) UnmarshalJSON(data []byte) (err error) {
 	// that every required field exists as a key in the generic map.
 	requiredProperties := []string{
 		"publicId",
+		"quantity",
+		"name",
+		"price",
+		"taxes",
+		"expiresAt",
+		"quotedAt",
+		"hasSeatMaps",
+		"terms",
+		"includedBaggage",
+		"availableServices",
+		"fareOptions",
 	}
 
 	allProperties := make(map[string]interface{})
@@ -257,7 +429,6 @@ func (o *FlightQuoteItem) UnmarshalJSON(data []byte) (err error) {
 	varFlightQuoteItem := _FlightQuoteItem{}
 
 	decoder := json.NewDecoder(bytes.NewReader(data))
-	decoder.DisallowUnknownFields()
 	err = decoder.Decode(&varFlightQuoteItem)
 
 	if err != nil {

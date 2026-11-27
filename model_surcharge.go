@@ -13,27 +13,35 @@ package openroam
 
 import (
 	"encoding/json"
+	"bytes"
+	"fmt"
 )
 
 // checks if the Surcharge type satisfies the MappedNullable interface at compile time
 var _ MappedNullable = &Surcharge{}
 
-// Surcharge A fee outside the room rate, in the same shape on search, quote and the order item.
+// Surcharge A fee outside the room rate, in the same shape on search, quote and the order item. A tax the guest pays at the hotel is not a surcharge: it is an `onSite` line of the offer's or item's `taxes`.
 type Surcharge struct {
-	Type *string `json:"type,omitempty"`
-	Description *string `json:"description,omitempty"`
-	Price *Money `json:"price,omitempty"`
+	Type string `json:"type"`
+	Description string `json:"description"`
+	Price Money `json:"price"`
 	ApproxPrice NullableMoney `json:"approxPrice,omitempty"`
-	IncludedInTotal *bool `json:"includedInTotal,omitempty"`
+	IncludedInTotal bool `json:"includedInTotal"`
 	PayableAt NullableString `json:"payableAt,omitempty"`
 }
+
+type _Surcharge Surcharge
 
 // NewSurcharge instantiates a new Surcharge object
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewSurcharge() *Surcharge {
+func NewSurcharge(type_ string, description string, price Money, includedInTotal bool) *Surcharge {
 	this := Surcharge{}
+	this.Type = type_
+	this.Description = description
+	this.Price = price
+	this.IncludedInTotal = includedInTotal
 	return &this
 }
 
@@ -45,100 +53,76 @@ func NewSurchargeWithDefaults() *Surcharge {
 	return &this
 }
 
-// GetType returns the Type field value if set, zero value otherwise.
+// GetType returns the Type field value
 func (o *Surcharge) GetType() string {
-	if o == nil || IsNil(o.Type) {
+	if o == nil {
 		var ret string
 		return ret
 	}
-	return *o.Type
+
+	return o.Type
 }
 
-// GetTypeOk returns a tuple with the Type field value if set, nil otherwise
+// GetTypeOk returns a tuple with the Type field value
 // and a boolean to check if the value has been set.
 func (o *Surcharge) GetTypeOk() (*string, bool) {
-	if o == nil || IsNil(o.Type) {
+	if o == nil {
 		return nil, false
 	}
-	return o.Type, true
+	return &o.Type, true
 }
 
-// HasType returns a boolean if a field has been set.
-func (o *Surcharge) HasType() bool {
-	if o != nil && !IsNil(o.Type) {
-		return true
-	}
-
-	return false
-}
-
-// SetType gets a reference to the given string and assigns it to the Type field.
+// SetType sets field value
 func (o *Surcharge) SetType(v string) {
-	o.Type = &v
+	o.Type = v
 }
 
-// GetDescription returns the Description field value if set, zero value otherwise.
+// GetDescription returns the Description field value
 func (o *Surcharge) GetDescription() string {
-	if o == nil || IsNil(o.Description) {
+	if o == nil {
 		var ret string
 		return ret
 	}
-	return *o.Description
+
+	return o.Description
 }
 
-// GetDescriptionOk returns a tuple with the Description field value if set, nil otherwise
+// GetDescriptionOk returns a tuple with the Description field value
 // and a boolean to check if the value has been set.
 func (o *Surcharge) GetDescriptionOk() (*string, bool) {
-	if o == nil || IsNil(o.Description) {
+	if o == nil {
 		return nil, false
 	}
-	return o.Description, true
+	return &o.Description, true
 }
 
-// HasDescription returns a boolean if a field has been set.
-func (o *Surcharge) HasDescription() bool {
-	if o != nil && !IsNil(o.Description) {
-		return true
-	}
-
-	return false
-}
-
-// SetDescription gets a reference to the given string and assigns it to the Description field.
+// SetDescription sets field value
 func (o *Surcharge) SetDescription(v string) {
-	o.Description = &v
+	o.Description = v
 }
 
-// GetPrice returns the Price field value if set, zero value otherwise.
+// GetPrice returns the Price field value
 func (o *Surcharge) GetPrice() Money {
-	if o == nil || IsNil(o.Price) {
+	if o == nil {
 		var ret Money
 		return ret
 	}
-	return *o.Price
+
+	return o.Price
 }
 
-// GetPriceOk returns a tuple with the Price field value if set, nil otherwise
+// GetPriceOk returns a tuple with the Price field value
 // and a boolean to check if the value has been set.
 func (o *Surcharge) GetPriceOk() (*Money, bool) {
-	if o == nil || IsNil(o.Price) {
+	if o == nil {
 		return nil, false
 	}
-	return o.Price, true
+	return &o.Price, true
 }
 
-// HasPrice returns a boolean if a field has been set.
-func (o *Surcharge) HasPrice() bool {
-	if o != nil && !IsNil(o.Price) {
-		return true
-	}
-
-	return false
-}
-
-// SetPrice gets a reference to the given Money and assigns it to the Price field.
+// SetPrice sets field value
 func (o *Surcharge) SetPrice(v Money) {
-	o.Price = &v
+	o.Price = v
 }
 
 // GetApproxPrice returns the ApproxPrice field value if set, zero value otherwise (both if not set or set to explicit null).
@@ -183,36 +167,28 @@ func (o *Surcharge) UnsetApproxPrice() {
 	o.ApproxPrice.Unset()
 }
 
-// GetIncludedInTotal returns the IncludedInTotal field value if set, zero value otherwise.
+// GetIncludedInTotal returns the IncludedInTotal field value
 func (o *Surcharge) GetIncludedInTotal() bool {
-	if o == nil || IsNil(o.IncludedInTotal) {
+	if o == nil {
 		var ret bool
 		return ret
 	}
-	return *o.IncludedInTotal
+
+	return o.IncludedInTotal
 }
 
-// GetIncludedInTotalOk returns a tuple with the IncludedInTotal field value if set, nil otherwise
+// GetIncludedInTotalOk returns a tuple with the IncludedInTotal field value
 // and a boolean to check if the value has been set.
 func (o *Surcharge) GetIncludedInTotalOk() (*bool, bool) {
-	if o == nil || IsNil(o.IncludedInTotal) {
+	if o == nil {
 		return nil, false
 	}
-	return o.IncludedInTotal, true
+	return &o.IncludedInTotal, true
 }
 
-// HasIncludedInTotal returns a boolean if a field has been set.
-func (o *Surcharge) HasIncludedInTotal() bool {
-	if o != nil && !IsNil(o.IncludedInTotal) {
-		return true
-	}
-
-	return false
-}
-
-// SetIncludedInTotal gets a reference to the given bool and assigns it to the IncludedInTotal field.
+// SetIncludedInTotal sets field value
 func (o *Surcharge) SetIncludedInTotal(v bool) {
-	o.IncludedInTotal = &v
+	o.IncludedInTotal = v
 }
 
 // GetPayableAt returns the PayableAt field value if set, zero value otherwise (both if not set or set to explicit null).
@@ -267,25 +243,56 @@ func (o Surcharge) MarshalJSON() ([]byte, error) {
 
 func (o Surcharge) ToMap() (map[string]interface{}, error) {
 	toSerialize := map[string]interface{}{}
-	if !IsNil(o.Type) {
-		toSerialize["type"] = o.Type
-	}
-	if !IsNil(o.Description) {
-		toSerialize["description"] = o.Description
-	}
-	if !IsNil(o.Price) {
-		toSerialize["price"] = o.Price
-	}
+	toSerialize["type"] = o.Type
+	toSerialize["description"] = o.Description
+	toSerialize["price"] = o.Price
 	if o.ApproxPrice.IsSet() {
 		toSerialize["approxPrice"] = o.ApproxPrice.Get()
 	}
-	if !IsNil(o.IncludedInTotal) {
-		toSerialize["includedInTotal"] = o.IncludedInTotal
-	}
+	toSerialize["includedInTotal"] = o.IncludedInTotal
 	if o.PayableAt.IsSet() {
 		toSerialize["payableAt"] = o.PayableAt.Get()
 	}
 	return toSerialize, nil
+}
+
+func (o *Surcharge) UnmarshalJSON(data []byte) (err error) {
+	// This validates that all required properties are included in the JSON object
+	// by unmarshalling the object into a generic map with string keys and checking
+	// that every required field exists as a key in the generic map.
+	requiredProperties := []string{
+		"type",
+		"description",
+		"price",
+		"includedInTotal",
+	}
+
+	allProperties := make(map[string]interface{})
+
+	err = json.Unmarshal(data, &allProperties)
+
+	if err != nil {
+		return err;
+	}
+
+	for _, requiredProperty := range(requiredProperties) {
+		if _, exists := allProperties[requiredProperty]; !exists {
+			return fmt.Errorf("no value given for required property %v", requiredProperty)
+		}
+	}
+
+	varSurcharge := _Surcharge{}
+
+	decoder := json.NewDecoder(bytes.NewReader(data))
+	err = decoder.Decode(&varSurcharge)
+
+	if err != nil {
+		return err
+	}
+
+	*o = Surcharge(varSurcharge)
+
+	return err
 }
 
 type NullableSurcharge struct {

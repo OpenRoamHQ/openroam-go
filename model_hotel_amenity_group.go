@@ -13,6 +13,8 @@ package openroam
 
 import (
 	"encoding/json"
+	"bytes"
+	"fmt"
 )
 
 // checks if the HotelAmenityGroup type satisfies the MappedNullable interface at compile time
@@ -21,17 +23,21 @@ var _ MappedNullable = &HotelAmenityGroup{}
 // HotelAmenityGroup One grouped section of a hotel card's amenities.
 type HotelAmenityGroup struct {
 	// Stable group key, matching an amenity group enum member.
-	Key *string `json:"key,omitempty"`
+	Key string `json:"key"`
 	// Canonical codes in this group, in enum declaration order.
-	Codes []string `json:"codes,omitempty"`
+	Codes []string `json:"codes"`
 }
+
+type _HotelAmenityGroup HotelAmenityGroup
 
 // NewHotelAmenityGroup instantiates a new HotelAmenityGroup object
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewHotelAmenityGroup() *HotelAmenityGroup {
+func NewHotelAmenityGroup(key string, codes []string) *HotelAmenityGroup {
 	this := HotelAmenityGroup{}
+	this.Key = key
+	this.Codes = codes
 	return &this
 }
 
@@ -43,66 +49,50 @@ func NewHotelAmenityGroupWithDefaults() *HotelAmenityGroup {
 	return &this
 }
 
-// GetKey returns the Key field value if set, zero value otherwise.
+// GetKey returns the Key field value
 func (o *HotelAmenityGroup) GetKey() string {
-	if o == nil || IsNil(o.Key) {
+	if o == nil {
 		var ret string
 		return ret
 	}
-	return *o.Key
+
+	return o.Key
 }
 
-// GetKeyOk returns a tuple with the Key field value if set, nil otherwise
+// GetKeyOk returns a tuple with the Key field value
 // and a boolean to check if the value has been set.
 func (o *HotelAmenityGroup) GetKeyOk() (*string, bool) {
-	if o == nil || IsNil(o.Key) {
+	if o == nil {
 		return nil, false
 	}
-	return o.Key, true
+	return &o.Key, true
 }
 
-// HasKey returns a boolean if a field has been set.
-func (o *HotelAmenityGroup) HasKey() bool {
-	if o != nil && !IsNil(o.Key) {
-		return true
-	}
-
-	return false
-}
-
-// SetKey gets a reference to the given string and assigns it to the Key field.
+// SetKey sets field value
 func (o *HotelAmenityGroup) SetKey(v string) {
-	o.Key = &v
+	o.Key = v
 }
 
-// GetCodes returns the Codes field value if set, zero value otherwise.
+// GetCodes returns the Codes field value
 func (o *HotelAmenityGroup) GetCodes() []string {
-	if o == nil || IsNil(o.Codes) {
+	if o == nil {
 		var ret []string
 		return ret
 	}
+
 	return o.Codes
 }
 
-// GetCodesOk returns a tuple with the Codes field value if set, nil otherwise
+// GetCodesOk returns a tuple with the Codes field value
 // and a boolean to check if the value has been set.
 func (o *HotelAmenityGroup) GetCodesOk() ([]string, bool) {
-	if o == nil || IsNil(o.Codes) {
+	if o == nil {
 		return nil, false
 	}
 	return o.Codes, true
 }
 
-// HasCodes returns a boolean if a field has been set.
-func (o *HotelAmenityGroup) HasCodes() bool {
-	if o != nil && !IsNil(o.Codes) {
-		return true
-	}
-
-	return false
-}
-
-// SetCodes gets a reference to the given []string and assigns it to the Codes field.
+// SetCodes sets field value
 func (o *HotelAmenityGroup) SetCodes(v []string) {
 	o.Codes = v
 }
@@ -117,13 +107,46 @@ func (o HotelAmenityGroup) MarshalJSON() ([]byte, error) {
 
 func (o HotelAmenityGroup) ToMap() (map[string]interface{}, error) {
 	toSerialize := map[string]interface{}{}
-	if !IsNil(o.Key) {
-		toSerialize["key"] = o.Key
-	}
-	if !IsNil(o.Codes) {
-		toSerialize["codes"] = o.Codes
-	}
+	toSerialize["key"] = o.Key
+	toSerialize["codes"] = o.Codes
 	return toSerialize, nil
+}
+
+func (o *HotelAmenityGroup) UnmarshalJSON(data []byte) (err error) {
+	// This validates that all required properties are included in the JSON object
+	// by unmarshalling the object into a generic map with string keys and checking
+	// that every required field exists as a key in the generic map.
+	requiredProperties := []string{
+		"key",
+		"codes",
+	}
+
+	allProperties := make(map[string]interface{})
+
+	err = json.Unmarshal(data, &allProperties)
+
+	if err != nil {
+		return err;
+	}
+
+	for _, requiredProperty := range(requiredProperties) {
+		if _, exists := allProperties[requiredProperty]; !exists {
+			return fmt.Errorf("no value given for required property %v", requiredProperty)
+		}
+	}
+
+	varHotelAmenityGroup := _HotelAmenityGroup{}
+
+	decoder := json.NewDecoder(bytes.NewReader(data))
+	err = decoder.Decode(&varHotelAmenityGroup)
+
+	if err != nil {
+		return err
+	}
+
+	*o = HotelAmenityGroup(varHotelAmenityGroup)
+
+	return err
 }
 
 type NullableHotelAmenityGroup struct {

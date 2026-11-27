@@ -13,6 +13,8 @@ package openroam
 
 import (
 	"encoding/json"
+	"bytes"
+	"fmt"
 )
 
 // checks if the BalanceLowWebhookData type satisfies the MappedNullable interface at compile time
@@ -20,19 +22,26 @@ var _ MappedNullable = &BalanceLowWebhookData{}
 
 // BalanceLowWebhookData struct for BalanceLowWebhookData
 type BalanceLowWebhookData struct {
-	WalletId *string `json:"walletId,omitempty"`
-	Balance *float32 `json:"balance,omitempty"`
-	LowBalanceThreshold *float32 `json:"lowBalanceThreshold,omitempty"`
-	ThresholdPercentage *int32 `json:"thresholdPercentage,omitempty"`
-	Currency *string `json:"currency,omitempty"`
+	WalletId string `json:"walletId"`
+	Balance float32 `json:"balance"`
+	LowBalanceThreshold float32 `json:"lowBalanceThreshold"`
+	ThresholdPercentage int32 `json:"thresholdPercentage"`
+	Currency string `json:"currency"`
 }
+
+type _BalanceLowWebhookData BalanceLowWebhookData
 
 // NewBalanceLowWebhookData instantiates a new BalanceLowWebhookData object
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewBalanceLowWebhookData() *BalanceLowWebhookData {
+func NewBalanceLowWebhookData(walletId string, balance float32, lowBalanceThreshold float32, thresholdPercentage int32, currency string) *BalanceLowWebhookData {
 	this := BalanceLowWebhookData{}
+	this.WalletId = walletId
+	this.Balance = balance
+	this.LowBalanceThreshold = lowBalanceThreshold
+	this.ThresholdPercentage = thresholdPercentage
+	this.Currency = currency
 	return &this
 }
 
@@ -44,164 +53,124 @@ func NewBalanceLowWebhookDataWithDefaults() *BalanceLowWebhookData {
 	return &this
 }
 
-// GetWalletId returns the WalletId field value if set, zero value otherwise.
+// GetWalletId returns the WalletId field value
 func (o *BalanceLowWebhookData) GetWalletId() string {
-	if o == nil || IsNil(o.WalletId) {
+	if o == nil {
 		var ret string
 		return ret
 	}
-	return *o.WalletId
+
+	return o.WalletId
 }
 
-// GetWalletIdOk returns a tuple with the WalletId field value if set, nil otherwise
+// GetWalletIdOk returns a tuple with the WalletId field value
 // and a boolean to check if the value has been set.
 func (o *BalanceLowWebhookData) GetWalletIdOk() (*string, bool) {
-	if o == nil || IsNil(o.WalletId) {
+	if o == nil {
 		return nil, false
 	}
-	return o.WalletId, true
+	return &o.WalletId, true
 }
 
-// HasWalletId returns a boolean if a field has been set.
-func (o *BalanceLowWebhookData) HasWalletId() bool {
-	if o != nil && !IsNil(o.WalletId) {
-		return true
-	}
-
-	return false
-}
-
-// SetWalletId gets a reference to the given string and assigns it to the WalletId field.
+// SetWalletId sets field value
 func (o *BalanceLowWebhookData) SetWalletId(v string) {
-	o.WalletId = &v
+	o.WalletId = v
 }
 
-// GetBalance returns the Balance field value if set, zero value otherwise.
+// GetBalance returns the Balance field value
 func (o *BalanceLowWebhookData) GetBalance() float32 {
-	if o == nil || IsNil(o.Balance) {
+	if o == nil {
 		var ret float32
 		return ret
 	}
-	return *o.Balance
+
+	return o.Balance
 }
 
-// GetBalanceOk returns a tuple with the Balance field value if set, nil otherwise
+// GetBalanceOk returns a tuple with the Balance field value
 // and a boolean to check if the value has been set.
 func (o *BalanceLowWebhookData) GetBalanceOk() (*float32, bool) {
-	if o == nil || IsNil(o.Balance) {
+	if o == nil {
 		return nil, false
 	}
-	return o.Balance, true
+	return &o.Balance, true
 }
 
-// HasBalance returns a boolean if a field has been set.
-func (o *BalanceLowWebhookData) HasBalance() bool {
-	if o != nil && !IsNil(o.Balance) {
-		return true
-	}
-
-	return false
-}
-
-// SetBalance gets a reference to the given float32 and assigns it to the Balance field.
+// SetBalance sets field value
 func (o *BalanceLowWebhookData) SetBalance(v float32) {
-	o.Balance = &v
+	o.Balance = v
 }
 
-// GetLowBalanceThreshold returns the LowBalanceThreshold field value if set, zero value otherwise.
+// GetLowBalanceThreshold returns the LowBalanceThreshold field value
 func (o *BalanceLowWebhookData) GetLowBalanceThreshold() float32 {
-	if o == nil || IsNil(o.LowBalanceThreshold) {
+	if o == nil {
 		var ret float32
 		return ret
 	}
-	return *o.LowBalanceThreshold
+
+	return o.LowBalanceThreshold
 }
 
-// GetLowBalanceThresholdOk returns a tuple with the LowBalanceThreshold field value if set, nil otherwise
+// GetLowBalanceThresholdOk returns a tuple with the LowBalanceThreshold field value
 // and a boolean to check if the value has been set.
 func (o *BalanceLowWebhookData) GetLowBalanceThresholdOk() (*float32, bool) {
-	if o == nil || IsNil(o.LowBalanceThreshold) {
+	if o == nil {
 		return nil, false
 	}
-	return o.LowBalanceThreshold, true
+	return &o.LowBalanceThreshold, true
 }
 
-// HasLowBalanceThreshold returns a boolean if a field has been set.
-func (o *BalanceLowWebhookData) HasLowBalanceThreshold() bool {
-	if o != nil && !IsNil(o.LowBalanceThreshold) {
-		return true
-	}
-
-	return false
-}
-
-// SetLowBalanceThreshold gets a reference to the given float32 and assigns it to the LowBalanceThreshold field.
+// SetLowBalanceThreshold sets field value
 func (o *BalanceLowWebhookData) SetLowBalanceThreshold(v float32) {
-	o.LowBalanceThreshold = &v
+	o.LowBalanceThreshold = v
 }
 
-// GetThresholdPercentage returns the ThresholdPercentage field value if set, zero value otherwise.
+// GetThresholdPercentage returns the ThresholdPercentage field value
 func (o *BalanceLowWebhookData) GetThresholdPercentage() int32 {
-	if o == nil || IsNil(o.ThresholdPercentage) {
+	if o == nil {
 		var ret int32
 		return ret
 	}
-	return *o.ThresholdPercentage
+
+	return o.ThresholdPercentage
 }
 
-// GetThresholdPercentageOk returns a tuple with the ThresholdPercentage field value if set, nil otherwise
+// GetThresholdPercentageOk returns a tuple with the ThresholdPercentage field value
 // and a boolean to check if the value has been set.
 func (o *BalanceLowWebhookData) GetThresholdPercentageOk() (*int32, bool) {
-	if o == nil || IsNil(o.ThresholdPercentage) {
+	if o == nil {
 		return nil, false
 	}
-	return o.ThresholdPercentage, true
+	return &o.ThresholdPercentage, true
 }
 
-// HasThresholdPercentage returns a boolean if a field has been set.
-func (o *BalanceLowWebhookData) HasThresholdPercentage() bool {
-	if o != nil && !IsNil(o.ThresholdPercentage) {
-		return true
-	}
-
-	return false
-}
-
-// SetThresholdPercentage gets a reference to the given int32 and assigns it to the ThresholdPercentage field.
+// SetThresholdPercentage sets field value
 func (o *BalanceLowWebhookData) SetThresholdPercentage(v int32) {
-	o.ThresholdPercentage = &v
+	o.ThresholdPercentage = v
 }
 
-// GetCurrency returns the Currency field value if set, zero value otherwise.
+// GetCurrency returns the Currency field value
 func (o *BalanceLowWebhookData) GetCurrency() string {
-	if o == nil || IsNil(o.Currency) {
+	if o == nil {
 		var ret string
 		return ret
 	}
-	return *o.Currency
+
+	return o.Currency
 }
 
-// GetCurrencyOk returns a tuple with the Currency field value if set, nil otherwise
+// GetCurrencyOk returns a tuple with the Currency field value
 // and a boolean to check if the value has been set.
 func (o *BalanceLowWebhookData) GetCurrencyOk() (*string, bool) {
-	if o == nil || IsNil(o.Currency) {
+	if o == nil {
 		return nil, false
 	}
-	return o.Currency, true
+	return &o.Currency, true
 }
 
-// HasCurrency returns a boolean if a field has been set.
-func (o *BalanceLowWebhookData) HasCurrency() bool {
-	if o != nil && !IsNil(o.Currency) {
-		return true
-	}
-
-	return false
-}
-
-// SetCurrency gets a reference to the given string and assigns it to the Currency field.
+// SetCurrency sets field value
 func (o *BalanceLowWebhookData) SetCurrency(v string) {
-	o.Currency = &v
+	o.Currency = v
 }
 
 func (o BalanceLowWebhookData) MarshalJSON() ([]byte, error) {
@@ -214,22 +183,52 @@ func (o BalanceLowWebhookData) MarshalJSON() ([]byte, error) {
 
 func (o BalanceLowWebhookData) ToMap() (map[string]interface{}, error) {
 	toSerialize := map[string]interface{}{}
-	if !IsNil(o.WalletId) {
-		toSerialize["walletId"] = o.WalletId
-	}
-	if !IsNil(o.Balance) {
-		toSerialize["balance"] = o.Balance
-	}
-	if !IsNil(o.LowBalanceThreshold) {
-		toSerialize["lowBalanceThreshold"] = o.LowBalanceThreshold
-	}
-	if !IsNil(o.ThresholdPercentage) {
-		toSerialize["thresholdPercentage"] = o.ThresholdPercentage
-	}
-	if !IsNil(o.Currency) {
-		toSerialize["currency"] = o.Currency
-	}
+	toSerialize["walletId"] = o.WalletId
+	toSerialize["balance"] = o.Balance
+	toSerialize["lowBalanceThreshold"] = o.LowBalanceThreshold
+	toSerialize["thresholdPercentage"] = o.ThresholdPercentage
+	toSerialize["currency"] = o.Currency
 	return toSerialize, nil
+}
+
+func (o *BalanceLowWebhookData) UnmarshalJSON(data []byte) (err error) {
+	// This validates that all required properties are included in the JSON object
+	// by unmarshalling the object into a generic map with string keys and checking
+	// that every required field exists as a key in the generic map.
+	requiredProperties := []string{
+		"walletId",
+		"balance",
+		"lowBalanceThreshold",
+		"thresholdPercentage",
+		"currency",
+	}
+
+	allProperties := make(map[string]interface{})
+
+	err = json.Unmarshal(data, &allProperties)
+
+	if err != nil {
+		return err;
+	}
+
+	for _, requiredProperty := range(requiredProperties) {
+		if _, exists := allProperties[requiredProperty]; !exists {
+			return fmt.Errorf("no value given for required property %v", requiredProperty)
+		}
+	}
+
+	varBalanceLowWebhookData := _BalanceLowWebhookData{}
+
+	decoder := json.NewDecoder(bytes.NewReader(data))
+	err = decoder.Decode(&varBalanceLowWebhookData)
+
+	if err != nil {
+		return err
+	}
+
+	*o = BalanceLowWebhookData(varBalanceLowWebhookData)
+
+	return err
 }
 
 type NullableBalanceLowWebhookData struct {

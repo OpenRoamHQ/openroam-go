@@ -14,28 +14,50 @@ package openroam
 import (
 	"encoding/json"
 	"time"
+	"bytes"
+	"fmt"
 )
 
 // checks if the BookedSlice type satisfies the MappedNullable interface at compile time
 var _ MappedNullable = &BookedSlice{}
 
-// BookedSlice struct for BookedSlice
+// BookedSlice One slice of the trip, such as the outbound or the return.
 type BookedSlice struct {
-	Origin *BookedAirport `json:"origin,omitempty"`
-	Destination *BookedAirport `json:"destination,omitempty"`
-	DepartureAt *time.Time `json:"departureAt,omitempty"`
-	ArrivalAt *time.Time `json:"arrivalAt,omitempty"`
-	DurationMinutes *int32 `json:"durationMinutes,omitempty"`
-	Stops *int32 `json:"stops,omitempty"`
-	Segments []BookedSegment `json:"segments,omitempty"`
+	// The airport the slice departs from.
+	Origin BookedAirport `json:"origin"`
+	// The airport the slice lands at.
+	Destination BookedAirport `json:"destination"`
+	// When the slice departs, a UTC instant; `origin.timezone` gives the airport's clock.
+	DepartureAt time.Time `json:"departureAt"`
+	// The clock at the departure airport (`origin.timezone`) at `departureAt`. Written yyyy-MM-ddTHH:mm:ss with no zone, for display only: compute and compare with `departureAt`. Null when the place's time zone is unknown.
+	DepartureLocalTime NullableString `json:"departureLocalTime,omitempty"`
+	// When the slice lands, a UTC instant; `destination.timezone` gives the airport's clock.
+	ArrivalAt time.Time `json:"arrivalAt"`
+	// The clock at the arrival airport (`destination.timezone`) at `arrivalAt`. Written yyyy-MM-ddTHH:mm:ss with no zone, for display only: compute and compare with `arrivalAt`. Null when the place's time zone is unknown.
+	ArrivalLocalTime NullableString `json:"arrivalLocalTime,omitempty"`
+	// Flying and connection time of the slice.
+	DurationMinutes int32 `json:"durationMinutes"`
+	// Connections within the slice.
+	Stops int32 `json:"stops"`
+	// The flights of the slice, in order.
+	Segments []BookedSegment `json:"segments"`
 }
+
+type _BookedSlice BookedSlice
 
 // NewBookedSlice instantiates a new BookedSlice object
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewBookedSlice() *BookedSlice {
+func NewBookedSlice(origin BookedAirport, destination BookedAirport, departureAt time.Time, arrivalAt time.Time, durationMinutes int32, stops int32, segments []BookedSegment) *BookedSlice {
 	this := BookedSlice{}
+	this.Origin = origin
+	this.Destination = destination
+	this.DepartureAt = departureAt
+	this.ArrivalAt = arrivalAt
+	this.DurationMinutes = durationMinutes
+	this.Stops = stops
+	this.Segments = segments
 	return &this
 }
 
@@ -47,226 +69,254 @@ func NewBookedSliceWithDefaults() *BookedSlice {
 	return &this
 }
 
-// GetOrigin returns the Origin field value if set, zero value otherwise.
+// GetOrigin returns the Origin field value
 func (o *BookedSlice) GetOrigin() BookedAirport {
-	if o == nil || IsNil(o.Origin) {
+	if o == nil {
 		var ret BookedAirport
 		return ret
 	}
-	return *o.Origin
+
+	return o.Origin
 }
 
-// GetOriginOk returns a tuple with the Origin field value if set, nil otherwise
+// GetOriginOk returns a tuple with the Origin field value
 // and a boolean to check if the value has been set.
 func (o *BookedSlice) GetOriginOk() (*BookedAirport, bool) {
-	if o == nil || IsNil(o.Origin) {
+	if o == nil {
 		return nil, false
 	}
-	return o.Origin, true
+	return &o.Origin, true
 }
 
-// HasOrigin returns a boolean if a field has been set.
-func (o *BookedSlice) HasOrigin() bool {
-	if o != nil && !IsNil(o.Origin) {
-		return true
-	}
-
-	return false
-}
-
-// SetOrigin gets a reference to the given BookedAirport and assigns it to the Origin field.
+// SetOrigin sets field value
 func (o *BookedSlice) SetOrigin(v BookedAirport) {
-	o.Origin = &v
+	o.Origin = v
 }
 
-// GetDestination returns the Destination field value if set, zero value otherwise.
+// GetDestination returns the Destination field value
 func (o *BookedSlice) GetDestination() BookedAirport {
-	if o == nil || IsNil(o.Destination) {
+	if o == nil {
 		var ret BookedAirport
 		return ret
 	}
-	return *o.Destination
+
+	return o.Destination
 }
 
-// GetDestinationOk returns a tuple with the Destination field value if set, nil otherwise
+// GetDestinationOk returns a tuple with the Destination field value
 // and a boolean to check if the value has been set.
 func (o *BookedSlice) GetDestinationOk() (*BookedAirport, bool) {
-	if o == nil || IsNil(o.Destination) {
+	if o == nil {
 		return nil, false
 	}
-	return o.Destination, true
+	return &o.Destination, true
 }
 
-// HasDestination returns a boolean if a field has been set.
-func (o *BookedSlice) HasDestination() bool {
-	if o != nil && !IsNil(o.Destination) {
-		return true
-	}
-
-	return false
-}
-
-// SetDestination gets a reference to the given BookedAirport and assigns it to the Destination field.
+// SetDestination sets field value
 func (o *BookedSlice) SetDestination(v BookedAirport) {
-	o.Destination = &v
+	o.Destination = v
 }
 
-// GetDepartureAt returns the DepartureAt field value if set, zero value otherwise.
+// GetDepartureAt returns the DepartureAt field value
 func (o *BookedSlice) GetDepartureAt() time.Time {
-	if o == nil || IsNil(o.DepartureAt) {
+	if o == nil {
 		var ret time.Time
 		return ret
 	}
-	return *o.DepartureAt
+
+	return o.DepartureAt
 }
 
-// GetDepartureAtOk returns a tuple with the DepartureAt field value if set, nil otherwise
+// GetDepartureAtOk returns a tuple with the DepartureAt field value
 // and a boolean to check if the value has been set.
 func (o *BookedSlice) GetDepartureAtOk() (*time.Time, bool) {
-	if o == nil || IsNil(o.DepartureAt) {
+	if o == nil {
 		return nil, false
 	}
-	return o.DepartureAt, true
+	return &o.DepartureAt, true
 }
 
-// HasDepartureAt returns a boolean if a field has been set.
-func (o *BookedSlice) HasDepartureAt() bool {
-	if o != nil && !IsNil(o.DepartureAt) {
+// SetDepartureAt sets field value
+func (o *BookedSlice) SetDepartureAt(v time.Time) {
+	o.DepartureAt = v
+}
+
+// GetDepartureLocalTime returns the DepartureLocalTime field value if set, zero value otherwise (both if not set or set to explicit null).
+func (o *BookedSlice) GetDepartureLocalTime() string {
+	if o == nil || IsNil(o.DepartureLocalTime.Get()) {
+		var ret string
+		return ret
+	}
+	return *o.DepartureLocalTime.Get()
+}
+
+// GetDepartureLocalTimeOk returns a tuple with the DepartureLocalTime field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+// NOTE: If the value is an explicit nil, `nil, true` will be returned
+func (o *BookedSlice) GetDepartureLocalTimeOk() (*string, bool) {
+	if o == nil {
+		return nil, false
+	}
+	return o.DepartureLocalTime.Get(), o.DepartureLocalTime.IsSet()
+}
+
+// HasDepartureLocalTime returns a boolean if a field has been set.
+func (o *BookedSlice) HasDepartureLocalTime() bool {
+	if o != nil && o.DepartureLocalTime.IsSet() {
 		return true
 	}
 
 	return false
 }
 
-// SetDepartureAt gets a reference to the given time.Time and assigns it to the DepartureAt field.
-func (o *BookedSlice) SetDepartureAt(v time.Time) {
-	o.DepartureAt = &v
+// SetDepartureLocalTime gets a reference to the given NullableString and assigns it to the DepartureLocalTime field.
+func (o *BookedSlice) SetDepartureLocalTime(v string) {
+	o.DepartureLocalTime.Set(&v)
+}
+// SetDepartureLocalTimeNil sets the value for DepartureLocalTime to be an explicit nil
+func (o *BookedSlice) SetDepartureLocalTimeNil() {
+	o.DepartureLocalTime.Set(nil)
 }
 
-// GetArrivalAt returns the ArrivalAt field value if set, zero value otherwise.
+// UnsetDepartureLocalTime ensures that no value is present for DepartureLocalTime, not even an explicit nil
+func (o *BookedSlice) UnsetDepartureLocalTime() {
+	o.DepartureLocalTime.Unset()
+}
+
+// GetArrivalAt returns the ArrivalAt field value
 func (o *BookedSlice) GetArrivalAt() time.Time {
-	if o == nil || IsNil(o.ArrivalAt) {
+	if o == nil {
 		var ret time.Time
 		return ret
 	}
-	return *o.ArrivalAt
+
+	return o.ArrivalAt
 }
 
-// GetArrivalAtOk returns a tuple with the ArrivalAt field value if set, nil otherwise
+// GetArrivalAtOk returns a tuple with the ArrivalAt field value
 // and a boolean to check if the value has been set.
 func (o *BookedSlice) GetArrivalAtOk() (*time.Time, bool) {
-	if o == nil || IsNil(o.ArrivalAt) {
+	if o == nil {
 		return nil, false
 	}
-	return o.ArrivalAt, true
+	return &o.ArrivalAt, true
 }
 
-// HasArrivalAt returns a boolean if a field has been set.
-func (o *BookedSlice) HasArrivalAt() bool {
-	if o != nil && !IsNil(o.ArrivalAt) {
+// SetArrivalAt sets field value
+func (o *BookedSlice) SetArrivalAt(v time.Time) {
+	o.ArrivalAt = v
+}
+
+// GetArrivalLocalTime returns the ArrivalLocalTime field value if set, zero value otherwise (both if not set or set to explicit null).
+func (o *BookedSlice) GetArrivalLocalTime() string {
+	if o == nil || IsNil(o.ArrivalLocalTime.Get()) {
+		var ret string
+		return ret
+	}
+	return *o.ArrivalLocalTime.Get()
+}
+
+// GetArrivalLocalTimeOk returns a tuple with the ArrivalLocalTime field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+// NOTE: If the value is an explicit nil, `nil, true` will be returned
+func (o *BookedSlice) GetArrivalLocalTimeOk() (*string, bool) {
+	if o == nil {
+		return nil, false
+	}
+	return o.ArrivalLocalTime.Get(), o.ArrivalLocalTime.IsSet()
+}
+
+// HasArrivalLocalTime returns a boolean if a field has been set.
+func (o *BookedSlice) HasArrivalLocalTime() bool {
+	if o != nil && o.ArrivalLocalTime.IsSet() {
 		return true
 	}
 
 	return false
 }
 
-// SetArrivalAt gets a reference to the given time.Time and assigns it to the ArrivalAt field.
-func (o *BookedSlice) SetArrivalAt(v time.Time) {
-	o.ArrivalAt = &v
+// SetArrivalLocalTime gets a reference to the given NullableString and assigns it to the ArrivalLocalTime field.
+func (o *BookedSlice) SetArrivalLocalTime(v string) {
+	o.ArrivalLocalTime.Set(&v)
+}
+// SetArrivalLocalTimeNil sets the value for ArrivalLocalTime to be an explicit nil
+func (o *BookedSlice) SetArrivalLocalTimeNil() {
+	o.ArrivalLocalTime.Set(nil)
 }
 
-// GetDurationMinutes returns the DurationMinutes field value if set, zero value otherwise.
+// UnsetArrivalLocalTime ensures that no value is present for ArrivalLocalTime, not even an explicit nil
+func (o *BookedSlice) UnsetArrivalLocalTime() {
+	o.ArrivalLocalTime.Unset()
+}
+
+// GetDurationMinutes returns the DurationMinutes field value
 func (o *BookedSlice) GetDurationMinutes() int32 {
-	if o == nil || IsNil(o.DurationMinutes) {
+	if o == nil {
 		var ret int32
 		return ret
 	}
-	return *o.DurationMinutes
+
+	return o.DurationMinutes
 }
 
-// GetDurationMinutesOk returns a tuple with the DurationMinutes field value if set, nil otherwise
+// GetDurationMinutesOk returns a tuple with the DurationMinutes field value
 // and a boolean to check if the value has been set.
 func (o *BookedSlice) GetDurationMinutesOk() (*int32, bool) {
-	if o == nil || IsNil(o.DurationMinutes) {
+	if o == nil {
 		return nil, false
 	}
-	return o.DurationMinutes, true
+	return &o.DurationMinutes, true
 }
 
-// HasDurationMinutes returns a boolean if a field has been set.
-func (o *BookedSlice) HasDurationMinutes() bool {
-	if o != nil && !IsNil(o.DurationMinutes) {
-		return true
-	}
-
-	return false
-}
-
-// SetDurationMinutes gets a reference to the given int32 and assigns it to the DurationMinutes field.
+// SetDurationMinutes sets field value
 func (o *BookedSlice) SetDurationMinutes(v int32) {
-	o.DurationMinutes = &v
+	o.DurationMinutes = v
 }
 
-// GetStops returns the Stops field value if set, zero value otherwise.
+// GetStops returns the Stops field value
 func (o *BookedSlice) GetStops() int32 {
-	if o == nil || IsNil(o.Stops) {
+	if o == nil {
 		var ret int32
 		return ret
 	}
-	return *o.Stops
+
+	return o.Stops
 }
 
-// GetStopsOk returns a tuple with the Stops field value if set, nil otherwise
+// GetStopsOk returns a tuple with the Stops field value
 // and a boolean to check if the value has been set.
 func (o *BookedSlice) GetStopsOk() (*int32, bool) {
-	if o == nil || IsNil(o.Stops) {
+	if o == nil {
 		return nil, false
 	}
-	return o.Stops, true
+	return &o.Stops, true
 }
 
-// HasStops returns a boolean if a field has been set.
-func (o *BookedSlice) HasStops() bool {
-	if o != nil && !IsNil(o.Stops) {
-		return true
-	}
-
-	return false
-}
-
-// SetStops gets a reference to the given int32 and assigns it to the Stops field.
+// SetStops sets field value
 func (o *BookedSlice) SetStops(v int32) {
-	o.Stops = &v
+	o.Stops = v
 }
 
-// GetSegments returns the Segments field value if set, zero value otherwise.
+// GetSegments returns the Segments field value
 func (o *BookedSlice) GetSegments() []BookedSegment {
-	if o == nil || IsNil(o.Segments) {
+	if o == nil {
 		var ret []BookedSegment
 		return ret
 	}
+
 	return o.Segments
 }
 
-// GetSegmentsOk returns a tuple with the Segments field value if set, nil otherwise
+// GetSegmentsOk returns a tuple with the Segments field value
 // and a boolean to check if the value has been set.
 func (o *BookedSlice) GetSegmentsOk() ([]BookedSegment, bool) {
-	if o == nil || IsNil(o.Segments) {
+	if o == nil {
 		return nil, false
 	}
 	return o.Segments, true
 }
 
-// HasSegments returns a boolean if a field has been set.
-func (o *BookedSlice) HasSegments() bool {
-	if o != nil && !IsNil(o.Segments) {
-		return true
-	}
-
-	return false
-}
-
-// SetSegments gets a reference to the given []BookedSegment and assigns it to the Segments field.
+// SetSegments sets field value
 func (o *BookedSlice) SetSegments(v []BookedSegment) {
 	o.Segments = v
 }
@@ -281,28 +331,62 @@ func (o BookedSlice) MarshalJSON() ([]byte, error) {
 
 func (o BookedSlice) ToMap() (map[string]interface{}, error) {
 	toSerialize := map[string]interface{}{}
-	if !IsNil(o.Origin) {
-		toSerialize["origin"] = o.Origin
+	toSerialize["origin"] = o.Origin
+	toSerialize["destination"] = o.Destination
+	toSerialize["departureAt"] = o.DepartureAt
+	if o.DepartureLocalTime.IsSet() {
+		toSerialize["departureLocalTime"] = o.DepartureLocalTime.Get()
 	}
-	if !IsNil(o.Destination) {
-		toSerialize["destination"] = o.Destination
+	toSerialize["arrivalAt"] = o.ArrivalAt
+	if o.ArrivalLocalTime.IsSet() {
+		toSerialize["arrivalLocalTime"] = o.ArrivalLocalTime.Get()
 	}
-	if !IsNil(o.DepartureAt) {
-		toSerialize["departureAt"] = o.DepartureAt
-	}
-	if !IsNil(o.ArrivalAt) {
-		toSerialize["arrivalAt"] = o.ArrivalAt
-	}
-	if !IsNil(o.DurationMinutes) {
-		toSerialize["durationMinutes"] = o.DurationMinutes
-	}
-	if !IsNil(o.Stops) {
-		toSerialize["stops"] = o.Stops
-	}
-	if !IsNil(o.Segments) {
-		toSerialize["segments"] = o.Segments
-	}
+	toSerialize["durationMinutes"] = o.DurationMinutes
+	toSerialize["stops"] = o.Stops
+	toSerialize["segments"] = o.Segments
 	return toSerialize, nil
+}
+
+func (o *BookedSlice) UnmarshalJSON(data []byte) (err error) {
+	// This validates that all required properties are included in the JSON object
+	// by unmarshalling the object into a generic map with string keys and checking
+	// that every required field exists as a key in the generic map.
+	requiredProperties := []string{
+		"origin",
+		"destination",
+		"departureAt",
+		"arrivalAt",
+		"durationMinutes",
+		"stops",
+		"segments",
+	}
+
+	allProperties := make(map[string]interface{})
+
+	err = json.Unmarshal(data, &allProperties)
+
+	if err != nil {
+		return err;
+	}
+
+	for _, requiredProperty := range(requiredProperties) {
+		if _, exists := allProperties[requiredProperty]; !exists {
+			return fmt.Errorf("no value given for required property %v", requiredProperty)
+		}
+	}
+
+	varBookedSlice := _BookedSlice{}
+
+	decoder := json.NewDecoder(bytes.NewReader(data))
+	err = decoder.Decode(&varBookedSlice)
+
+	if err != nil {
+		return err
+	}
+
+	*o = BookedSlice(varBookedSlice)
+
+	return err
 }
 
 type NullableBookedSlice struct {

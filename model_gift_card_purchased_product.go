@@ -13,6 +13,8 @@ package openroam
 
 import (
 	"encoding/json"
+	"bytes"
+	"fmt"
 )
 
 // checks if the GiftCardPurchasedProduct type satisfies the MappedNullable interface at compile time
@@ -20,22 +22,27 @@ var _ MappedNullable = &GiftCardPurchasedProduct{}
 
 // GiftCardPurchasedProduct The card an order item bought. `name` is the card at its `value`, named as the quote names it, and `inputs` echoes the item's inputs with customer identifiers masked. `value` is the card's face value; it is null only for older orders placed before the face value was recorded, which are named by the brand alone. `countryCode` is the issuing country's ISO 3166-1 alpha-2 code, or null for a card without one, as in browse.
 type GiftCardPurchasedProduct struct {
-	Name *string `json:"name,omitempty"`
+	Name string `json:"name"`
 	CountryCode NullableString `json:"countryCode,omitempty"`
 	LogoUrl NullableString `json:"logoUrl,omitempty"`
 	Value NullableMoney `json:"value,omitempty"`
 	// The item's `inputs` under the request's keys. `recipientIdentifier` and `recipientEmail` are masked; `giftMessage` is returned as given. The identifier is echoed only when the card required it.
-	Inputs *GiftCardPurchasedInputs `json:"inputs,omitempty"`
+	Inputs GiftCardPurchasedInputs `json:"inputs"`
 	// Gift card facts outside the purchased-product keys every partner service shares, as captured when the card was added. `redemptionInstructions` is the detailed text, or the summary when the card has only that.
-	Details *GiftCardPurchasedDetails `json:"details,omitempty"`
+	Details GiftCardPurchasedDetails `json:"details"`
 }
+
+type _GiftCardPurchasedProduct GiftCardPurchasedProduct
 
 // NewGiftCardPurchasedProduct instantiates a new GiftCardPurchasedProduct object
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewGiftCardPurchasedProduct() *GiftCardPurchasedProduct {
+func NewGiftCardPurchasedProduct(name string, inputs GiftCardPurchasedInputs, details GiftCardPurchasedDetails) *GiftCardPurchasedProduct {
 	this := GiftCardPurchasedProduct{}
+	this.Name = name
+	this.Inputs = inputs
+	this.Details = details
 	return &this
 }
 
@@ -47,36 +54,28 @@ func NewGiftCardPurchasedProductWithDefaults() *GiftCardPurchasedProduct {
 	return &this
 }
 
-// GetName returns the Name field value if set, zero value otherwise.
+// GetName returns the Name field value
 func (o *GiftCardPurchasedProduct) GetName() string {
-	if o == nil || IsNil(o.Name) {
+	if o == nil {
 		var ret string
 		return ret
 	}
-	return *o.Name
+
+	return o.Name
 }
 
-// GetNameOk returns a tuple with the Name field value if set, nil otherwise
+// GetNameOk returns a tuple with the Name field value
 // and a boolean to check if the value has been set.
 func (o *GiftCardPurchasedProduct) GetNameOk() (*string, bool) {
-	if o == nil || IsNil(o.Name) {
+	if o == nil {
 		return nil, false
 	}
-	return o.Name, true
+	return &o.Name, true
 }
 
-// HasName returns a boolean if a field has been set.
-func (o *GiftCardPurchasedProduct) HasName() bool {
-	if o != nil && !IsNil(o.Name) {
-		return true
-	}
-
-	return false
-}
-
-// SetName gets a reference to the given string and assigns it to the Name field.
+// SetName sets field value
 func (o *GiftCardPurchasedProduct) SetName(v string) {
-	o.Name = &v
+	o.Name = v
 }
 
 // GetCountryCode returns the CountryCode field value if set, zero value otherwise (both if not set or set to explicit null).
@@ -205,68 +204,52 @@ func (o *GiftCardPurchasedProduct) UnsetValue() {
 	o.Value.Unset()
 }
 
-// GetInputs returns the Inputs field value if set, zero value otherwise.
+// GetInputs returns the Inputs field value
 func (o *GiftCardPurchasedProduct) GetInputs() GiftCardPurchasedInputs {
-	if o == nil || IsNil(o.Inputs) {
+	if o == nil {
 		var ret GiftCardPurchasedInputs
 		return ret
 	}
-	return *o.Inputs
+
+	return o.Inputs
 }
 
-// GetInputsOk returns a tuple with the Inputs field value if set, nil otherwise
+// GetInputsOk returns a tuple with the Inputs field value
 // and a boolean to check if the value has been set.
 func (o *GiftCardPurchasedProduct) GetInputsOk() (*GiftCardPurchasedInputs, bool) {
-	if o == nil || IsNil(o.Inputs) {
+	if o == nil {
 		return nil, false
 	}
-	return o.Inputs, true
+	return &o.Inputs, true
 }
 
-// HasInputs returns a boolean if a field has been set.
-func (o *GiftCardPurchasedProduct) HasInputs() bool {
-	if o != nil && !IsNil(o.Inputs) {
-		return true
-	}
-
-	return false
-}
-
-// SetInputs gets a reference to the given GiftCardPurchasedInputs and assigns it to the Inputs field.
+// SetInputs sets field value
 func (o *GiftCardPurchasedProduct) SetInputs(v GiftCardPurchasedInputs) {
-	o.Inputs = &v
+	o.Inputs = v
 }
 
-// GetDetails returns the Details field value if set, zero value otherwise.
+// GetDetails returns the Details field value
 func (o *GiftCardPurchasedProduct) GetDetails() GiftCardPurchasedDetails {
-	if o == nil || IsNil(o.Details) {
+	if o == nil {
 		var ret GiftCardPurchasedDetails
 		return ret
 	}
-	return *o.Details
+
+	return o.Details
 }
 
-// GetDetailsOk returns a tuple with the Details field value if set, nil otherwise
+// GetDetailsOk returns a tuple with the Details field value
 // and a boolean to check if the value has been set.
 func (o *GiftCardPurchasedProduct) GetDetailsOk() (*GiftCardPurchasedDetails, bool) {
-	if o == nil || IsNil(o.Details) {
+	if o == nil {
 		return nil, false
 	}
-	return o.Details, true
+	return &o.Details, true
 }
 
-// HasDetails returns a boolean if a field has been set.
-func (o *GiftCardPurchasedProduct) HasDetails() bool {
-	if o != nil && !IsNil(o.Details) {
-		return true
-	}
-
-	return false
-}
-
-// SetDetails gets a reference to the given GiftCardPurchasedDetails and assigns it to the Details field.
+// SetDetails sets field value
 func (o *GiftCardPurchasedProduct) SetDetails(v GiftCardPurchasedDetails) {
-	o.Details = &v
+	o.Details = v
 }
 
 func (o GiftCardPurchasedProduct) MarshalJSON() ([]byte, error) {
@@ -279,9 +262,7 @@ func (o GiftCardPurchasedProduct) MarshalJSON() ([]byte, error) {
 
 func (o GiftCardPurchasedProduct) ToMap() (map[string]interface{}, error) {
 	toSerialize := map[string]interface{}{}
-	if !IsNil(o.Name) {
-		toSerialize["name"] = o.Name
-	}
+	toSerialize["name"] = o.Name
 	if o.CountryCode.IsSet() {
 		toSerialize["countryCode"] = o.CountryCode.Get()
 	}
@@ -291,13 +272,47 @@ func (o GiftCardPurchasedProduct) ToMap() (map[string]interface{}, error) {
 	if o.Value.IsSet() {
 		toSerialize["value"] = o.Value.Get()
 	}
-	if !IsNil(o.Inputs) {
-		toSerialize["inputs"] = o.Inputs
-	}
-	if !IsNil(o.Details) {
-		toSerialize["details"] = o.Details
-	}
+	toSerialize["inputs"] = o.Inputs
+	toSerialize["details"] = o.Details
 	return toSerialize, nil
+}
+
+func (o *GiftCardPurchasedProduct) UnmarshalJSON(data []byte) (err error) {
+	// This validates that all required properties are included in the JSON object
+	// by unmarshalling the object into a generic map with string keys and checking
+	// that every required field exists as a key in the generic map.
+	requiredProperties := []string{
+		"name",
+		"inputs",
+		"details",
+	}
+
+	allProperties := make(map[string]interface{})
+
+	err = json.Unmarshal(data, &allProperties)
+
+	if err != nil {
+		return err;
+	}
+
+	for _, requiredProperty := range(requiredProperties) {
+		if _, exists := allProperties[requiredProperty]; !exists {
+			return fmt.Errorf("no value given for required property %v", requiredProperty)
+		}
+	}
+
+	varGiftCardPurchasedProduct := _GiftCardPurchasedProduct{}
+
+	decoder := json.NewDecoder(bytes.NewReader(data))
+	err = decoder.Decode(&varGiftCardPurchasedProduct)
+
+	if err != nil {
+		return err
+	}
+
+	*o = GiftCardPurchasedProduct(varGiftCardPurchasedProduct)
+
+	return err
 }
 
 type NullableGiftCardPurchasedProduct struct {

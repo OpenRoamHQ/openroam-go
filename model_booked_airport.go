@@ -13,29 +13,42 @@ package openroam
 
 import (
 	"encoding/json"
+	"bytes"
+	"fmt"
 )
 
 // checks if the BookedAirport type satisfies the MappedNullable interface at compile time
 var _ MappedNullable = &BookedAirport{}
 
-// BookedAirport struct for BookedAirport
+// BookedAirport An airport.
 type BookedAirport struct {
-	IataCode *string `json:"iataCode,omitempty"`
+	// The airport's IATA code, for example `LHR`.
+	IataCode string `json:"iataCode"`
+	// The airport's ICAO code; null when not stated.
 	IcaoCode NullableString `json:"icaoCode,omitempty"`
+	// The airport's name; null when not stated.
 	Name NullableString `json:"name,omitempty"`
+	// The city the airport serves; null when not stated.
 	City NullableString `json:"city,omitempty"`
+	// The IATA code of that city; null when not stated.
 	CityIataCode NullableString `json:"cityIataCode,omitempty"`
+	// ISO 3166-1 alpha-2 country of the airport; null when not stated.
 	CountryCode NullableString `json:"countryCode,omitempty"`
+	// The terminal; null when not stated.
 	Terminal NullableString `json:"terminal,omitempty"`
+	// The airport's IANA time zone, such as `Europe/London`: it turns the UTC times at this             airport into the airport's clock.
 	Timezone NullableString `json:"timezone,omitempty"`
 }
+
+type _BookedAirport BookedAirport
 
 // NewBookedAirport instantiates a new BookedAirport object
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewBookedAirport() *BookedAirport {
+func NewBookedAirport(iataCode string) *BookedAirport {
 	this := BookedAirport{}
+	this.IataCode = iataCode
 	return &this
 }
 
@@ -47,36 +60,28 @@ func NewBookedAirportWithDefaults() *BookedAirport {
 	return &this
 }
 
-// GetIataCode returns the IataCode field value if set, zero value otherwise.
+// GetIataCode returns the IataCode field value
 func (o *BookedAirport) GetIataCode() string {
-	if o == nil || IsNil(o.IataCode) {
+	if o == nil {
 		var ret string
 		return ret
 	}
-	return *o.IataCode
+
+	return o.IataCode
 }
 
-// GetIataCodeOk returns a tuple with the IataCode field value if set, nil otherwise
+// GetIataCodeOk returns a tuple with the IataCode field value
 // and a boolean to check if the value has been set.
 func (o *BookedAirport) GetIataCodeOk() (*string, bool) {
-	if o == nil || IsNil(o.IataCode) {
+	if o == nil {
 		return nil, false
 	}
-	return o.IataCode, true
+	return &o.IataCode, true
 }
 
-// HasIataCode returns a boolean if a field has been set.
-func (o *BookedAirport) HasIataCode() bool {
-	if o != nil && !IsNil(o.IataCode) {
-		return true
-	}
-
-	return false
-}
-
-// SetIataCode gets a reference to the given string and assigns it to the IataCode field.
+// SetIataCode sets field value
 func (o *BookedAirport) SetIataCode(v string) {
-	o.IataCode = &v
+	o.IataCode = v
 }
 
 // GetIcaoCode returns the IcaoCode field value if set, zero value otherwise (both if not set or set to explicit null).
@@ -383,9 +388,7 @@ func (o BookedAirport) MarshalJSON() ([]byte, error) {
 
 func (o BookedAirport) ToMap() (map[string]interface{}, error) {
 	toSerialize := map[string]interface{}{}
-	if !IsNil(o.IataCode) {
-		toSerialize["iataCode"] = o.IataCode
-	}
+	toSerialize["iataCode"] = o.IataCode
 	if o.IcaoCode.IsSet() {
 		toSerialize["icaoCode"] = o.IcaoCode.Get()
 	}
@@ -408,6 +411,42 @@ func (o BookedAirport) ToMap() (map[string]interface{}, error) {
 		toSerialize["timezone"] = o.Timezone.Get()
 	}
 	return toSerialize, nil
+}
+
+func (o *BookedAirport) UnmarshalJSON(data []byte) (err error) {
+	// This validates that all required properties are included in the JSON object
+	// by unmarshalling the object into a generic map with string keys and checking
+	// that every required field exists as a key in the generic map.
+	requiredProperties := []string{
+		"iataCode",
+	}
+
+	allProperties := make(map[string]interface{})
+
+	err = json.Unmarshal(data, &allProperties)
+
+	if err != nil {
+		return err;
+	}
+
+	for _, requiredProperty := range(requiredProperties) {
+		if _, exists := allProperties[requiredProperty]; !exists {
+			return fmt.Errorf("no value given for required property %v", requiredProperty)
+		}
+	}
+
+	varBookedAirport := _BookedAirport{}
+
+	decoder := json.NewDecoder(bytes.NewReader(data))
+	err = decoder.Decode(&varBookedAirport)
+
+	if err != nil {
+		return err
+	}
+
+	*o = BookedAirport(varBookedAirport)
+
+	return err
 }
 
 type NullableBookedAirport struct {

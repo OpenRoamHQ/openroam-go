@@ -109,7 +109,6 @@ func (o *EsimSmsRequest) UnmarshalJSON(data []byte) (err error) {
 	varEsimSmsRequest := _EsimSmsRequest{}
 
 	decoder := json.NewDecoder(bytes.NewReader(data))
-	decoder.DisallowUnknownFields()
 	err = decoder.Decode(&varEsimSmsRequest)
 
 	if err != nil {

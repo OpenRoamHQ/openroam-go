@@ -243,7 +243,6 @@ func (o *LeadGuestInput) UnmarshalJSON(data []byte) (err error) {
 	varLeadGuestInput := _LeadGuestInput{}
 
 	decoder := json.NewDecoder(bytes.NewReader(data))
-	decoder.DisallowUnknownFields()
 	err = decoder.Decode(&varLeadGuestInput)
 
 	if err != nil {

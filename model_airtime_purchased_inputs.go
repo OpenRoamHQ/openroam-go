@@ -13,6 +13,8 @@ package openroam
 
 import (
 	"encoding/json"
+	"bytes"
+	"fmt"
 )
 
 // checks if the AirtimePurchasedInputs type satisfies the MappedNullable interface at compile time
@@ -20,16 +22,19 @@ var _ MappedNullable = &AirtimePurchasedInputs{}
 
 // AirtimePurchasedInputs The item's `inputs` under the request's keys. `phoneNumber` is masked; `minDeliveredValue` is returned as accepted, in the value's currency, and is null when the item took no minimum. Operator settings are not echoed.
 type AirtimePurchasedInputs struct {
-	PhoneNumber *string `json:"phoneNumber,omitempty"`
+	PhoneNumber string `json:"phoneNumber"`
 	MinDeliveredValue NullableMoney `json:"minDeliveredValue,omitempty"`
 }
+
+type _AirtimePurchasedInputs AirtimePurchasedInputs
 
 // NewAirtimePurchasedInputs instantiates a new AirtimePurchasedInputs object
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewAirtimePurchasedInputs() *AirtimePurchasedInputs {
+func NewAirtimePurchasedInputs(phoneNumber string) *AirtimePurchasedInputs {
 	this := AirtimePurchasedInputs{}
+	this.PhoneNumber = phoneNumber
 	return &this
 }
 
@@ -41,36 +46,28 @@ func NewAirtimePurchasedInputsWithDefaults() *AirtimePurchasedInputs {
 	return &this
 }
 
-// GetPhoneNumber returns the PhoneNumber field value if set, zero value otherwise.
+// GetPhoneNumber returns the PhoneNumber field value
 func (o *AirtimePurchasedInputs) GetPhoneNumber() string {
-	if o == nil || IsNil(o.PhoneNumber) {
+	if o == nil {
 		var ret string
 		return ret
 	}
-	return *o.PhoneNumber
+
+	return o.PhoneNumber
 }
 
-// GetPhoneNumberOk returns a tuple with the PhoneNumber field value if set, nil otherwise
+// GetPhoneNumberOk returns a tuple with the PhoneNumber field value
 // and a boolean to check if the value has been set.
 func (o *AirtimePurchasedInputs) GetPhoneNumberOk() (*string, bool) {
-	if o == nil || IsNil(o.PhoneNumber) {
+	if o == nil {
 		return nil, false
 	}
-	return o.PhoneNumber, true
+	return &o.PhoneNumber, true
 }
 
-// HasPhoneNumber returns a boolean if a field has been set.
-func (o *AirtimePurchasedInputs) HasPhoneNumber() bool {
-	if o != nil && !IsNil(o.PhoneNumber) {
-		return true
-	}
-
-	return false
-}
-
-// SetPhoneNumber gets a reference to the given string and assigns it to the PhoneNumber field.
+// SetPhoneNumber sets field value
 func (o *AirtimePurchasedInputs) SetPhoneNumber(v string) {
-	o.PhoneNumber = &v
+	o.PhoneNumber = v
 }
 
 // GetMinDeliveredValue returns the MinDeliveredValue field value if set, zero value otherwise (both if not set or set to explicit null).
@@ -125,13 +122,47 @@ func (o AirtimePurchasedInputs) MarshalJSON() ([]byte, error) {
 
 func (o AirtimePurchasedInputs) ToMap() (map[string]interface{}, error) {
 	toSerialize := map[string]interface{}{}
-	if !IsNil(o.PhoneNumber) {
-		toSerialize["phoneNumber"] = o.PhoneNumber
-	}
+	toSerialize["phoneNumber"] = o.PhoneNumber
 	if o.MinDeliveredValue.IsSet() {
 		toSerialize["minDeliveredValue"] = o.MinDeliveredValue.Get()
 	}
 	return toSerialize, nil
+}
+
+func (o *AirtimePurchasedInputs) UnmarshalJSON(data []byte) (err error) {
+	// This validates that all required properties are included in the JSON object
+	// by unmarshalling the object into a generic map with string keys and checking
+	// that every required field exists as a key in the generic map.
+	requiredProperties := []string{
+		"phoneNumber",
+	}
+
+	allProperties := make(map[string]interface{})
+
+	err = json.Unmarshal(data, &allProperties)
+
+	if err != nil {
+		return err;
+	}
+
+	for _, requiredProperty := range(requiredProperties) {
+		if _, exists := allProperties[requiredProperty]; !exists {
+			return fmt.Errorf("no value given for required property %v", requiredProperty)
+		}
+	}
+
+	varAirtimePurchasedInputs := _AirtimePurchasedInputs{}
+
+	decoder := json.NewDecoder(bytes.NewReader(data))
+	err = decoder.Decode(&varAirtimePurchasedInputs)
+
+	if err != nil {
+		return err
+	}
+
+	*o = AirtimePurchasedInputs(varAirtimePurchasedInputs)
+
+	return err
 }
 
 type NullableAirtimePurchasedInputs struct {

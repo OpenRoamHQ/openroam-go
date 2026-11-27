@@ -27,8 +27,8 @@ type OfferPassenger struct {
 	Type NullableString `json:"type,omitempty"`
 	Age NullableInt32 `json:"age,omitempty"`
 	FareType NullableString `json:"fareType,omitempty"`
-	IncludedBaggage []Baggage `json:"includedBaggage,omitempty"`
-	AvailableServices []AvailableService `json:"availableServices,omitempty"`
+	IncludedBaggage []Baggage `json:"includedBaggage"`
+	AvailableServices []AvailableService `json:"availableServices"`
 }
 
 type _OfferPassenger OfferPassenger
@@ -37,9 +37,11 @@ type _OfferPassenger OfferPassenger
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewOfferPassenger(passengerIndex int32) *OfferPassenger {
+func NewOfferPassenger(passengerIndex int32, includedBaggage []Baggage, availableServices []AvailableService) *OfferPassenger {
 	this := OfferPassenger{}
 	this.PassengerIndex = passengerIndex
+	this.IncludedBaggage = includedBaggage
+	this.AvailableServices = availableServices
 	return &this
 }
 
@@ -201,66 +203,50 @@ func (o *OfferPassenger) UnsetFareType() {
 	o.FareType.Unset()
 }
 
-// GetIncludedBaggage returns the IncludedBaggage field value if set, zero value otherwise.
+// GetIncludedBaggage returns the IncludedBaggage field value
 func (o *OfferPassenger) GetIncludedBaggage() []Baggage {
-	if o == nil || IsNil(o.IncludedBaggage) {
+	if o == nil {
 		var ret []Baggage
 		return ret
 	}
+
 	return o.IncludedBaggage
 }
 
-// GetIncludedBaggageOk returns a tuple with the IncludedBaggage field value if set, nil otherwise
+// GetIncludedBaggageOk returns a tuple with the IncludedBaggage field value
 // and a boolean to check if the value has been set.
 func (o *OfferPassenger) GetIncludedBaggageOk() ([]Baggage, bool) {
-	if o == nil || IsNil(o.IncludedBaggage) {
+	if o == nil {
 		return nil, false
 	}
 	return o.IncludedBaggage, true
 }
 
-// HasIncludedBaggage returns a boolean if a field has been set.
-func (o *OfferPassenger) HasIncludedBaggage() bool {
-	if o != nil && !IsNil(o.IncludedBaggage) {
-		return true
-	}
-
-	return false
-}
-
-// SetIncludedBaggage gets a reference to the given []Baggage and assigns it to the IncludedBaggage field.
+// SetIncludedBaggage sets field value
 func (o *OfferPassenger) SetIncludedBaggage(v []Baggage) {
 	o.IncludedBaggage = v
 }
 
-// GetAvailableServices returns the AvailableServices field value if set, zero value otherwise.
+// GetAvailableServices returns the AvailableServices field value
 func (o *OfferPassenger) GetAvailableServices() []AvailableService {
-	if o == nil || IsNil(o.AvailableServices) {
+	if o == nil {
 		var ret []AvailableService
 		return ret
 	}
+
 	return o.AvailableServices
 }
 
-// GetAvailableServicesOk returns a tuple with the AvailableServices field value if set, nil otherwise
+// GetAvailableServicesOk returns a tuple with the AvailableServices field value
 // and a boolean to check if the value has been set.
 func (o *OfferPassenger) GetAvailableServicesOk() ([]AvailableService, bool) {
-	if o == nil || IsNil(o.AvailableServices) {
+	if o == nil {
 		return nil, false
 	}
 	return o.AvailableServices, true
 }
 
-// HasAvailableServices returns a boolean if a field has been set.
-func (o *OfferPassenger) HasAvailableServices() bool {
-	if o != nil && !IsNil(o.AvailableServices) {
-		return true
-	}
-
-	return false
-}
-
-// SetAvailableServices gets a reference to the given []AvailableService and assigns it to the AvailableServices field.
+// SetAvailableServices sets field value
 func (o *OfferPassenger) SetAvailableServices(v []AvailableService) {
 	o.AvailableServices = v
 }
@@ -285,12 +271,8 @@ func (o OfferPassenger) ToMap() (map[string]interface{}, error) {
 	if o.FareType.IsSet() {
 		toSerialize["fareType"] = o.FareType.Get()
 	}
-	if !IsNil(o.IncludedBaggage) {
-		toSerialize["includedBaggage"] = o.IncludedBaggage
-	}
-	if !IsNil(o.AvailableServices) {
-		toSerialize["availableServices"] = o.AvailableServices
-	}
+	toSerialize["includedBaggage"] = o.IncludedBaggage
+	toSerialize["availableServices"] = o.AvailableServices
 	return toSerialize, nil
 }
 
@@ -300,6 +282,8 @@ func (o *OfferPassenger) UnmarshalJSON(data []byte) (err error) {
 	// that every required field exists as a key in the generic map.
 	requiredProperties := []string{
 		"passengerIndex",
+		"includedBaggage",
+		"availableServices",
 	}
 
 	allProperties := make(map[string]interface{})
@@ -319,7 +303,6 @@ func (o *OfferPassenger) UnmarshalJSON(data []byte) (err error) {
 	varOfferPassenger := _OfferPassenger{}
 
 	decoder := json.NewDecoder(bytes.NewReader(data))
-	decoder.DisallowUnknownFields()
 	err = decoder.Decode(&varOfferPassenger)
 
 	if err != nil {

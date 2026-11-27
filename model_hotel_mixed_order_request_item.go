@@ -202,7 +202,6 @@ func (o *HotelMixedOrderRequestItem) UnmarshalJSON(data []byte) (err error) {
 	varHotelMixedOrderRequestItem := _HotelMixedOrderRequestItem{}
 
 	decoder := json.NewDecoder(bytes.NewReader(data))
-	decoder.DisallowUnknownFields()
 	err = decoder.Decode(&varHotelMixedOrderRequestItem)
 
 	if err != nil {

@@ -138,7 +138,6 @@ func (o *Coordinates) UnmarshalJSON(data []byte) (err error) {
 	varCoordinates := _Coordinates{}
 
 	decoder := json.NewDecoder(bytes.NewReader(data))
-	decoder.DisallowUnknownFields()
 	err = decoder.Decode(&varCoordinates)
 
 	if err != nil {

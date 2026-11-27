@@ -13,35 +13,66 @@ package openroam
 
 import (
 	"encoding/json"
+	"time"
+	"bytes"
+	"fmt"
 )
 
 // checks if the EsimUsageWebhookData type satisfies the MappedNullable interface at compile time
 var _ MappedNullable = &EsimUsageWebhookData{}
 
-// EsimUsageWebhookData Data of the `esim.usage.updated` webhook. Partners address the eSIM by its order item and ICCID; the offer's public id and internal package ids are not part of it. Allowances and remaining amounts are the base plan's, without top-ups: data in MB (binary 1024), voice in seconds and SMS in messages.
+// EsimUsageWebhookData Data of the `esim.usage.updated` webhook, with the names, meanings, units and formats of `GET /esims/{iccid}/usage`: plan and top-ups together, data in MB (1 MB = 1024 KB), SMS in messages, voice in minutes, and null for an amount that is unlimited, not reported or not included. Partners address the eSIM by its order item and ICCID; the offer's public id and internal package ids are not part of it.
 type EsimUsageWebhookData struct {
-	OrderId *string `json:"orderId,omitempty"`
-	OrderItemId *string `json:"orderItemId,omitempty"`
+	OrderId string `json:"orderId"`
+	OrderItemId string `json:"orderItemId"`
+	// The eSIM's ICCID; null until the eSIM is provisioned.
 	Iccid NullableString `json:"iccid,omitempty"`
-	Start NullableInt64 `json:"start,omitempty"`
-	End NullableInt64 `json:"end,omitempty"`
-	Status *string `json:"status,omitempty"`
-	PackageName *string `json:"packageName,omitempty"`
-	IsUnlimited *bool `json:"isUnlimited,omitempty"`
-	AllowedData *int64 `json:"allowedData,omitempty"`
-	RemainingData *int64 `json:"remainingData,omitempty"`
-	AllowedSms *int64 `json:"allowedSms,omitempty"`
-	RemainingSms *int64 `json:"remainingSms,omitempty"`
-	AllowedVoice *int64 `json:"allowedVoice,omitempty"`
-	RemainingVoice *int64 `json:"remainingVoice,omitempty"`
+	// When the plan started, in UTC (ISO 8601); null until it is activated.
+	Start NullableTime `json:"start,omitempty"`
+	// When the plan ends, in UTC (ISO 8601), as last reported; null while no end is reported.
+	End NullableTime `json:"end,omitempty"`
+	// The eSIM's lifecycle status, as `esimStatus` on the order item and usage reads.
+	EsimStatus string `json:"esimStatus"`
+	// The installed profile's status, as `profileStatus` on the order item and usage reads.
+	ProfileStatus string `json:"profileStatus"`
+	// Display name of the purchased plan.
+	PackageName string `json:"packageName"`
+	// Total data in MB; null when unlimited or not reported.
+	AllowedData NullableInt64 `json:"allowedData,omitempty"`
+	// Remaining data in MB; null when unlimited or not reported.
+	RemainingData NullableInt64 `json:"remainingData,omitempty"`
+	// Whether the data is unlimited.
+	IsDataUnlimited bool `json:"isDataUnlimited"`
+	// Total SMS, in messages; null when unlimited, not reported or not included.
+	AllowedSms NullableInt64 `json:"allowedSms,omitempty"`
+	// Remaining SMS, in messages; null when unlimited, not reported or not included.
+	RemainingSms NullableInt64 `json:"remainingSms,omitempty"`
+	// Whether SMS are unlimited.
+	IsSmsUnlimited bool `json:"isSmsUnlimited"`
+	// Total voice, in minutes; null when unlimited, not reported or not included.
+	AllowedVoice NullableInt64 `json:"allowedVoice,omitempty"`
+	// Remaining voice, in whole minutes; null when unlimited, not reported or not included.
+	RemainingVoice NullableInt64 `json:"remainingVoice,omitempty"`
+	// Whether voice is unlimited.
+	IsVoiceUnlimited bool `json:"isVoiceUnlimited"`
 }
+
+type _EsimUsageWebhookData EsimUsageWebhookData
 
 // NewEsimUsageWebhookData instantiates a new EsimUsageWebhookData object
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewEsimUsageWebhookData() *EsimUsageWebhookData {
+func NewEsimUsageWebhookData(orderId string, orderItemId string, esimStatus string, profileStatus string, packageName string, isDataUnlimited bool, isSmsUnlimited bool, isVoiceUnlimited bool) *EsimUsageWebhookData {
 	this := EsimUsageWebhookData{}
+	this.OrderId = orderId
+	this.OrderItemId = orderItemId
+	this.EsimStatus = esimStatus
+	this.ProfileStatus = profileStatus
+	this.PackageName = packageName
+	this.IsDataUnlimited = isDataUnlimited
+	this.IsSmsUnlimited = isSmsUnlimited
+	this.IsVoiceUnlimited = isVoiceUnlimited
 	return &this
 }
 
@@ -53,68 +84,52 @@ func NewEsimUsageWebhookDataWithDefaults() *EsimUsageWebhookData {
 	return &this
 }
 
-// GetOrderId returns the OrderId field value if set, zero value otherwise.
+// GetOrderId returns the OrderId field value
 func (o *EsimUsageWebhookData) GetOrderId() string {
-	if o == nil || IsNil(o.OrderId) {
+	if o == nil {
 		var ret string
 		return ret
 	}
-	return *o.OrderId
+
+	return o.OrderId
 }
 
-// GetOrderIdOk returns a tuple with the OrderId field value if set, nil otherwise
+// GetOrderIdOk returns a tuple with the OrderId field value
 // and a boolean to check if the value has been set.
 func (o *EsimUsageWebhookData) GetOrderIdOk() (*string, bool) {
-	if o == nil || IsNil(o.OrderId) {
+	if o == nil {
 		return nil, false
 	}
-	return o.OrderId, true
+	return &o.OrderId, true
 }
 
-// HasOrderId returns a boolean if a field has been set.
-func (o *EsimUsageWebhookData) HasOrderId() bool {
-	if o != nil && !IsNil(o.OrderId) {
-		return true
-	}
-
-	return false
-}
-
-// SetOrderId gets a reference to the given string and assigns it to the OrderId field.
+// SetOrderId sets field value
 func (o *EsimUsageWebhookData) SetOrderId(v string) {
-	o.OrderId = &v
+	o.OrderId = v
 }
 
-// GetOrderItemId returns the OrderItemId field value if set, zero value otherwise.
+// GetOrderItemId returns the OrderItemId field value
 func (o *EsimUsageWebhookData) GetOrderItemId() string {
-	if o == nil || IsNil(o.OrderItemId) {
+	if o == nil {
 		var ret string
 		return ret
 	}
-	return *o.OrderItemId
+
+	return o.OrderItemId
 }
 
-// GetOrderItemIdOk returns a tuple with the OrderItemId field value if set, nil otherwise
+// GetOrderItemIdOk returns a tuple with the OrderItemId field value
 // and a boolean to check if the value has been set.
 func (o *EsimUsageWebhookData) GetOrderItemIdOk() (*string, bool) {
-	if o == nil || IsNil(o.OrderItemId) {
+	if o == nil {
 		return nil, false
 	}
-	return o.OrderItemId, true
+	return &o.OrderItemId, true
 }
 
-// HasOrderItemId returns a boolean if a field has been set.
-func (o *EsimUsageWebhookData) HasOrderItemId() bool {
-	if o != nil && !IsNil(o.OrderItemId) {
-		return true
-	}
-
-	return false
-}
-
-// SetOrderItemId gets a reference to the given string and assigns it to the OrderItemId field.
+// SetOrderItemId sets field value
 func (o *EsimUsageWebhookData) SetOrderItemId(v string) {
-	o.OrderItemId = &v
+	o.OrderItemId = v
 }
 
 // GetIccid returns the Iccid field value if set, zero value otherwise (both if not set or set to explicit null).
@@ -160,9 +175,9 @@ func (o *EsimUsageWebhookData) UnsetIccid() {
 }
 
 // GetStart returns the Start field value if set, zero value otherwise (both if not set or set to explicit null).
-func (o *EsimUsageWebhookData) GetStart() int64 {
+func (o *EsimUsageWebhookData) GetStart() time.Time {
 	if o == nil || IsNil(o.Start.Get()) {
-		var ret int64
+		var ret time.Time
 		return ret
 	}
 	return *o.Start.Get()
@@ -171,7 +186,7 @@ func (o *EsimUsageWebhookData) GetStart() int64 {
 // GetStartOk returns a tuple with the Start field value if set, nil otherwise
 // and a boolean to check if the value has been set.
 // NOTE: If the value is an explicit nil, `nil, true` will be returned
-func (o *EsimUsageWebhookData) GetStartOk() (*int64, bool) {
+func (o *EsimUsageWebhookData) GetStartOk() (*time.Time, bool) {
 	if o == nil {
 		return nil, false
 	}
@@ -187,8 +202,8 @@ func (o *EsimUsageWebhookData) HasStart() bool {
 	return false
 }
 
-// SetStart gets a reference to the given NullableInt64 and assigns it to the Start field.
-func (o *EsimUsageWebhookData) SetStart(v int64) {
+// SetStart gets a reference to the given NullableTime and assigns it to the Start field.
+func (o *EsimUsageWebhookData) SetStart(v time.Time) {
 	o.Start.Set(&v)
 }
 // SetStartNil sets the value for Start to be an explicit nil
@@ -202,9 +217,9 @@ func (o *EsimUsageWebhookData) UnsetStart() {
 }
 
 // GetEnd returns the End field value if set, zero value otherwise (both if not set or set to explicit null).
-func (o *EsimUsageWebhookData) GetEnd() int64 {
+func (o *EsimUsageWebhookData) GetEnd() time.Time {
 	if o == nil || IsNil(o.End.Get()) {
-		var ret int64
+		var ret time.Time
 		return ret
 	}
 	return *o.End.Get()
@@ -213,7 +228,7 @@ func (o *EsimUsageWebhookData) GetEnd() int64 {
 // GetEndOk returns a tuple with the End field value if set, nil otherwise
 // and a boolean to check if the value has been set.
 // NOTE: If the value is an explicit nil, `nil, true` will be returned
-func (o *EsimUsageWebhookData) GetEndOk() (*int64, bool) {
+func (o *EsimUsageWebhookData) GetEndOk() (*time.Time, bool) {
 	if o == nil {
 		return nil, false
 	}
@@ -229,8 +244,8 @@ func (o *EsimUsageWebhookData) HasEnd() bool {
 	return false
 }
 
-// SetEnd gets a reference to the given NullableInt64 and assigns it to the End field.
-func (o *EsimUsageWebhookData) SetEnd(v int64) {
+// SetEnd gets a reference to the given NullableTime and assigns it to the End field.
+func (o *EsimUsageWebhookData) SetEnd(v time.Time) {
 	o.End.Set(&v)
 }
 // SetEndNil sets the value for End to be an explicit nil
@@ -243,292 +258,400 @@ func (o *EsimUsageWebhookData) UnsetEnd() {
 	o.End.Unset()
 }
 
-// GetStatus returns the Status field value if set, zero value otherwise.
-func (o *EsimUsageWebhookData) GetStatus() string {
-	if o == nil || IsNil(o.Status) {
+// GetEsimStatus returns the EsimStatus field value
+func (o *EsimUsageWebhookData) GetEsimStatus() string {
+	if o == nil {
 		var ret string
 		return ret
 	}
-	return *o.Status
+
+	return o.EsimStatus
 }
 
-// GetStatusOk returns a tuple with the Status field value if set, nil otherwise
+// GetEsimStatusOk returns a tuple with the EsimStatus field value
 // and a boolean to check if the value has been set.
-func (o *EsimUsageWebhookData) GetStatusOk() (*string, bool) {
-	if o == nil || IsNil(o.Status) {
+func (o *EsimUsageWebhookData) GetEsimStatusOk() (*string, bool) {
+	if o == nil {
 		return nil, false
 	}
-	return o.Status, true
+	return &o.EsimStatus, true
 }
 
-// HasStatus returns a boolean if a field has been set.
-func (o *EsimUsageWebhookData) HasStatus() bool {
-	if o != nil && !IsNil(o.Status) {
-		return true
-	}
-
-	return false
+// SetEsimStatus sets field value
+func (o *EsimUsageWebhookData) SetEsimStatus(v string) {
+	o.EsimStatus = v
 }
 
-// SetStatus gets a reference to the given string and assigns it to the Status field.
-func (o *EsimUsageWebhookData) SetStatus(v string) {
-	o.Status = &v
-}
-
-// GetPackageName returns the PackageName field value if set, zero value otherwise.
-func (o *EsimUsageWebhookData) GetPackageName() string {
-	if o == nil || IsNil(o.PackageName) {
+// GetProfileStatus returns the ProfileStatus field value
+func (o *EsimUsageWebhookData) GetProfileStatus() string {
+	if o == nil {
 		var ret string
 		return ret
 	}
-	return *o.PackageName
+
+	return o.ProfileStatus
 }
 
-// GetPackageNameOk returns a tuple with the PackageName field value if set, nil otherwise
+// GetProfileStatusOk returns a tuple with the ProfileStatus field value
+// and a boolean to check if the value has been set.
+func (o *EsimUsageWebhookData) GetProfileStatusOk() (*string, bool) {
+	if o == nil {
+		return nil, false
+	}
+	return &o.ProfileStatus, true
+}
+
+// SetProfileStatus sets field value
+func (o *EsimUsageWebhookData) SetProfileStatus(v string) {
+	o.ProfileStatus = v
+}
+
+// GetPackageName returns the PackageName field value
+func (o *EsimUsageWebhookData) GetPackageName() string {
+	if o == nil {
+		var ret string
+		return ret
+	}
+
+	return o.PackageName
+}
+
+// GetPackageNameOk returns a tuple with the PackageName field value
 // and a boolean to check if the value has been set.
 func (o *EsimUsageWebhookData) GetPackageNameOk() (*string, bool) {
-	if o == nil || IsNil(o.PackageName) {
+	if o == nil {
 		return nil, false
 	}
-	return o.PackageName, true
+	return &o.PackageName, true
 }
 
-// HasPackageName returns a boolean if a field has been set.
-func (o *EsimUsageWebhookData) HasPackageName() bool {
-	if o != nil && !IsNil(o.PackageName) {
-		return true
-	}
-
-	return false
-}
-
-// SetPackageName gets a reference to the given string and assigns it to the PackageName field.
+// SetPackageName sets field value
 func (o *EsimUsageWebhookData) SetPackageName(v string) {
-	o.PackageName = &v
+	o.PackageName = v
 }
 
-// GetIsUnlimited returns the IsUnlimited field value if set, zero value otherwise.
-func (o *EsimUsageWebhookData) GetIsUnlimited() bool {
-	if o == nil || IsNil(o.IsUnlimited) {
-		var ret bool
-		return ret
-	}
-	return *o.IsUnlimited
-}
-
-// GetIsUnlimitedOk returns a tuple with the IsUnlimited field value if set, nil otherwise
-// and a boolean to check if the value has been set.
-func (o *EsimUsageWebhookData) GetIsUnlimitedOk() (*bool, bool) {
-	if o == nil || IsNil(o.IsUnlimited) {
-		return nil, false
-	}
-	return o.IsUnlimited, true
-}
-
-// HasIsUnlimited returns a boolean if a field has been set.
-func (o *EsimUsageWebhookData) HasIsUnlimited() bool {
-	if o != nil && !IsNil(o.IsUnlimited) {
-		return true
-	}
-
-	return false
-}
-
-// SetIsUnlimited gets a reference to the given bool and assigns it to the IsUnlimited field.
-func (o *EsimUsageWebhookData) SetIsUnlimited(v bool) {
-	o.IsUnlimited = &v
-}
-
-// GetAllowedData returns the AllowedData field value if set, zero value otherwise.
+// GetAllowedData returns the AllowedData field value if set, zero value otherwise (both if not set or set to explicit null).
 func (o *EsimUsageWebhookData) GetAllowedData() int64 {
-	if o == nil || IsNil(o.AllowedData) {
+	if o == nil || IsNil(o.AllowedData.Get()) {
 		var ret int64
 		return ret
 	}
-	return *o.AllowedData
+	return *o.AllowedData.Get()
 }
 
 // GetAllowedDataOk returns a tuple with the AllowedData field value if set, nil otherwise
 // and a boolean to check if the value has been set.
+// NOTE: If the value is an explicit nil, `nil, true` will be returned
 func (o *EsimUsageWebhookData) GetAllowedDataOk() (*int64, bool) {
-	if o == nil || IsNil(o.AllowedData) {
+	if o == nil {
 		return nil, false
 	}
-	return o.AllowedData, true
+	return o.AllowedData.Get(), o.AllowedData.IsSet()
 }
 
 // HasAllowedData returns a boolean if a field has been set.
 func (o *EsimUsageWebhookData) HasAllowedData() bool {
-	if o != nil && !IsNil(o.AllowedData) {
+	if o != nil && o.AllowedData.IsSet() {
 		return true
 	}
 
 	return false
 }
 
-// SetAllowedData gets a reference to the given int64 and assigns it to the AllowedData field.
+// SetAllowedData gets a reference to the given NullableInt64 and assigns it to the AllowedData field.
 func (o *EsimUsageWebhookData) SetAllowedData(v int64) {
-	o.AllowedData = &v
+	o.AllowedData.Set(&v)
+}
+// SetAllowedDataNil sets the value for AllowedData to be an explicit nil
+func (o *EsimUsageWebhookData) SetAllowedDataNil() {
+	o.AllowedData.Set(nil)
 }
 
-// GetRemainingData returns the RemainingData field value if set, zero value otherwise.
+// UnsetAllowedData ensures that no value is present for AllowedData, not even an explicit nil
+func (o *EsimUsageWebhookData) UnsetAllowedData() {
+	o.AllowedData.Unset()
+}
+
+// GetRemainingData returns the RemainingData field value if set, zero value otherwise (both if not set or set to explicit null).
 func (o *EsimUsageWebhookData) GetRemainingData() int64 {
-	if o == nil || IsNil(o.RemainingData) {
+	if o == nil || IsNil(o.RemainingData.Get()) {
 		var ret int64
 		return ret
 	}
-	return *o.RemainingData
+	return *o.RemainingData.Get()
 }
 
 // GetRemainingDataOk returns a tuple with the RemainingData field value if set, nil otherwise
 // and a boolean to check if the value has been set.
+// NOTE: If the value is an explicit nil, `nil, true` will be returned
 func (o *EsimUsageWebhookData) GetRemainingDataOk() (*int64, bool) {
-	if o == nil || IsNil(o.RemainingData) {
+	if o == nil {
 		return nil, false
 	}
-	return o.RemainingData, true
+	return o.RemainingData.Get(), o.RemainingData.IsSet()
 }
 
 // HasRemainingData returns a boolean if a field has been set.
 func (o *EsimUsageWebhookData) HasRemainingData() bool {
-	if o != nil && !IsNil(o.RemainingData) {
+	if o != nil && o.RemainingData.IsSet() {
 		return true
 	}
 
 	return false
 }
 
-// SetRemainingData gets a reference to the given int64 and assigns it to the RemainingData field.
+// SetRemainingData gets a reference to the given NullableInt64 and assigns it to the RemainingData field.
 func (o *EsimUsageWebhookData) SetRemainingData(v int64) {
-	o.RemainingData = &v
+	o.RemainingData.Set(&v)
+}
+// SetRemainingDataNil sets the value for RemainingData to be an explicit nil
+func (o *EsimUsageWebhookData) SetRemainingDataNil() {
+	o.RemainingData.Set(nil)
 }
 
-// GetAllowedSms returns the AllowedSms field value if set, zero value otherwise.
+// UnsetRemainingData ensures that no value is present for RemainingData, not even an explicit nil
+func (o *EsimUsageWebhookData) UnsetRemainingData() {
+	o.RemainingData.Unset()
+}
+
+// GetIsDataUnlimited returns the IsDataUnlimited field value
+func (o *EsimUsageWebhookData) GetIsDataUnlimited() bool {
+	if o == nil {
+		var ret bool
+		return ret
+	}
+
+	return o.IsDataUnlimited
+}
+
+// GetIsDataUnlimitedOk returns a tuple with the IsDataUnlimited field value
+// and a boolean to check if the value has been set.
+func (o *EsimUsageWebhookData) GetIsDataUnlimitedOk() (*bool, bool) {
+	if o == nil {
+		return nil, false
+	}
+	return &o.IsDataUnlimited, true
+}
+
+// SetIsDataUnlimited sets field value
+func (o *EsimUsageWebhookData) SetIsDataUnlimited(v bool) {
+	o.IsDataUnlimited = v
+}
+
+// GetAllowedSms returns the AllowedSms field value if set, zero value otherwise (both if not set or set to explicit null).
 func (o *EsimUsageWebhookData) GetAllowedSms() int64 {
-	if o == nil || IsNil(o.AllowedSms) {
+	if o == nil || IsNil(o.AllowedSms.Get()) {
 		var ret int64
 		return ret
 	}
-	return *o.AllowedSms
+	return *o.AllowedSms.Get()
 }
 
 // GetAllowedSmsOk returns a tuple with the AllowedSms field value if set, nil otherwise
 // and a boolean to check if the value has been set.
+// NOTE: If the value is an explicit nil, `nil, true` will be returned
 func (o *EsimUsageWebhookData) GetAllowedSmsOk() (*int64, bool) {
-	if o == nil || IsNil(o.AllowedSms) {
+	if o == nil {
 		return nil, false
 	}
-	return o.AllowedSms, true
+	return o.AllowedSms.Get(), o.AllowedSms.IsSet()
 }
 
 // HasAllowedSms returns a boolean if a field has been set.
 func (o *EsimUsageWebhookData) HasAllowedSms() bool {
-	if o != nil && !IsNil(o.AllowedSms) {
+	if o != nil && o.AllowedSms.IsSet() {
 		return true
 	}
 
 	return false
 }
 
-// SetAllowedSms gets a reference to the given int64 and assigns it to the AllowedSms field.
+// SetAllowedSms gets a reference to the given NullableInt64 and assigns it to the AllowedSms field.
 func (o *EsimUsageWebhookData) SetAllowedSms(v int64) {
-	o.AllowedSms = &v
+	o.AllowedSms.Set(&v)
+}
+// SetAllowedSmsNil sets the value for AllowedSms to be an explicit nil
+func (o *EsimUsageWebhookData) SetAllowedSmsNil() {
+	o.AllowedSms.Set(nil)
 }
 
-// GetRemainingSms returns the RemainingSms field value if set, zero value otherwise.
+// UnsetAllowedSms ensures that no value is present for AllowedSms, not even an explicit nil
+func (o *EsimUsageWebhookData) UnsetAllowedSms() {
+	o.AllowedSms.Unset()
+}
+
+// GetRemainingSms returns the RemainingSms field value if set, zero value otherwise (both if not set or set to explicit null).
 func (o *EsimUsageWebhookData) GetRemainingSms() int64 {
-	if o == nil || IsNil(o.RemainingSms) {
+	if o == nil || IsNil(o.RemainingSms.Get()) {
 		var ret int64
 		return ret
 	}
-	return *o.RemainingSms
+	return *o.RemainingSms.Get()
 }
 
 // GetRemainingSmsOk returns a tuple with the RemainingSms field value if set, nil otherwise
 // and a boolean to check if the value has been set.
+// NOTE: If the value is an explicit nil, `nil, true` will be returned
 func (o *EsimUsageWebhookData) GetRemainingSmsOk() (*int64, bool) {
-	if o == nil || IsNil(o.RemainingSms) {
+	if o == nil {
 		return nil, false
 	}
-	return o.RemainingSms, true
+	return o.RemainingSms.Get(), o.RemainingSms.IsSet()
 }
 
 // HasRemainingSms returns a boolean if a field has been set.
 func (o *EsimUsageWebhookData) HasRemainingSms() bool {
-	if o != nil && !IsNil(o.RemainingSms) {
+	if o != nil && o.RemainingSms.IsSet() {
 		return true
 	}
 
 	return false
 }
 
-// SetRemainingSms gets a reference to the given int64 and assigns it to the RemainingSms field.
+// SetRemainingSms gets a reference to the given NullableInt64 and assigns it to the RemainingSms field.
 func (o *EsimUsageWebhookData) SetRemainingSms(v int64) {
-	o.RemainingSms = &v
+	o.RemainingSms.Set(&v)
+}
+// SetRemainingSmsNil sets the value for RemainingSms to be an explicit nil
+func (o *EsimUsageWebhookData) SetRemainingSmsNil() {
+	o.RemainingSms.Set(nil)
 }
 
-// GetAllowedVoice returns the AllowedVoice field value if set, zero value otherwise.
+// UnsetRemainingSms ensures that no value is present for RemainingSms, not even an explicit nil
+func (o *EsimUsageWebhookData) UnsetRemainingSms() {
+	o.RemainingSms.Unset()
+}
+
+// GetIsSmsUnlimited returns the IsSmsUnlimited field value
+func (o *EsimUsageWebhookData) GetIsSmsUnlimited() bool {
+	if o == nil {
+		var ret bool
+		return ret
+	}
+
+	return o.IsSmsUnlimited
+}
+
+// GetIsSmsUnlimitedOk returns a tuple with the IsSmsUnlimited field value
+// and a boolean to check if the value has been set.
+func (o *EsimUsageWebhookData) GetIsSmsUnlimitedOk() (*bool, bool) {
+	if o == nil {
+		return nil, false
+	}
+	return &o.IsSmsUnlimited, true
+}
+
+// SetIsSmsUnlimited sets field value
+func (o *EsimUsageWebhookData) SetIsSmsUnlimited(v bool) {
+	o.IsSmsUnlimited = v
+}
+
+// GetAllowedVoice returns the AllowedVoice field value if set, zero value otherwise (both if not set or set to explicit null).
 func (o *EsimUsageWebhookData) GetAllowedVoice() int64 {
-	if o == nil || IsNil(o.AllowedVoice) {
+	if o == nil || IsNil(o.AllowedVoice.Get()) {
 		var ret int64
 		return ret
 	}
-	return *o.AllowedVoice
+	return *o.AllowedVoice.Get()
 }
 
 // GetAllowedVoiceOk returns a tuple with the AllowedVoice field value if set, nil otherwise
 // and a boolean to check if the value has been set.
+// NOTE: If the value is an explicit nil, `nil, true` will be returned
 func (o *EsimUsageWebhookData) GetAllowedVoiceOk() (*int64, bool) {
-	if o == nil || IsNil(o.AllowedVoice) {
+	if o == nil {
 		return nil, false
 	}
-	return o.AllowedVoice, true
+	return o.AllowedVoice.Get(), o.AllowedVoice.IsSet()
 }
 
 // HasAllowedVoice returns a boolean if a field has been set.
 func (o *EsimUsageWebhookData) HasAllowedVoice() bool {
-	if o != nil && !IsNil(o.AllowedVoice) {
+	if o != nil && o.AllowedVoice.IsSet() {
 		return true
 	}
 
 	return false
 }
 
-// SetAllowedVoice gets a reference to the given int64 and assigns it to the AllowedVoice field.
+// SetAllowedVoice gets a reference to the given NullableInt64 and assigns it to the AllowedVoice field.
 func (o *EsimUsageWebhookData) SetAllowedVoice(v int64) {
-	o.AllowedVoice = &v
+	o.AllowedVoice.Set(&v)
+}
+// SetAllowedVoiceNil sets the value for AllowedVoice to be an explicit nil
+func (o *EsimUsageWebhookData) SetAllowedVoiceNil() {
+	o.AllowedVoice.Set(nil)
 }
 
-// GetRemainingVoice returns the RemainingVoice field value if set, zero value otherwise.
+// UnsetAllowedVoice ensures that no value is present for AllowedVoice, not even an explicit nil
+func (o *EsimUsageWebhookData) UnsetAllowedVoice() {
+	o.AllowedVoice.Unset()
+}
+
+// GetRemainingVoice returns the RemainingVoice field value if set, zero value otherwise (both if not set or set to explicit null).
 func (o *EsimUsageWebhookData) GetRemainingVoice() int64 {
-	if o == nil || IsNil(o.RemainingVoice) {
+	if o == nil || IsNil(o.RemainingVoice.Get()) {
 		var ret int64
 		return ret
 	}
-	return *o.RemainingVoice
+	return *o.RemainingVoice.Get()
 }
 
 // GetRemainingVoiceOk returns a tuple with the RemainingVoice field value if set, nil otherwise
 // and a boolean to check if the value has been set.
+// NOTE: If the value is an explicit nil, `nil, true` will be returned
 func (o *EsimUsageWebhookData) GetRemainingVoiceOk() (*int64, bool) {
-	if o == nil || IsNil(o.RemainingVoice) {
+	if o == nil {
 		return nil, false
 	}
-	return o.RemainingVoice, true
+	return o.RemainingVoice.Get(), o.RemainingVoice.IsSet()
 }
 
 // HasRemainingVoice returns a boolean if a field has been set.
 func (o *EsimUsageWebhookData) HasRemainingVoice() bool {
-	if o != nil && !IsNil(o.RemainingVoice) {
+	if o != nil && o.RemainingVoice.IsSet() {
 		return true
 	}
 
 	return false
 }
 
-// SetRemainingVoice gets a reference to the given int64 and assigns it to the RemainingVoice field.
+// SetRemainingVoice gets a reference to the given NullableInt64 and assigns it to the RemainingVoice field.
 func (o *EsimUsageWebhookData) SetRemainingVoice(v int64) {
-	o.RemainingVoice = &v
+	o.RemainingVoice.Set(&v)
+}
+// SetRemainingVoiceNil sets the value for RemainingVoice to be an explicit nil
+func (o *EsimUsageWebhookData) SetRemainingVoiceNil() {
+	o.RemainingVoice.Set(nil)
+}
+
+// UnsetRemainingVoice ensures that no value is present for RemainingVoice, not even an explicit nil
+func (o *EsimUsageWebhookData) UnsetRemainingVoice() {
+	o.RemainingVoice.Unset()
+}
+
+// GetIsVoiceUnlimited returns the IsVoiceUnlimited field value
+func (o *EsimUsageWebhookData) GetIsVoiceUnlimited() bool {
+	if o == nil {
+		var ret bool
+		return ret
+	}
+
+	return o.IsVoiceUnlimited
+}
+
+// GetIsVoiceUnlimitedOk returns a tuple with the IsVoiceUnlimited field value
+// and a boolean to check if the value has been set.
+func (o *EsimUsageWebhookData) GetIsVoiceUnlimitedOk() (*bool, bool) {
+	if o == nil {
+		return nil, false
+	}
+	return &o.IsVoiceUnlimited, true
+}
+
+// SetIsVoiceUnlimited sets field value
+func (o *EsimUsageWebhookData) SetIsVoiceUnlimited(v bool) {
+	o.IsVoiceUnlimited = v
 }
 
 func (o EsimUsageWebhookData) MarshalJSON() ([]byte, error) {
@@ -541,12 +664,8 @@ func (o EsimUsageWebhookData) MarshalJSON() ([]byte, error) {
 
 func (o EsimUsageWebhookData) ToMap() (map[string]interface{}, error) {
 	toSerialize := map[string]interface{}{}
-	if !IsNil(o.OrderId) {
-		toSerialize["orderId"] = o.OrderId
-	}
-	if !IsNil(o.OrderItemId) {
-		toSerialize["orderItemId"] = o.OrderItemId
-	}
+	toSerialize["orderId"] = o.OrderId
+	toSerialize["orderItemId"] = o.OrderItemId
 	if o.Iccid.IsSet() {
 		toSerialize["iccid"] = o.Iccid.Get()
 	}
@@ -556,34 +675,74 @@ func (o EsimUsageWebhookData) ToMap() (map[string]interface{}, error) {
 	if o.End.IsSet() {
 		toSerialize["end"] = o.End.Get()
 	}
-	if !IsNil(o.Status) {
-		toSerialize["status"] = o.Status
+	toSerialize["esimStatus"] = o.EsimStatus
+	toSerialize["profileStatus"] = o.ProfileStatus
+	toSerialize["packageName"] = o.PackageName
+	if o.AllowedData.IsSet() {
+		toSerialize["allowedData"] = o.AllowedData.Get()
 	}
-	if !IsNil(o.PackageName) {
-		toSerialize["packageName"] = o.PackageName
+	if o.RemainingData.IsSet() {
+		toSerialize["remainingData"] = o.RemainingData.Get()
 	}
-	if !IsNil(o.IsUnlimited) {
-		toSerialize["isUnlimited"] = o.IsUnlimited
+	toSerialize["isDataUnlimited"] = o.IsDataUnlimited
+	if o.AllowedSms.IsSet() {
+		toSerialize["allowedSms"] = o.AllowedSms.Get()
 	}
-	if !IsNil(o.AllowedData) {
-		toSerialize["allowedData"] = o.AllowedData
+	if o.RemainingSms.IsSet() {
+		toSerialize["remainingSms"] = o.RemainingSms.Get()
 	}
-	if !IsNil(o.RemainingData) {
-		toSerialize["remainingData"] = o.RemainingData
+	toSerialize["isSmsUnlimited"] = o.IsSmsUnlimited
+	if o.AllowedVoice.IsSet() {
+		toSerialize["allowedVoice"] = o.AllowedVoice.Get()
 	}
-	if !IsNil(o.AllowedSms) {
-		toSerialize["allowedSms"] = o.AllowedSms
+	if o.RemainingVoice.IsSet() {
+		toSerialize["remainingVoice"] = o.RemainingVoice.Get()
 	}
-	if !IsNil(o.RemainingSms) {
-		toSerialize["remainingSms"] = o.RemainingSms
-	}
-	if !IsNil(o.AllowedVoice) {
-		toSerialize["allowedVoice"] = o.AllowedVoice
-	}
-	if !IsNil(o.RemainingVoice) {
-		toSerialize["remainingVoice"] = o.RemainingVoice
-	}
+	toSerialize["isVoiceUnlimited"] = o.IsVoiceUnlimited
 	return toSerialize, nil
+}
+
+func (o *EsimUsageWebhookData) UnmarshalJSON(data []byte) (err error) {
+	// This validates that all required properties are included in the JSON object
+	// by unmarshalling the object into a generic map with string keys and checking
+	// that every required field exists as a key in the generic map.
+	requiredProperties := []string{
+		"orderId",
+		"orderItemId",
+		"esimStatus",
+		"profileStatus",
+		"packageName",
+		"isDataUnlimited",
+		"isSmsUnlimited",
+		"isVoiceUnlimited",
+	}
+
+	allProperties := make(map[string]interface{})
+
+	err = json.Unmarshal(data, &allProperties)
+
+	if err != nil {
+		return err;
+	}
+
+	for _, requiredProperty := range(requiredProperties) {
+		if _, exists := allProperties[requiredProperty]; !exists {
+			return fmt.Errorf("no value given for required property %v", requiredProperty)
+		}
+	}
+
+	varEsimUsageWebhookData := _EsimUsageWebhookData{}
+
+	decoder := json.NewDecoder(bytes.NewReader(data))
+	err = decoder.Decode(&varEsimUsageWebhookData)
+
+	if err != nil {
+		return err
+	}
+
+	*o = EsimUsageWebhookData(varEsimUsageWebhookData)
+
+	return err
 }
 
 type NullableEsimUsageWebhookData struct {

@@ -13,6 +13,8 @@ package openroam
 
 import (
 	"encoding/json"
+	"bytes"
+	"fmt"
 )
 
 // checks if the AmenityFacet type satisfies the MappedNullable interface at compile time
@@ -21,19 +23,24 @@ var _ MappedNullable = &AmenityFacet{}
 // AmenityFacet One row of the amenity filter rail.
 type AmenityFacet struct {
 	// The canonical code to send back in `filters.amenityCodes`.
-	Code *string `json:"code,omitempty"`
+	Code string `json:"code"`
 	// Display text in the request's language.
-	Label *string `json:"label,omitempty"`
+	Label string `json:"label"`
 	// Candidate hotels carrying this code. Never zero — absent codes are omitted.
-	Count *int32 `json:"count,omitempty"`
+	Count int32 `json:"count"`
 }
+
+type _AmenityFacet AmenityFacet
 
 // NewAmenityFacet instantiates a new AmenityFacet object
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewAmenityFacet() *AmenityFacet {
+func NewAmenityFacet(code string, label string, count int32) *AmenityFacet {
 	this := AmenityFacet{}
+	this.Code = code
+	this.Label = label
+	this.Count = count
 	return &this
 }
 
@@ -45,100 +52,76 @@ func NewAmenityFacetWithDefaults() *AmenityFacet {
 	return &this
 }
 
-// GetCode returns the Code field value if set, zero value otherwise.
+// GetCode returns the Code field value
 func (o *AmenityFacet) GetCode() string {
-	if o == nil || IsNil(o.Code) {
+	if o == nil {
 		var ret string
 		return ret
 	}
-	return *o.Code
+
+	return o.Code
 }
 
-// GetCodeOk returns a tuple with the Code field value if set, nil otherwise
+// GetCodeOk returns a tuple with the Code field value
 // and a boolean to check if the value has been set.
 func (o *AmenityFacet) GetCodeOk() (*string, bool) {
-	if o == nil || IsNil(o.Code) {
+	if o == nil {
 		return nil, false
 	}
-	return o.Code, true
+	return &o.Code, true
 }
 
-// HasCode returns a boolean if a field has been set.
-func (o *AmenityFacet) HasCode() bool {
-	if o != nil && !IsNil(o.Code) {
-		return true
-	}
-
-	return false
-}
-
-// SetCode gets a reference to the given string and assigns it to the Code field.
+// SetCode sets field value
 func (o *AmenityFacet) SetCode(v string) {
-	o.Code = &v
+	o.Code = v
 }
 
-// GetLabel returns the Label field value if set, zero value otherwise.
+// GetLabel returns the Label field value
 func (o *AmenityFacet) GetLabel() string {
-	if o == nil || IsNil(o.Label) {
+	if o == nil {
 		var ret string
 		return ret
 	}
-	return *o.Label
+
+	return o.Label
 }
 
-// GetLabelOk returns a tuple with the Label field value if set, nil otherwise
+// GetLabelOk returns a tuple with the Label field value
 // and a boolean to check if the value has been set.
 func (o *AmenityFacet) GetLabelOk() (*string, bool) {
-	if o == nil || IsNil(o.Label) {
+	if o == nil {
 		return nil, false
 	}
-	return o.Label, true
+	return &o.Label, true
 }
 
-// HasLabel returns a boolean if a field has been set.
-func (o *AmenityFacet) HasLabel() bool {
-	if o != nil && !IsNil(o.Label) {
-		return true
-	}
-
-	return false
-}
-
-// SetLabel gets a reference to the given string and assigns it to the Label field.
+// SetLabel sets field value
 func (o *AmenityFacet) SetLabel(v string) {
-	o.Label = &v
+	o.Label = v
 }
 
-// GetCount returns the Count field value if set, zero value otherwise.
+// GetCount returns the Count field value
 func (o *AmenityFacet) GetCount() int32 {
-	if o == nil || IsNil(o.Count) {
+	if o == nil {
 		var ret int32
 		return ret
 	}
-	return *o.Count
+
+	return o.Count
 }
 
-// GetCountOk returns a tuple with the Count field value if set, nil otherwise
+// GetCountOk returns a tuple with the Count field value
 // and a boolean to check if the value has been set.
 func (o *AmenityFacet) GetCountOk() (*int32, bool) {
-	if o == nil || IsNil(o.Count) {
+	if o == nil {
 		return nil, false
 	}
-	return o.Count, true
+	return &o.Count, true
 }
 
-// HasCount returns a boolean if a field has been set.
-func (o *AmenityFacet) HasCount() bool {
-	if o != nil && !IsNil(o.Count) {
-		return true
-	}
-
-	return false
-}
-
-// SetCount gets a reference to the given int32 and assigns it to the Count field.
+// SetCount sets field value
 func (o *AmenityFacet) SetCount(v int32) {
-	o.Count = &v
+	o.Count = v
 }
 
 func (o AmenityFacet) MarshalJSON() ([]byte, error) {
@@ -151,16 +134,48 @@ func (o AmenityFacet) MarshalJSON() ([]byte, error) {
 
 func (o AmenityFacet) ToMap() (map[string]interface{}, error) {
 	toSerialize := map[string]interface{}{}
-	if !IsNil(o.Code) {
-		toSerialize["code"] = o.Code
-	}
-	if !IsNil(o.Label) {
-		toSerialize["label"] = o.Label
-	}
-	if !IsNil(o.Count) {
-		toSerialize["count"] = o.Count
-	}
+	toSerialize["code"] = o.Code
+	toSerialize["label"] = o.Label
+	toSerialize["count"] = o.Count
 	return toSerialize, nil
+}
+
+func (o *AmenityFacet) UnmarshalJSON(data []byte) (err error) {
+	// This validates that all required properties are included in the JSON object
+	// by unmarshalling the object into a generic map with string keys and checking
+	// that every required field exists as a key in the generic map.
+	requiredProperties := []string{
+		"code",
+		"label",
+		"count",
+	}
+
+	allProperties := make(map[string]interface{})
+
+	err = json.Unmarshal(data, &allProperties)
+
+	if err != nil {
+		return err;
+	}
+
+	for _, requiredProperty := range(requiredProperties) {
+		if _, exists := allProperties[requiredProperty]; !exists {
+			return fmt.Errorf("no value given for required property %v", requiredProperty)
+		}
+	}
+
+	varAmenityFacet := _AmenityFacet{}
+
+	decoder := json.NewDecoder(bytes.NewReader(data))
+	err = decoder.Decode(&varAmenityFacet)
+
+	if err != nil {
+		return err
+	}
+
+	*o = AmenityFacet(varAmenityFacet)
+
+	return err
 }
 
 type NullableAmenityFacet struct {

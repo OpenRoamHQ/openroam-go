@@ -14,6 +14,8 @@ package openroam
 import (
 	"encoding/json"
 	"time"
+	"bytes"
+	"fmt"
 )
 
 // checks if the HotelOfferDetails type satisfies the MappedNullable interface at compile time
@@ -22,47 +24,61 @@ var _ MappedNullable = &HotelOfferDetails{}
 // HotelOfferDetails Rate facts outside the offer keys every partner service shares.
 type HotelOfferDetails struct {
 	// When `publicId` stops being accepted (UTC): at most 30 minutes after the search, and never after an expiry the hotel system states. Quote or order before then.
-	ExpiresAt *time.Time `json:"expiresAt,omitempty"`
+	ExpiresAt time.Time `json:"expiresAt"`
 	// The rooms of the rate, one per searched room, with that room's searched occupancy.
-	Rooms []Room `json:"rooms,omitempty"`
+	Rooms []Room `json:"rooms"`
 	// The meal plan.
-	Board *MealPlan `json:"board,omitempty"`
-	// How the stay is paid, what cancelling gives back and whether it can be changed, in the rate's currency and with OpenRoam's fees included.
-	Terms *BookingTerms `json:"terms,omitempty"`
-	// Taxes included in or added to the price, as far as they are stated; null when not stated.
-	Taxes NullableTaxBreakdown `json:"taxes,omitempty"`
+	Board MealPlan `json:"board"`
+	// How the stay is paid, what cancelling gives back and whether it can be changed, in the rate's currency and with OpenRoam's fees included. Each cancellation instant is also stated on the hotel's clock.
+	Terms BookingTerms `json:"terms"`
 	// Whether the price is stated as binding; null when not stated.
 	PriceIsBinding NullableBool `json:"priceIsBinding,omitempty"`
 	// The price split by night, every night in the price's currency; the nights add up to the price. Empty when the price is not split by night: on a B2B location search, when no nightly amounts are given, or when a night could not be converted to the search currency.
-	NightlyPrices []NightlyPrice `json:"nightlyPrices,omitempty"`
-	// Fees outside the room rate, such as a city tax or a deposit, in the quote's and the order item's shape: `price` in the property's currency, `approxPrice` in the search currency or null when it could not be converted, and `includedInTotal` when the fee is already in the offer's price. Indicative: the quote's surcharges are binding. Empty on a B2B location search.
-	Surcharges []Surcharge `json:"surcharges,omitempty"`
+	NightlyPrices []NightlyPrice `json:"nightlyPrices"`
+	// Fees outside the room rate, such as a deposit, in the quote's and the order item's shape: `price` in the property's currency, `approxPrice` in the search currency or null when it could not be converted, and `includedInTotal` when the fee is already in the offer's price. A tax paid at the hotel is an `onSite` line of `taxes` instead. Indicative: the quote's surcharges are binding. Empty on a B2B location search.
+	Surcharges []Surcharge `json:"surcharges"`
 	// Short labels on the rate, such as a promotion name.
-	RateTags []string `json:"rateTags,omitempty"`
+	RateTags []string `json:"rateTags"`
 	// Remarks about the rate, verbatim.
-	Remarks []string `json:"remarks,omitempty"`
+	Remarks []string `json:"remarks"`
 	// Whether the rate includes transfers.
-	WithTransfers *bool `json:"withTransfers,omitempty"`
+	WithTransfers bool `json:"withTransfers"`
 	// The rate's classes, such as `nonRefundable` or `package`.
-	RateRules []string `json:"rateRules,omitempty"`
+	RateRules []string `json:"rateRules"`
 	// Whether a booking of this rate can be amended.
-	AmendabilityStatus *string `json:"amendabilityStatus,omitempty"`
+	AmendabilityStatus string `json:"amendabilityStatus"`
 	// What the booking accepts as a holder's or guest's first and last name, so a form can check the names before the order is sent.
-	GuestNameRules *GuestNameRules `json:"guestNameRules,omitempty"`
+	GuestNameRules GuestNameRules `json:"guestNameRules"`
 	// Minimum resale price for the whole stay; use its stated currency. Null when unavailable.
 	MinimumSellingPrice NullableMoney `json:"minimumSellingPrice,omitempty"`
 	// Whether every room accepts requests; omitted when unstated.
 	AllowsSpecialRequests NullableBool `json:"allowsSpecialRequests,omitempty"`
 	// Available requests, subject to availability at check-in; null for free-text requests.
 	SpecialRequestOptions []SpecialRequestOption `json:"specialRequestOptions,omitempty"`
+	// Opaque key, equal on two offers exactly when their `terms` are the same but for the price: the same payment type, the same changes, and the same cancellation steps from the same instants, each keeping the same share of the stay, under the same OpenRoam fees. Use it to show offers that differ only in board or price under one cancellation choice. Compare it; do not read it. Null when the terms cannot be compared exactly: show that offer's terms on their own.
+	GroupKey NullableString `json:"groupKey,omitempty"`
 }
+
+type _HotelOfferDetails HotelOfferDetails
 
 // NewHotelOfferDetails instantiates a new HotelOfferDetails object
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewHotelOfferDetails() *HotelOfferDetails {
+func NewHotelOfferDetails(expiresAt time.Time, rooms []Room, board MealPlan, terms BookingTerms, nightlyPrices []NightlyPrice, surcharges []Surcharge, rateTags []string, remarks []string, withTransfers bool, rateRules []string, amendabilityStatus string, guestNameRules GuestNameRules) *HotelOfferDetails {
 	this := HotelOfferDetails{}
+	this.ExpiresAt = expiresAt
+	this.Rooms = rooms
+	this.Board = board
+	this.Terms = terms
+	this.NightlyPrices = nightlyPrices
+	this.Surcharges = surcharges
+	this.RateTags = rateTags
+	this.Remarks = remarks
+	this.WithTransfers = withTransfers
+	this.RateRules = rateRules
+	this.AmendabilityStatus = amendabilityStatus
+	this.GuestNameRules = guestNameRules
 	return &this
 }
 
@@ -74,174 +90,100 @@ func NewHotelOfferDetailsWithDefaults() *HotelOfferDetails {
 	return &this
 }
 
-// GetExpiresAt returns the ExpiresAt field value if set, zero value otherwise.
+// GetExpiresAt returns the ExpiresAt field value
 func (o *HotelOfferDetails) GetExpiresAt() time.Time {
-	if o == nil || IsNil(o.ExpiresAt) {
+	if o == nil {
 		var ret time.Time
 		return ret
 	}
-	return *o.ExpiresAt
+
+	return o.ExpiresAt
 }
 
-// GetExpiresAtOk returns a tuple with the ExpiresAt field value if set, nil otherwise
+// GetExpiresAtOk returns a tuple with the ExpiresAt field value
 // and a boolean to check if the value has been set.
 func (o *HotelOfferDetails) GetExpiresAtOk() (*time.Time, bool) {
-	if o == nil || IsNil(o.ExpiresAt) {
+	if o == nil {
 		return nil, false
 	}
-	return o.ExpiresAt, true
+	return &o.ExpiresAt, true
 }
 
-// HasExpiresAt returns a boolean if a field has been set.
-func (o *HotelOfferDetails) HasExpiresAt() bool {
-	if o != nil && !IsNil(o.ExpiresAt) {
-		return true
-	}
-
-	return false
-}
-
-// SetExpiresAt gets a reference to the given time.Time and assigns it to the ExpiresAt field.
+// SetExpiresAt sets field value
 func (o *HotelOfferDetails) SetExpiresAt(v time.Time) {
-	o.ExpiresAt = &v
+	o.ExpiresAt = v
 }
 
-// GetRooms returns the Rooms field value if set, zero value otherwise.
+// GetRooms returns the Rooms field value
 func (o *HotelOfferDetails) GetRooms() []Room {
-	if o == nil || IsNil(o.Rooms) {
+	if o == nil {
 		var ret []Room
 		return ret
 	}
+
 	return o.Rooms
 }
 
-// GetRoomsOk returns a tuple with the Rooms field value if set, nil otherwise
+// GetRoomsOk returns a tuple with the Rooms field value
 // and a boolean to check if the value has been set.
 func (o *HotelOfferDetails) GetRoomsOk() ([]Room, bool) {
-	if o == nil || IsNil(o.Rooms) {
+	if o == nil {
 		return nil, false
 	}
 	return o.Rooms, true
 }
 
-// HasRooms returns a boolean if a field has been set.
-func (o *HotelOfferDetails) HasRooms() bool {
-	if o != nil && !IsNil(o.Rooms) {
-		return true
-	}
-
-	return false
-}
-
-// SetRooms gets a reference to the given []Room and assigns it to the Rooms field.
+// SetRooms sets field value
 func (o *HotelOfferDetails) SetRooms(v []Room) {
 	o.Rooms = v
 }
 
-// GetBoard returns the Board field value if set, zero value otherwise.
+// GetBoard returns the Board field value
 func (o *HotelOfferDetails) GetBoard() MealPlan {
-	if o == nil || IsNil(o.Board) {
+	if o == nil {
 		var ret MealPlan
 		return ret
 	}
-	return *o.Board
+
+	return o.Board
 }
 
-// GetBoardOk returns a tuple with the Board field value if set, nil otherwise
+// GetBoardOk returns a tuple with the Board field value
 // and a boolean to check if the value has been set.
 func (o *HotelOfferDetails) GetBoardOk() (*MealPlan, bool) {
-	if o == nil || IsNil(o.Board) {
-		return nil, false
-	}
-	return o.Board, true
-}
-
-// HasBoard returns a boolean if a field has been set.
-func (o *HotelOfferDetails) HasBoard() bool {
-	if o != nil && !IsNil(o.Board) {
-		return true
-	}
-
-	return false
-}
-
-// SetBoard gets a reference to the given MealPlan and assigns it to the Board field.
-func (o *HotelOfferDetails) SetBoard(v MealPlan) {
-	o.Board = &v
-}
-
-// GetTerms returns the Terms field value if set, zero value otherwise.
-func (o *HotelOfferDetails) GetTerms() BookingTerms {
-	if o == nil || IsNil(o.Terms) {
-		var ret BookingTerms
-		return ret
-	}
-	return *o.Terms
-}
-
-// GetTermsOk returns a tuple with the Terms field value if set, nil otherwise
-// and a boolean to check if the value has been set.
-func (o *HotelOfferDetails) GetTermsOk() (*BookingTerms, bool) {
-	if o == nil || IsNil(o.Terms) {
-		return nil, false
-	}
-	return o.Terms, true
-}
-
-// HasTerms returns a boolean if a field has been set.
-func (o *HotelOfferDetails) HasTerms() bool {
-	if o != nil && !IsNil(o.Terms) {
-		return true
-	}
-
-	return false
-}
-
-// SetTerms gets a reference to the given BookingTerms and assigns it to the Terms field.
-func (o *HotelOfferDetails) SetTerms(v BookingTerms) {
-	o.Terms = &v
-}
-
-// GetTaxes returns the Taxes field value if set, zero value otherwise (both if not set or set to explicit null).
-func (o *HotelOfferDetails) GetTaxes() TaxBreakdown {
-	if o == nil || IsNil(o.Taxes.Get()) {
-		var ret TaxBreakdown
-		return ret
-	}
-	return *o.Taxes.Get()
-}
-
-// GetTaxesOk returns a tuple with the Taxes field value if set, nil otherwise
-// and a boolean to check if the value has been set.
-// NOTE: If the value is an explicit nil, `nil, true` will be returned
-func (o *HotelOfferDetails) GetTaxesOk() (*TaxBreakdown, bool) {
 	if o == nil {
 		return nil, false
 	}
-	return o.Taxes.Get(), o.Taxes.IsSet()
+	return &o.Board, true
 }
 
-// HasTaxes returns a boolean if a field has been set.
-func (o *HotelOfferDetails) HasTaxes() bool {
-	if o != nil && o.Taxes.IsSet() {
-		return true
+// SetBoard sets field value
+func (o *HotelOfferDetails) SetBoard(v MealPlan) {
+	o.Board = v
+}
+
+// GetTerms returns the Terms field value
+func (o *HotelOfferDetails) GetTerms() BookingTerms {
+	if o == nil {
+		var ret BookingTerms
+		return ret
 	}
 
-	return false
+	return o.Terms
 }
 
-// SetTaxes gets a reference to the given NullableTaxBreakdown and assigns it to the Taxes field.
-func (o *HotelOfferDetails) SetTaxes(v TaxBreakdown) {
-	o.Taxes.Set(&v)
-}
-// SetTaxesNil sets the value for Taxes to be an explicit nil
-func (o *HotelOfferDetails) SetTaxesNil() {
-	o.Taxes.Set(nil)
+// GetTermsOk returns a tuple with the Terms field value
+// and a boolean to check if the value has been set.
+func (o *HotelOfferDetails) GetTermsOk() (*BookingTerms, bool) {
+	if o == nil {
+		return nil, false
+	}
+	return &o.Terms, true
 }
 
-// UnsetTaxes ensures that no value is present for Taxes, not even an explicit nil
-func (o *HotelOfferDetails) UnsetTaxes() {
-	o.Taxes.Unset()
+// SetTerms sets field value
+func (o *HotelOfferDetails) SetTerms(v BookingTerms) {
+	o.Terms = v
 }
 
 // GetPriceIsBinding returns the PriceIsBinding field value if set, zero value otherwise (both if not set or set to explicit null).
@@ -286,260 +228,196 @@ func (o *HotelOfferDetails) UnsetPriceIsBinding() {
 	o.PriceIsBinding.Unset()
 }
 
-// GetNightlyPrices returns the NightlyPrices field value if set, zero value otherwise.
+// GetNightlyPrices returns the NightlyPrices field value
 func (o *HotelOfferDetails) GetNightlyPrices() []NightlyPrice {
-	if o == nil || IsNil(o.NightlyPrices) {
+	if o == nil {
 		var ret []NightlyPrice
 		return ret
 	}
+
 	return o.NightlyPrices
 }
 
-// GetNightlyPricesOk returns a tuple with the NightlyPrices field value if set, nil otherwise
+// GetNightlyPricesOk returns a tuple with the NightlyPrices field value
 // and a boolean to check if the value has been set.
 func (o *HotelOfferDetails) GetNightlyPricesOk() ([]NightlyPrice, bool) {
-	if o == nil || IsNil(o.NightlyPrices) {
+	if o == nil {
 		return nil, false
 	}
 	return o.NightlyPrices, true
 }
 
-// HasNightlyPrices returns a boolean if a field has been set.
-func (o *HotelOfferDetails) HasNightlyPrices() bool {
-	if o != nil && !IsNil(o.NightlyPrices) {
-		return true
-	}
-
-	return false
-}
-
-// SetNightlyPrices gets a reference to the given []NightlyPrice and assigns it to the NightlyPrices field.
+// SetNightlyPrices sets field value
 func (o *HotelOfferDetails) SetNightlyPrices(v []NightlyPrice) {
 	o.NightlyPrices = v
 }
 
-// GetSurcharges returns the Surcharges field value if set, zero value otherwise.
+// GetSurcharges returns the Surcharges field value
 func (o *HotelOfferDetails) GetSurcharges() []Surcharge {
-	if o == nil || IsNil(o.Surcharges) {
+	if o == nil {
 		var ret []Surcharge
 		return ret
 	}
+
 	return o.Surcharges
 }
 
-// GetSurchargesOk returns a tuple with the Surcharges field value if set, nil otherwise
+// GetSurchargesOk returns a tuple with the Surcharges field value
 // and a boolean to check if the value has been set.
 func (o *HotelOfferDetails) GetSurchargesOk() ([]Surcharge, bool) {
-	if o == nil || IsNil(o.Surcharges) {
+	if o == nil {
 		return nil, false
 	}
 	return o.Surcharges, true
 }
 
-// HasSurcharges returns a boolean if a field has been set.
-func (o *HotelOfferDetails) HasSurcharges() bool {
-	if o != nil && !IsNil(o.Surcharges) {
-		return true
-	}
-
-	return false
-}
-
-// SetSurcharges gets a reference to the given []Surcharge and assigns it to the Surcharges field.
+// SetSurcharges sets field value
 func (o *HotelOfferDetails) SetSurcharges(v []Surcharge) {
 	o.Surcharges = v
 }
 
-// GetRateTags returns the RateTags field value if set, zero value otherwise.
+// GetRateTags returns the RateTags field value
 func (o *HotelOfferDetails) GetRateTags() []string {
-	if o == nil || IsNil(o.RateTags) {
+	if o == nil {
 		var ret []string
 		return ret
 	}
+
 	return o.RateTags
 }
 
-// GetRateTagsOk returns a tuple with the RateTags field value if set, nil otherwise
+// GetRateTagsOk returns a tuple with the RateTags field value
 // and a boolean to check if the value has been set.
 func (o *HotelOfferDetails) GetRateTagsOk() ([]string, bool) {
-	if o == nil || IsNil(o.RateTags) {
+	if o == nil {
 		return nil, false
 	}
 	return o.RateTags, true
 }
 
-// HasRateTags returns a boolean if a field has been set.
-func (o *HotelOfferDetails) HasRateTags() bool {
-	if o != nil && !IsNil(o.RateTags) {
-		return true
-	}
-
-	return false
-}
-
-// SetRateTags gets a reference to the given []string and assigns it to the RateTags field.
+// SetRateTags sets field value
 func (o *HotelOfferDetails) SetRateTags(v []string) {
 	o.RateTags = v
 }
 
-// GetRemarks returns the Remarks field value if set, zero value otherwise.
+// GetRemarks returns the Remarks field value
 func (o *HotelOfferDetails) GetRemarks() []string {
-	if o == nil || IsNil(o.Remarks) {
+	if o == nil {
 		var ret []string
 		return ret
 	}
+
 	return o.Remarks
 }
 
-// GetRemarksOk returns a tuple with the Remarks field value if set, nil otherwise
+// GetRemarksOk returns a tuple with the Remarks field value
 // and a boolean to check if the value has been set.
 func (o *HotelOfferDetails) GetRemarksOk() ([]string, bool) {
-	if o == nil || IsNil(o.Remarks) {
+	if o == nil {
 		return nil, false
 	}
 	return o.Remarks, true
 }
 
-// HasRemarks returns a boolean if a field has been set.
-func (o *HotelOfferDetails) HasRemarks() bool {
-	if o != nil && !IsNil(o.Remarks) {
-		return true
-	}
-
-	return false
-}
-
-// SetRemarks gets a reference to the given []string and assigns it to the Remarks field.
+// SetRemarks sets field value
 func (o *HotelOfferDetails) SetRemarks(v []string) {
 	o.Remarks = v
 }
 
-// GetWithTransfers returns the WithTransfers field value if set, zero value otherwise.
+// GetWithTransfers returns the WithTransfers field value
 func (o *HotelOfferDetails) GetWithTransfers() bool {
-	if o == nil || IsNil(o.WithTransfers) {
+	if o == nil {
 		var ret bool
 		return ret
 	}
-	return *o.WithTransfers
+
+	return o.WithTransfers
 }
 
-// GetWithTransfersOk returns a tuple with the WithTransfers field value if set, nil otherwise
+// GetWithTransfersOk returns a tuple with the WithTransfers field value
 // and a boolean to check if the value has been set.
 func (o *HotelOfferDetails) GetWithTransfersOk() (*bool, bool) {
-	if o == nil || IsNil(o.WithTransfers) {
+	if o == nil {
 		return nil, false
 	}
-	return o.WithTransfers, true
+	return &o.WithTransfers, true
 }
 
-// HasWithTransfers returns a boolean if a field has been set.
-func (o *HotelOfferDetails) HasWithTransfers() bool {
-	if o != nil && !IsNil(o.WithTransfers) {
-		return true
-	}
-
-	return false
-}
-
-// SetWithTransfers gets a reference to the given bool and assigns it to the WithTransfers field.
+// SetWithTransfers sets field value
 func (o *HotelOfferDetails) SetWithTransfers(v bool) {
-	o.WithTransfers = &v
+	o.WithTransfers = v
 }
 
-// GetRateRules returns the RateRules field value if set, zero value otherwise.
+// GetRateRules returns the RateRules field value
 func (o *HotelOfferDetails) GetRateRules() []string {
-	if o == nil || IsNil(o.RateRules) {
+	if o == nil {
 		var ret []string
 		return ret
 	}
+
 	return o.RateRules
 }
 
-// GetRateRulesOk returns a tuple with the RateRules field value if set, nil otherwise
+// GetRateRulesOk returns a tuple with the RateRules field value
 // and a boolean to check if the value has been set.
 func (o *HotelOfferDetails) GetRateRulesOk() ([]string, bool) {
-	if o == nil || IsNil(o.RateRules) {
+	if o == nil {
 		return nil, false
 	}
 	return o.RateRules, true
 }
 
-// HasRateRules returns a boolean if a field has been set.
-func (o *HotelOfferDetails) HasRateRules() bool {
-	if o != nil && !IsNil(o.RateRules) {
-		return true
-	}
-
-	return false
-}
-
-// SetRateRules gets a reference to the given []string and assigns it to the RateRules field.
+// SetRateRules sets field value
 func (o *HotelOfferDetails) SetRateRules(v []string) {
 	o.RateRules = v
 }
 
-// GetAmendabilityStatus returns the AmendabilityStatus field value if set, zero value otherwise.
+// GetAmendabilityStatus returns the AmendabilityStatus field value
 func (o *HotelOfferDetails) GetAmendabilityStatus() string {
-	if o == nil || IsNil(o.AmendabilityStatus) {
+	if o == nil {
 		var ret string
 		return ret
 	}
-	return *o.AmendabilityStatus
+
+	return o.AmendabilityStatus
 }
 
-// GetAmendabilityStatusOk returns a tuple with the AmendabilityStatus field value if set, nil otherwise
+// GetAmendabilityStatusOk returns a tuple with the AmendabilityStatus field value
 // and a boolean to check if the value has been set.
 func (o *HotelOfferDetails) GetAmendabilityStatusOk() (*string, bool) {
-	if o == nil || IsNil(o.AmendabilityStatus) {
+	if o == nil {
 		return nil, false
 	}
-	return o.AmendabilityStatus, true
+	return &o.AmendabilityStatus, true
 }
 
-// HasAmendabilityStatus returns a boolean if a field has been set.
-func (o *HotelOfferDetails) HasAmendabilityStatus() bool {
-	if o != nil && !IsNil(o.AmendabilityStatus) {
-		return true
-	}
-
-	return false
-}
-
-// SetAmendabilityStatus gets a reference to the given string and assigns it to the AmendabilityStatus field.
+// SetAmendabilityStatus sets field value
 func (o *HotelOfferDetails) SetAmendabilityStatus(v string) {
-	o.AmendabilityStatus = &v
+	o.AmendabilityStatus = v
 }
 
-// GetGuestNameRules returns the GuestNameRules field value if set, zero value otherwise.
+// GetGuestNameRules returns the GuestNameRules field value
 func (o *HotelOfferDetails) GetGuestNameRules() GuestNameRules {
-	if o == nil || IsNil(o.GuestNameRules) {
+	if o == nil {
 		var ret GuestNameRules
 		return ret
 	}
-	return *o.GuestNameRules
+
+	return o.GuestNameRules
 }
 
-// GetGuestNameRulesOk returns a tuple with the GuestNameRules field value if set, nil otherwise
+// GetGuestNameRulesOk returns a tuple with the GuestNameRules field value
 // and a boolean to check if the value has been set.
 func (o *HotelOfferDetails) GetGuestNameRulesOk() (*GuestNameRules, bool) {
-	if o == nil || IsNil(o.GuestNameRules) {
+	if o == nil {
 		return nil, false
 	}
-	return o.GuestNameRules, true
+	return &o.GuestNameRules, true
 }
 
-// HasGuestNameRules returns a boolean if a field has been set.
-func (o *HotelOfferDetails) HasGuestNameRules() bool {
-	if o != nil && !IsNil(o.GuestNameRules) {
-		return true
-	}
-
-	return false
-}
-
-// SetGuestNameRules gets a reference to the given GuestNameRules and assigns it to the GuestNameRules field.
+// SetGuestNameRules sets field value
 func (o *HotelOfferDetails) SetGuestNameRules(v GuestNameRules) {
-	o.GuestNameRules = &v
+	o.GuestNameRules = v
 }
 
 // GetMinimumSellingPrice returns the MinimumSellingPrice field value if set, zero value otherwise (both if not set or set to explicit null).
@@ -659,6 +537,48 @@ func (o *HotelOfferDetails) SetSpecialRequestOptions(v []SpecialRequestOption) {
 	o.SpecialRequestOptions = v
 }
 
+// GetGroupKey returns the GroupKey field value if set, zero value otherwise (both if not set or set to explicit null).
+func (o *HotelOfferDetails) GetGroupKey() string {
+	if o == nil || IsNil(o.GroupKey.Get()) {
+		var ret string
+		return ret
+	}
+	return *o.GroupKey.Get()
+}
+
+// GetGroupKeyOk returns a tuple with the GroupKey field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+// NOTE: If the value is an explicit nil, `nil, true` will be returned
+func (o *HotelOfferDetails) GetGroupKeyOk() (*string, bool) {
+	if o == nil {
+		return nil, false
+	}
+	return o.GroupKey.Get(), o.GroupKey.IsSet()
+}
+
+// HasGroupKey returns a boolean if a field has been set.
+func (o *HotelOfferDetails) HasGroupKey() bool {
+	if o != nil && o.GroupKey.IsSet() {
+		return true
+	}
+
+	return false
+}
+
+// SetGroupKey gets a reference to the given NullableString and assigns it to the GroupKey field.
+func (o *HotelOfferDetails) SetGroupKey(v string) {
+	o.GroupKey.Set(&v)
+}
+// SetGroupKeyNil sets the value for GroupKey to be an explicit nil
+func (o *HotelOfferDetails) SetGroupKeyNil() {
+	o.GroupKey.Set(nil)
+}
+
+// UnsetGroupKey ensures that no value is present for GroupKey, not even an explicit nil
+func (o *HotelOfferDetails) UnsetGroupKey() {
+	o.GroupKey.Unset()
+}
+
 func (o HotelOfferDetails) MarshalJSON() ([]byte, error) {
 	toSerialize,err := o.ToMap()
 	if err != nil {
@@ -669,48 +589,21 @@ func (o HotelOfferDetails) MarshalJSON() ([]byte, error) {
 
 func (o HotelOfferDetails) ToMap() (map[string]interface{}, error) {
 	toSerialize := map[string]interface{}{}
-	if !IsNil(o.ExpiresAt) {
-		toSerialize["expiresAt"] = o.ExpiresAt
-	}
-	if !IsNil(o.Rooms) {
-		toSerialize["rooms"] = o.Rooms
-	}
-	if !IsNil(o.Board) {
-		toSerialize["board"] = o.Board
-	}
-	if !IsNil(o.Terms) {
-		toSerialize["terms"] = o.Terms
-	}
-	if o.Taxes.IsSet() {
-		toSerialize["taxes"] = o.Taxes.Get()
-	}
+	toSerialize["expiresAt"] = o.ExpiresAt
+	toSerialize["rooms"] = o.Rooms
+	toSerialize["board"] = o.Board
+	toSerialize["terms"] = o.Terms
 	if o.PriceIsBinding.IsSet() {
 		toSerialize["priceIsBinding"] = o.PriceIsBinding.Get()
 	}
-	if !IsNil(o.NightlyPrices) {
-		toSerialize["nightlyPrices"] = o.NightlyPrices
-	}
-	if !IsNil(o.Surcharges) {
-		toSerialize["surcharges"] = o.Surcharges
-	}
-	if !IsNil(o.RateTags) {
-		toSerialize["rateTags"] = o.RateTags
-	}
-	if !IsNil(o.Remarks) {
-		toSerialize["remarks"] = o.Remarks
-	}
-	if !IsNil(o.WithTransfers) {
-		toSerialize["withTransfers"] = o.WithTransfers
-	}
-	if !IsNil(o.RateRules) {
-		toSerialize["rateRules"] = o.RateRules
-	}
-	if !IsNil(o.AmendabilityStatus) {
-		toSerialize["amendabilityStatus"] = o.AmendabilityStatus
-	}
-	if !IsNil(o.GuestNameRules) {
-		toSerialize["guestNameRules"] = o.GuestNameRules
-	}
+	toSerialize["nightlyPrices"] = o.NightlyPrices
+	toSerialize["surcharges"] = o.Surcharges
+	toSerialize["rateTags"] = o.RateTags
+	toSerialize["remarks"] = o.Remarks
+	toSerialize["withTransfers"] = o.WithTransfers
+	toSerialize["rateRules"] = o.RateRules
+	toSerialize["amendabilityStatus"] = o.AmendabilityStatus
+	toSerialize["guestNameRules"] = o.GuestNameRules
 	if o.MinimumSellingPrice.IsSet() {
 		toSerialize["minimumSellingPrice"] = o.MinimumSellingPrice.Get()
 	}
@@ -720,7 +613,57 @@ func (o HotelOfferDetails) ToMap() (map[string]interface{}, error) {
 	if o.SpecialRequestOptions != nil {
 		toSerialize["specialRequestOptions"] = o.SpecialRequestOptions
 	}
+	if o.GroupKey.IsSet() {
+		toSerialize["groupKey"] = o.GroupKey.Get()
+	}
 	return toSerialize, nil
+}
+
+func (o *HotelOfferDetails) UnmarshalJSON(data []byte) (err error) {
+	// This validates that all required properties are included in the JSON object
+	// by unmarshalling the object into a generic map with string keys and checking
+	// that every required field exists as a key in the generic map.
+	requiredProperties := []string{
+		"expiresAt",
+		"rooms",
+		"board",
+		"terms",
+		"nightlyPrices",
+		"surcharges",
+		"rateTags",
+		"remarks",
+		"withTransfers",
+		"rateRules",
+		"amendabilityStatus",
+		"guestNameRules",
+	}
+
+	allProperties := make(map[string]interface{})
+
+	err = json.Unmarshal(data, &allProperties)
+
+	if err != nil {
+		return err;
+	}
+
+	for _, requiredProperty := range(requiredProperties) {
+		if _, exists := allProperties[requiredProperty]; !exists {
+			return fmt.Errorf("no value given for required property %v", requiredProperty)
+		}
+	}
+
+	varHotelOfferDetails := _HotelOfferDetails{}
+
+	decoder := json.NewDecoder(bytes.NewReader(data))
+	err = decoder.Decode(&varHotelOfferDetails)
+
+	if err != nil {
+		return err
+	}
+
+	*o = HotelOfferDetails(varHotelOfferDetails)
+
+	return err
 }
 
 type NullableHotelOfferDetails struct {

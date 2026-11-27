@@ -21,7 +21,7 @@ import (
 // checks if the EsimProfile type satisfies the MappedNullable interface at compile time
 var _ MappedNullable = &EsimProfile{}
 
-// EsimProfile One of your eSIMs: its order, plan, installation details, allowances and top-ups.
+// EsimProfile One of your eSIMs: its order, statuses, plan, installation details, allowances and top-ups.
 type EsimProfile struct {
 	// The order that bought the eSIM.
 	OrderId string `json:"orderId"`
@@ -33,34 +33,34 @@ type EsimProfile struct {
 	PackageName string `json:"packageName"`
 	// Image URL of the destination, or null.
 	CountryImage NullableString `json:"countryImage,omitempty"`
-	// The eSIM's lifecycle status.
-	Status string `json:"status"`
-	// How many days the plan is valid.
-	Day *int32 `json:"day,omitempty"`
-	// Whether the plan has unlimited data.
-	IsUnlimited *bool `json:"isUnlimited,omitempty"`
+	// The eSIM's lifecycle status, as the order item's `esimStatus`. An eSIM under review reads as pending.
+	EsimStatus string `json:"esimStatus"`
+	// The installed profile's status, as last recorded: the order item's `profileStatus`.
+	ProfileStatus string `json:"profileStatus"`
+	// How many days the plan is valid, counted from activation.
+	Day int32 `json:"day"`
 	// Whether the device sets the APN automatically; otherwise use `apn`.
-	IsApnAutomatic *bool `json:"isApnAutomatic,omitempty"`
+	IsApnAutomatic bool `json:"isApnAutomatic"`
 	// Whether the plan includes SMS.
-	WithSMS *bool `json:"withSMS,omitempty"`
+	WithSMS bool `json:"withSMS"`
 	// Whether the plan includes calls.
-	WithCall *bool `json:"withCall,omitempty"`
+	WithCall bool `json:"withCall"`
 	// Plan features, such as hotspot and top-up support.
 	Properties NullableEsimFeatures `json:"properties,omitempty"`
 	// SIM details: LPA code, QR code URL, quick-install links and usage; null until the eSIM is provisioned.
 	Esim NullableSimCard `json:"esim,omitempty"`
 	// The top-ups applied to the eSIM.
-	Addon []EsimAddon `json:"addon,omitempty"`
-	// The plan's data allowance.
-	Data NullableEsimProfileData `json:"data,omitempty"`
-	// The plan's SMS allowance, when it includes SMS.
+	Addon []EsimAddon `json:"addon"`
+	// The plan's data allowance, as the offer shows it.
+	Data NullableEsimDataAllowance `json:"data,omitempty"`
+	// The plan's SMS allowance; null when the plan includes no SMS.
 	Sms NullableEsimSmsAllowance `json:"sms,omitempty"`
-	// The plan's calling allowance, when it includes calls.
+	// The plan's calling allowance; null when the plan includes no calls.
 	Voice NullableEsimVoiceAllowance `json:"voice,omitempty"`
 	// APN settings for manual device setup.
 	Apn NullableEsimApn `json:"apn,omitempty"`
-	// When the eSIM's validity ends, in UTC; null until it is activated.
-	ExpiredAt NullableTime `json:"expiredAt,omitempty"`
+	// When the plan ends, in UTC, as reported once the plan has started: its activation plus `day`, extended by top-ups. Null until the eSIM is activated.
+	ExpiresAt NullableTime `json:"expiresAt,omitempty"`
 }
 
 type _EsimProfile EsimProfile
@@ -69,12 +69,18 @@ type _EsimProfile EsimProfile
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewEsimProfile(orderId string, orderItemId string, packageName string, status string) *EsimProfile {
+func NewEsimProfile(orderId string, orderItemId string, packageName string, esimStatus string, profileStatus string, day int32, isApnAutomatic bool, withSMS bool, withCall bool, addon []EsimAddon) *EsimProfile {
 	this := EsimProfile{}
 	this.OrderId = orderId
 	this.OrderItemId = orderItemId
 	this.PackageName = packageName
-	this.Status = status
+	this.EsimStatus = esimStatus
+	this.ProfileStatus = profileStatus
+	this.Day = day
+	this.IsApnAutomatic = isApnAutomatic
+	this.WithSMS = withSMS
+	this.WithCall = withCall
+	this.Addon = addon
 	return &this
 }
 
@@ -242,188 +248,148 @@ func (o *EsimProfile) UnsetCountryImage() {
 	o.CountryImage.Unset()
 }
 
-// GetStatus returns the Status field value
-func (o *EsimProfile) GetStatus() string {
+// GetEsimStatus returns the EsimStatus field value
+func (o *EsimProfile) GetEsimStatus() string {
 	if o == nil {
 		var ret string
 		return ret
 	}
 
-	return o.Status
+	return o.EsimStatus
 }
 
-// GetStatusOk returns a tuple with the Status field value
+// GetEsimStatusOk returns a tuple with the EsimStatus field value
 // and a boolean to check if the value has been set.
-func (o *EsimProfile) GetStatusOk() (*string, bool) {
+func (o *EsimProfile) GetEsimStatusOk() (*string, bool) {
 	if o == nil {
 		return nil, false
 	}
-	return &o.Status, true
+	return &o.EsimStatus, true
 }
 
-// SetStatus sets field value
-func (o *EsimProfile) SetStatus(v string) {
-	o.Status = v
+// SetEsimStatus sets field value
+func (o *EsimProfile) SetEsimStatus(v string) {
+	o.EsimStatus = v
 }
 
-// GetDay returns the Day field value if set, zero value otherwise.
+// GetProfileStatus returns the ProfileStatus field value
+func (o *EsimProfile) GetProfileStatus() string {
+	if o == nil {
+		var ret string
+		return ret
+	}
+
+	return o.ProfileStatus
+}
+
+// GetProfileStatusOk returns a tuple with the ProfileStatus field value
+// and a boolean to check if the value has been set.
+func (o *EsimProfile) GetProfileStatusOk() (*string, bool) {
+	if o == nil {
+		return nil, false
+	}
+	return &o.ProfileStatus, true
+}
+
+// SetProfileStatus sets field value
+func (o *EsimProfile) SetProfileStatus(v string) {
+	o.ProfileStatus = v
+}
+
+// GetDay returns the Day field value
 func (o *EsimProfile) GetDay() int32 {
-	if o == nil || IsNil(o.Day) {
+	if o == nil {
 		var ret int32
 		return ret
 	}
-	return *o.Day
+
+	return o.Day
 }
 
-// GetDayOk returns a tuple with the Day field value if set, nil otherwise
+// GetDayOk returns a tuple with the Day field value
 // and a boolean to check if the value has been set.
 func (o *EsimProfile) GetDayOk() (*int32, bool) {
-	if o == nil || IsNil(o.Day) {
+	if o == nil {
 		return nil, false
 	}
-	return o.Day, true
+	return &o.Day, true
 }
 
-// HasDay returns a boolean if a field has been set.
-func (o *EsimProfile) HasDay() bool {
-	if o != nil && !IsNil(o.Day) {
-		return true
-	}
-
-	return false
-}
-
-// SetDay gets a reference to the given int32 and assigns it to the Day field.
+// SetDay sets field value
 func (o *EsimProfile) SetDay(v int32) {
-	o.Day = &v
+	o.Day = v
 }
 
-// GetIsUnlimited returns the IsUnlimited field value if set, zero value otherwise.
-func (o *EsimProfile) GetIsUnlimited() bool {
-	if o == nil || IsNil(o.IsUnlimited) {
-		var ret bool
-		return ret
-	}
-	return *o.IsUnlimited
-}
-
-// GetIsUnlimitedOk returns a tuple with the IsUnlimited field value if set, nil otherwise
-// and a boolean to check if the value has been set.
-func (o *EsimProfile) GetIsUnlimitedOk() (*bool, bool) {
-	if o == nil || IsNil(o.IsUnlimited) {
-		return nil, false
-	}
-	return o.IsUnlimited, true
-}
-
-// HasIsUnlimited returns a boolean if a field has been set.
-func (o *EsimProfile) HasIsUnlimited() bool {
-	if o != nil && !IsNil(o.IsUnlimited) {
-		return true
-	}
-
-	return false
-}
-
-// SetIsUnlimited gets a reference to the given bool and assigns it to the IsUnlimited field.
-func (o *EsimProfile) SetIsUnlimited(v bool) {
-	o.IsUnlimited = &v
-}
-
-// GetIsApnAutomatic returns the IsApnAutomatic field value if set, zero value otherwise.
+// GetIsApnAutomatic returns the IsApnAutomatic field value
 func (o *EsimProfile) GetIsApnAutomatic() bool {
-	if o == nil || IsNil(o.IsApnAutomatic) {
+	if o == nil {
 		var ret bool
 		return ret
 	}
-	return *o.IsApnAutomatic
+
+	return o.IsApnAutomatic
 }
 
-// GetIsApnAutomaticOk returns a tuple with the IsApnAutomatic field value if set, nil otherwise
+// GetIsApnAutomaticOk returns a tuple with the IsApnAutomatic field value
 // and a boolean to check if the value has been set.
 func (o *EsimProfile) GetIsApnAutomaticOk() (*bool, bool) {
-	if o == nil || IsNil(o.IsApnAutomatic) {
+	if o == nil {
 		return nil, false
 	}
-	return o.IsApnAutomatic, true
+	return &o.IsApnAutomatic, true
 }
 
-// HasIsApnAutomatic returns a boolean if a field has been set.
-func (o *EsimProfile) HasIsApnAutomatic() bool {
-	if o != nil && !IsNil(o.IsApnAutomatic) {
-		return true
-	}
-
-	return false
-}
-
-// SetIsApnAutomatic gets a reference to the given bool and assigns it to the IsApnAutomatic field.
+// SetIsApnAutomatic sets field value
 func (o *EsimProfile) SetIsApnAutomatic(v bool) {
-	o.IsApnAutomatic = &v
+	o.IsApnAutomatic = v
 }
 
-// GetWithSMS returns the WithSMS field value if set, zero value otherwise.
+// GetWithSMS returns the WithSMS field value
 func (o *EsimProfile) GetWithSMS() bool {
-	if o == nil || IsNil(o.WithSMS) {
+	if o == nil {
 		var ret bool
 		return ret
 	}
-	return *o.WithSMS
+
+	return o.WithSMS
 }
 
-// GetWithSMSOk returns a tuple with the WithSMS field value if set, nil otherwise
+// GetWithSMSOk returns a tuple with the WithSMS field value
 // and a boolean to check if the value has been set.
 func (o *EsimProfile) GetWithSMSOk() (*bool, bool) {
-	if o == nil || IsNil(o.WithSMS) {
+	if o == nil {
 		return nil, false
 	}
-	return o.WithSMS, true
+	return &o.WithSMS, true
 }
 
-// HasWithSMS returns a boolean if a field has been set.
-func (o *EsimProfile) HasWithSMS() bool {
-	if o != nil && !IsNil(o.WithSMS) {
-		return true
-	}
-
-	return false
-}
-
-// SetWithSMS gets a reference to the given bool and assigns it to the WithSMS field.
+// SetWithSMS sets field value
 func (o *EsimProfile) SetWithSMS(v bool) {
-	o.WithSMS = &v
+	o.WithSMS = v
 }
 
-// GetWithCall returns the WithCall field value if set, zero value otherwise.
+// GetWithCall returns the WithCall field value
 func (o *EsimProfile) GetWithCall() bool {
-	if o == nil || IsNil(o.WithCall) {
+	if o == nil {
 		var ret bool
 		return ret
 	}
-	return *o.WithCall
+
+	return o.WithCall
 }
 
-// GetWithCallOk returns a tuple with the WithCall field value if set, nil otherwise
+// GetWithCallOk returns a tuple with the WithCall field value
 // and a boolean to check if the value has been set.
 func (o *EsimProfile) GetWithCallOk() (*bool, bool) {
-	if o == nil || IsNil(o.WithCall) {
+	if o == nil {
 		return nil, false
 	}
-	return o.WithCall, true
+	return &o.WithCall, true
 }
 
-// HasWithCall returns a boolean if a field has been set.
-func (o *EsimProfile) HasWithCall() bool {
-	if o != nil && !IsNil(o.WithCall) {
-		return true
-	}
-
-	return false
-}
-
-// SetWithCall gets a reference to the given bool and assigns it to the WithCall field.
+// SetWithCall sets field value
 func (o *EsimProfile) SetWithCall(v bool) {
-	o.WithCall = &v
+	o.WithCall = v
 }
 
 // GetProperties returns the Properties field value if set, zero value otherwise (both if not set or set to explicit null).
@@ -510,42 +476,34 @@ func (o *EsimProfile) UnsetEsim() {
 	o.Esim.Unset()
 }
 
-// GetAddon returns the Addon field value if set, zero value otherwise.
+// GetAddon returns the Addon field value
 func (o *EsimProfile) GetAddon() []EsimAddon {
-	if o == nil || IsNil(o.Addon) {
+	if o == nil {
 		var ret []EsimAddon
 		return ret
 	}
+
 	return o.Addon
 }
 
-// GetAddonOk returns a tuple with the Addon field value if set, nil otherwise
+// GetAddonOk returns a tuple with the Addon field value
 // and a boolean to check if the value has been set.
 func (o *EsimProfile) GetAddonOk() ([]EsimAddon, bool) {
-	if o == nil || IsNil(o.Addon) {
+	if o == nil {
 		return nil, false
 	}
 	return o.Addon, true
 }
 
-// HasAddon returns a boolean if a field has been set.
-func (o *EsimProfile) HasAddon() bool {
-	if o != nil && !IsNil(o.Addon) {
-		return true
-	}
-
-	return false
-}
-
-// SetAddon gets a reference to the given []EsimAddon and assigns it to the Addon field.
+// SetAddon sets field value
 func (o *EsimProfile) SetAddon(v []EsimAddon) {
 	o.Addon = v
 }
 
 // GetData returns the Data field value if set, zero value otherwise (both if not set or set to explicit null).
-func (o *EsimProfile) GetData() EsimProfileData {
+func (o *EsimProfile) GetData() EsimDataAllowance {
 	if o == nil || IsNil(o.Data.Get()) {
-		var ret EsimProfileData
+		var ret EsimDataAllowance
 		return ret
 	}
 	return *o.Data.Get()
@@ -554,7 +512,7 @@ func (o *EsimProfile) GetData() EsimProfileData {
 // GetDataOk returns a tuple with the Data field value if set, nil otherwise
 // and a boolean to check if the value has been set.
 // NOTE: If the value is an explicit nil, `nil, true` will be returned
-func (o *EsimProfile) GetDataOk() (*EsimProfileData, bool) {
+func (o *EsimProfile) GetDataOk() (*EsimDataAllowance, bool) {
 	if o == nil {
 		return nil, false
 	}
@@ -570,8 +528,8 @@ func (o *EsimProfile) HasData() bool {
 	return false
 }
 
-// SetData gets a reference to the given NullableEsimProfileData and assigns it to the Data field.
-func (o *EsimProfile) SetData(v EsimProfileData) {
+// SetData gets a reference to the given NullableEsimDataAllowance and assigns it to the Data field.
+func (o *EsimProfile) SetData(v EsimDataAllowance) {
 	o.Data.Set(&v)
 }
 // SetDataNil sets the value for Data to be an explicit nil
@@ -710,46 +668,46 @@ func (o *EsimProfile) UnsetApn() {
 	o.Apn.Unset()
 }
 
-// GetExpiredAt returns the ExpiredAt field value if set, zero value otherwise (both if not set or set to explicit null).
-func (o *EsimProfile) GetExpiredAt() time.Time {
-	if o == nil || IsNil(o.ExpiredAt.Get()) {
+// GetExpiresAt returns the ExpiresAt field value if set, zero value otherwise (both if not set or set to explicit null).
+func (o *EsimProfile) GetExpiresAt() time.Time {
+	if o == nil || IsNil(o.ExpiresAt.Get()) {
 		var ret time.Time
 		return ret
 	}
-	return *o.ExpiredAt.Get()
+	return *o.ExpiresAt.Get()
 }
 
-// GetExpiredAtOk returns a tuple with the ExpiredAt field value if set, nil otherwise
+// GetExpiresAtOk returns a tuple with the ExpiresAt field value if set, nil otherwise
 // and a boolean to check if the value has been set.
 // NOTE: If the value is an explicit nil, `nil, true` will be returned
-func (o *EsimProfile) GetExpiredAtOk() (*time.Time, bool) {
+func (o *EsimProfile) GetExpiresAtOk() (*time.Time, bool) {
 	if o == nil {
 		return nil, false
 	}
-	return o.ExpiredAt.Get(), o.ExpiredAt.IsSet()
+	return o.ExpiresAt.Get(), o.ExpiresAt.IsSet()
 }
 
-// HasExpiredAt returns a boolean if a field has been set.
-func (o *EsimProfile) HasExpiredAt() bool {
-	if o != nil && o.ExpiredAt.IsSet() {
+// HasExpiresAt returns a boolean if a field has been set.
+func (o *EsimProfile) HasExpiresAt() bool {
+	if o != nil && o.ExpiresAt.IsSet() {
 		return true
 	}
 
 	return false
 }
 
-// SetExpiredAt gets a reference to the given NullableTime and assigns it to the ExpiredAt field.
-func (o *EsimProfile) SetExpiredAt(v time.Time) {
-	o.ExpiredAt.Set(&v)
+// SetExpiresAt gets a reference to the given NullableTime and assigns it to the ExpiresAt field.
+func (o *EsimProfile) SetExpiresAt(v time.Time) {
+	o.ExpiresAt.Set(&v)
 }
-// SetExpiredAtNil sets the value for ExpiredAt to be an explicit nil
-func (o *EsimProfile) SetExpiredAtNil() {
-	o.ExpiredAt.Set(nil)
+// SetExpiresAtNil sets the value for ExpiresAt to be an explicit nil
+func (o *EsimProfile) SetExpiresAtNil() {
+	o.ExpiresAt.Set(nil)
 }
 
-// UnsetExpiredAt ensures that no value is present for ExpiredAt, not even an explicit nil
-func (o *EsimProfile) UnsetExpiredAt() {
-	o.ExpiredAt.Unset()
+// UnsetExpiresAt ensures that no value is present for ExpiresAt, not even an explicit nil
+func (o *EsimProfile) UnsetExpiresAt() {
+	o.ExpiresAt.Unset()
 }
 
 func (o EsimProfile) MarshalJSON() ([]byte, error) {
@@ -771,31 +729,19 @@ func (o EsimProfile) ToMap() (map[string]interface{}, error) {
 	if o.CountryImage.IsSet() {
 		toSerialize["countryImage"] = o.CountryImage.Get()
 	}
-	toSerialize["status"] = o.Status
-	if !IsNil(o.Day) {
-		toSerialize["day"] = o.Day
-	}
-	if !IsNil(o.IsUnlimited) {
-		toSerialize["isUnlimited"] = o.IsUnlimited
-	}
-	if !IsNil(o.IsApnAutomatic) {
-		toSerialize["isApnAutomatic"] = o.IsApnAutomatic
-	}
-	if !IsNil(o.WithSMS) {
-		toSerialize["withSMS"] = o.WithSMS
-	}
-	if !IsNil(o.WithCall) {
-		toSerialize["withCall"] = o.WithCall
-	}
+	toSerialize["esimStatus"] = o.EsimStatus
+	toSerialize["profileStatus"] = o.ProfileStatus
+	toSerialize["day"] = o.Day
+	toSerialize["isApnAutomatic"] = o.IsApnAutomatic
+	toSerialize["withSMS"] = o.WithSMS
+	toSerialize["withCall"] = o.WithCall
 	if o.Properties.IsSet() {
 		toSerialize["properties"] = o.Properties.Get()
 	}
 	if o.Esim.IsSet() {
 		toSerialize["esim"] = o.Esim.Get()
 	}
-	if !IsNil(o.Addon) {
-		toSerialize["addon"] = o.Addon
-	}
+	toSerialize["addon"] = o.Addon
 	if o.Data.IsSet() {
 		toSerialize["data"] = o.Data.Get()
 	}
@@ -808,8 +754,8 @@ func (o EsimProfile) ToMap() (map[string]interface{}, error) {
 	if o.Apn.IsSet() {
 		toSerialize["apn"] = o.Apn.Get()
 	}
-	if o.ExpiredAt.IsSet() {
-		toSerialize["expiredAt"] = o.ExpiredAt.Get()
+	if o.ExpiresAt.IsSet() {
+		toSerialize["expiresAt"] = o.ExpiresAt.Get()
 	}
 	return toSerialize, nil
 }
@@ -822,7 +768,13 @@ func (o *EsimProfile) UnmarshalJSON(data []byte) (err error) {
 		"orderId",
 		"orderItemId",
 		"packageName",
-		"status",
+		"esimStatus",
+		"profileStatus",
+		"day",
+		"isApnAutomatic",
+		"withSMS",
+		"withCall",
+		"addon",
 	}
 
 	allProperties := make(map[string]interface{})
@@ -842,7 +794,6 @@ func (o *EsimProfile) UnmarshalJSON(data []byte) (err error) {
 	varEsimProfile := _EsimProfile{}
 
 	decoder := json.NewDecoder(bytes.NewReader(data))
-	decoder.DisallowUnknownFields()
 	err = decoder.Decode(&varEsimProfile)
 
 	if err != nil {

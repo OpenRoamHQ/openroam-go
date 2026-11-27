@@ -1,6 +1,5 @@
 <p align="center">
-  <img alt="OpenRoam" src="brand/readme-lockup-light.svg#gh-light-mode-only" width="280" />
-  <img alt="OpenRoam" src="brand/readme-lockup-dark.svg#gh-dark-mode-only" width="280" />
+  <img alt="OpenRoam" src="https://openroamhq.github.io/openroam-sdks/brand/readme-lockup-light.svg" width="280" />
 </p>
 
 # OpenRoam SDK for Go
@@ -44,7 +43,7 @@ hotels, err := client.Hotels.Search(ctx, openroam.NewHotelSearchRequest( /* ... 
 ```
 
 Every product is a field of the client: `Esims`, `Airtime`, `Utilities`, `GiftCards`, `Hotels`, `Flights`, plus `Orders`, `OrderItems`,
-`Wallets`, `Currencies`, `Countries` and `MobileNetworks`. Buying always reads `Search`, `Quote`, `Order`; `Get` fetches one thing you own,
+`Wallets`, `Account`, `BrowserSessions`, `Checkouts`, `Currencies`, `Countries` and `MobileNetworks`. Buying always reads `Search`, `Quote`, `Order`; `Get` fetches one thing you own,
 `List...` returns many, everything else starts with a verb. Every method takes `ctx` first, then the path ids in path order, then the
 request body (a pointer to its model, passed as it is) or the query parameters (a pointer to the method's `...Query` struct; `nil` sends
 none, and a `nil` field is not sent). A client is safe for concurrent use: make one and share it.

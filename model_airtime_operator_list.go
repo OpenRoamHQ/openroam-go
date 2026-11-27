@@ -13,6 +13,8 @@ package openroam
 
 import (
 	"encoding/json"
+	"bytes"
+	"fmt"
 )
 
 // checks if the AirtimeOperatorList type satisfies the MappedNullable interface at compile time
@@ -20,15 +22,18 @@ var _ MappedNullable = &AirtimeOperatorList{}
 
 // AirtimeOperatorList The complete operator list of one country for manual selection; it is small, so it is not paged.
 type AirtimeOperatorList struct {
-	Items []AirtimeOperatorSummary `json:"items,omitempty"`
+	Items []AirtimeOperatorSummary `json:"items"`
 }
+
+type _AirtimeOperatorList AirtimeOperatorList
 
 // NewAirtimeOperatorList instantiates a new AirtimeOperatorList object
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewAirtimeOperatorList() *AirtimeOperatorList {
+func NewAirtimeOperatorList(items []AirtimeOperatorSummary) *AirtimeOperatorList {
 	this := AirtimeOperatorList{}
+	this.Items = items
 	return &this
 }
 
@@ -40,34 +45,26 @@ func NewAirtimeOperatorListWithDefaults() *AirtimeOperatorList {
 	return &this
 }
 
-// GetItems returns the Items field value if set, zero value otherwise.
+// GetItems returns the Items field value
 func (o *AirtimeOperatorList) GetItems() []AirtimeOperatorSummary {
-	if o == nil || IsNil(o.Items) {
+	if o == nil {
 		var ret []AirtimeOperatorSummary
 		return ret
 	}
+
 	return o.Items
 }
 
-// GetItemsOk returns a tuple with the Items field value if set, nil otherwise
+// GetItemsOk returns a tuple with the Items field value
 // and a boolean to check if the value has been set.
 func (o *AirtimeOperatorList) GetItemsOk() ([]AirtimeOperatorSummary, bool) {
-	if o == nil || IsNil(o.Items) {
+	if o == nil {
 		return nil, false
 	}
 	return o.Items, true
 }
 
-// HasItems returns a boolean if a field has been set.
-func (o *AirtimeOperatorList) HasItems() bool {
-	if o != nil && !IsNil(o.Items) {
-		return true
-	}
-
-	return false
-}
-
-// SetItems gets a reference to the given []AirtimeOperatorSummary and assigns it to the Items field.
+// SetItems sets field value
 func (o *AirtimeOperatorList) SetItems(v []AirtimeOperatorSummary) {
 	o.Items = v
 }
@@ -82,10 +79,44 @@ func (o AirtimeOperatorList) MarshalJSON() ([]byte, error) {
 
 func (o AirtimeOperatorList) ToMap() (map[string]interface{}, error) {
 	toSerialize := map[string]interface{}{}
-	if !IsNil(o.Items) {
-		toSerialize["items"] = o.Items
-	}
+	toSerialize["items"] = o.Items
 	return toSerialize, nil
+}
+
+func (o *AirtimeOperatorList) UnmarshalJSON(data []byte) (err error) {
+	// This validates that all required properties are included in the JSON object
+	// by unmarshalling the object into a generic map with string keys and checking
+	// that every required field exists as a key in the generic map.
+	requiredProperties := []string{
+		"items",
+	}
+
+	allProperties := make(map[string]interface{})
+
+	err = json.Unmarshal(data, &allProperties)
+
+	if err != nil {
+		return err;
+	}
+
+	for _, requiredProperty := range(requiredProperties) {
+		if _, exists := allProperties[requiredProperty]; !exists {
+			return fmt.Errorf("no value given for required property %v", requiredProperty)
+		}
+	}
+
+	varAirtimeOperatorList := _AirtimeOperatorList{}
+
+	decoder := json.NewDecoder(bytes.NewReader(data))
+	err = decoder.Decode(&varAirtimeOperatorList)
+
+	if err != nil {
+		return err
+	}
+
+	*o = AirtimeOperatorList(varAirtimeOperatorList)
+
+	return err
 }
 
 type NullableAirtimeOperatorList struct {

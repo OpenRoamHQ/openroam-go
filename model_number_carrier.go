@@ -13,6 +13,8 @@ package openroam
 
 import (
 	"encoding/json"
+	"bytes"
+	"fmt"
 )
 
 // checks if the NumberCarrier type satisfies the MappedNullable interface at compile time
@@ -22,16 +24,19 @@ var _ MappedNullable = &NumberCarrier{}
 type NumberCarrier struct {
 	Name NullableString `json:"name,omitempty"`
 	NormalizedName NullableString `json:"normalizedName,omitempty"`
-	LineType *string `json:"lineType,omitempty"`
+	LineType string `json:"lineType"`
 	IsPorted NullableBool `json:"isPorted,omitempty"`
 }
+
+type _NumberCarrier NumberCarrier
 
 // NewNumberCarrier instantiates a new NumberCarrier object
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewNumberCarrier() *NumberCarrier {
+func NewNumberCarrier(lineType string) *NumberCarrier {
 	this := NumberCarrier{}
+	this.LineType = lineType
 	return &this
 }
 
@@ -127,36 +132,28 @@ func (o *NumberCarrier) UnsetNormalizedName() {
 	o.NormalizedName.Unset()
 }
 
-// GetLineType returns the LineType field value if set, zero value otherwise.
+// GetLineType returns the LineType field value
 func (o *NumberCarrier) GetLineType() string {
-	if o == nil || IsNil(o.LineType) {
+	if o == nil {
 		var ret string
 		return ret
 	}
-	return *o.LineType
+
+	return o.LineType
 }
 
-// GetLineTypeOk returns a tuple with the LineType field value if set, nil otherwise
+// GetLineTypeOk returns a tuple with the LineType field value
 // and a boolean to check if the value has been set.
 func (o *NumberCarrier) GetLineTypeOk() (*string, bool) {
-	if o == nil || IsNil(o.LineType) {
+	if o == nil {
 		return nil, false
 	}
-	return o.LineType, true
+	return &o.LineType, true
 }
 
-// HasLineType returns a boolean if a field has been set.
-func (o *NumberCarrier) HasLineType() bool {
-	if o != nil && !IsNil(o.LineType) {
-		return true
-	}
-
-	return false
-}
-
-// SetLineType gets a reference to the given string and assigns it to the LineType field.
+// SetLineType sets field value
 func (o *NumberCarrier) SetLineType(v string) {
-	o.LineType = &v
+	o.LineType = v
 }
 
 // GetIsPorted returns the IsPorted field value if set, zero value otherwise (both if not set or set to explicit null).
@@ -217,13 +214,47 @@ func (o NumberCarrier) ToMap() (map[string]interface{}, error) {
 	if o.NormalizedName.IsSet() {
 		toSerialize["normalizedName"] = o.NormalizedName.Get()
 	}
-	if !IsNil(o.LineType) {
-		toSerialize["lineType"] = o.LineType
-	}
+	toSerialize["lineType"] = o.LineType
 	if o.IsPorted.IsSet() {
 		toSerialize["isPorted"] = o.IsPorted.Get()
 	}
 	return toSerialize, nil
+}
+
+func (o *NumberCarrier) UnmarshalJSON(data []byte) (err error) {
+	// This validates that all required properties are included in the JSON object
+	// by unmarshalling the object into a generic map with string keys and checking
+	// that every required field exists as a key in the generic map.
+	requiredProperties := []string{
+		"lineType",
+	}
+
+	allProperties := make(map[string]interface{})
+
+	err = json.Unmarshal(data, &allProperties)
+
+	if err != nil {
+		return err;
+	}
+
+	for _, requiredProperty := range(requiredProperties) {
+		if _, exists := allProperties[requiredProperty]; !exists {
+			return fmt.Errorf("no value given for required property %v", requiredProperty)
+		}
+	}
+
+	varNumberCarrier := _NumberCarrier{}
+
+	decoder := json.NewDecoder(bytes.NewReader(data))
+	err = decoder.Decode(&varNumberCarrier)
+
+	if err != nil {
+		return err
+	}
+
+	*o = NumberCarrier(varNumberCarrier)
+
+	return err
 }
 
 type NullableNumberCarrier struct {

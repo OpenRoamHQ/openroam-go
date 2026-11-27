@@ -1,8 +1,19 @@
 [
   {
+    "method": "account.listServices",
+    "verb": "GET",
+    "route": "/v1/account/services",
+    "pathNames": [],
+    "query": [],
+    "idempotent": false,
+    "body": false,
+    "bodyModel": null,
+    "bodySample": null
+  },
+  {
     "method": "airtime.listCatalog",
     "verb": "GET",
-    "route": "/api/v1/b2b/airtime/catalog",
+    "route": "/v1/airtime/catalog",
     "pathNames": [],
     "query": [
       {
@@ -29,7 +40,7 @@
   {
     "method": "airtime.search",
     "verb": "GET",
-    "route": "/api/v1/b2b/airtime/search",
+    "route": "/v1/airtime/search",
     "pathNames": [],
     "query": [
       {
@@ -91,7 +102,7 @@
   {
     "method": "airtime.lookupNumber",
     "verb": "GET",
-    "route": "/api/v1/b2b/airtime/number-lookup",
+    "route": "/v1/airtime/number-lookup",
     "pathNames": [],
     "query": [
       {
@@ -108,7 +119,7 @@
   {
     "method": "airtime.listOperators",
     "verb": "GET",
-    "route": "/api/v1/b2b/airtime/operators",
+    "route": "/v1/airtime/operators",
     "pathNames": [],
     "query": [
       {
@@ -125,7 +136,7 @@
   {
     "method": "airtime.getOperator",
     "verb": "GET",
-    "route": "/api/v1/b2b/airtime/operators/{id}",
+    "route": "/v1/airtime/operators/{id}",
     "pathNames": [
       "id"
     ],
@@ -179,7 +190,7 @@
   {
     "method": "airtime.quote",
     "verb": "POST",
-    "route": "/api/v1/b2b/airtime/quote",
+    "route": "/v1/airtime/quote",
     "pathNames": [],
     "query": [],
     "idempotent": false,
@@ -199,7 +210,7 @@
   {
     "method": "airtime.order",
     "verb": "POST",
-    "route": "/api/v1/b2b/airtime/order",
+    "route": "/v1/airtime/order",
     "pathNames": [],
     "query": [],
     "idempotent": true,
@@ -217,9 +228,81 @@
     }
   },
   {
+    "method": "browserSessions.create",
+    "verb": "POST",
+    "route": "/v1/browser-sessions",
+    "pathNames": [],
+    "query": [],
+    "idempotent": false,
+    "body": true,
+    "bodyModel": "BrowserSessionCreateRequest",
+    "bodySample": {
+      "origin": "sample",
+      "siteId": "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+    }
+  },
+  {
+    "method": "browserSessions.revoke",
+    "verb": "POST",
+    "route": "/v1/browser-sessions/revoke",
+    "pathNames": [],
+    "query": [],
+    "idempotent": false,
+    "body": true,
+    "bodyModel": "BrowserSessionRevokeRequest",
+    "bodySample": {
+      "siteId": "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+    }
+  },
+  {
+    "method": "checkouts.get",
+    "verb": "GET",
+    "route": "/v1/checkouts/{id}",
+    "pathNames": [
+      "id"
+    ],
+    "query": [],
+    "idempotent": false,
+    "body": false,
+    "bodyModel": null,
+    "bodySample": null
+  },
+  {
+    "method": "checkouts.confirm",
+    "verb": "POST",
+    "route": "/v1/checkouts/{id}/confirm",
+    "pathNames": [
+      "id"
+    ],
+    "query": [],
+    "idempotent": true,
+    "body": true,
+    "bodyModel": "CheckoutConfirmRequest",
+    "bodySample": {
+      "amount": {
+        "amount": 1.5,
+        "currency": "sample"
+      },
+      "paymentReference": "sample"
+    }
+  },
+  {
+    "method": "checkouts.fail",
+    "verb": "POST",
+    "route": "/v1/checkouts/{id}/fail",
+    "pathNames": [
+      "id"
+    ],
+    "query": [],
+    "idempotent": true,
+    "body": true,
+    "bodyModel": null,
+    "bodySample": {}
+  },
+  {
     "method": "countries.list",
     "verb": "GET",
-    "route": "/api/v1/b2b/common/countries",
+    "route": "/v1/common/countries",
     "pathNames": [],
     "query": [],
     "idempotent": false,
@@ -230,7 +313,7 @@
   {
     "method": "mobileNetworks.list",
     "verb": "GET",
-    "route": "/api/v1/b2b/common/mccmnc",
+    "route": "/v1/common/mccmnc",
     "pathNames": [],
     "query": [
       {
@@ -252,7 +335,7 @@
   {
     "method": "currencies.list",
     "verb": "GET",
-    "route": "/api/v1/b2b/currencies",
+    "route": "/v1/currencies",
     "pathNames": [],
     "query": [],
     "idempotent": false,
@@ -263,7 +346,7 @@
   {
     "method": "esims.search",
     "verb": "GET",
-    "route": "/api/v1/b2b/esims/search",
+    "route": "/v1/esims/search",
     "pathNames": [],
     "query": [
       {
@@ -320,7 +403,7 @@
   {
     "method": "esims.listDestinations",
     "verb": "GET",
-    "route": "/api/v1/b2b/esims/destinations",
+    "route": "/v1/esims/destinations",
     "pathNames": [],
     "query": [
       {
@@ -342,7 +425,7 @@
   {
     "method": "esims.getDestination",
     "verb": "GET",
-    "route": "/api/v1/b2b/esims/destinations/{id}",
+    "route": "/v1/esims/destinations/{id}",
     "pathNames": [
       "id"
     ],
@@ -361,7 +444,7 @@
   {
     "method": "esims.listCatalog",
     "verb": "GET",
-    "route": "/api/v1/b2b/esims/catalog",
+    "route": "/v1/esims/catalog",
     "pathNames": [],
     "query": [
       {
@@ -413,7 +496,7 @@
   {
     "method": "esims.listCompatibleDevices",
     "verb": "GET",
-    "route": "/api/v1/b2b/esims/compatible-devices",
+    "route": "/v1/esims/compatible-devices",
     "pathNames": [],
     "query": [],
     "idempotent": false,
@@ -424,7 +507,7 @@
   {
     "method": "esims.order",
     "verb": "POST",
-    "route": "/api/v1/b2b/esims/order",
+    "route": "/v1/esims/order",
     "pathNames": [],
     "query": [],
     "idempotent": true,
@@ -441,7 +524,7 @@
   {
     "method": "esims.quote",
     "verb": "POST",
-    "route": "/api/v1/b2b/esims/quote",
+    "route": "/v1/esims/quote",
     "pathNames": [],
     "query": [],
     "idempotent": false,
@@ -458,7 +541,7 @@
   {
     "method": "esims.getProfile",
     "verb": "GET",
-    "route": "/api/v1/b2b/esims/{iccid}/profile",
+    "route": "/v1/esims/{iccid}/profile",
     "pathNames": [
       "iccid"
     ],
@@ -471,7 +554,7 @@
   {
     "method": "esims.getUsage",
     "verb": "GET",
-    "route": "/api/v1/b2b/esims/{iccid}/usage",
+    "route": "/v1/esims/{iccid}/usage",
     "pathNames": [
       "iccid"
     ],
@@ -484,7 +567,7 @@
   {
     "method": "esims.listDailyUsage",
     "verb": "GET",
-    "route": "/api/v1/b2b/esims/{iccid}/usage/details",
+    "route": "/v1/esims/{iccid}/usage/details",
     "pathNames": [
       "iccid"
     ],
@@ -497,7 +580,7 @@
   {
     "method": "esims.listUsageHistory",
     "verb": "GET",
-    "route": "/api/v1/b2b/esims/{iccid}/usage/history",
+    "route": "/v1/esims/{iccid}/usage/history",
     "pathNames": [
       "iccid"
     ],
@@ -531,7 +614,7 @@
   {
     "method": "esims.listStatusHistory",
     "verb": "GET",
-    "route": "/api/v1/b2b/esims/{iccid}/status-events",
+    "route": "/v1/esims/{iccid}/status-events",
     "pathNames": [
       "iccid"
     ],
@@ -565,7 +648,7 @@
   {
     "method": "esims.listLocationHistory",
     "verb": "GET",
-    "route": "/api/v1/b2b/esims/{iccid}/location-events",
+    "route": "/v1/esims/{iccid}/location-events",
     "pathNames": [
       "iccid"
     ],
@@ -599,7 +682,7 @@
   {
     "method": "esims.provision",
     "verb": "POST",
-    "route": "/api/v1/b2b/esims/{id}/provisioning",
+    "route": "/v1/esims/{id}/provisioning",
     "pathNames": [
       "id"
     ],
@@ -612,7 +695,7 @@
   {
     "method": "esims.sendSms",
     "verb": "POST",
-    "route": "/api/v1/b2b/esims/{iccid}/sms",
+    "route": "/v1/esims/{iccid}/sms",
     "pathNames": [
       "iccid"
     ],
@@ -625,9 +708,36 @@
     }
   },
   {
+    "method": "flights.listPlaces",
+    "verb": "GET",
+    "route": "/v1/flights/places",
+    "pathNames": [],
+    "query": [
+      {
+        "name": "q",
+        "required": true,
+        "kind": "string"
+      },
+      {
+        "name": "category",
+        "required": false,
+        "kind": "string"
+      },
+      {
+        "name": "limit",
+        "required": false,
+        "kind": "number"
+      }
+    ],
+    "idempotent": false,
+    "body": false,
+    "bodyModel": null,
+    "bodySample": null
+  },
+  {
     "method": "flights.search",
     "verb": "POST",
-    "route": "/api/v1/b2b/flights/search",
+    "route": "/v1/flights/search",
     "pathNames": [],
     "query": [],
     "idempotent": false,
@@ -651,7 +761,7 @@
   {
     "method": "flights.quote",
     "verb": "POST",
-    "route": "/api/v1/b2b/flights/quote",
+    "route": "/v1/flights/quote",
     "pathNames": [],
     "query": [],
     "idempotent": false,
@@ -668,7 +778,7 @@
   {
     "method": "flights.order",
     "verb": "POST",
-    "route": "/api/v1/b2b/flights/order",
+    "route": "/v1/flights/order",
     "pathNames": [],
     "query": [],
     "idempotent": true,
@@ -685,7 +795,7 @@
   {
     "method": "flights.getSeatMap",
     "verb": "GET",
-    "route": "/api/v1/b2b/flights/offers/{publicId}/seat-map",
+    "route": "/v1/flights/offers/{publicId}/seat-map",
     "pathNames": [
       "publicId"
     ],
@@ -698,7 +808,7 @@
   {
     "method": "giftCards.listCategories",
     "verb": "GET",
-    "route": "/api/v1/b2b/giftcards/categories",
+    "route": "/v1/giftcards/categories",
     "pathNames": [],
     "query": [],
     "idempotent": false,
@@ -709,7 +819,7 @@
   {
     "method": "giftCards.search",
     "verb": "GET",
-    "route": "/api/v1/b2b/giftcards/search",
+    "route": "/v1/giftcards/search",
     "pathNames": [],
     "query": [
       {
@@ -761,7 +871,7 @@
   {
     "method": "giftCards.listCatalog",
     "verb": "GET",
-    "route": "/api/v1/b2b/giftcards/catalog",
+    "route": "/v1/giftcards/catalog",
     "pathNames": [],
     "query": [
       {
@@ -808,7 +918,7 @@
   {
     "method": "giftCards.getGiftCard",
     "verb": "GET",
-    "route": "/api/v1/b2b/giftcards/cards/{id}",
+    "route": "/v1/giftcards/cards/{id}",
     "pathNames": [
       "id"
     ],
@@ -827,7 +937,7 @@
   {
     "method": "giftCards.order",
     "verb": "POST",
-    "route": "/api/v1/b2b/giftcards/order",
+    "route": "/v1/giftcards/order",
     "pathNames": [],
     "query": [],
     "idempotent": true,
@@ -844,7 +954,7 @@
   {
     "method": "giftCards.quote",
     "verb": "POST",
-    "route": "/api/v1/b2b/giftcards/quote",
+    "route": "/v1/giftcards/quote",
     "pathNames": [],
     "query": [],
     "idempotent": false,
@@ -859,64 +969,9 @@
     }
   },
   {
-    "method": "orderItems.manualAmendments.create",
-    "verb": "POST",
-    "route": "/api/v1/b2b/order-items/{id}/manual-amendments",
-    "pathNames": [
-      "id"
-    ],
-    "query": [],
-    "idempotent": true,
-    "body": true,
-    "bodyModel": "ManualAmendmentCreateRequest",
-    "bodySample": {}
-  },
-  {
-    "method": "orderItems.manualAmendments.cancel",
-    "verb": "POST",
-    "route": "/api/v1/b2b/order-items/{id}/manual-amendments/{amendmentId}/cancel",
-    "pathNames": [
-      "id",
-      "amendmentId"
-    ],
-    "query": [],
-    "idempotent": false,
-    "body": false,
-    "bodyModel": null,
-    "bodySample": null
-  },
-  {
-    "method": "orderItems.manualAmendments.approve",
-    "verb": "POST",
-    "route": "/api/v1/b2b/order-items/{id}/manual-amendments/{amendmentId}/approve",
-    "pathNames": [
-      "id",
-      "amendmentId"
-    ],
-    "query": [],
-    "idempotent": true,
-    "body": true,
-    "bodyModel": "ManualAmendmentApproveRequest",
-    "bodySample": {}
-  },
-  {
-    "method": "orderItems.manualAmendments.decline",
-    "verb": "POST",
-    "route": "/api/v1/b2b/order-items/{id}/manual-amendments/{amendmentId}/decline",
-    "pathNames": [
-      "id",
-      "amendmentId"
-    ],
-    "query": [],
-    "idempotent": false,
-    "body": false,
-    "bodyModel": null,
-    "bodySample": null
-  },
-  {
     "method": "hotels.search",
     "verb": "POST",
-    "route": "/api/v1/b2b/hotels/search",
+    "route": "/v1/hotels/search",
     "pathNames": [],
     "query": [],
     "idempotent": false,
@@ -934,7 +989,7 @@
   {
     "method": "hotels.getHotel",
     "verb": "GET",
-    "route": "/api/v1/b2b/hotels/properties/{id}",
+    "route": "/v1/hotels/properties/{id}",
     "pathNames": [
       "id"
     ],
@@ -947,7 +1002,7 @@
   {
     "method": "hotels.listDestinations",
     "verb": "GET",
-    "route": "/api/v1/b2b/hotels/destinations",
+    "route": "/v1/hotels/destinations",
     "pathNames": [],
     "query": [
       {
@@ -974,7 +1029,7 @@
   {
     "method": "hotels.listAmenities",
     "verb": "GET",
-    "route": "/api/v1/b2b/hotels/amenities/catalog",
+    "route": "/v1/hotels/amenities/catalog",
     "pathNames": [],
     "query": [],
     "idempotent": false,
@@ -985,7 +1040,7 @@
   {
     "method": "hotels.exportCatalog",
     "verb": "GET",
-    "route": "/api/v1/b2b/hotels/catalog/files",
+    "route": "/v1/hotels/catalog/files",
     "pathNames": [],
     "query": [],
     "idempotent": false,
@@ -996,7 +1051,7 @@
   {
     "method": "hotels.quote",
     "verb": "POST",
-    "route": "/api/v1/b2b/hotels/quote",
+    "route": "/v1/hotels/quote",
     "pathNames": [],
     "query": [],
     "idempotent": false,
@@ -1013,7 +1068,7 @@
   {
     "method": "hotels.order",
     "verb": "POST",
-    "route": "/api/v1/b2b/hotels/order",
+    "route": "/v1/hotels/order",
     "pathNames": [],
     "query": [],
     "idempotent": true,
@@ -1028,57 +1083,55 @@
     }
   },
   {
-    "method": "orderItems.listPartnerAmendments",
+    "method": "orderItems.get",
     "verb": "GET",
-    "route": "/api/v1/b2b/amendments",
-    "pathNames": [],
+    "route": "/v1/order-items/{id}",
+    "pathNames": [
+      "id"
+    ],
+    "query": [],
+    "idempotent": false,
+    "body": false,
+    "bodyModel": null,
+    "bodySample": null
+  },
+  {
+    "method": "orderItems.change",
+    "verb": "POST",
+    "route": "/v1/order-items/{id}/changes",
+    "pathNames": [
+      "id"
+    ],
+    "query": [],
+    "idempotent": true,
+    "body": true,
+    "bodyModel": "OrderItemChangeRequest",
+    "bodySample": {
+      "operation": "request"
+    }
+  },
+  {
+    "method": "orderItems.listChanges",
+    "verb": "GET",
+    "route": "/v1/order-items/{id}/changes",
+    "pathNames": [
+      "id"
+    ],
     "query": [
       {
-        "name": "page",
+        "name": "updatedSince",
         "required": false,
-        "kind": "number"
+        "kind": "date"
+      },
+      {
+        "name": "cursor",
+        "required": false,
+        "kind": "string"
       },
       {
         "name": "limit",
         "required": false,
         "kind": "number"
-      },
-      {
-        "name": "statuses",
-        "required": false,
-        "kind": "array"
-      },
-      {
-        "name": "productType",
-        "required": false,
-        "kind": "string"
-      },
-      {
-        "name": "amendmentMode",
-        "required": false,
-        "kind": "string"
-      },
-      {
-        "name": "orderId",
-        "required": false,
-        "kind": "string",
-        "format": "uuid"
-      },
-      {
-        "name": "orderItemId",
-        "required": false,
-        "kind": "string",
-        "format": "uuid"
-      },
-      {
-        "name": "from",
-        "required": false,
-        "kind": "date"
-      },
-      {
-        "name": "to",
-        "required": false,
-        "kind": "date"
       }
     ],
     "idempotent": false,
@@ -1087,64 +1140,39 @@
     "bodySample": null
   },
   {
-    "method": "orderItems.get",
+    "method": "orderItems.listPartnerChanges",
     "verb": "GET",
-    "route": "/api/v1/b2b/order-items/{id}",
-    "pathNames": [
-      "id"
+    "route": "/v1/changes",
+    "pathNames": [],
+    "query": [
+      {
+        "name": "updatedSince",
+        "required": false,
+        "kind": "date"
+      },
+      {
+        "name": "cursor",
+        "required": false,
+        "kind": "string"
+      },
+      {
+        "name": "limit",
+        "required": false,
+        "kind": "number"
+      }
     ],
-    "query": [],
     "idempotent": false,
     "body": false,
     "bodyModel": null,
     "bodySample": null
   },
   {
-    "method": "orderItems.getCancellationPreview",
+    "method": "orderItems.getChange",
     "verb": "GET",
-    "route": "/api/v1/b2b/order-items/{id}/cancellation-preview",
-    "pathNames": [
-      "id"
-    ],
-    "query": [],
-    "idempotent": false,
-    "body": false,
-    "bodyModel": null,
-    "bodySample": null
-  },
-  {
-    "method": "orderItems.quoteAmendment",
-    "verb": "POST",
-    "route": "/api/v1/b2b/order-items/{id}/amendments/quote",
-    "pathNames": [
-      "id"
-    ],
-    "query": [],
-    "idempotent": true,
-    "body": true,
-    "bodyModel": "AmendmentQuoteRequest",
-    "bodySample": {}
-  },
-  {
-    "method": "orderItems.listAmendments",
-    "verb": "GET",
-    "route": "/api/v1/b2b/order-items/{id}/amendments",
-    "pathNames": [
-      "id"
-    ],
-    "query": [],
-    "idempotent": false,
-    "body": false,
-    "bodyModel": null,
-    "bodySample": null
-  },
-  {
-    "method": "orderItems.getAmendment",
-    "verb": "GET",
-    "route": "/api/v1/b2b/order-items/{id}/amendments/{amendmentId}",
+    "route": "/v1/order-items/{id}/changes/{changeId}",
     "pathNames": [
       "id",
-      "amendmentId"
+      "changeId"
     ],
     "query": [],
     "idempotent": false,
@@ -1155,53 +1183,22 @@
   {
     "method": "orderItems.cancel",
     "verb": "POST",
-    "route": "/api/v1/b2b/order-items/{id}/cancel",
+    "route": "/v1/order-items/{id}/cancellation",
     "pathNames": [
       "id"
     ],
     "query": [],
     "idempotent": true,
     "body": true,
-    "bodyModel": "OrderItemCancelRequest",
+    "bodyModel": "OrderItemCancellationRequest",
     "bodySample": {
-      "reason": "requestedByCustomer"
-    }
-  },
-  {
-    "method": "orderItems.update",
-    "verb": "POST",
-    "route": "/api/v1/b2b/order-items/{id}/update",
-    "pathNames": [
-      "id"
-    ],
-    "query": [],
-    "idempotent": true,
-    "body": true,
-    "bodyModel": "OrderItemUpdateRequest",
-    "bodySample": {
-      "inputs": {}
-    }
-  },
-  {
-    "method": "orderItems.confirmAmendment",
-    "verb": "POST",
-    "route": "/api/v1/b2b/order-items/{id}/amendments/confirm",
-    "pathNames": [
-      "id"
-    ],
-    "query": [],
-    "idempotent": true,
-    "body": true,
-    "bodyModel": "AmendmentConfirmRequest",
-    "bodySample": {
-      "amendmentRequestId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
-      "paymentMethod": "balance"
+      "operation": "quote"
     }
   },
   {
     "method": "orders.list",
     "verb": "GET",
-    "route": "/api/v1/b2b/orders",
+    "route": "/v1/orders",
     "pathNames": [],
     "query": [
       {
@@ -1245,7 +1242,7 @@
         "kind": "string"
       },
       {
-        "name": "salesChannel",
+        "name": "channel",
         "required": false,
         "kind": "string"
       },
@@ -1268,7 +1265,7 @@
   {
     "method": "orders.order",
     "verb": "POST",
-    "route": "/api/v1/b2b/orders",
+    "route": "/v1/orders",
     "pathNames": [],
     "query": [],
     "idempotent": true,
@@ -1286,7 +1283,7 @@
   {
     "method": "orders.get",
     "verb": "GET",
-    "route": "/api/v1/b2b/orders/{id}",
+    "route": "/v1/orders/{id}",
     "pathNames": [
       "id"
     ],
@@ -1299,7 +1296,7 @@
   {
     "method": "orders.quote",
     "verb": "POST",
-    "route": "/api/v1/b2b/orders/quote",
+    "route": "/v1/orders/quote",
     "pathNames": [],
     "query": [],
     "idempotent": false,
@@ -1315,35 +1312,9 @@
     }
   },
   {
-    "method": "orders.retryPayment",
-    "verb": "POST",
-    "route": "/api/v1/b2b/orders/{orderId}/payment/retry",
-    "pathNames": [
-      "orderId"
-    ],
-    "query": [],
-    "idempotent": true,
-    "body": false,
-    "bodyModel": null,
-    "bodySample": null
-  },
-  {
-    "method": "orders.retryFulfillment",
-    "verb": "POST",
-    "route": "/api/v1/b2b/orders/{orderId}/fulfillment/retry",
-    "pathNames": [
-      "orderId"
-    ],
-    "query": [],
-    "idempotent": true,
-    "body": false,
-    "bodyModel": null,
-    "bodySample": null
-  },
-  {
     "method": "orders.getFulfillmentStatus",
     "verb": "GET",
-    "route": "/api/v1/b2b/orders/{orderId}/fulfillment/status",
+    "route": "/v1/orders/{orderId}/fulfillment/status",
     "pathNames": [
       "orderId"
     ],
@@ -1354,22 +1325,24 @@
     "bodySample": null
   },
   {
-    "method": "orders.getCancellationPreview",
-    "verb": "GET",
-    "route": "/api/v1/b2b/orders/{id}/cancellation-preview",
+    "method": "orders.resendEmail",
+    "verb": "POST",
+    "route": "/v1/orders/{id}/emails/resend",
     "pathNames": [
       "id"
     ],
     "query": [],
-    "idempotent": false,
-    "body": false,
-    "bodyModel": null,
-    "bodySample": null
+    "idempotent": true,
+    "body": true,
+    "bodyModel": "OrderEmailResendRequest",
+    "bodySample": {
+      "type": "receipt"
+    }
   },
   {
     "method": "utilities.search",
     "verb": "GET",
-    "route": "/api/v1/b2b/utility/search",
+    "route": "/v1/utility/search",
     "pathNames": [],
     "query": [
       {
@@ -1416,7 +1389,7 @@
   {
     "method": "utilities.getBiller",
     "verb": "GET",
-    "route": "/api/v1/b2b/utility/billers/{id}",
+    "route": "/v1/utility/billers/{id}",
     "pathNames": [
       "id"
     ],
@@ -1435,7 +1408,7 @@
   {
     "method": "utilities.listCatalog",
     "verb": "GET",
-    "route": "/api/v1/b2b/utility/catalog",
+    "route": "/v1/utility/catalog",
     "pathNames": [],
     "query": [
       {
@@ -1477,7 +1450,7 @@
   {
     "method": "utilities.order",
     "verb": "POST",
-    "route": "/api/v1/b2b/utility/order",
+    "route": "/v1/utility/order",
     "pathNames": [],
     "query": [],
     "idempotent": true,
@@ -1494,7 +1467,7 @@
   {
     "method": "utilities.quote",
     "verb": "POST",
-    "route": "/api/v1/b2b/utility/quote",
+    "route": "/v1/utility/quote",
     "pathNames": [],
     "query": [],
     "idempotent": false,
@@ -1511,7 +1484,7 @@
   {
     "method": "wallets.list",
     "verb": "GET",
-    "route": "/api/v1/b2b/wallets",
+    "route": "/v1/wallets",
     "pathNames": [],
     "query": [],
     "idempotent": false,
@@ -1522,7 +1495,7 @@
   {
     "method": "wallets.create",
     "verb": "POST",
-    "route": "/api/v1/b2b/wallets",
+    "route": "/v1/wallets",
     "pathNames": [],
     "query": [],
     "idempotent": false,
@@ -1533,7 +1506,7 @@
   {
     "method": "wallets.get",
     "verb": "GET",
-    "route": "/api/v1/b2b/wallets/{id}",
+    "route": "/v1/wallets/{id}",
     "pathNames": [
       "id"
     ],
@@ -1546,7 +1519,7 @@
   {
     "method": "wallets.update",
     "verb": "PATCH",
-    "route": "/api/v1/b2b/wallets/{id}",
+    "route": "/v1/wallets/{id}",
     "pathNames": [
       "id"
     ],
@@ -1559,7 +1532,7 @@
   {
     "method": "wallets.setDefault",
     "verb": "PATCH",
-    "route": "/api/v1/b2b/wallets/select/{id}",
+    "route": "/v1/wallets/select/{id}",
     "pathNames": [
       "id"
     ],
@@ -1572,7 +1545,7 @@
   {
     "method": "wallets.transfer",
     "verb": "POST",
-    "route": "/api/v1/b2b/wallets/transfer",
+    "route": "/v1/wallets/transfer",
     "pathNames": [],
     "query": [],
     "idempotent": true,
@@ -1587,7 +1560,7 @@
   {
     "method": "wallets.listTransactions",
     "verb": "GET",
-    "route": "/api/v1/b2b/wallets/{walletId}/transactions",
+    "route": "/v1/wallets/{walletId}/transactions",
     "pathNames": [
       "walletId"
     ],

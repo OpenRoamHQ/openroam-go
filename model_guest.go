@@ -13,6 +13,8 @@ package openroam
 
 import (
 	"encoding/json"
+	"bytes"
+	"fmt"
 )
 
 // checks if the Guest type satisfies the MappedNullable interface at compile time
@@ -27,21 +29,25 @@ type Guest struct {
 	// Title, for example `Mr`, `Mrs` or `Miss`; null when there is none.
 	Title NullableString `json:"title,omitempty"`
 	// First name.
-	FirstName *string `json:"firstName,omitempty"`
+	FirstName string `json:"firstName"`
 	// Last name.
-	LastName *string `json:"lastName,omitempty"`
+	LastName string `json:"lastName"`
 	// Middle name; null when there is none.
 	MiddleName NullableString `json:"middleName,omitempty"`
 	// Age in years; null when none was given. A guest is a child when it is 0–17 and an adult when it is 18 or more or null.
 	Age NullableInt32 `json:"age,omitempty"`
 }
 
+type _Guest Guest
+
 // NewGuest instantiates a new Guest object
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewGuest() *Guest {
+func NewGuest(firstName string, lastName string) *Guest {
 	this := Guest{}
+	this.FirstName = firstName
+	this.LastName = lastName
 	return &this
 }
 
@@ -179,68 +185,52 @@ func (o *Guest) UnsetTitle() {
 	o.Title.Unset()
 }
 
-// GetFirstName returns the FirstName field value if set, zero value otherwise.
+// GetFirstName returns the FirstName field value
 func (o *Guest) GetFirstName() string {
-	if o == nil || IsNil(o.FirstName) {
+	if o == nil {
 		var ret string
 		return ret
 	}
-	return *o.FirstName
+
+	return o.FirstName
 }
 
-// GetFirstNameOk returns a tuple with the FirstName field value if set, nil otherwise
+// GetFirstNameOk returns a tuple with the FirstName field value
 // and a boolean to check if the value has been set.
 func (o *Guest) GetFirstNameOk() (*string, bool) {
-	if o == nil || IsNil(o.FirstName) {
+	if o == nil {
 		return nil, false
 	}
-	return o.FirstName, true
+	return &o.FirstName, true
 }
 
-// HasFirstName returns a boolean if a field has been set.
-func (o *Guest) HasFirstName() bool {
-	if o != nil && !IsNil(o.FirstName) {
-		return true
-	}
-
-	return false
-}
-
-// SetFirstName gets a reference to the given string and assigns it to the FirstName field.
+// SetFirstName sets field value
 func (o *Guest) SetFirstName(v string) {
-	o.FirstName = &v
+	o.FirstName = v
 }
 
-// GetLastName returns the LastName field value if set, zero value otherwise.
+// GetLastName returns the LastName field value
 func (o *Guest) GetLastName() string {
-	if o == nil || IsNil(o.LastName) {
+	if o == nil {
 		var ret string
 		return ret
 	}
-	return *o.LastName
+
+	return o.LastName
 }
 
-// GetLastNameOk returns a tuple with the LastName field value if set, nil otherwise
+// GetLastNameOk returns a tuple with the LastName field value
 // and a boolean to check if the value has been set.
 func (o *Guest) GetLastNameOk() (*string, bool) {
-	if o == nil || IsNil(o.LastName) {
+	if o == nil {
 		return nil, false
 	}
-	return o.LastName, true
+	return &o.LastName, true
 }
 
-// HasLastName returns a boolean if a field has been set.
-func (o *Guest) HasLastName() bool {
-	if o != nil && !IsNil(o.LastName) {
-		return true
-	}
-
-	return false
-}
-
-// SetLastName gets a reference to the given string and assigns it to the LastName field.
+// SetLastName sets field value
 func (o *Guest) SetLastName(v string) {
-	o.LastName = &v
+	o.LastName = v
 }
 
 // GetMiddleName returns the MiddleName field value if set, zero value otherwise (both if not set or set to explicit null).
@@ -346,12 +336,8 @@ func (o Guest) ToMap() (map[string]interface{}, error) {
 	if o.Title.IsSet() {
 		toSerialize["title"] = o.Title.Get()
 	}
-	if !IsNil(o.FirstName) {
-		toSerialize["firstName"] = o.FirstName
-	}
-	if !IsNil(o.LastName) {
-		toSerialize["lastName"] = o.LastName
-	}
+	toSerialize["firstName"] = o.FirstName
+	toSerialize["lastName"] = o.LastName
 	if o.MiddleName.IsSet() {
 		toSerialize["middleName"] = o.MiddleName.Get()
 	}
@@ -359,6 +345,43 @@ func (o Guest) ToMap() (map[string]interface{}, error) {
 		toSerialize["age"] = o.Age.Get()
 	}
 	return toSerialize, nil
+}
+
+func (o *Guest) UnmarshalJSON(data []byte) (err error) {
+	// This validates that all required properties are included in the JSON object
+	// by unmarshalling the object into a generic map with string keys and checking
+	// that every required field exists as a key in the generic map.
+	requiredProperties := []string{
+		"firstName",
+		"lastName",
+	}
+
+	allProperties := make(map[string]interface{})
+
+	err = json.Unmarshal(data, &allProperties)
+
+	if err != nil {
+		return err;
+	}
+
+	for _, requiredProperty := range(requiredProperties) {
+		if _, exists := allProperties[requiredProperty]; !exists {
+			return fmt.Errorf("no value given for required property %v", requiredProperty)
+		}
+	}
+
+	varGuest := _Guest{}
+
+	decoder := json.NewDecoder(bytes.NewReader(data))
+	err = decoder.Decode(&varGuest)
+
+	if err != nil {
+		return err
+	}
+
+	*o = Guest(varGuest)
+
+	return err
 }
 
 type NullableGuest struct {

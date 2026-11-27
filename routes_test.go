@@ -93,10 +93,10 @@ func recordRequests(t *testing.T, use func(c *OpenRoam)) []recorded {
 	return requests
 }
 
-func TestTheRouteTableCoversAll75RoutesEachWithItsOwnMethod(t *testing.T) {
+func TestTheRouteTableCoversAll73RoutesEachWithItsOwnMethod(t *testing.T) {
 	routes := loadRoutes(t)
-	if len(routes) != 75 {
-		t.Fatalf("%d routes, want 75", len(routes))
+	if len(routes) != 73 {
+		t.Fatalf("%d routes, want 73", len(routes))
 	}
 	seen := map[string]bool{}
 	for _, route := range routes {
@@ -167,7 +167,8 @@ func TestEveryRouteMakesItsRequest(t *testing.T) {
 			if route.Body {
 				// The body itself is sent, flat: its own top-level fields, not wrapped in an object named after its type.
 				var sent, sample map[string]any
-				if err := json.Unmarshal([]byte(request.body), &sent); err != nil {
+				// JSON null reads into a nil map without an error, so it is refused by name.
+				if err := json.Unmarshal([]byte(request.body), &sent); err != nil || sent == nil {
 					t.Fatalf("the body is not a JSON object: %q", request.body)
 				}
 				if err := json.Unmarshal(route.BodySample, &sample); err != nil {
@@ -217,7 +218,7 @@ func TestEveryRouteIsAMethodOfTheClient(t *testing.T) {
 	}
 }
 
-// clientMethods lists every method of every resource of the client, for example "OrderItems.ManualAmendments.Approve".
+// clientMethods lists every method of every resource of the client, for example "OrderItems.GetChange".
 func clientMethods(t *testing.T) []string {
 	t.Helper()
 	c, err := New("key")

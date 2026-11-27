@@ -210,7 +210,6 @@ func (o *GiftCardMixedOrderRequestItem) UnmarshalJSON(data []byte) (err error) {
 	varGiftCardMixedOrderRequestItem := _GiftCardMixedOrderRequestItem{}
 
 	decoder := json.NewDecoder(bytes.NewReader(data))
-	decoder.DisallowUnknownFields()
 	err = decoder.Decode(&varGiftCardMixedOrderRequestItem)
 
 	if err != nil {

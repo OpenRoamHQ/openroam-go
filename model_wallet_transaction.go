@@ -14,6 +14,8 @@ package openroam
 import (
 	"encoding/json"
 	"time"
+	"bytes"
+	"fmt"
 )
 
 // checks if the WalletTransaction type satisfies the MappedNullable interface at compile time
@@ -22,33 +24,46 @@ var _ MappedNullable = &WalletTransaction{}
 // WalletTransaction One wallet transaction.
 type WalletTransaction struct {
 	// Transaction id.
-	Id *string `json:"id,omitempty"`
-	// `debit` adds funds to the wallet; `credit` takes funds from it.
-	Type *string `json:"type,omitempty"`
+	Id string `json:"id"`
+	// `debit` takes funds from the wallet, such as an order payment; `credit` adds funds to             it, such as a top-up or a refund.
+	Type string `json:"type"`
 	// Why the transaction was made, such as `order`, `topUp` or `exchange`.
-	Source *string `json:"source,omitempty"`
+	Source string `json:"source"`
 	// The amount, in the wallet's currency.
-	Amount *float32 `json:"amount,omitempty"`
+	Amount float32 `json:"amount"`
 	// The wallet's currency.
-	Currency *string `json:"currency,omitempty"`
-	// A short description.
-	Description NullableString `json:"description,omitempty"`
+	Currency string `json:"currency"`
+	// What the transaction was for, such as `Wallet top-up` or             `Order payment for order {orderId}`.
+	Description string `json:"description"`
+	// The order the transaction belongs to, such as its payment or a refund for it; `null`             when it belongs to no order.
+	OrderId NullableString `json:"orderId,omitempty"`
 	// The amount before conversion, in `originalCurrency`.
-	OriginalAmount *float32 `json:"originalAmount,omitempty"`
+	OriginalAmount float32 `json:"originalAmount"`
 	// The currency the amount was given in.
-	OriginalCurrency *string `json:"originalCurrency,omitempty"`
+	OriginalCurrency string `json:"originalCurrency"`
 	// The rate applied when the currencies differ.
 	ConversionRate NullableFloat32 `json:"conversionRate,omitempty"`
 	// When the transaction was made (UTC).
-	Date *time.Time `json:"date,omitempty"`
+	Date time.Time `json:"date"`
 }
+
+type _WalletTransaction WalletTransaction
 
 // NewWalletTransaction instantiates a new WalletTransaction object
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewWalletTransaction() *WalletTransaction {
+func NewWalletTransaction(id string, type_ string, source string, amount float32, currency string, description string, originalAmount float32, originalCurrency string, date time.Time) *WalletTransaction {
 	this := WalletTransaction{}
+	this.Id = id
+	this.Type = type_
+	this.Source = source
+	this.Amount = amount
+	this.Currency = currency
+	this.Description = description
+	this.OriginalAmount = originalAmount
+	this.OriginalCurrency = originalCurrency
+	this.Date = date
 	return &this
 }
 
@@ -60,270 +75,238 @@ func NewWalletTransactionWithDefaults() *WalletTransaction {
 	return &this
 }
 
-// GetId returns the Id field value if set, zero value otherwise.
+// GetId returns the Id field value
 func (o *WalletTransaction) GetId() string {
-	if o == nil || IsNil(o.Id) {
+	if o == nil {
 		var ret string
 		return ret
 	}
-	return *o.Id
+
+	return o.Id
 }
 
-// GetIdOk returns a tuple with the Id field value if set, nil otherwise
+// GetIdOk returns a tuple with the Id field value
 // and a boolean to check if the value has been set.
 func (o *WalletTransaction) GetIdOk() (*string, bool) {
-	if o == nil || IsNil(o.Id) {
+	if o == nil {
 		return nil, false
 	}
-	return o.Id, true
+	return &o.Id, true
 }
 
-// HasId returns a boolean if a field has been set.
-func (o *WalletTransaction) HasId() bool {
-	if o != nil && !IsNil(o.Id) {
-		return true
-	}
-
-	return false
-}
-
-// SetId gets a reference to the given string and assigns it to the Id field.
+// SetId sets field value
 func (o *WalletTransaction) SetId(v string) {
-	o.Id = &v
+	o.Id = v
 }
 
-// GetType returns the Type field value if set, zero value otherwise.
+// GetType returns the Type field value
 func (o *WalletTransaction) GetType() string {
-	if o == nil || IsNil(o.Type) {
+	if o == nil {
 		var ret string
 		return ret
 	}
-	return *o.Type
+
+	return o.Type
 }
 
-// GetTypeOk returns a tuple with the Type field value if set, nil otherwise
+// GetTypeOk returns a tuple with the Type field value
 // and a boolean to check if the value has been set.
 func (o *WalletTransaction) GetTypeOk() (*string, bool) {
-	if o == nil || IsNil(o.Type) {
+	if o == nil {
 		return nil, false
 	}
-	return o.Type, true
+	return &o.Type, true
 }
 
-// HasType returns a boolean if a field has been set.
-func (o *WalletTransaction) HasType() bool {
-	if o != nil && !IsNil(o.Type) {
-		return true
-	}
-
-	return false
-}
-
-// SetType gets a reference to the given string and assigns it to the Type field.
+// SetType sets field value
 func (o *WalletTransaction) SetType(v string) {
-	o.Type = &v
+	o.Type = v
 }
 
-// GetSource returns the Source field value if set, zero value otherwise.
+// GetSource returns the Source field value
 func (o *WalletTransaction) GetSource() string {
-	if o == nil || IsNil(o.Source) {
+	if o == nil {
 		var ret string
 		return ret
 	}
-	return *o.Source
+
+	return o.Source
 }
 
-// GetSourceOk returns a tuple with the Source field value if set, nil otherwise
+// GetSourceOk returns a tuple with the Source field value
 // and a boolean to check if the value has been set.
 func (o *WalletTransaction) GetSourceOk() (*string, bool) {
-	if o == nil || IsNil(o.Source) {
+	if o == nil {
 		return nil, false
 	}
-	return o.Source, true
+	return &o.Source, true
 }
 
-// HasSource returns a boolean if a field has been set.
-func (o *WalletTransaction) HasSource() bool {
-	if o != nil && !IsNil(o.Source) {
-		return true
-	}
-
-	return false
-}
-
-// SetSource gets a reference to the given string and assigns it to the Source field.
+// SetSource sets field value
 func (o *WalletTransaction) SetSource(v string) {
-	o.Source = &v
+	o.Source = v
 }
 
-// GetAmount returns the Amount field value if set, zero value otherwise.
+// GetAmount returns the Amount field value
 func (o *WalletTransaction) GetAmount() float32 {
-	if o == nil || IsNil(o.Amount) {
+	if o == nil {
 		var ret float32
 		return ret
 	}
-	return *o.Amount
+
+	return o.Amount
 }
 
-// GetAmountOk returns a tuple with the Amount field value if set, nil otherwise
+// GetAmountOk returns a tuple with the Amount field value
 // and a boolean to check if the value has been set.
 func (o *WalletTransaction) GetAmountOk() (*float32, bool) {
-	if o == nil || IsNil(o.Amount) {
+	if o == nil {
 		return nil, false
 	}
-	return o.Amount, true
+	return &o.Amount, true
 }
 
-// HasAmount returns a boolean if a field has been set.
-func (o *WalletTransaction) HasAmount() bool {
-	if o != nil && !IsNil(o.Amount) {
-		return true
-	}
-
-	return false
-}
-
-// SetAmount gets a reference to the given float32 and assigns it to the Amount field.
+// SetAmount sets field value
 func (o *WalletTransaction) SetAmount(v float32) {
-	o.Amount = &v
+	o.Amount = v
 }
 
-// GetCurrency returns the Currency field value if set, zero value otherwise.
+// GetCurrency returns the Currency field value
 func (o *WalletTransaction) GetCurrency() string {
-	if o == nil || IsNil(o.Currency) {
+	if o == nil {
 		var ret string
 		return ret
 	}
-	return *o.Currency
+
+	return o.Currency
 }
 
-// GetCurrencyOk returns a tuple with the Currency field value if set, nil otherwise
+// GetCurrencyOk returns a tuple with the Currency field value
 // and a boolean to check if the value has been set.
 func (o *WalletTransaction) GetCurrencyOk() (*string, bool) {
-	if o == nil || IsNil(o.Currency) {
+	if o == nil {
 		return nil, false
 	}
-	return o.Currency, true
+	return &o.Currency, true
 }
 
-// HasCurrency returns a boolean if a field has been set.
-func (o *WalletTransaction) HasCurrency() bool {
-	if o != nil && !IsNil(o.Currency) {
-		return true
-	}
-
-	return false
-}
-
-// SetCurrency gets a reference to the given string and assigns it to the Currency field.
+// SetCurrency sets field value
 func (o *WalletTransaction) SetCurrency(v string) {
-	o.Currency = &v
+	o.Currency = v
 }
 
-// GetDescription returns the Description field value if set, zero value otherwise (both if not set or set to explicit null).
+// GetDescription returns the Description field value
 func (o *WalletTransaction) GetDescription() string {
-	if o == nil || IsNil(o.Description.Get()) {
+	if o == nil {
 		var ret string
 		return ret
 	}
-	return *o.Description.Get()
+
+	return o.Description
 }
 
-// GetDescriptionOk returns a tuple with the Description field value if set, nil otherwise
+// GetDescriptionOk returns a tuple with the Description field value
 // and a boolean to check if the value has been set.
-// NOTE: If the value is an explicit nil, `nil, true` will be returned
 func (o *WalletTransaction) GetDescriptionOk() (*string, bool) {
 	if o == nil {
 		return nil, false
 	}
-	return o.Description.Get(), o.Description.IsSet()
+	return &o.Description, true
 }
 
-// HasDescription returns a boolean if a field has been set.
-func (o *WalletTransaction) HasDescription() bool {
-	if o != nil && o.Description.IsSet() {
-		return true
-	}
-
-	return false
-}
-
-// SetDescription gets a reference to the given NullableString and assigns it to the Description field.
+// SetDescription sets field value
 func (o *WalletTransaction) SetDescription(v string) {
-	o.Description.Set(&v)
-}
-// SetDescriptionNil sets the value for Description to be an explicit nil
-func (o *WalletTransaction) SetDescriptionNil() {
-	o.Description.Set(nil)
+	o.Description = v
 }
 
-// UnsetDescription ensures that no value is present for Description, not even an explicit nil
-func (o *WalletTransaction) UnsetDescription() {
-	o.Description.Unset()
-}
-
-// GetOriginalAmount returns the OriginalAmount field value if set, zero value otherwise.
-func (o *WalletTransaction) GetOriginalAmount() float32 {
-	if o == nil || IsNil(o.OriginalAmount) {
-		var ret float32
-		return ret
-	}
-	return *o.OriginalAmount
-}
-
-// GetOriginalAmountOk returns a tuple with the OriginalAmount field value if set, nil otherwise
-// and a boolean to check if the value has been set.
-func (o *WalletTransaction) GetOriginalAmountOk() (*float32, bool) {
-	if o == nil || IsNil(o.OriginalAmount) {
-		return nil, false
-	}
-	return o.OriginalAmount, true
-}
-
-// HasOriginalAmount returns a boolean if a field has been set.
-func (o *WalletTransaction) HasOriginalAmount() bool {
-	if o != nil && !IsNil(o.OriginalAmount) {
-		return true
-	}
-
-	return false
-}
-
-// SetOriginalAmount gets a reference to the given float32 and assigns it to the OriginalAmount field.
-func (o *WalletTransaction) SetOriginalAmount(v float32) {
-	o.OriginalAmount = &v
-}
-
-// GetOriginalCurrency returns the OriginalCurrency field value if set, zero value otherwise.
-func (o *WalletTransaction) GetOriginalCurrency() string {
-	if o == nil || IsNil(o.OriginalCurrency) {
+// GetOrderId returns the OrderId field value if set, zero value otherwise (both if not set or set to explicit null).
+func (o *WalletTransaction) GetOrderId() string {
+	if o == nil || IsNil(o.OrderId.Get()) {
 		var ret string
 		return ret
 	}
-	return *o.OriginalCurrency
+	return *o.OrderId.Get()
 }
 
-// GetOriginalCurrencyOk returns a tuple with the OriginalCurrency field value if set, nil otherwise
+// GetOrderIdOk returns a tuple with the OrderId field value if set, nil otherwise
 // and a boolean to check if the value has been set.
-func (o *WalletTransaction) GetOriginalCurrencyOk() (*string, bool) {
-	if o == nil || IsNil(o.OriginalCurrency) {
+// NOTE: If the value is an explicit nil, `nil, true` will be returned
+func (o *WalletTransaction) GetOrderIdOk() (*string, bool) {
+	if o == nil {
 		return nil, false
 	}
-	return o.OriginalCurrency, true
+	return o.OrderId.Get(), o.OrderId.IsSet()
 }
 
-// HasOriginalCurrency returns a boolean if a field has been set.
-func (o *WalletTransaction) HasOriginalCurrency() bool {
-	if o != nil && !IsNil(o.OriginalCurrency) {
+// HasOrderId returns a boolean if a field has been set.
+func (o *WalletTransaction) HasOrderId() bool {
+	if o != nil && o.OrderId.IsSet() {
 		return true
 	}
 
 	return false
 }
 
-// SetOriginalCurrency gets a reference to the given string and assigns it to the OriginalCurrency field.
+// SetOrderId gets a reference to the given NullableString and assigns it to the OrderId field.
+func (o *WalletTransaction) SetOrderId(v string) {
+	o.OrderId.Set(&v)
+}
+// SetOrderIdNil sets the value for OrderId to be an explicit nil
+func (o *WalletTransaction) SetOrderIdNil() {
+	o.OrderId.Set(nil)
+}
+
+// UnsetOrderId ensures that no value is present for OrderId, not even an explicit nil
+func (o *WalletTransaction) UnsetOrderId() {
+	o.OrderId.Unset()
+}
+
+// GetOriginalAmount returns the OriginalAmount field value
+func (o *WalletTransaction) GetOriginalAmount() float32 {
+	if o == nil {
+		var ret float32
+		return ret
+	}
+
+	return o.OriginalAmount
+}
+
+// GetOriginalAmountOk returns a tuple with the OriginalAmount field value
+// and a boolean to check if the value has been set.
+func (o *WalletTransaction) GetOriginalAmountOk() (*float32, bool) {
+	if o == nil {
+		return nil, false
+	}
+	return &o.OriginalAmount, true
+}
+
+// SetOriginalAmount sets field value
+func (o *WalletTransaction) SetOriginalAmount(v float32) {
+	o.OriginalAmount = v
+}
+
+// GetOriginalCurrency returns the OriginalCurrency field value
+func (o *WalletTransaction) GetOriginalCurrency() string {
+	if o == nil {
+		var ret string
+		return ret
+	}
+
+	return o.OriginalCurrency
+}
+
+// GetOriginalCurrencyOk returns a tuple with the OriginalCurrency field value
+// and a boolean to check if the value has been set.
+func (o *WalletTransaction) GetOriginalCurrencyOk() (*string, bool) {
+	if o == nil {
+		return nil, false
+	}
+	return &o.OriginalCurrency, true
+}
+
+// SetOriginalCurrency sets field value
 func (o *WalletTransaction) SetOriginalCurrency(v string) {
-	o.OriginalCurrency = &v
+	o.OriginalCurrency = v
 }
 
 // GetConversionRate returns the ConversionRate field value if set, zero value otherwise (both if not set or set to explicit null).
@@ -368,36 +351,28 @@ func (o *WalletTransaction) UnsetConversionRate() {
 	o.ConversionRate.Unset()
 }
 
-// GetDate returns the Date field value if set, zero value otherwise.
+// GetDate returns the Date field value
 func (o *WalletTransaction) GetDate() time.Time {
-	if o == nil || IsNil(o.Date) {
+	if o == nil {
 		var ret time.Time
 		return ret
 	}
-	return *o.Date
+
+	return o.Date
 }
 
-// GetDateOk returns a tuple with the Date field value if set, nil otherwise
+// GetDateOk returns a tuple with the Date field value
 // and a boolean to check if the value has been set.
 func (o *WalletTransaction) GetDateOk() (*time.Time, bool) {
-	if o == nil || IsNil(o.Date) {
+	if o == nil {
 		return nil, false
 	}
-	return o.Date, true
+	return &o.Date, true
 }
 
-// HasDate returns a boolean if a field has been set.
-func (o *WalletTransaction) HasDate() bool {
-	if o != nil && !IsNil(o.Date) {
-		return true
-	}
-
-	return false
-}
-
-// SetDate gets a reference to the given time.Time and assigns it to the Date field.
+// SetDate sets field value
 func (o *WalletTransaction) SetDate(v time.Time) {
-	o.Date = &v
+	o.Date = v
 }
 
 func (o WalletTransaction) MarshalJSON() ([]byte, error) {
@@ -410,37 +385,66 @@ func (o WalletTransaction) MarshalJSON() ([]byte, error) {
 
 func (o WalletTransaction) ToMap() (map[string]interface{}, error) {
 	toSerialize := map[string]interface{}{}
-	if !IsNil(o.Id) {
-		toSerialize["id"] = o.Id
+	toSerialize["id"] = o.Id
+	toSerialize["type"] = o.Type
+	toSerialize["source"] = o.Source
+	toSerialize["amount"] = o.Amount
+	toSerialize["currency"] = o.Currency
+	toSerialize["description"] = o.Description
+	if o.OrderId.IsSet() {
+		toSerialize["orderId"] = o.OrderId.Get()
 	}
-	if !IsNil(o.Type) {
-		toSerialize["type"] = o.Type
-	}
-	if !IsNil(o.Source) {
-		toSerialize["source"] = o.Source
-	}
-	if !IsNil(o.Amount) {
-		toSerialize["amount"] = o.Amount
-	}
-	if !IsNil(o.Currency) {
-		toSerialize["currency"] = o.Currency
-	}
-	if o.Description.IsSet() {
-		toSerialize["description"] = o.Description.Get()
-	}
-	if !IsNil(o.OriginalAmount) {
-		toSerialize["originalAmount"] = o.OriginalAmount
-	}
-	if !IsNil(o.OriginalCurrency) {
-		toSerialize["originalCurrency"] = o.OriginalCurrency
-	}
+	toSerialize["originalAmount"] = o.OriginalAmount
+	toSerialize["originalCurrency"] = o.OriginalCurrency
 	if o.ConversionRate.IsSet() {
 		toSerialize["conversionRate"] = o.ConversionRate.Get()
 	}
-	if !IsNil(o.Date) {
-		toSerialize["date"] = o.Date
-	}
+	toSerialize["date"] = o.Date
 	return toSerialize, nil
+}
+
+func (o *WalletTransaction) UnmarshalJSON(data []byte) (err error) {
+	// This validates that all required properties are included in the JSON object
+	// by unmarshalling the object into a generic map with string keys and checking
+	// that every required field exists as a key in the generic map.
+	requiredProperties := []string{
+		"id",
+		"type",
+		"source",
+		"amount",
+		"currency",
+		"description",
+		"originalAmount",
+		"originalCurrency",
+		"date",
+	}
+
+	allProperties := make(map[string]interface{})
+
+	err = json.Unmarshal(data, &allProperties)
+
+	if err != nil {
+		return err;
+	}
+
+	for _, requiredProperty := range(requiredProperties) {
+		if _, exists := allProperties[requiredProperty]; !exists {
+			return fmt.Errorf("no value given for required property %v", requiredProperty)
+		}
+	}
+
+	varWalletTransaction := _WalletTransaction{}
+
+	decoder := json.NewDecoder(bytes.NewReader(data))
+	err = decoder.Decode(&varWalletTransaction)
+
+	if err != nil {
+		return err
+	}
+
+	*o = WalletTransaction(varWalletTransaction)
+
+	return err
 }
 
 type NullableWalletTransaction struct {

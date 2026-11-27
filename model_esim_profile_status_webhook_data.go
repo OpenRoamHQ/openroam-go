@@ -13,6 +13,9 @@ package openroam
 
 import (
 	"encoding/json"
+	"time"
+	"bytes"
+	"fmt"
 )
 
 // checks if the EsimProfileStatusWebhookData type satisfies the MappedNullable interface at compile time
@@ -20,20 +23,29 @@ var _ MappedNullable = &EsimProfileStatusWebhookData{}
 
 // EsimProfileStatusWebhookData Data of the `esim.profileStatus.updated` webhook. Partners address the eSIM by its order item and ICCID; the offer's public id and internal package ids are not part of it.
 type EsimProfileStatusWebhookData struct {
-	OrderId *string `json:"orderId,omitempty"`
-	OrderItemId *string `json:"orderItemId,omitempty"`
+	OrderId string `json:"orderId"`
+	OrderItemId string `json:"orderItemId"`
+	// The eSIM's ICCID; null until the eSIM is provisioned.
 	Iccid NullableString `json:"iccid,omitempty"`
-	Start NullableInt64 `json:"start,omitempty"`
-	End NullableInt64 `json:"end,omitempty"`
-	ProfileStatus *string `json:"profileStatus,omitempty"`
+	// When the plan started, in UTC (ISO 8601), as `start` on usage reads; null until it is activated.
+	Start NullableTime `json:"start,omitempty"`
+	// When the plan ends, in UTC (ISO 8601), as `end` on usage reads; null while no end is reported.
+	End NullableTime `json:"end,omitempty"`
+	// The installed profile's new status, as `profileStatus` on the order item.
+	ProfileStatus string `json:"profileStatus"`
 }
+
+type _EsimProfileStatusWebhookData EsimProfileStatusWebhookData
 
 // NewEsimProfileStatusWebhookData instantiates a new EsimProfileStatusWebhookData object
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewEsimProfileStatusWebhookData() *EsimProfileStatusWebhookData {
+func NewEsimProfileStatusWebhookData(orderId string, orderItemId string, profileStatus string) *EsimProfileStatusWebhookData {
 	this := EsimProfileStatusWebhookData{}
+	this.OrderId = orderId
+	this.OrderItemId = orderItemId
+	this.ProfileStatus = profileStatus
 	return &this
 }
 
@@ -45,68 +57,52 @@ func NewEsimProfileStatusWebhookDataWithDefaults() *EsimProfileStatusWebhookData
 	return &this
 }
 
-// GetOrderId returns the OrderId field value if set, zero value otherwise.
+// GetOrderId returns the OrderId field value
 func (o *EsimProfileStatusWebhookData) GetOrderId() string {
-	if o == nil || IsNil(o.OrderId) {
+	if o == nil {
 		var ret string
 		return ret
 	}
-	return *o.OrderId
+
+	return o.OrderId
 }
 
-// GetOrderIdOk returns a tuple with the OrderId field value if set, nil otherwise
+// GetOrderIdOk returns a tuple with the OrderId field value
 // and a boolean to check if the value has been set.
 func (o *EsimProfileStatusWebhookData) GetOrderIdOk() (*string, bool) {
-	if o == nil || IsNil(o.OrderId) {
+	if o == nil {
 		return nil, false
 	}
-	return o.OrderId, true
+	return &o.OrderId, true
 }
 
-// HasOrderId returns a boolean if a field has been set.
-func (o *EsimProfileStatusWebhookData) HasOrderId() bool {
-	if o != nil && !IsNil(o.OrderId) {
-		return true
-	}
-
-	return false
-}
-
-// SetOrderId gets a reference to the given string and assigns it to the OrderId field.
+// SetOrderId sets field value
 func (o *EsimProfileStatusWebhookData) SetOrderId(v string) {
-	o.OrderId = &v
+	o.OrderId = v
 }
 
-// GetOrderItemId returns the OrderItemId field value if set, zero value otherwise.
+// GetOrderItemId returns the OrderItemId field value
 func (o *EsimProfileStatusWebhookData) GetOrderItemId() string {
-	if o == nil || IsNil(o.OrderItemId) {
+	if o == nil {
 		var ret string
 		return ret
 	}
-	return *o.OrderItemId
+
+	return o.OrderItemId
 }
 
-// GetOrderItemIdOk returns a tuple with the OrderItemId field value if set, nil otherwise
+// GetOrderItemIdOk returns a tuple with the OrderItemId field value
 // and a boolean to check if the value has been set.
 func (o *EsimProfileStatusWebhookData) GetOrderItemIdOk() (*string, bool) {
-	if o == nil || IsNil(o.OrderItemId) {
+	if o == nil {
 		return nil, false
 	}
-	return o.OrderItemId, true
+	return &o.OrderItemId, true
 }
 
-// HasOrderItemId returns a boolean if a field has been set.
-func (o *EsimProfileStatusWebhookData) HasOrderItemId() bool {
-	if o != nil && !IsNil(o.OrderItemId) {
-		return true
-	}
-
-	return false
-}
-
-// SetOrderItemId gets a reference to the given string and assigns it to the OrderItemId field.
+// SetOrderItemId sets field value
 func (o *EsimProfileStatusWebhookData) SetOrderItemId(v string) {
-	o.OrderItemId = &v
+	o.OrderItemId = v
 }
 
 // GetIccid returns the Iccid field value if set, zero value otherwise (both if not set or set to explicit null).
@@ -152,9 +148,9 @@ func (o *EsimProfileStatusWebhookData) UnsetIccid() {
 }
 
 // GetStart returns the Start field value if set, zero value otherwise (both if not set or set to explicit null).
-func (o *EsimProfileStatusWebhookData) GetStart() int64 {
+func (o *EsimProfileStatusWebhookData) GetStart() time.Time {
 	if o == nil || IsNil(o.Start.Get()) {
-		var ret int64
+		var ret time.Time
 		return ret
 	}
 	return *o.Start.Get()
@@ -163,7 +159,7 @@ func (o *EsimProfileStatusWebhookData) GetStart() int64 {
 // GetStartOk returns a tuple with the Start field value if set, nil otherwise
 // and a boolean to check if the value has been set.
 // NOTE: If the value is an explicit nil, `nil, true` will be returned
-func (o *EsimProfileStatusWebhookData) GetStartOk() (*int64, bool) {
+func (o *EsimProfileStatusWebhookData) GetStartOk() (*time.Time, bool) {
 	if o == nil {
 		return nil, false
 	}
@@ -179,8 +175,8 @@ func (o *EsimProfileStatusWebhookData) HasStart() bool {
 	return false
 }
 
-// SetStart gets a reference to the given NullableInt64 and assigns it to the Start field.
-func (o *EsimProfileStatusWebhookData) SetStart(v int64) {
+// SetStart gets a reference to the given NullableTime and assigns it to the Start field.
+func (o *EsimProfileStatusWebhookData) SetStart(v time.Time) {
 	o.Start.Set(&v)
 }
 // SetStartNil sets the value for Start to be an explicit nil
@@ -194,9 +190,9 @@ func (o *EsimProfileStatusWebhookData) UnsetStart() {
 }
 
 // GetEnd returns the End field value if set, zero value otherwise (both if not set or set to explicit null).
-func (o *EsimProfileStatusWebhookData) GetEnd() int64 {
+func (o *EsimProfileStatusWebhookData) GetEnd() time.Time {
 	if o == nil || IsNil(o.End.Get()) {
-		var ret int64
+		var ret time.Time
 		return ret
 	}
 	return *o.End.Get()
@@ -205,7 +201,7 @@ func (o *EsimProfileStatusWebhookData) GetEnd() int64 {
 // GetEndOk returns a tuple with the End field value if set, nil otherwise
 // and a boolean to check if the value has been set.
 // NOTE: If the value is an explicit nil, `nil, true` will be returned
-func (o *EsimProfileStatusWebhookData) GetEndOk() (*int64, bool) {
+func (o *EsimProfileStatusWebhookData) GetEndOk() (*time.Time, bool) {
 	if o == nil {
 		return nil, false
 	}
@@ -221,8 +217,8 @@ func (o *EsimProfileStatusWebhookData) HasEnd() bool {
 	return false
 }
 
-// SetEnd gets a reference to the given NullableInt64 and assigns it to the End field.
-func (o *EsimProfileStatusWebhookData) SetEnd(v int64) {
+// SetEnd gets a reference to the given NullableTime and assigns it to the End field.
+func (o *EsimProfileStatusWebhookData) SetEnd(v time.Time) {
 	o.End.Set(&v)
 }
 // SetEndNil sets the value for End to be an explicit nil
@@ -235,36 +231,28 @@ func (o *EsimProfileStatusWebhookData) UnsetEnd() {
 	o.End.Unset()
 }
 
-// GetProfileStatus returns the ProfileStatus field value if set, zero value otherwise.
+// GetProfileStatus returns the ProfileStatus field value
 func (o *EsimProfileStatusWebhookData) GetProfileStatus() string {
-	if o == nil || IsNil(o.ProfileStatus) {
+	if o == nil {
 		var ret string
 		return ret
 	}
-	return *o.ProfileStatus
+
+	return o.ProfileStatus
 }
 
-// GetProfileStatusOk returns a tuple with the ProfileStatus field value if set, nil otherwise
+// GetProfileStatusOk returns a tuple with the ProfileStatus field value
 // and a boolean to check if the value has been set.
 func (o *EsimProfileStatusWebhookData) GetProfileStatusOk() (*string, bool) {
-	if o == nil || IsNil(o.ProfileStatus) {
+	if o == nil {
 		return nil, false
 	}
-	return o.ProfileStatus, true
+	return &o.ProfileStatus, true
 }
 
-// HasProfileStatus returns a boolean if a field has been set.
-func (o *EsimProfileStatusWebhookData) HasProfileStatus() bool {
-	if o != nil && !IsNil(o.ProfileStatus) {
-		return true
-	}
-
-	return false
-}
-
-// SetProfileStatus gets a reference to the given string and assigns it to the ProfileStatus field.
+// SetProfileStatus sets field value
 func (o *EsimProfileStatusWebhookData) SetProfileStatus(v string) {
-	o.ProfileStatus = &v
+	o.ProfileStatus = v
 }
 
 func (o EsimProfileStatusWebhookData) MarshalJSON() ([]byte, error) {
@@ -277,12 +265,8 @@ func (o EsimProfileStatusWebhookData) MarshalJSON() ([]byte, error) {
 
 func (o EsimProfileStatusWebhookData) ToMap() (map[string]interface{}, error) {
 	toSerialize := map[string]interface{}{}
-	if !IsNil(o.OrderId) {
-		toSerialize["orderId"] = o.OrderId
-	}
-	if !IsNil(o.OrderItemId) {
-		toSerialize["orderItemId"] = o.OrderItemId
-	}
+	toSerialize["orderId"] = o.OrderId
+	toSerialize["orderItemId"] = o.OrderItemId
 	if o.Iccid.IsSet() {
 		toSerialize["iccid"] = o.Iccid.Get()
 	}
@@ -292,10 +276,46 @@ func (o EsimProfileStatusWebhookData) ToMap() (map[string]interface{}, error) {
 	if o.End.IsSet() {
 		toSerialize["end"] = o.End.Get()
 	}
-	if !IsNil(o.ProfileStatus) {
-		toSerialize["profileStatus"] = o.ProfileStatus
-	}
+	toSerialize["profileStatus"] = o.ProfileStatus
 	return toSerialize, nil
+}
+
+func (o *EsimProfileStatusWebhookData) UnmarshalJSON(data []byte) (err error) {
+	// This validates that all required properties are included in the JSON object
+	// by unmarshalling the object into a generic map with string keys and checking
+	// that every required field exists as a key in the generic map.
+	requiredProperties := []string{
+		"orderId",
+		"orderItemId",
+		"profileStatus",
+	}
+
+	allProperties := make(map[string]interface{})
+
+	err = json.Unmarshal(data, &allProperties)
+
+	if err != nil {
+		return err;
+	}
+
+	for _, requiredProperty := range(requiredProperties) {
+		if _, exists := allProperties[requiredProperty]; !exists {
+			return fmt.Errorf("no value given for required property %v", requiredProperty)
+		}
+	}
+
+	varEsimProfileStatusWebhookData := _EsimProfileStatusWebhookData{}
+
+	decoder := json.NewDecoder(bytes.NewReader(data))
+	err = decoder.Decode(&varEsimProfileStatusWebhookData)
+
+	if err != nil {
+		return err
+	}
+
+	*o = EsimProfileStatusWebhookData(varEsimProfileStatusWebhookData)
+
+	return err
 }
 
 type NullableEsimProfileStatusWebhookData struct {

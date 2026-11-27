@@ -13,6 +13,8 @@ package openroam
 
 import (
 	"encoding/json"
+	"bytes"
+	"fmt"
 )
 
 // checks if the EsimPurchasedDestination type satisfies the MappedNullable interface at compile time
@@ -20,19 +22,22 @@ var _ MappedNullable = &EsimPurchasedDestination{}
 
 // EsimPurchasedDestination The destination an eSIM order item was bought for, as stored with the item. `id` is the destination id that browse returns, so `GET /esims/destinations/{id}` gives its coverage.
 type EsimPurchasedDestination struct {
-	Id *string `json:"id,omitempty"`
+	Id string `json:"id"`
 	// The destination name, such as `Europe`; null when none is stored.
 	Name NullableString `json:"name,omitempty"`
-	// The destination's eSIM code, such as `JP`, `EU` or `GLOBAL`, as browse returns it in `details.destinationCode`; null when none is stored.
+	// The destination's eSIM code, such as `JP`, `EU` or `GLOBAL`, as browse returns it in `destinationCode`; null when none is stored.
 	Code NullableString `json:"code,omitempty"`
 }
+
+type _EsimPurchasedDestination EsimPurchasedDestination
 
 // NewEsimPurchasedDestination instantiates a new EsimPurchasedDestination object
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewEsimPurchasedDestination() *EsimPurchasedDestination {
+func NewEsimPurchasedDestination(id string) *EsimPurchasedDestination {
 	this := EsimPurchasedDestination{}
+	this.Id = id
 	return &this
 }
 
@@ -44,36 +49,28 @@ func NewEsimPurchasedDestinationWithDefaults() *EsimPurchasedDestination {
 	return &this
 }
 
-// GetId returns the Id field value if set, zero value otherwise.
+// GetId returns the Id field value
 func (o *EsimPurchasedDestination) GetId() string {
-	if o == nil || IsNil(o.Id) {
+	if o == nil {
 		var ret string
 		return ret
 	}
-	return *o.Id
+
+	return o.Id
 }
 
-// GetIdOk returns a tuple with the Id field value if set, nil otherwise
+// GetIdOk returns a tuple with the Id field value
 // and a boolean to check if the value has been set.
 func (o *EsimPurchasedDestination) GetIdOk() (*string, bool) {
-	if o == nil || IsNil(o.Id) {
+	if o == nil {
 		return nil, false
 	}
-	return o.Id, true
+	return &o.Id, true
 }
 
-// HasId returns a boolean if a field has been set.
-func (o *EsimPurchasedDestination) HasId() bool {
-	if o != nil && !IsNil(o.Id) {
-		return true
-	}
-
-	return false
-}
-
-// SetId gets a reference to the given string and assigns it to the Id field.
+// SetId sets field value
 func (o *EsimPurchasedDestination) SetId(v string) {
-	o.Id = &v
+	o.Id = v
 }
 
 // GetName returns the Name field value if set, zero value otherwise (both if not set or set to explicit null).
@@ -170,9 +167,7 @@ func (o EsimPurchasedDestination) MarshalJSON() ([]byte, error) {
 
 func (o EsimPurchasedDestination) ToMap() (map[string]interface{}, error) {
 	toSerialize := map[string]interface{}{}
-	if !IsNil(o.Id) {
-		toSerialize["id"] = o.Id
-	}
+	toSerialize["id"] = o.Id
 	if o.Name.IsSet() {
 		toSerialize["name"] = o.Name.Get()
 	}
@@ -180,6 +175,42 @@ func (o EsimPurchasedDestination) ToMap() (map[string]interface{}, error) {
 		toSerialize["code"] = o.Code.Get()
 	}
 	return toSerialize, nil
+}
+
+func (o *EsimPurchasedDestination) UnmarshalJSON(data []byte) (err error) {
+	// This validates that all required properties are included in the JSON object
+	// by unmarshalling the object into a generic map with string keys and checking
+	// that every required field exists as a key in the generic map.
+	requiredProperties := []string{
+		"id",
+	}
+
+	allProperties := make(map[string]interface{})
+
+	err = json.Unmarshal(data, &allProperties)
+
+	if err != nil {
+		return err;
+	}
+
+	for _, requiredProperty := range(requiredProperties) {
+		if _, exists := allProperties[requiredProperty]; !exists {
+			return fmt.Errorf("no value given for required property %v", requiredProperty)
+		}
+	}
+
+	varEsimPurchasedDestination := _EsimPurchasedDestination{}
+
+	decoder := json.NewDecoder(bytes.NewReader(data))
+	err = decoder.Decode(&varEsimPurchasedDestination)
+
+	if err != nil {
+		return err
+	}
+
+	*o = EsimPurchasedDestination(varEsimPurchasedDestination)
+
+	return err
 }
 
 type NullableEsimPurchasedDestination struct {

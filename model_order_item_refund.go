@@ -14,6 +14,8 @@ package openroam
 import (
 	"encoding/json"
 	"time"
+	"bytes"
+	"fmt"
 )
 
 // checks if the OrderItemRefund type satisfies the MappedNullable interface at compile time
@@ -22,19 +24,29 @@ var _ MappedNullable = &OrderItemRefund{}
 // OrderItemRefund The recorded refund state, independent of whether another refund action is available.
 type OrderItemRefund struct {
 	// `pending`, `processing`, `refunded` or `failed`.
-	Status *string `json:"status,omitempty"`
+	Status string `json:"status"`
 	// The recorded refund amount in its currency; settled only when `refunded`.
-	Amount *Money `json:"amount,omitempty"`
+	Amount Money `json:"amount"`
 	// When the refund was last updated (UTC).
-	UpdatedAt *time.Time `json:"updatedAt,omitempty"`
+	UpdatedAt time.Time `json:"updatedAt"`
+	// The credited wallet and what it received, when one wallet credit can be identified.
+	Wallet NullableOrderItemRefundWallet `json:"wallet,omitempty"`
+	// The recorded refund methods, `balance` for a wallet and `card` for a card.             Can contain both after an additional payment. An empty list means no method is known or no money is being             returned. Use `status` to tell whether the refund has completed.
+	Methods []string `json:"methods"`
 }
+
+type _OrderItemRefund OrderItemRefund
 
 // NewOrderItemRefund instantiates a new OrderItemRefund object
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewOrderItemRefund() *OrderItemRefund {
+func NewOrderItemRefund(status string, amount Money, updatedAt time.Time, methods []string) *OrderItemRefund {
 	this := OrderItemRefund{}
+	this.Status = status
+	this.Amount = amount
+	this.UpdatedAt = updatedAt
+	this.Methods = methods
 	return &this
 }
 
@@ -46,100 +58,142 @@ func NewOrderItemRefundWithDefaults() *OrderItemRefund {
 	return &this
 }
 
-// GetStatus returns the Status field value if set, zero value otherwise.
+// GetStatus returns the Status field value
 func (o *OrderItemRefund) GetStatus() string {
-	if o == nil || IsNil(o.Status) {
+	if o == nil {
 		var ret string
 		return ret
 	}
-	return *o.Status
+
+	return o.Status
 }
 
-// GetStatusOk returns a tuple with the Status field value if set, nil otherwise
+// GetStatusOk returns a tuple with the Status field value
 // and a boolean to check if the value has been set.
 func (o *OrderItemRefund) GetStatusOk() (*string, bool) {
-	if o == nil || IsNil(o.Status) {
+	if o == nil {
 		return nil, false
 	}
-	return o.Status, true
+	return &o.Status, true
 }
 
-// HasStatus returns a boolean if a field has been set.
-func (o *OrderItemRefund) HasStatus() bool {
-	if o != nil && !IsNil(o.Status) {
-		return true
-	}
-
-	return false
-}
-
-// SetStatus gets a reference to the given string and assigns it to the Status field.
+// SetStatus sets field value
 func (o *OrderItemRefund) SetStatus(v string) {
-	o.Status = &v
+	o.Status = v
 }
 
-// GetAmount returns the Amount field value if set, zero value otherwise.
+// GetAmount returns the Amount field value
 func (o *OrderItemRefund) GetAmount() Money {
-	if o == nil || IsNil(o.Amount) {
+	if o == nil {
 		var ret Money
 		return ret
 	}
-	return *o.Amount
+
+	return o.Amount
 }
 
-// GetAmountOk returns a tuple with the Amount field value if set, nil otherwise
+// GetAmountOk returns a tuple with the Amount field value
 // and a boolean to check if the value has been set.
 func (o *OrderItemRefund) GetAmountOk() (*Money, bool) {
-	if o == nil || IsNil(o.Amount) {
+	if o == nil {
 		return nil, false
 	}
-	return o.Amount, true
+	return &o.Amount, true
 }
 
-// HasAmount returns a boolean if a field has been set.
-func (o *OrderItemRefund) HasAmount() bool {
-	if o != nil && !IsNil(o.Amount) {
-		return true
-	}
-
-	return false
-}
-
-// SetAmount gets a reference to the given Money and assigns it to the Amount field.
+// SetAmount sets field value
 func (o *OrderItemRefund) SetAmount(v Money) {
-	o.Amount = &v
+	o.Amount = v
 }
 
-// GetUpdatedAt returns the UpdatedAt field value if set, zero value otherwise.
+// GetUpdatedAt returns the UpdatedAt field value
 func (o *OrderItemRefund) GetUpdatedAt() time.Time {
-	if o == nil || IsNil(o.UpdatedAt) {
+	if o == nil {
 		var ret time.Time
 		return ret
 	}
-	return *o.UpdatedAt
+
+	return o.UpdatedAt
 }
 
-// GetUpdatedAtOk returns a tuple with the UpdatedAt field value if set, nil otherwise
+// GetUpdatedAtOk returns a tuple with the UpdatedAt field value
 // and a boolean to check if the value has been set.
 func (o *OrderItemRefund) GetUpdatedAtOk() (*time.Time, bool) {
-	if o == nil || IsNil(o.UpdatedAt) {
+	if o == nil {
 		return nil, false
 	}
-	return o.UpdatedAt, true
+	return &o.UpdatedAt, true
 }
 
-// HasUpdatedAt returns a boolean if a field has been set.
-func (o *OrderItemRefund) HasUpdatedAt() bool {
-	if o != nil && !IsNil(o.UpdatedAt) {
+// SetUpdatedAt sets field value
+func (o *OrderItemRefund) SetUpdatedAt(v time.Time) {
+	o.UpdatedAt = v
+}
+
+// GetWallet returns the Wallet field value if set, zero value otherwise (both if not set or set to explicit null).
+func (o *OrderItemRefund) GetWallet() OrderItemRefundWallet {
+	if o == nil || IsNil(o.Wallet.Get()) {
+		var ret OrderItemRefundWallet
+		return ret
+	}
+	return *o.Wallet.Get()
+}
+
+// GetWalletOk returns a tuple with the Wallet field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+// NOTE: If the value is an explicit nil, `nil, true` will be returned
+func (o *OrderItemRefund) GetWalletOk() (*OrderItemRefundWallet, bool) {
+	if o == nil {
+		return nil, false
+	}
+	return o.Wallet.Get(), o.Wallet.IsSet()
+}
+
+// HasWallet returns a boolean if a field has been set.
+func (o *OrderItemRefund) HasWallet() bool {
+	if o != nil && o.Wallet.IsSet() {
 		return true
 	}
 
 	return false
 }
 
-// SetUpdatedAt gets a reference to the given time.Time and assigns it to the UpdatedAt field.
-func (o *OrderItemRefund) SetUpdatedAt(v time.Time) {
-	o.UpdatedAt = &v
+// SetWallet gets a reference to the given NullableOrderItemRefundWallet and assigns it to the Wallet field.
+func (o *OrderItemRefund) SetWallet(v OrderItemRefundWallet) {
+	o.Wallet.Set(&v)
+}
+// SetWalletNil sets the value for Wallet to be an explicit nil
+func (o *OrderItemRefund) SetWalletNil() {
+	o.Wallet.Set(nil)
+}
+
+// UnsetWallet ensures that no value is present for Wallet, not even an explicit nil
+func (o *OrderItemRefund) UnsetWallet() {
+	o.Wallet.Unset()
+}
+
+// GetMethods returns the Methods field value
+func (o *OrderItemRefund) GetMethods() []string {
+	if o == nil {
+		var ret []string
+		return ret
+	}
+
+	return o.Methods
+}
+
+// GetMethodsOk returns a tuple with the Methods field value
+// and a boolean to check if the value has been set.
+func (o *OrderItemRefund) GetMethodsOk() ([]string, bool) {
+	if o == nil {
+		return nil, false
+	}
+	return o.Methods, true
+}
+
+// SetMethods sets field value
+func (o *OrderItemRefund) SetMethods(v []string) {
+	o.Methods = v
 }
 
 func (o OrderItemRefund) MarshalJSON() ([]byte, error) {
@@ -152,16 +206,53 @@ func (o OrderItemRefund) MarshalJSON() ([]byte, error) {
 
 func (o OrderItemRefund) ToMap() (map[string]interface{}, error) {
 	toSerialize := map[string]interface{}{}
-	if !IsNil(o.Status) {
-		toSerialize["status"] = o.Status
+	toSerialize["status"] = o.Status
+	toSerialize["amount"] = o.Amount
+	toSerialize["updatedAt"] = o.UpdatedAt
+	if o.Wallet.IsSet() {
+		toSerialize["wallet"] = o.Wallet.Get()
 	}
-	if !IsNil(o.Amount) {
-		toSerialize["amount"] = o.Amount
-	}
-	if !IsNil(o.UpdatedAt) {
-		toSerialize["updatedAt"] = o.UpdatedAt
-	}
+	toSerialize["methods"] = o.Methods
 	return toSerialize, nil
+}
+
+func (o *OrderItemRefund) UnmarshalJSON(data []byte) (err error) {
+	// This validates that all required properties are included in the JSON object
+	// by unmarshalling the object into a generic map with string keys and checking
+	// that every required field exists as a key in the generic map.
+	requiredProperties := []string{
+		"status",
+		"amount",
+		"updatedAt",
+		"methods",
+	}
+
+	allProperties := make(map[string]interface{})
+
+	err = json.Unmarshal(data, &allProperties)
+
+	if err != nil {
+		return err;
+	}
+
+	for _, requiredProperty := range(requiredProperties) {
+		if _, exists := allProperties[requiredProperty]; !exists {
+			return fmt.Errorf("no value given for required property %v", requiredProperty)
+		}
+	}
+
+	varOrderItemRefund := _OrderItemRefund{}
+
+	decoder := json.NewDecoder(bytes.NewReader(data))
+	err = decoder.Decode(&varOrderItemRefund)
+
+	if err != nil {
+		return err
+	}
+
+	*o = OrderItemRefund(varOrderItemRefund)
+
+	return err
 }
 
 type NullableOrderItemRefund struct {

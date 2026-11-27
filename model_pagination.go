@@ -13,6 +13,8 @@ package openroam
 
 import (
 	"encoding/json"
+	"bytes"
+	"fmt"
 )
 
 // checks if the Pagination type satisfies the MappedNullable interface at compile time
@@ -21,27 +23,36 @@ var _ MappedNullable = &Pagination{}
 // Pagination Paging of a list response.
 type Pagination struct {
 	// Number of items on this page.
-	CurrentCount *int32 `json:"currentCount,omitempty"`
+	CurrentCount int32 `json:"currentCount"`
 	// Number of items matching the filters, across all pages.
-	TotalCount *int64 `json:"totalCount,omitempty"`
+	TotalCount int64 `json:"totalCount"`
 	// Number of items before this page.
-	Skip *int32 `json:"skip,omitempty"`
+	Skip int32 `json:"skip"`
 	// Page size.
-	Limit *int32 `json:"limit,omitempty"`
+	Limit int32 `json:"limit"`
 	// Whether another page follows.
-	HasMore *bool `json:"hasMore,omitempty"`
+	HasMore bool `json:"hasMore"`
 	// One-based page number.
-	Page *int32 `json:"page,omitempty"`
+	Page int32 `json:"page"`
 	// Number of pages at this page size.
-	TotalPages *int32 `json:"totalPages,omitempty"`
+	TotalPages int32 `json:"totalPages"`
 }
+
+type _Pagination Pagination
 
 // NewPagination instantiates a new Pagination object
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewPagination() *Pagination {
+func NewPagination(currentCount int32, totalCount int64, skip int32, limit int32, hasMore bool, page int32, totalPages int32) *Pagination {
 	this := Pagination{}
+	this.CurrentCount = currentCount
+	this.TotalCount = totalCount
+	this.Skip = skip
+	this.Limit = limit
+	this.HasMore = hasMore
+	this.Page = page
+	this.TotalPages = totalPages
 	return &this
 }
 
@@ -53,228 +64,172 @@ func NewPaginationWithDefaults() *Pagination {
 	return &this
 }
 
-// GetCurrentCount returns the CurrentCount field value if set, zero value otherwise.
+// GetCurrentCount returns the CurrentCount field value
 func (o *Pagination) GetCurrentCount() int32 {
-	if o == nil || IsNil(o.CurrentCount) {
+	if o == nil {
 		var ret int32
 		return ret
 	}
-	return *o.CurrentCount
+
+	return o.CurrentCount
 }
 
-// GetCurrentCountOk returns a tuple with the CurrentCount field value if set, nil otherwise
+// GetCurrentCountOk returns a tuple with the CurrentCount field value
 // and a boolean to check if the value has been set.
 func (o *Pagination) GetCurrentCountOk() (*int32, bool) {
-	if o == nil || IsNil(o.CurrentCount) {
+	if o == nil {
 		return nil, false
 	}
-	return o.CurrentCount, true
+	return &o.CurrentCount, true
 }
 
-// HasCurrentCount returns a boolean if a field has been set.
-func (o *Pagination) HasCurrentCount() bool {
-	if o != nil && !IsNil(o.CurrentCount) {
-		return true
-	}
-
-	return false
-}
-
-// SetCurrentCount gets a reference to the given int32 and assigns it to the CurrentCount field.
+// SetCurrentCount sets field value
 func (o *Pagination) SetCurrentCount(v int32) {
-	o.CurrentCount = &v
+	o.CurrentCount = v
 }
 
-// GetTotalCount returns the TotalCount field value if set, zero value otherwise.
+// GetTotalCount returns the TotalCount field value
 func (o *Pagination) GetTotalCount() int64 {
-	if o == nil || IsNil(o.TotalCount) {
+	if o == nil {
 		var ret int64
 		return ret
 	}
-	return *o.TotalCount
+
+	return o.TotalCount
 }
 
-// GetTotalCountOk returns a tuple with the TotalCount field value if set, nil otherwise
+// GetTotalCountOk returns a tuple with the TotalCount field value
 // and a boolean to check if the value has been set.
 func (o *Pagination) GetTotalCountOk() (*int64, bool) {
-	if o == nil || IsNil(o.TotalCount) {
+	if o == nil {
 		return nil, false
 	}
-	return o.TotalCount, true
+	return &o.TotalCount, true
 }
 
-// HasTotalCount returns a boolean if a field has been set.
-func (o *Pagination) HasTotalCount() bool {
-	if o != nil && !IsNil(o.TotalCount) {
-		return true
-	}
-
-	return false
-}
-
-// SetTotalCount gets a reference to the given int64 and assigns it to the TotalCount field.
+// SetTotalCount sets field value
 func (o *Pagination) SetTotalCount(v int64) {
-	o.TotalCount = &v
+	o.TotalCount = v
 }
 
-// GetSkip returns the Skip field value if set, zero value otherwise.
+// GetSkip returns the Skip field value
 func (o *Pagination) GetSkip() int32 {
-	if o == nil || IsNil(o.Skip) {
+	if o == nil {
 		var ret int32
 		return ret
 	}
-	return *o.Skip
+
+	return o.Skip
 }
 
-// GetSkipOk returns a tuple with the Skip field value if set, nil otherwise
+// GetSkipOk returns a tuple with the Skip field value
 // and a boolean to check if the value has been set.
 func (o *Pagination) GetSkipOk() (*int32, bool) {
-	if o == nil || IsNil(o.Skip) {
+	if o == nil {
 		return nil, false
 	}
-	return o.Skip, true
+	return &o.Skip, true
 }
 
-// HasSkip returns a boolean if a field has been set.
-func (o *Pagination) HasSkip() bool {
-	if o != nil && !IsNil(o.Skip) {
-		return true
-	}
-
-	return false
-}
-
-// SetSkip gets a reference to the given int32 and assigns it to the Skip field.
+// SetSkip sets field value
 func (o *Pagination) SetSkip(v int32) {
-	o.Skip = &v
+	o.Skip = v
 }
 
-// GetLimit returns the Limit field value if set, zero value otherwise.
+// GetLimit returns the Limit field value
 func (o *Pagination) GetLimit() int32 {
-	if o == nil || IsNil(o.Limit) {
+	if o == nil {
 		var ret int32
 		return ret
 	}
-	return *o.Limit
+
+	return o.Limit
 }
 
-// GetLimitOk returns a tuple with the Limit field value if set, nil otherwise
+// GetLimitOk returns a tuple with the Limit field value
 // and a boolean to check if the value has been set.
 func (o *Pagination) GetLimitOk() (*int32, bool) {
-	if o == nil || IsNil(o.Limit) {
+	if o == nil {
 		return nil, false
 	}
-	return o.Limit, true
+	return &o.Limit, true
 }
 
-// HasLimit returns a boolean if a field has been set.
-func (o *Pagination) HasLimit() bool {
-	if o != nil && !IsNil(o.Limit) {
-		return true
-	}
-
-	return false
-}
-
-// SetLimit gets a reference to the given int32 and assigns it to the Limit field.
+// SetLimit sets field value
 func (o *Pagination) SetLimit(v int32) {
-	o.Limit = &v
+	o.Limit = v
 }
 
-// GetHasMore returns the HasMore field value if set, zero value otherwise.
+// GetHasMore returns the HasMore field value
 func (o *Pagination) GetHasMore() bool {
-	if o == nil || IsNil(o.HasMore) {
+	if o == nil {
 		var ret bool
 		return ret
 	}
-	return *o.HasMore
+
+	return o.HasMore
 }
 
-// GetHasMoreOk returns a tuple with the HasMore field value if set, nil otherwise
+// GetHasMoreOk returns a tuple with the HasMore field value
 // and a boolean to check if the value has been set.
 func (o *Pagination) GetHasMoreOk() (*bool, bool) {
-	if o == nil || IsNil(o.HasMore) {
+	if o == nil {
 		return nil, false
 	}
-	return o.HasMore, true
+	return &o.HasMore, true
 }
 
-// HasHasMore returns a boolean if a field has been set.
-func (o *Pagination) HasHasMore() bool {
-	if o != nil && !IsNil(o.HasMore) {
-		return true
-	}
-
-	return false
-}
-
-// SetHasMore gets a reference to the given bool and assigns it to the HasMore field.
+// SetHasMore sets field value
 func (o *Pagination) SetHasMore(v bool) {
-	o.HasMore = &v
+	o.HasMore = v
 }
 
-// GetPage returns the Page field value if set, zero value otherwise.
+// GetPage returns the Page field value
 func (o *Pagination) GetPage() int32 {
-	if o == nil || IsNil(o.Page) {
+	if o == nil {
 		var ret int32
 		return ret
 	}
-	return *o.Page
+
+	return o.Page
 }
 
-// GetPageOk returns a tuple with the Page field value if set, nil otherwise
+// GetPageOk returns a tuple with the Page field value
 // and a boolean to check if the value has been set.
 func (o *Pagination) GetPageOk() (*int32, bool) {
-	if o == nil || IsNil(o.Page) {
+	if o == nil {
 		return nil, false
 	}
-	return o.Page, true
+	return &o.Page, true
 }
 
-// HasPage returns a boolean if a field has been set.
-func (o *Pagination) HasPage() bool {
-	if o != nil && !IsNil(o.Page) {
-		return true
-	}
-
-	return false
-}
-
-// SetPage gets a reference to the given int32 and assigns it to the Page field.
+// SetPage sets field value
 func (o *Pagination) SetPage(v int32) {
-	o.Page = &v
+	o.Page = v
 }
 
-// GetTotalPages returns the TotalPages field value if set, zero value otherwise.
+// GetTotalPages returns the TotalPages field value
 func (o *Pagination) GetTotalPages() int32 {
-	if o == nil || IsNil(o.TotalPages) {
+	if o == nil {
 		var ret int32
 		return ret
 	}
-	return *o.TotalPages
+
+	return o.TotalPages
 }
 
-// GetTotalPagesOk returns a tuple with the TotalPages field value if set, nil otherwise
+// GetTotalPagesOk returns a tuple with the TotalPages field value
 // and a boolean to check if the value has been set.
 func (o *Pagination) GetTotalPagesOk() (*int32, bool) {
-	if o == nil || IsNil(o.TotalPages) {
+	if o == nil {
 		return nil, false
 	}
-	return o.TotalPages, true
+	return &o.TotalPages, true
 }
 
-// HasTotalPages returns a boolean if a field has been set.
-func (o *Pagination) HasTotalPages() bool {
-	if o != nil && !IsNil(o.TotalPages) {
-		return true
-	}
-
-	return false
-}
-
-// SetTotalPages gets a reference to the given int32 and assigns it to the TotalPages field.
+// SetTotalPages sets field value
 func (o *Pagination) SetTotalPages(v int32) {
-	o.TotalPages = &v
+	o.TotalPages = v
 }
 
 func (o Pagination) MarshalJSON() ([]byte, error) {
@@ -287,28 +242,56 @@ func (o Pagination) MarshalJSON() ([]byte, error) {
 
 func (o Pagination) ToMap() (map[string]interface{}, error) {
 	toSerialize := map[string]interface{}{}
-	if !IsNil(o.CurrentCount) {
-		toSerialize["currentCount"] = o.CurrentCount
-	}
-	if !IsNil(o.TotalCount) {
-		toSerialize["totalCount"] = o.TotalCount
-	}
-	if !IsNil(o.Skip) {
-		toSerialize["skip"] = o.Skip
-	}
-	if !IsNil(o.Limit) {
-		toSerialize["limit"] = o.Limit
-	}
-	if !IsNil(o.HasMore) {
-		toSerialize["hasMore"] = o.HasMore
-	}
-	if !IsNil(o.Page) {
-		toSerialize["page"] = o.Page
-	}
-	if !IsNil(o.TotalPages) {
-		toSerialize["totalPages"] = o.TotalPages
-	}
+	toSerialize["currentCount"] = o.CurrentCount
+	toSerialize["totalCount"] = o.TotalCount
+	toSerialize["skip"] = o.Skip
+	toSerialize["limit"] = o.Limit
+	toSerialize["hasMore"] = o.HasMore
+	toSerialize["page"] = o.Page
+	toSerialize["totalPages"] = o.TotalPages
 	return toSerialize, nil
+}
+
+func (o *Pagination) UnmarshalJSON(data []byte) (err error) {
+	// This validates that all required properties are included in the JSON object
+	// by unmarshalling the object into a generic map with string keys and checking
+	// that every required field exists as a key in the generic map.
+	requiredProperties := []string{
+		"currentCount",
+		"totalCount",
+		"skip",
+		"limit",
+		"hasMore",
+		"page",
+		"totalPages",
+	}
+
+	allProperties := make(map[string]interface{})
+
+	err = json.Unmarshal(data, &allProperties)
+
+	if err != nil {
+		return err;
+	}
+
+	for _, requiredProperty := range(requiredProperties) {
+		if _, exists := allProperties[requiredProperty]; !exists {
+			return fmt.Errorf("no value given for required property %v", requiredProperty)
+		}
+	}
+
+	varPagination := _Pagination{}
+
+	decoder := json.NewDecoder(bytes.NewReader(data))
+	err = decoder.Decode(&varPagination)
+
+	if err != nil {
+		return err
+	}
+
+	*o = Pagination(varPagination)
+
+	return err
 }
 
 type NullablePagination struct {

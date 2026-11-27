@@ -13,6 +13,8 @@ package openroam
 
 import (
 	"encoding/json"
+	"bytes"
+	"fmt"
 )
 
 // checks if the ErrorDetail type satisfies the MappedNullable interface at compile time
@@ -20,18 +22,22 @@ var _ MappedNullable = &ErrorDetail{}
 
 // ErrorDetail One problem with a request field: its `path`, a machine `reason` such as `REQUIRED` or `INVALID_VALUE`, and, when there is one, a safe human-readable `message`.
 type ErrorDetail struct {
-	// Where the error is: the path of a body field, such as items[0].inputs.maxPrice, or the name of a query or route parameter. A JSON body that does not deserialize gives its path rooted at $, such as $.items[0].value. Cart checkout names the failing cart line by its id: items[<cart item id>].
-	Path *string `json:"path,omitempty"`
-	Reason *string `json:"reason,omitempty"`
+	// Where the error is: the path of a body field, such as items[0].inputs.maxPrice, or the name of a query or route parameter. A JSON body that does not deserialize gives its path rooted at $, such as $.items[0].value. Cart checkout names the failing cart line by its id: items[<cart item id>]. A refused wallet charge (402) names wallet.
+	Path string `json:"path"`
+	Reason string `json:"reason"`
 	Message NullableString `json:"message,omitempty"`
 }
+
+type _ErrorDetail ErrorDetail
 
 // NewErrorDetail instantiates a new ErrorDetail object
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewErrorDetail() *ErrorDetail {
+func NewErrorDetail(path string, reason string) *ErrorDetail {
 	this := ErrorDetail{}
+	this.Path = path
+	this.Reason = reason
 	return &this
 }
 
@@ -43,68 +49,52 @@ func NewErrorDetailWithDefaults() *ErrorDetail {
 	return &this
 }
 
-// GetPath returns the Path field value if set, zero value otherwise.
+// GetPath returns the Path field value
 func (o *ErrorDetail) GetPath() string {
-	if o == nil || IsNil(o.Path) {
+	if o == nil {
 		var ret string
 		return ret
 	}
-	return *o.Path
+
+	return o.Path
 }
 
-// GetPathOk returns a tuple with the Path field value if set, nil otherwise
+// GetPathOk returns a tuple with the Path field value
 // and a boolean to check if the value has been set.
 func (o *ErrorDetail) GetPathOk() (*string, bool) {
-	if o == nil || IsNil(o.Path) {
+	if o == nil {
 		return nil, false
 	}
-	return o.Path, true
+	return &o.Path, true
 }
 
-// HasPath returns a boolean if a field has been set.
-func (o *ErrorDetail) HasPath() bool {
-	if o != nil && !IsNil(o.Path) {
-		return true
-	}
-
-	return false
-}
-
-// SetPath gets a reference to the given string and assigns it to the Path field.
+// SetPath sets field value
 func (o *ErrorDetail) SetPath(v string) {
-	o.Path = &v
+	o.Path = v
 }
 
-// GetReason returns the Reason field value if set, zero value otherwise.
+// GetReason returns the Reason field value
 func (o *ErrorDetail) GetReason() string {
-	if o == nil || IsNil(o.Reason) {
+	if o == nil {
 		var ret string
 		return ret
 	}
-	return *o.Reason
+
+	return o.Reason
 }
 
-// GetReasonOk returns a tuple with the Reason field value if set, nil otherwise
+// GetReasonOk returns a tuple with the Reason field value
 // and a boolean to check if the value has been set.
 func (o *ErrorDetail) GetReasonOk() (*string, bool) {
-	if o == nil || IsNil(o.Reason) {
+	if o == nil {
 		return nil, false
 	}
-	return o.Reason, true
+	return &o.Reason, true
 }
 
-// HasReason returns a boolean if a field has been set.
-func (o *ErrorDetail) HasReason() bool {
-	if o != nil && !IsNil(o.Reason) {
-		return true
-	}
-
-	return false
-}
-
-// SetReason gets a reference to the given string and assigns it to the Reason field.
+// SetReason sets field value
 func (o *ErrorDetail) SetReason(v string) {
-	o.Reason = &v
+	o.Reason = v
 }
 
 // GetMessage returns the Message field value if set, zero value otherwise (both if not set or set to explicit null).
@@ -159,16 +149,49 @@ func (o ErrorDetail) MarshalJSON() ([]byte, error) {
 
 func (o ErrorDetail) ToMap() (map[string]interface{}, error) {
 	toSerialize := map[string]interface{}{}
-	if !IsNil(o.Path) {
-		toSerialize["path"] = o.Path
-	}
-	if !IsNil(o.Reason) {
-		toSerialize["reason"] = o.Reason
-	}
+	toSerialize["path"] = o.Path
+	toSerialize["reason"] = o.Reason
 	if o.Message.IsSet() {
 		toSerialize["message"] = o.Message.Get()
 	}
 	return toSerialize, nil
+}
+
+func (o *ErrorDetail) UnmarshalJSON(data []byte) (err error) {
+	// This validates that all required properties are included in the JSON object
+	// by unmarshalling the object into a generic map with string keys and checking
+	// that every required field exists as a key in the generic map.
+	requiredProperties := []string{
+		"path",
+		"reason",
+	}
+
+	allProperties := make(map[string]interface{})
+
+	err = json.Unmarshal(data, &allProperties)
+
+	if err != nil {
+		return err;
+	}
+
+	for _, requiredProperty := range(requiredProperties) {
+		if _, exists := allProperties[requiredProperty]; !exists {
+			return fmt.Errorf("no value given for required property %v", requiredProperty)
+		}
+	}
+
+	varErrorDetail := _ErrorDetail{}
+
+	decoder := json.NewDecoder(bytes.NewReader(data))
+	err = decoder.Decode(&varErrorDetail)
+
+	if err != nil {
+		return err
+	}
+
+	*o = ErrorDetail(varErrorDetail)
+
+	return err
 }
 
 type NullableErrorDetail struct {

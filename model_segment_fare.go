@@ -13,6 +13,8 @@ package openroam
 
 import (
 	"encoding/json"
+	"bytes"
+	"fmt"
 )
 
 // checks if the SegmentFare type satisfies the MappedNullable interface at compile time
@@ -20,18 +22,23 @@ var _ MappedNullable = &SegmentFare{}
 
 // SegmentFare A fare's cabin and baggage on one segment; slice and segment positions are 1-based.
 type SegmentFare struct {
-	SliceIndex *int32 `json:"sliceIndex,omitempty"`
-	SegmentIndex *int32 `json:"segmentIndex,omitempty"`
+	SliceIndex int32 `json:"sliceIndex"`
+	SegmentIndex int32 `json:"segmentIndex"`
 	CabinClass NullableString `json:"cabinClass,omitempty"`
-	Baggage []Baggage `json:"baggage,omitempty"`
+	Baggage []Baggage `json:"baggage"`
 }
+
+type _SegmentFare SegmentFare
 
 // NewSegmentFare instantiates a new SegmentFare object
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewSegmentFare() *SegmentFare {
+func NewSegmentFare(sliceIndex int32, segmentIndex int32, baggage []Baggage) *SegmentFare {
 	this := SegmentFare{}
+	this.SliceIndex = sliceIndex
+	this.SegmentIndex = segmentIndex
+	this.Baggage = baggage
 	return &this
 }
 
@@ -43,68 +50,52 @@ func NewSegmentFareWithDefaults() *SegmentFare {
 	return &this
 }
 
-// GetSliceIndex returns the SliceIndex field value if set, zero value otherwise.
+// GetSliceIndex returns the SliceIndex field value
 func (o *SegmentFare) GetSliceIndex() int32 {
-	if o == nil || IsNil(o.SliceIndex) {
+	if o == nil {
 		var ret int32
 		return ret
 	}
-	return *o.SliceIndex
+
+	return o.SliceIndex
 }
 
-// GetSliceIndexOk returns a tuple with the SliceIndex field value if set, nil otherwise
+// GetSliceIndexOk returns a tuple with the SliceIndex field value
 // and a boolean to check if the value has been set.
 func (o *SegmentFare) GetSliceIndexOk() (*int32, bool) {
-	if o == nil || IsNil(o.SliceIndex) {
+	if o == nil {
 		return nil, false
 	}
-	return o.SliceIndex, true
+	return &o.SliceIndex, true
 }
 
-// HasSliceIndex returns a boolean if a field has been set.
-func (o *SegmentFare) HasSliceIndex() bool {
-	if o != nil && !IsNil(o.SliceIndex) {
-		return true
-	}
-
-	return false
-}
-
-// SetSliceIndex gets a reference to the given int32 and assigns it to the SliceIndex field.
+// SetSliceIndex sets field value
 func (o *SegmentFare) SetSliceIndex(v int32) {
-	o.SliceIndex = &v
+	o.SliceIndex = v
 }
 
-// GetSegmentIndex returns the SegmentIndex field value if set, zero value otherwise.
+// GetSegmentIndex returns the SegmentIndex field value
 func (o *SegmentFare) GetSegmentIndex() int32 {
-	if o == nil || IsNil(o.SegmentIndex) {
+	if o == nil {
 		var ret int32
 		return ret
 	}
-	return *o.SegmentIndex
+
+	return o.SegmentIndex
 }
 
-// GetSegmentIndexOk returns a tuple with the SegmentIndex field value if set, nil otherwise
+// GetSegmentIndexOk returns a tuple with the SegmentIndex field value
 // and a boolean to check if the value has been set.
 func (o *SegmentFare) GetSegmentIndexOk() (*int32, bool) {
-	if o == nil || IsNil(o.SegmentIndex) {
+	if o == nil {
 		return nil, false
 	}
-	return o.SegmentIndex, true
+	return &o.SegmentIndex, true
 }
 
-// HasSegmentIndex returns a boolean if a field has been set.
-func (o *SegmentFare) HasSegmentIndex() bool {
-	if o != nil && !IsNil(o.SegmentIndex) {
-		return true
-	}
-
-	return false
-}
-
-// SetSegmentIndex gets a reference to the given int32 and assigns it to the SegmentIndex field.
+// SetSegmentIndex sets field value
 func (o *SegmentFare) SetSegmentIndex(v int32) {
-	o.SegmentIndex = &v
+	o.SegmentIndex = v
 }
 
 // GetCabinClass returns the CabinClass field value if set, zero value otherwise (both if not set or set to explicit null).
@@ -149,34 +140,26 @@ func (o *SegmentFare) UnsetCabinClass() {
 	o.CabinClass.Unset()
 }
 
-// GetBaggage returns the Baggage field value if set, zero value otherwise.
+// GetBaggage returns the Baggage field value
 func (o *SegmentFare) GetBaggage() []Baggage {
-	if o == nil || IsNil(o.Baggage) {
+	if o == nil {
 		var ret []Baggage
 		return ret
 	}
+
 	return o.Baggage
 }
 
-// GetBaggageOk returns a tuple with the Baggage field value if set, nil otherwise
+// GetBaggageOk returns a tuple with the Baggage field value
 // and a boolean to check if the value has been set.
 func (o *SegmentFare) GetBaggageOk() ([]Baggage, bool) {
-	if o == nil || IsNil(o.Baggage) {
+	if o == nil {
 		return nil, false
 	}
 	return o.Baggage, true
 }
 
-// HasBaggage returns a boolean if a field has been set.
-func (o *SegmentFare) HasBaggage() bool {
-	if o != nil && !IsNil(o.Baggage) {
-		return true
-	}
-
-	return false
-}
-
-// SetBaggage gets a reference to the given []Baggage and assigns it to the Baggage field.
+// SetBaggage sets field value
 func (o *SegmentFare) SetBaggage(v []Baggage) {
 	o.Baggage = v
 }
@@ -191,19 +174,51 @@ func (o SegmentFare) MarshalJSON() ([]byte, error) {
 
 func (o SegmentFare) ToMap() (map[string]interface{}, error) {
 	toSerialize := map[string]interface{}{}
-	if !IsNil(o.SliceIndex) {
-		toSerialize["sliceIndex"] = o.SliceIndex
-	}
-	if !IsNil(o.SegmentIndex) {
-		toSerialize["segmentIndex"] = o.SegmentIndex
-	}
+	toSerialize["sliceIndex"] = o.SliceIndex
+	toSerialize["segmentIndex"] = o.SegmentIndex
 	if o.CabinClass.IsSet() {
 		toSerialize["cabinClass"] = o.CabinClass.Get()
 	}
-	if !IsNil(o.Baggage) {
-		toSerialize["baggage"] = o.Baggage
-	}
+	toSerialize["baggage"] = o.Baggage
 	return toSerialize, nil
+}
+
+func (o *SegmentFare) UnmarshalJSON(data []byte) (err error) {
+	// This validates that all required properties are included in the JSON object
+	// by unmarshalling the object into a generic map with string keys and checking
+	// that every required field exists as a key in the generic map.
+	requiredProperties := []string{
+		"sliceIndex",
+		"segmentIndex",
+		"baggage",
+	}
+
+	allProperties := make(map[string]interface{})
+
+	err = json.Unmarshal(data, &allProperties)
+
+	if err != nil {
+		return err;
+	}
+
+	for _, requiredProperty := range(requiredProperties) {
+		if _, exists := allProperties[requiredProperty]; !exists {
+			return fmt.Errorf("no value given for required property %v", requiredProperty)
+		}
+	}
+
+	varSegmentFare := _SegmentFare{}
+
+	decoder := json.NewDecoder(bytes.NewReader(data))
+	err = decoder.Decode(&varSegmentFare)
+
+	if err != nil {
+		return err
+	}
+
+	*o = SegmentFare(varSegmentFare)
+
+	return err
 }
 
 type NullableSegmentFare struct {

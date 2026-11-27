@@ -13,6 +13,8 @@ package openroam
 
 import (
 	"encoding/json"
+	"bytes"
+	"fmt"
 )
 
 // checks if the TicketDocument type satisfies the MappedNullable interface at compile time
@@ -21,17 +23,21 @@ var _ MappedNullable = &TicketDocument{}
 // TicketDocument A document the airline issued for the booking and its number, for example an e-ticket number.
 type TicketDocument struct {
 	// `electronicTicket`, `electronicMiscellaneousDocumentAssociated`, `electronicMiscellaneousDocumentStandalone` or `other`.
-	Type *string `json:"type,omitempty"`
+	Type string `json:"type"`
 	// The document's number.
-	UniqueIdentifier *string `json:"uniqueIdentifier,omitempty"`
+	UniqueIdentifier string `json:"uniqueIdentifier"`
 }
+
+type _TicketDocument TicketDocument
 
 // NewTicketDocument instantiates a new TicketDocument object
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewTicketDocument() *TicketDocument {
+func NewTicketDocument(type_ string, uniqueIdentifier string) *TicketDocument {
 	this := TicketDocument{}
+	this.Type = type_
+	this.UniqueIdentifier = uniqueIdentifier
 	return &this
 }
 
@@ -43,68 +49,52 @@ func NewTicketDocumentWithDefaults() *TicketDocument {
 	return &this
 }
 
-// GetType returns the Type field value if set, zero value otherwise.
+// GetType returns the Type field value
 func (o *TicketDocument) GetType() string {
-	if o == nil || IsNil(o.Type) {
+	if o == nil {
 		var ret string
 		return ret
 	}
-	return *o.Type
+
+	return o.Type
 }
 
-// GetTypeOk returns a tuple with the Type field value if set, nil otherwise
+// GetTypeOk returns a tuple with the Type field value
 // and a boolean to check if the value has been set.
 func (o *TicketDocument) GetTypeOk() (*string, bool) {
-	if o == nil || IsNil(o.Type) {
+	if o == nil {
 		return nil, false
 	}
-	return o.Type, true
+	return &o.Type, true
 }
 
-// HasType returns a boolean if a field has been set.
-func (o *TicketDocument) HasType() bool {
-	if o != nil && !IsNil(o.Type) {
-		return true
-	}
-
-	return false
-}
-
-// SetType gets a reference to the given string and assigns it to the Type field.
+// SetType sets field value
 func (o *TicketDocument) SetType(v string) {
-	o.Type = &v
+	o.Type = v
 }
 
-// GetUniqueIdentifier returns the UniqueIdentifier field value if set, zero value otherwise.
+// GetUniqueIdentifier returns the UniqueIdentifier field value
 func (o *TicketDocument) GetUniqueIdentifier() string {
-	if o == nil || IsNil(o.UniqueIdentifier) {
+	if o == nil {
 		var ret string
 		return ret
 	}
-	return *o.UniqueIdentifier
+
+	return o.UniqueIdentifier
 }
 
-// GetUniqueIdentifierOk returns a tuple with the UniqueIdentifier field value if set, nil otherwise
+// GetUniqueIdentifierOk returns a tuple with the UniqueIdentifier field value
 // and a boolean to check if the value has been set.
 func (o *TicketDocument) GetUniqueIdentifierOk() (*string, bool) {
-	if o == nil || IsNil(o.UniqueIdentifier) {
+	if o == nil {
 		return nil, false
 	}
-	return o.UniqueIdentifier, true
+	return &o.UniqueIdentifier, true
 }
 
-// HasUniqueIdentifier returns a boolean if a field has been set.
-func (o *TicketDocument) HasUniqueIdentifier() bool {
-	if o != nil && !IsNil(o.UniqueIdentifier) {
-		return true
-	}
-
-	return false
-}
-
-// SetUniqueIdentifier gets a reference to the given string and assigns it to the UniqueIdentifier field.
+// SetUniqueIdentifier sets field value
 func (o *TicketDocument) SetUniqueIdentifier(v string) {
-	o.UniqueIdentifier = &v
+	o.UniqueIdentifier = v
 }
 
 func (o TicketDocument) MarshalJSON() ([]byte, error) {
@@ -117,13 +107,46 @@ func (o TicketDocument) MarshalJSON() ([]byte, error) {
 
 func (o TicketDocument) ToMap() (map[string]interface{}, error) {
 	toSerialize := map[string]interface{}{}
-	if !IsNil(o.Type) {
-		toSerialize["type"] = o.Type
-	}
-	if !IsNil(o.UniqueIdentifier) {
-		toSerialize["uniqueIdentifier"] = o.UniqueIdentifier
-	}
+	toSerialize["type"] = o.Type
+	toSerialize["uniqueIdentifier"] = o.UniqueIdentifier
 	return toSerialize, nil
+}
+
+func (o *TicketDocument) UnmarshalJSON(data []byte) (err error) {
+	// This validates that all required properties are included in the JSON object
+	// by unmarshalling the object into a generic map with string keys and checking
+	// that every required field exists as a key in the generic map.
+	requiredProperties := []string{
+		"type",
+		"uniqueIdentifier",
+	}
+
+	allProperties := make(map[string]interface{})
+
+	err = json.Unmarshal(data, &allProperties)
+
+	if err != nil {
+		return err;
+	}
+
+	for _, requiredProperty := range(requiredProperties) {
+		if _, exists := allProperties[requiredProperty]; !exists {
+			return fmt.Errorf("no value given for required property %v", requiredProperty)
+		}
+	}
+
+	varTicketDocument := _TicketDocument{}
+
+	decoder := json.NewDecoder(bytes.NewReader(data))
+	err = decoder.Decode(&varTicketDocument)
+
+	if err != nil {
+		return err
+	}
+
+	*o = TicketDocument(varTicketDocument)
+
+	return err
 }
 
 type NullableTicketDocument struct {

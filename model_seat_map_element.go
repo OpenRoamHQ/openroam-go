@@ -25,10 +25,10 @@ type SeatMapElement struct {
 	Type string `json:"type"`
 	SeatDesignator NullableString `json:"seatDesignator,omitempty"`
 	Label NullableString `json:"label,omitempty"`
-	IsAvailable *bool `json:"isAvailable,omitempty"`
-	Characteristics []string `json:"characteristics,omitempty"`
+	IsAvailable bool `json:"isAvailable"`
+	Characteristics []string `json:"characteristics"`
 	// Passengers who can take this seat, with the price for each.
-	AvailableFor []SeatAvailability `json:"availableFor,omitempty"`
+	AvailableFor []SeatAvailability `json:"availableFor"`
 }
 
 type _SeatMapElement SeatMapElement
@@ -37,9 +37,12 @@ type _SeatMapElement SeatMapElement
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewSeatMapElement(type_ string) *SeatMapElement {
+func NewSeatMapElement(type_ string, isAvailable bool, characteristics []string, availableFor []SeatAvailability) *SeatMapElement {
 	this := SeatMapElement{}
 	this.Type = type_
+	this.IsAvailable = isAvailable
+	this.Characteristics = characteristics
+	this.AvailableFor = availableFor
 	return &this
 }
 
@@ -159,98 +162,74 @@ func (o *SeatMapElement) UnsetLabel() {
 	o.Label.Unset()
 }
 
-// GetIsAvailable returns the IsAvailable field value if set, zero value otherwise.
+// GetIsAvailable returns the IsAvailable field value
 func (o *SeatMapElement) GetIsAvailable() bool {
-	if o == nil || IsNil(o.IsAvailable) {
+	if o == nil {
 		var ret bool
 		return ret
 	}
-	return *o.IsAvailable
+
+	return o.IsAvailable
 }
 
-// GetIsAvailableOk returns a tuple with the IsAvailable field value if set, nil otherwise
+// GetIsAvailableOk returns a tuple with the IsAvailable field value
 // and a boolean to check if the value has been set.
 func (o *SeatMapElement) GetIsAvailableOk() (*bool, bool) {
-	if o == nil || IsNil(o.IsAvailable) {
+	if o == nil {
 		return nil, false
 	}
-	return o.IsAvailable, true
+	return &o.IsAvailable, true
 }
 
-// HasIsAvailable returns a boolean if a field has been set.
-func (o *SeatMapElement) HasIsAvailable() bool {
-	if o != nil && !IsNil(o.IsAvailable) {
-		return true
-	}
-
-	return false
-}
-
-// SetIsAvailable gets a reference to the given bool and assigns it to the IsAvailable field.
+// SetIsAvailable sets field value
 func (o *SeatMapElement) SetIsAvailable(v bool) {
-	o.IsAvailable = &v
+	o.IsAvailable = v
 }
 
-// GetCharacteristics returns the Characteristics field value if set, zero value otherwise.
+// GetCharacteristics returns the Characteristics field value
 func (o *SeatMapElement) GetCharacteristics() []string {
-	if o == nil || IsNil(o.Characteristics) {
+	if o == nil {
 		var ret []string
 		return ret
 	}
+
 	return o.Characteristics
 }
 
-// GetCharacteristicsOk returns a tuple with the Characteristics field value if set, nil otherwise
+// GetCharacteristicsOk returns a tuple with the Characteristics field value
 // and a boolean to check if the value has been set.
 func (o *SeatMapElement) GetCharacteristicsOk() ([]string, bool) {
-	if o == nil || IsNil(o.Characteristics) {
+	if o == nil {
 		return nil, false
 	}
 	return o.Characteristics, true
 }
 
-// HasCharacteristics returns a boolean if a field has been set.
-func (o *SeatMapElement) HasCharacteristics() bool {
-	if o != nil && !IsNil(o.Characteristics) {
-		return true
-	}
-
-	return false
-}
-
-// SetCharacteristics gets a reference to the given []string and assigns it to the Characteristics field.
+// SetCharacteristics sets field value
 func (o *SeatMapElement) SetCharacteristics(v []string) {
 	o.Characteristics = v
 }
 
-// GetAvailableFor returns the AvailableFor field value if set, zero value otherwise.
+// GetAvailableFor returns the AvailableFor field value
 func (o *SeatMapElement) GetAvailableFor() []SeatAvailability {
-	if o == nil || IsNil(o.AvailableFor) {
+	if o == nil {
 		var ret []SeatAvailability
 		return ret
 	}
+
 	return o.AvailableFor
 }
 
-// GetAvailableForOk returns a tuple with the AvailableFor field value if set, nil otherwise
+// GetAvailableForOk returns a tuple with the AvailableFor field value
 // and a boolean to check if the value has been set.
 func (o *SeatMapElement) GetAvailableForOk() ([]SeatAvailability, bool) {
-	if o == nil || IsNil(o.AvailableFor) {
+	if o == nil {
 		return nil, false
 	}
 	return o.AvailableFor, true
 }
 
-// HasAvailableFor returns a boolean if a field has been set.
-func (o *SeatMapElement) HasAvailableFor() bool {
-	if o != nil && !IsNil(o.AvailableFor) {
-		return true
-	}
-
-	return false
-}
-
-// SetAvailableFor gets a reference to the given []SeatAvailability and assigns it to the AvailableFor field.
+// SetAvailableFor sets field value
 func (o *SeatMapElement) SetAvailableFor(v []SeatAvailability) {
 	o.AvailableFor = v
 }
@@ -272,15 +251,9 @@ func (o SeatMapElement) ToMap() (map[string]interface{}, error) {
 	if o.Label.IsSet() {
 		toSerialize["label"] = o.Label.Get()
 	}
-	if !IsNil(o.IsAvailable) {
-		toSerialize["isAvailable"] = o.IsAvailable
-	}
-	if !IsNil(o.Characteristics) {
-		toSerialize["characteristics"] = o.Characteristics
-	}
-	if !IsNil(o.AvailableFor) {
-		toSerialize["availableFor"] = o.AvailableFor
-	}
+	toSerialize["isAvailable"] = o.IsAvailable
+	toSerialize["characteristics"] = o.Characteristics
+	toSerialize["availableFor"] = o.AvailableFor
 	return toSerialize, nil
 }
 
@@ -290,6 +263,9 @@ func (o *SeatMapElement) UnmarshalJSON(data []byte) (err error) {
 	// that every required field exists as a key in the generic map.
 	requiredProperties := []string{
 		"type",
+		"isAvailable",
+		"characteristics",
+		"availableFor",
 	}
 
 	allProperties := make(map[string]interface{})
@@ -309,7 +285,6 @@ func (o *SeatMapElement) UnmarshalJSON(data []byte) (err error) {
 	varSeatMapElement := _SeatMapElement{}
 
 	decoder := json.NewDecoder(bytes.NewReader(data))
-	decoder.DisallowUnknownFields()
 	err = decoder.Decode(&varSeatMapElement)
 
 	if err != nil {

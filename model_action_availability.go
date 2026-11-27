@@ -13,6 +13,8 @@ package openroam
 
 import (
 	"encoding/json"
+	"bytes"
+	"fmt"
 )
 
 // checks if the ActionAvailability type satisfies the MappedNullable interface at compile time
@@ -20,18 +22,21 @@ var _ MappedNullable = &ActionAvailability{}
 
 // ActionAvailability Whether an action can be taken now.
 type ActionAvailability struct {
-	// `available`; `notAvailable`; `requiresDashboard` (use the dashboard);             `manualReview` (handled by support or the manual flow); or `inProgress` (already running).
-	Availability *string `json:"availability,omitempty"`
+	// `available`; `notAvailable`; `manualReview` (handled by support or the             manual flow); or `inProgress` (already running).
+	Availability string `json:"availability"`
 	// Why the action is limited, when there is a reason to show.
 	Reason NullableString `json:"reason,omitempty"`
 }
+
+type _ActionAvailability ActionAvailability
 
 // NewActionAvailability instantiates a new ActionAvailability object
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewActionAvailability() *ActionAvailability {
+func NewActionAvailability(availability string) *ActionAvailability {
 	this := ActionAvailability{}
+	this.Availability = availability
 	return &this
 }
 
@@ -43,36 +48,28 @@ func NewActionAvailabilityWithDefaults() *ActionAvailability {
 	return &this
 }
 
-// GetAvailability returns the Availability field value if set, zero value otherwise.
+// GetAvailability returns the Availability field value
 func (o *ActionAvailability) GetAvailability() string {
-	if o == nil || IsNil(o.Availability) {
+	if o == nil {
 		var ret string
 		return ret
 	}
-	return *o.Availability
+
+	return o.Availability
 }
 
-// GetAvailabilityOk returns a tuple with the Availability field value if set, nil otherwise
+// GetAvailabilityOk returns a tuple with the Availability field value
 // and a boolean to check if the value has been set.
 func (o *ActionAvailability) GetAvailabilityOk() (*string, bool) {
-	if o == nil || IsNil(o.Availability) {
+	if o == nil {
 		return nil, false
 	}
-	return o.Availability, true
+	return &o.Availability, true
 }
 
-// HasAvailability returns a boolean if a field has been set.
-func (o *ActionAvailability) HasAvailability() bool {
-	if o != nil && !IsNil(o.Availability) {
-		return true
-	}
-
-	return false
-}
-
-// SetAvailability gets a reference to the given string and assigns it to the Availability field.
+// SetAvailability sets field value
 func (o *ActionAvailability) SetAvailability(v string) {
-	o.Availability = &v
+	o.Availability = v
 }
 
 // GetReason returns the Reason field value if set, zero value otherwise (both if not set or set to explicit null).
@@ -127,13 +124,47 @@ func (o ActionAvailability) MarshalJSON() ([]byte, error) {
 
 func (o ActionAvailability) ToMap() (map[string]interface{}, error) {
 	toSerialize := map[string]interface{}{}
-	if !IsNil(o.Availability) {
-		toSerialize["availability"] = o.Availability
-	}
+	toSerialize["availability"] = o.Availability
 	if o.Reason.IsSet() {
 		toSerialize["reason"] = o.Reason.Get()
 	}
 	return toSerialize, nil
+}
+
+func (o *ActionAvailability) UnmarshalJSON(data []byte) (err error) {
+	// This validates that all required properties are included in the JSON object
+	// by unmarshalling the object into a generic map with string keys and checking
+	// that every required field exists as a key in the generic map.
+	requiredProperties := []string{
+		"availability",
+	}
+
+	allProperties := make(map[string]interface{})
+
+	err = json.Unmarshal(data, &allProperties)
+
+	if err != nil {
+		return err;
+	}
+
+	for _, requiredProperty := range(requiredProperties) {
+		if _, exists := allProperties[requiredProperty]; !exists {
+			return fmt.Errorf("no value given for required property %v", requiredProperty)
+		}
+	}
+
+	varActionAvailability := _ActionAvailability{}
+
+	decoder := json.NewDecoder(bytes.NewReader(data))
+	err = decoder.Decode(&varActionAvailability)
+
+	if err != nil {
+		return err
+	}
+
+	*o = ActionAvailability(varActionAvailability)
+
+	return err
 }
 
 type NullableActionAvailability struct {

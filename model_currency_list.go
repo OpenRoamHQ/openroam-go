@@ -13,6 +13,8 @@ package openroam
 
 import (
 	"encoding/json"
+	"bytes"
+	"fmt"
 )
 
 // checks if the CurrencyList type satisfies the MappedNullable interface at compile time
@@ -21,15 +23,18 @@ var _ MappedNullable = &CurrencyList{}
 // CurrencyList Every supported currency.
 type CurrencyList struct {
 	// The currencies.
-	Currencies []Currency `json:"currencies,omitempty"`
+	Currencies []Currency `json:"currencies"`
 }
+
+type _CurrencyList CurrencyList
 
 // NewCurrencyList instantiates a new CurrencyList object
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewCurrencyList() *CurrencyList {
+func NewCurrencyList(currencies []Currency) *CurrencyList {
 	this := CurrencyList{}
+	this.Currencies = currencies
 	return &this
 }
 
@@ -41,34 +46,26 @@ func NewCurrencyListWithDefaults() *CurrencyList {
 	return &this
 }
 
-// GetCurrencies returns the Currencies field value if set, zero value otherwise.
+// GetCurrencies returns the Currencies field value
 func (o *CurrencyList) GetCurrencies() []Currency {
-	if o == nil || IsNil(o.Currencies) {
+	if o == nil {
 		var ret []Currency
 		return ret
 	}
+
 	return o.Currencies
 }
 
-// GetCurrenciesOk returns a tuple with the Currencies field value if set, nil otherwise
+// GetCurrenciesOk returns a tuple with the Currencies field value
 // and a boolean to check if the value has been set.
 func (o *CurrencyList) GetCurrenciesOk() ([]Currency, bool) {
-	if o == nil || IsNil(o.Currencies) {
+	if o == nil {
 		return nil, false
 	}
 	return o.Currencies, true
 }
 
-// HasCurrencies returns a boolean if a field has been set.
-func (o *CurrencyList) HasCurrencies() bool {
-	if o != nil && !IsNil(o.Currencies) {
-		return true
-	}
-
-	return false
-}
-
-// SetCurrencies gets a reference to the given []Currency and assigns it to the Currencies field.
+// SetCurrencies sets field value
 func (o *CurrencyList) SetCurrencies(v []Currency) {
 	o.Currencies = v
 }
@@ -83,10 +80,44 @@ func (o CurrencyList) MarshalJSON() ([]byte, error) {
 
 func (o CurrencyList) ToMap() (map[string]interface{}, error) {
 	toSerialize := map[string]interface{}{}
-	if !IsNil(o.Currencies) {
-		toSerialize["currencies"] = o.Currencies
-	}
+	toSerialize["currencies"] = o.Currencies
 	return toSerialize, nil
+}
+
+func (o *CurrencyList) UnmarshalJSON(data []byte) (err error) {
+	// This validates that all required properties are included in the JSON object
+	// by unmarshalling the object into a generic map with string keys and checking
+	// that every required field exists as a key in the generic map.
+	requiredProperties := []string{
+		"currencies",
+	}
+
+	allProperties := make(map[string]interface{})
+
+	err = json.Unmarshal(data, &allProperties)
+
+	if err != nil {
+		return err;
+	}
+
+	for _, requiredProperty := range(requiredProperties) {
+		if _, exists := allProperties[requiredProperty]; !exists {
+			return fmt.Errorf("no value given for required property %v", requiredProperty)
+		}
+	}
+
+	varCurrencyList := _CurrencyList{}
+
+	decoder := json.NewDecoder(bytes.NewReader(data))
+	err = decoder.Decode(&varCurrencyList)
+
+	if err != nil {
+		return err
+	}
+
+	*o = CurrencyList(varCurrencyList)
+
+	return err
 }
 
 type NullableCurrencyList struct {

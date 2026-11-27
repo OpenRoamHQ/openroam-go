@@ -176,7 +176,6 @@ func (o *RoomOccupancy) UnmarshalJSON(data []byte) (err error) {
 	varRoomOccupancy := _RoomOccupancy{}
 
 	decoder := json.NewDecoder(bytes.NewReader(data))
-	decoder.DisallowUnknownFields()
 	err = decoder.Decode(&varRoomOccupancy)
 
 	if err != nil {

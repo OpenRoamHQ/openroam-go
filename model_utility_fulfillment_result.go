@@ -13,6 +13,8 @@ package openroam
 
 import (
 	"encoding/json"
+	"bytes"
+	"fmt"
 )
 
 // checks if the UtilityFulfillmentResult type satisfies the MappedNullable interface at compile time
@@ -22,15 +24,18 @@ var _ MappedNullable = &UtilityFulfillmentResult{}
 type UtilityFulfillmentResult struct {
 	DeliveredValue NullableMoney `json:"deliveredValue,omitempty"`
 	// The prepaid token a token biller delivered, once the payment is ready. Null for direct-credit billers.
-	Details *UtilityFulfillmentDetails `json:"details,omitempty"`
+	Details UtilityFulfillmentDetails `json:"details"`
 }
+
+type _UtilityFulfillmentResult UtilityFulfillmentResult
 
 // NewUtilityFulfillmentResult instantiates a new UtilityFulfillmentResult object
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewUtilityFulfillmentResult() *UtilityFulfillmentResult {
+func NewUtilityFulfillmentResult(details UtilityFulfillmentDetails) *UtilityFulfillmentResult {
 	this := UtilityFulfillmentResult{}
+	this.Details = details
 	return &this
 }
 
@@ -84,36 +89,28 @@ func (o *UtilityFulfillmentResult) UnsetDeliveredValue() {
 	o.DeliveredValue.Unset()
 }
 
-// GetDetails returns the Details field value if set, zero value otherwise.
+// GetDetails returns the Details field value
 func (o *UtilityFulfillmentResult) GetDetails() UtilityFulfillmentDetails {
-	if o == nil || IsNil(o.Details) {
+	if o == nil {
 		var ret UtilityFulfillmentDetails
 		return ret
 	}
-	return *o.Details
+
+	return o.Details
 }
 
-// GetDetailsOk returns a tuple with the Details field value if set, nil otherwise
+// GetDetailsOk returns a tuple with the Details field value
 // and a boolean to check if the value has been set.
 func (o *UtilityFulfillmentResult) GetDetailsOk() (*UtilityFulfillmentDetails, bool) {
-	if o == nil || IsNil(o.Details) {
+	if o == nil {
 		return nil, false
 	}
-	return o.Details, true
+	return &o.Details, true
 }
 
-// HasDetails returns a boolean if a field has been set.
-func (o *UtilityFulfillmentResult) HasDetails() bool {
-	if o != nil && !IsNil(o.Details) {
-		return true
-	}
-
-	return false
-}
-
-// SetDetails gets a reference to the given UtilityFulfillmentDetails and assigns it to the Details field.
+// SetDetails sets field value
 func (o *UtilityFulfillmentResult) SetDetails(v UtilityFulfillmentDetails) {
-	o.Details = &v
+	o.Details = v
 }
 
 func (o UtilityFulfillmentResult) MarshalJSON() ([]byte, error) {
@@ -129,10 +126,44 @@ func (o UtilityFulfillmentResult) ToMap() (map[string]interface{}, error) {
 	if o.DeliveredValue.IsSet() {
 		toSerialize["deliveredValue"] = o.DeliveredValue.Get()
 	}
-	if !IsNil(o.Details) {
-		toSerialize["details"] = o.Details
-	}
+	toSerialize["details"] = o.Details
 	return toSerialize, nil
+}
+
+func (o *UtilityFulfillmentResult) UnmarshalJSON(data []byte) (err error) {
+	// This validates that all required properties are included in the JSON object
+	// by unmarshalling the object into a generic map with string keys and checking
+	// that every required field exists as a key in the generic map.
+	requiredProperties := []string{
+		"details",
+	}
+
+	allProperties := make(map[string]interface{})
+
+	err = json.Unmarshal(data, &allProperties)
+
+	if err != nil {
+		return err;
+	}
+
+	for _, requiredProperty := range(requiredProperties) {
+		if _, exists := allProperties[requiredProperty]; !exists {
+			return fmt.Errorf("no value given for required property %v", requiredProperty)
+		}
+	}
+
+	varUtilityFulfillmentResult := _UtilityFulfillmentResult{}
+
+	decoder := json.NewDecoder(bytes.NewReader(data))
+	err = decoder.Decode(&varUtilityFulfillmentResult)
+
+	if err != nil {
+		return err
+	}
+
+	*o = UtilityFulfillmentResult(varUtilityFulfillmentResult)
+
+	return err
 }
 
 type NullableUtilityFulfillmentResult struct {

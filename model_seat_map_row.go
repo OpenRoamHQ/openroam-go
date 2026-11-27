@@ -13,6 +13,8 @@ package openroam
 
 import (
 	"encoding/json"
+	"bytes"
+	"fmt"
 )
 
 // checks if the SeatMapRow type satisfies the MappedNullable interface at compile time
@@ -20,16 +22,20 @@ var _ MappedNullable = &SeatMapRow{}
 
 // SeatMapRow struct for SeatMapRow
 type SeatMapRow struct {
-	Number *int32 `json:"number,omitempty"`
-	Sections []SeatMapSection `json:"sections,omitempty"`
+	Number int32 `json:"number"`
+	Sections []SeatMapSection `json:"sections"`
 }
+
+type _SeatMapRow SeatMapRow
 
 // NewSeatMapRow instantiates a new SeatMapRow object
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewSeatMapRow() *SeatMapRow {
+func NewSeatMapRow(number int32, sections []SeatMapSection) *SeatMapRow {
 	this := SeatMapRow{}
+	this.Number = number
+	this.Sections = sections
 	return &this
 }
 
@@ -41,66 +47,50 @@ func NewSeatMapRowWithDefaults() *SeatMapRow {
 	return &this
 }
 
-// GetNumber returns the Number field value if set, zero value otherwise.
+// GetNumber returns the Number field value
 func (o *SeatMapRow) GetNumber() int32 {
-	if o == nil || IsNil(o.Number) {
+	if o == nil {
 		var ret int32
 		return ret
 	}
-	return *o.Number
+
+	return o.Number
 }
 
-// GetNumberOk returns a tuple with the Number field value if set, nil otherwise
+// GetNumberOk returns a tuple with the Number field value
 // and a boolean to check if the value has been set.
 func (o *SeatMapRow) GetNumberOk() (*int32, bool) {
-	if o == nil || IsNil(o.Number) {
+	if o == nil {
 		return nil, false
 	}
-	return o.Number, true
+	return &o.Number, true
 }
 
-// HasNumber returns a boolean if a field has been set.
-func (o *SeatMapRow) HasNumber() bool {
-	if o != nil && !IsNil(o.Number) {
-		return true
-	}
-
-	return false
-}
-
-// SetNumber gets a reference to the given int32 and assigns it to the Number field.
+// SetNumber sets field value
 func (o *SeatMapRow) SetNumber(v int32) {
-	o.Number = &v
+	o.Number = v
 }
 
-// GetSections returns the Sections field value if set, zero value otherwise.
+// GetSections returns the Sections field value
 func (o *SeatMapRow) GetSections() []SeatMapSection {
-	if o == nil || IsNil(o.Sections) {
+	if o == nil {
 		var ret []SeatMapSection
 		return ret
 	}
+
 	return o.Sections
 }
 
-// GetSectionsOk returns a tuple with the Sections field value if set, nil otherwise
+// GetSectionsOk returns a tuple with the Sections field value
 // and a boolean to check if the value has been set.
 func (o *SeatMapRow) GetSectionsOk() ([]SeatMapSection, bool) {
-	if o == nil || IsNil(o.Sections) {
+	if o == nil {
 		return nil, false
 	}
 	return o.Sections, true
 }
 
-// HasSections returns a boolean if a field has been set.
-func (o *SeatMapRow) HasSections() bool {
-	if o != nil && !IsNil(o.Sections) {
-		return true
-	}
-
-	return false
-}
-
-// SetSections gets a reference to the given []SeatMapSection and assigns it to the Sections field.
+// SetSections sets field value
 func (o *SeatMapRow) SetSections(v []SeatMapSection) {
 	o.Sections = v
 }
@@ -115,13 +105,46 @@ func (o SeatMapRow) MarshalJSON() ([]byte, error) {
 
 func (o SeatMapRow) ToMap() (map[string]interface{}, error) {
 	toSerialize := map[string]interface{}{}
-	if !IsNil(o.Number) {
-		toSerialize["number"] = o.Number
-	}
-	if !IsNil(o.Sections) {
-		toSerialize["sections"] = o.Sections
-	}
+	toSerialize["number"] = o.Number
+	toSerialize["sections"] = o.Sections
 	return toSerialize, nil
+}
+
+func (o *SeatMapRow) UnmarshalJSON(data []byte) (err error) {
+	// This validates that all required properties are included in the JSON object
+	// by unmarshalling the object into a generic map with string keys and checking
+	// that every required field exists as a key in the generic map.
+	requiredProperties := []string{
+		"number",
+		"sections",
+	}
+
+	allProperties := make(map[string]interface{})
+
+	err = json.Unmarshal(data, &allProperties)
+
+	if err != nil {
+		return err;
+	}
+
+	for _, requiredProperty := range(requiredProperties) {
+		if _, exists := allProperties[requiredProperty]; !exists {
+			return fmt.Errorf("no value given for required property %v", requiredProperty)
+		}
+	}
+
+	varSeatMapRow := _SeatMapRow{}
+
+	decoder := json.NewDecoder(bytes.NewReader(data))
+	err = decoder.Decode(&varSeatMapRow)
+
+	if err != nil {
+		return err
+	}
+
+	*o = SeatMapRow(varSeatMapRow)
+
+	return err
 }
 
 type NullableSeatMapRow struct {

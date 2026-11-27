@@ -13,25 +13,37 @@ package openroam
 
 import (
 	"encoding/json"
+	"bytes"
+	"fmt"
 )
 
 // checks if the EsimSmsAllowance type satisfies the MappedNullable interface at compile time
 var _ MappedNullable = &EsimSmsAllowance{}
 
-// EsimSmsAllowance struct for EsimSmsAllowance
+// EsimSmsAllowance A plan's SMS allowance. Text messages are always counted one by one.
 type EsimSmsAllowance struct {
-	SmsAmount *int64 `json:"smsAmount,omitempty"`
-	SmsUnit NullableString `json:"smsUnit,omitempty"`
-	SmsLabel NullableString `json:"smsLabel,omitempty"`
-	SmsType NullableString `json:"smsType,omitempty"`
+	// The number of messages; null when it is unlimited or the plan does not state it.
+	Amount NullableInt64 `json:"amount,omitempty"`
+	// Always `messages`.
+	Unit string `json:"unit"`
+	// Whether messages are unlimited; `amount` is then null.
+	IsUnlimited bool `json:"isUnlimited"`
+	// The allowance as the plan displays it, or null.
+	Label NullableString `json:"label,omitempty"`
+	// Which messages the allowance covers, as the plan states it, for example `all`.
+	Type NullableString `json:"type,omitempty"`
 }
+
+type _EsimSmsAllowance EsimSmsAllowance
 
 // NewEsimSmsAllowance instantiates a new EsimSmsAllowance object
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewEsimSmsAllowance() *EsimSmsAllowance {
+func NewEsimSmsAllowance(unit string, isUnlimited bool) *EsimSmsAllowance {
 	this := EsimSmsAllowance{}
+	this.Unit = unit
+	this.IsUnlimited = isUnlimited
 	return &this
 }
 
@@ -43,162 +55,178 @@ func NewEsimSmsAllowanceWithDefaults() *EsimSmsAllowance {
 	return &this
 }
 
-// GetSmsAmount returns the SmsAmount field value if set, zero value otherwise.
-func (o *EsimSmsAllowance) GetSmsAmount() int64 {
-	if o == nil || IsNil(o.SmsAmount) {
+// GetAmount returns the Amount field value if set, zero value otherwise (both if not set or set to explicit null).
+func (o *EsimSmsAllowance) GetAmount() int64 {
+	if o == nil || IsNil(o.Amount.Get()) {
 		var ret int64
 		return ret
 	}
-	return *o.SmsAmount
+	return *o.Amount.Get()
 }
 
-// GetSmsAmountOk returns a tuple with the SmsAmount field value if set, nil otherwise
-// and a boolean to check if the value has been set.
-func (o *EsimSmsAllowance) GetSmsAmountOk() (*int64, bool) {
-	if o == nil || IsNil(o.SmsAmount) {
-		return nil, false
-	}
-	return o.SmsAmount, true
-}
-
-// HasSmsAmount returns a boolean if a field has been set.
-func (o *EsimSmsAllowance) HasSmsAmount() bool {
-	if o != nil && !IsNil(o.SmsAmount) {
-		return true
-	}
-
-	return false
-}
-
-// SetSmsAmount gets a reference to the given int64 and assigns it to the SmsAmount field.
-func (o *EsimSmsAllowance) SetSmsAmount(v int64) {
-	o.SmsAmount = &v
-}
-
-// GetSmsUnit returns the SmsUnit field value if set, zero value otherwise (both if not set or set to explicit null).
-func (o *EsimSmsAllowance) GetSmsUnit() string {
-	if o == nil || IsNil(o.SmsUnit.Get()) {
-		var ret string
-		return ret
-	}
-	return *o.SmsUnit.Get()
-}
-
-// GetSmsUnitOk returns a tuple with the SmsUnit field value if set, nil otherwise
+// GetAmountOk returns a tuple with the Amount field value if set, nil otherwise
 // and a boolean to check if the value has been set.
 // NOTE: If the value is an explicit nil, `nil, true` will be returned
-func (o *EsimSmsAllowance) GetSmsUnitOk() (*string, bool) {
+func (o *EsimSmsAllowance) GetAmountOk() (*int64, bool) {
 	if o == nil {
 		return nil, false
 	}
-	return o.SmsUnit.Get(), o.SmsUnit.IsSet()
+	return o.Amount.Get(), o.Amount.IsSet()
 }
 
-// HasSmsUnit returns a boolean if a field has been set.
-func (o *EsimSmsAllowance) HasSmsUnit() bool {
-	if o != nil && o.SmsUnit.IsSet() {
+// HasAmount returns a boolean if a field has been set.
+func (o *EsimSmsAllowance) HasAmount() bool {
+	if o != nil && o.Amount.IsSet() {
 		return true
 	}
 
 	return false
 }
 
-// SetSmsUnit gets a reference to the given NullableString and assigns it to the SmsUnit field.
-func (o *EsimSmsAllowance) SetSmsUnit(v string) {
-	o.SmsUnit.Set(&v)
+// SetAmount gets a reference to the given NullableInt64 and assigns it to the Amount field.
+func (o *EsimSmsAllowance) SetAmount(v int64) {
+	o.Amount.Set(&v)
 }
-// SetSmsUnitNil sets the value for SmsUnit to be an explicit nil
-func (o *EsimSmsAllowance) SetSmsUnitNil() {
-	o.SmsUnit.Set(nil)
-}
-
-// UnsetSmsUnit ensures that no value is present for SmsUnit, not even an explicit nil
-func (o *EsimSmsAllowance) UnsetSmsUnit() {
-	o.SmsUnit.Unset()
+// SetAmountNil sets the value for Amount to be an explicit nil
+func (o *EsimSmsAllowance) SetAmountNil() {
+	o.Amount.Set(nil)
 }
 
-// GetSmsLabel returns the SmsLabel field value if set, zero value otherwise (both if not set or set to explicit null).
-func (o *EsimSmsAllowance) GetSmsLabel() string {
-	if o == nil || IsNil(o.SmsLabel.Get()) {
+// UnsetAmount ensures that no value is present for Amount, not even an explicit nil
+func (o *EsimSmsAllowance) UnsetAmount() {
+	o.Amount.Unset()
+}
+
+// GetUnit returns the Unit field value
+func (o *EsimSmsAllowance) GetUnit() string {
+	if o == nil {
 		var ret string
 		return ret
 	}
-	return *o.SmsLabel.Get()
+
+	return o.Unit
 }
 
-// GetSmsLabelOk returns a tuple with the SmsLabel field value if set, nil otherwise
+// GetUnitOk returns a tuple with the Unit field value
 // and a boolean to check if the value has been set.
-// NOTE: If the value is an explicit nil, `nil, true` will be returned
-func (o *EsimSmsAllowance) GetSmsLabelOk() (*string, bool) {
+func (o *EsimSmsAllowance) GetUnitOk() (*string, bool) {
 	if o == nil {
 		return nil, false
 	}
-	return o.SmsLabel.Get(), o.SmsLabel.IsSet()
+	return &o.Unit, true
 }
 
-// HasSmsLabel returns a boolean if a field has been set.
-func (o *EsimSmsAllowance) HasSmsLabel() bool {
-	if o != nil && o.SmsLabel.IsSet() {
-		return true
+// SetUnit sets field value
+func (o *EsimSmsAllowance) SetUnit(v string) {
+	o.Unit = v
+}
+
+// GetIsUnlimited returns the IsUnlimited field value
+func (o *EsimSmsAllowance) GetIsUnlimited() bool {
+	if o == nil {
+		var ret bool
+		return ret
 	}
 
-	return false
+	return o.IsUnlimited
 }
 
-// SetSmsLabel gets a reference to the given NullableString and assigns it to the SmsLabel field.
-func (o *EsimSmsAllowance) SetSmsLabel(v string) {
-	o.SmsLabel.Set(&v)
-}
-// SetSmsLabelNil sets the value for SmsLabel to be an explicit nil
-func (o *EsimSmsAllowance) SetSmsLabelNil() {
-	o.SmsLabel.Set(nil)
-}
-
-// UnsetSmsLabel ensures that no value is present for SmsLabel, not even an explicit nil
-func (o *EsimSmsAllowance) UnsetSmsLabel() {
-	o.SmsLabel.Unset()
+// GetIsUnlimitedOk returns a tuple with the IsUnlimited field value
+// and a boolean to check if the value has been set.
+func (o *EsimSmsAllowance) GetIsUnlimitedOk() (*bool, bool) {
+	if o == nil {
+		return nil, false
+	}
+	return &o.IsUnlimited, true
 }
 
-// GetSmsType returns the SmsType field value if set, zero value otherwise (both if not set or set to explicit null).
-func (o *EsimSmsAllowance) GetSmsType() string {
-	if o == nil || IsNil(o.SmsType.Get()) {
+// SetIsUnlimited sets field value
+func (o *EsimSmsAllowance) SetIsUnlimited(v bool) {
+	o.IsUnlimited = v
+}
+
+// GetLabel returns the Label field value if set, zero value otherwise (both if not set or set to explicit null).
+func (o *EsimSmsAllowance) GetLabel() string {
+	if o == nil || IsNil(o.Label.Get()) {
 		var ret string
 		return ret
 	}
-	return *o.SmsType.Get()
+	return *o.Label.Get()
 }
 
-// GetSmsTypeOk returns a tuple with the SmsType field value if set, nil otherwise
+// GetLabelOk returns a tuple with the Label field value if set, nil otherwise
 // and a boolean to check if the value has been set.
 // NOTE: If the value is an explicit nil, `nil, true` will be returned
-func (o *EsimSmsAllowance) GetSmsTypeOk() (*string, bool) {
+func (o *EsimSmsAllowance) GetLabelOk() (*string, bool) {
 	if o == nil {
 		return nil, false
 	}
-	return o.SmsType.Get(), o.SmsType.IsSet()
+	return o.Label.Get(), o.Label.IsSet()
 }
 
-// HasSmsType returns a boolean if a field has been set.
-func (o *EsimSmsAllowance) HasSmsType() bool {
-	if o != nil && o.SmsType.IsSet() {
+// HasLabel returns a boolean if a field has been set.
+func (o *EsimSmsAllowance) HasLabel() bool {
+	if o != nil && o.Label.IsSet() {
 		return true
 	}
 
 	return false
 }
 
-// SetSmsType gets a reference to the given NullableString and assigns it to the SmsType field.
-func (o *EsimSmsAllowance) SetSmsType(v string) {
-	o.SmsType.Set(&v)
+// SetLabel gets a reference to the given NullableString and assigns it to the Label field.
+func (o *EsimSmsAllowance) SetLabel(v string) {
+	o.Label.Set(&v)
 }
-// SetSmsTypeNil sets the value for SmsType to be an explicit nil
-func (o *EsimSmsAllowance) SetSmsTypeNil() {
-	o.SmsType.Set(nil)
+// SetLabelNil sets the value for Label to be an explicit nil
+func (o *EsimSmsAllowance) SetLabelNil() {
+	o.Label.Set(nil)
 }
 
-// UnsetSmsType ensures that no value is present for SmsType, not even an explicit nil
-func (o *EsimSmsAllowance) UnsetSmsType() {
-	o.SmsType.Unset()
+// UnsetLabel ensures that no value is present for Label, not even an explicit nil
+func (o *EsimSmsAllowance) UnsetLabel() {
+	o.Label.Unset()
+}
+
+// GetType returns the Type field value if set, zero value otherwise (both if not set or set to explicit null).
+func (o *EsimSmsAllowance) GetType() string {
+	if o == nil || IsNil(o.Type.Get()) {
+		var ret string
+		return ret
+	}
+	return *o.Type.Get()
+}
+
+// GetTypeOk returns a tuple with the Type field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+// NOTE: If the value is an explicit nil, `nil, true` will be returned
+func (o *EsimSmsAllowance) GetTypeOk() (*string, bool) {
+	if o == nil {
+		return nil, false
+	}
+	return o.Type.Get(), o.Type.IsSet()
+}
+
+// HasType returns a boolean if a field has been set.
+func (o *EsimSmsAllowance) HasType() bool {
+	if o != nil && o.Type.IsSet() {
+		return true
+	}
+
+	return false
+}
+
+// SetType gets a reference to the given NullableString and assigns it to the Type field.
+func (o *EsimSmsAllowance) SetType(v string) {
+	o.Type.Set(&v)
+}
+// SetTypeNil sets the value for Type to be an explicit nil
+func (o *EsimSmsAllowance) SetTypeNil() {
+	o.Type.Set(nil)
+}
+
+// UnsetType ensures that no value is present for Type, not even an explicit nil
+func (o *EsimSmsAllowance) UnsetType() {
+	o.Type.Unset()
 }
 
 func (o EsimSmsAllowance) MarshalJSON() ([]byte, error) {
@@ -211,19 +239,55 @@ func (o EsimSmsAllowance) MarshalJSON() ([]byte, error) {
 
 func (o EsimSmsAllowance) ToMap() (map[string]interface{}, error) {
 	toSerialize := map[string]interface{}{}
-	if !IsNil(o.SmsAmount) {
-		toSerialize["smsAmount"] = o.SmsAmount
+	if o.Amount.IsSet() {
+		toSerialize["amount"] = o.Amount.Get()
 	}
-	if o.SmsUnit.IsSet() {
-		toSerialize["smsUnit"] = o.SmsUnit.Get()
+	toSerialize["unit"] = o.Unit
+	toSerialize["isUnlimited"] = o.IsUnlimited
+	if o.Label.IsSet() {
+		toSerialize["label"] = o.Label.Get()
 	}
-	if o.SmsLabel.IsSet() {
-		toSerialize["smsLabel"] = o.SmsLabel.Get()
-	}
-	if o.SmsType.IsSet() {
-		toSerialize["smsType"] = o.SmsType.Get()
+	if o.Type.IsSet() {
+		toSerialize["type"] = o.Type.Get()
 	}
 	return toSerialize, nil
+}
+
+func (o *EsimSmsAllowance) UnmarshalJSON(data []byte) (err error) {
+	// This validates that all required properties are included in the JSON object
+	// by unmarshalling the object into a generic map with string keys and checking
+	// that every required field exists as a key in the generic map.
+	requiredProperties := []string{
+		"unit",
+		"isUnlimited",
+	}
+
+	allProperties := make(map[string]interface{})
+
+	err = json.Unmarshal(data, &allProperties)
+
+	if err != nil {
+		return err;
+	}
+
+	for _, requiredProperty := range(requiredProperties) {
+		if _, exists := allProperties[requiredProperty]; !exists {
+			return fmt.Errorf("no value given for required property %v", requiredProperty)
+		}
+	}
+
+	varEsimSmsAllowance := _EsimSmsAllowance{}
+
+	decoder := json.NewDecoder(bytes.NewReader(data))
+	err = decoder.Decode(&varEsimSmsAllowance)
+
+	if err != nil {
+		return err
+	}
+
+	*o = EsimSmsAllowance(varEsimSmsAllowance)
+
+	return err
 }
 
 type NullableEsimSmsAllowance struct {

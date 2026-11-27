@@ -430,7 +430,6 @@ func (o *Airport) UnmarshalJSON(data []byte) (err error) {
 	varAirport := _Airport{}
 
 	decoder := json.NewDecoder(bytes.NewReader(data))
-	decoder.DisallowUnknownFields()
 	err = decoder.Decode(&varAirport)
 
 	if err != nil {

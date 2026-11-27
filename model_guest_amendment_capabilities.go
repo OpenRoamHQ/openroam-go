@@ -13,6 +13,8 @@ package openroam
 
 import (
 	"encoding/json"
+	"bytes"
+	"fmt"
 )
 
 // checks if the GuestAmendmentCapabilities type satisfies the MappedNullable interface at compile time
@@ -20,20 +22,27 @@ var _ MappedNullable = &GuestAmendmentCapabilities{}
 
 // GuestAmendmentCapabilities What may change about the guests inside a room.
 type GuestAmendmentCapabilities struct {
-	AddMore *bool `json:"addMore,omitempty"`
-	Remove *bool `json:"remove,omitempty"`
+	AddMore bool `json:"addMore"`
+	Remove bool `json:"remove"`
 	// A guest may switch between adult and child.
-	GuestType *bool `json:"guestType,omitempty"`
-	Names *bool `json:"names,omitempty"`
-	Ages *bool `json:"ages,omitempty"`
+	GuestType bool `json:"guestType"`
+	Names bool `json:"names"`
+	Ages bool `json:"ages"`
 }
+
+type _GuestAmendmentCapabilities GuestAmendmentCapabilities
 
 // NewGuestAmendmentCapabilities instantiates a new GuestAmendmentCapabilities object
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewGuestAmendmentCapabilities() *GuestAmendmentCapabilities {
+func NewGuestAmendmentCapabilities(addMore bool, remove bool, guestType bool, names bool, ages bool) *GuestAmendmentCapabilities {
 	this := GuestAmendmentCapabilities{}
+	this.AddMore = addMore
+	this.Remove = remove
+	this.GuestType = guestType
+	this.Names = names
+	this.Ages = ages
 	return &this
 }
 
@@ -45,164 +54,124 @@ func NewGuestAmendmentCapabilitiesWithDefaults() *GuestAmendmentCapabilities {
 	return &this
 }
 
-// GetAddMore returns the AddMore field value if set, zero value otherwise.
+// GetAddMore returns the AddMore field value
 func (o *GuestAmendmentCapabilities) GetAddMore() bool {
-	if o == nil || IsNil(o.AddMore) {
+	if o == nil {
 		var ret bool
 		return ret
 	}
-	return *o.AddMore
+
+	return o.AddMore
 }
 
-// GetAddMoreOk returns a tuple with the AddMore field value if set, nil otherwise
+// GetAddMoreOk returns a tuple with the AddMore field value
 // and a boolean to check if the value has been set.
 func (o *GuestAmendmentCapabilities) GetAddMoreOk() (*bool, bool) {
-	if o == nil || IsNil(o.AddMore) {
+	if o == nil {
 		return nil, false
 	}
-	return o.AddMore, true
+	return &o.AddMore, true
 }
 
-// HasAddMore returns a boolean if a field has been set.
-func (o *GuestAmendmentCapabilities) HasAddMore() bool {
-	if o != nil && !IsNil(o.AddMore) {
-		return true
-	}
-
-	return false
-}
-
-// SetAddMore gets a reference to the given bool and assigns it to the AddMore field.
+// SetAddMore sets field value
 func (o *GuestAmendmentCapabilities) SetAddMore(v bool) {
-	o.AddMore = &v
+	o.AddMore = v
 }
 
-// GetRemove returns the Remove field value if set, zero value otherwise.
+// GetRemove returns the Remove field value
 func (o *GuestAmendmentCapabilities) GetRemove() bool {
-	if o == nil || IsNil(o.Remove) {
+	if o == nil {
 		var ret bool
 		return ret
 	}
-	return *o.Remove
+
+	return o.Remove
 }
 
-// GetRemoveOk returns a tuple with the Remove field value if set, nil otherwise
+// GetRemoveOk returns a tuple with the Remove field value
 // and a boolean to check if the value has been set.
 func (o *GuestAmendmentCapabilities) GetRemoveOk() (*bool, bool) {
-	if o == nil || IsNil(o.Remove) {
+	if o == nil {
 		return nil, false
 	}
-	return o.Remove, true
+	return &o.Remove, true
 }
 
-// HasRemove returns a boolean if a field has been set.
-func (o *GuestAmendmentCapabilities) HasRemove() bool {
-	if o != nil && !IsNil(o.Remove) {
-		return true
-	}
-
-	return false
-}
-
-// SetRemove gets a reference to the given bool and assigns it to the Remove field.
+// SetRemove sets field value
 func (o *GuestAmendmentCapabilities) SetRemove(v bool) {
-	o.Remove = &v
+	o.Remove = v
 }
 
-// GetGuestType returns the GuestType field value if set, zero value otherwise.
+// GetGuestType returns the GuestType field value
 func (o *GuestAmendmentCapabilities) GetGuestType() bool {
-	if o == nil || IsNil(o.GuestType) {
+	if o == nil {
 		var ret bool
 		return ret
 	}
-	return *o.GuestType
+
+	return o.GuestType
 }
 
-// GetGuestTypeOk returns a tuple with the GuestType field value if set, nil otherwise
+// GetGuestTypeOk returns a tuple with the GuestType field value
 // and a boolean to check if the value has been set.
 func (o *GuestAmendmentCapabilities) GetGuestTypeOk() (*bool, bool) {
-	if o == nil || IsNil(o.GuestType) {
+	if o == nil {
 		return nil, false
 	}
-	return o.GuestType, true
+	return &o.GuestType, true
 }
 
-// HasGuestType returns a boolean if a field has been set.
-func (o *GuestAmendmentCapabilities) HasGuestType() bool {
-	if o != nil && !IsNil(o.GuestType) {
-		return true
-	}
-
-	return false
-}
-
-// SetGuestType gets a reference to the given bool and assigns it to the GuestType field.
+// SetGuestType sets field value
 func (o *GuestAmendmentCapabilities) SetGuestType(v bool) {
-	o.GuestType = &v
+	o.GuestType = v
 }
 
-// GetNames returns the Names field value if set, zero value otherwise.
+// GetNames returns the Names field value
 func (o *GuestAmendmentCapabilities) GetNames() bool {
-	if o == nil || IsNil(o.Names) {
+	if o == nil {
 		var ret bool
 		return ret
 	}
-	return *o.Names
+
+	return o.Names
 }
 
-// GetNamesOk returns a tuple with the Names field value if set, nil otherwise
+// GetNamesOk returns a tuple with the Names field value
 // and a boolean to check if the value has been set.
 func (o *GuestAmendmentCapabilities) GetNamesOk() (*bool, bool) {
-	if o == nil || IsNil(o.Names) {
+	if o == nil {
 		return nil, false
 	}
-	return o.Names, true
+	return &o.Names, true
 }
 
-// HasNames returns a boolean if a field has been set.
-func (o *GuestAmendmentCapabilities) HasNames() bool {
-	if o != nil && !IsNil(o.Names) {
-		return true
-	}
-
-	return false
-}
-
-// SetNames gets a reference to the given bool and assigns it to the Names field.
+// SetNames sets field value
 func (o *GuestAmendmentCapabilities) SetNames(v bool) {
-	o.Names = &v
+	o.Names = v
 }
 
-// GetAges returns the Ages field value if set, zero value otherwise.
+// GetAges returns the Ages field value
 func (o *GuestAmendmentCapabilities) GetAges() bool {
-	if o == nil || IsNil(o.Ages) {
+	if o == nil {
 		var ret bool
 		return ret
 	}
-	return *o.Ages
+
+	return o.Ages
 }
 
-// GetAgesOk returns a tuple with the Ages field value if set, nil otherwise
+// GetAgesOk returns a tuple with the Ages field value
 // and a boolean to check if the value has been set.
 func (o *GuestAmendmentCapabilities) GetAgesOk() (*bool, bool) {
-	if o == nil || IsNil(o.Ages) {
+	if o == nil {
 		return nil, false
 	}
-	return o.Ages, true
+	return &o.Ages, true
 }
 
-// HasAges returns a boolean if a field has been set.
-func (o *GuestAmendmentCapabilities) HasAges() bool {
-	if o != nil && !IsNil(o.Ages) {
-		return true
-	}
-
-	return false
-}
-
-// SetAges gets a reference to the given bool and assigns it to the Ages field.
+// SetAges sets field value
 func (o *GuestAmendmentCapabilities) SetAges(v bool) {
-	o.Ages = &v
+	o.Ages = v
 }
 
 func (o GuestAmendmentCapabilities) MarshalJSON() ([]byte, error) {
@@ -215,22 +184,52 @@ func (o GuestAmendmentCapabilities) MarshalJSON() ([]byte, error) {
 
 func (o GuestAmendmentCapabilities) ToMap() (map[string]interface{}, error) {
 	toSerialize := map[string]interface{}{}
-	if !IsNil(o.AddMore) {
-		toSerialize["addMore"] = o.AddMore
-	}
-	if !IsNil(o.Remove) {
-		toSerialize["remove"] = o.Remove
-	}
-	if !IsNil(o.GuestType) {
-		toSerialize["guestType"] = o.GuestType
-	}
-	if !IsNil(o.Names) {
-		toSerialize["names"] = o.Names
-	}
-	if !IsNil(o.Ages) {
-		toSerialize["ages"] = o.Ages
-	}
+	toSerialize["addMore"] = o.AddMore
+	toSerialize["remove"] = o.Remove
+	toSerialize["guestType"] = o.GuestType
+	toSerialize["names"] = o.Names
+	toSerialize["ages"] = o.Ages
 	return toSerialize, nil
+}
+
+func (o *GuestAmendmentCapabilities) UnmarshalJSON(data []byte) (err error) {
+	// This validates that all required properties are included in the JSON object
+	// by unmarshalling the object into a generic map with string keys and checking
+	// that every required field exists as a key in the generic map.
+	requiredProperties := []string{
+		"addMore",
+		"remove",
+		"guestType",
+		"names",
+		"ages",
+	}
+
+	allProperties := make(map[string]interface{})
+
+	err = json.Unmarshal(data, &allProperties)
+
+	if err != nil {
+		return err;
+	}
+
+	for _, requiredProperty := range(requiredProperties) {
+		if _, exists := allProperties[requiredProperty]; !exists {
+			return fmt.Errorf("no value given for required property %v", requiredProperty)
+		}
+	}
+
+	varGuestAmendmentCapabilities := _GuestAmendmentCapabilities{}
+
+	decoder := json.NewDecoder(bytes.NewReader(data))
+	err = decoder.Decode(&varGuestAmendmentCapabilities)
+
+	if err != nil {
+		return err
+	}
+
+	*o = GuestAmendmentCapabilities(varGuestAmendmentCapabilities)
+
+	return err
 }
 
 type NullableGuestAmendmentCapabilities struct {

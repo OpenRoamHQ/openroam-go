@@ -13,6 +13,8 @@ package openroam
 
 import (
 	"encoding/json"
+	"bytes"
+	"fmt"
 )
 
 // checks if the FlightOffer type satisfies the MappedNullable interface at compile time
@@ -21,23 +23,32 @@ var _ MappedNullable = &FlightOffer{}
 // FlightOffer One fare bookable on the itinerary. `publicId` is what quote, order and the seat map take; it expires at `details.expiresAt`. Flights sell no monetary value, so there is no `value`.
 type FlightOffer struct {
 	// The fare's opaque id: quote, order and the seat map take it.
-	PublicId *string `json:"publicId,omitempty"`
+	PublicId string `json:"publicId"`
 	// The fare's brand with its cabin, for example \"Economy Basic\"; the cabin alone when the fare has no brand.
-	Name *string `json:"name,omitempty"`
+	Name string `json:"name"`
 	// Always null.
 	Description NullableString `json:"description,omitempty"`
 	// Indicative price for all passengers, in the search currency.
-	Price *OfferPrice `json:"price,omitempty"`
+	Price OfferPrice `json:"price"`
+	// The airline's taxes inside `price`: always `included`, with the airline's tax amount when it states one. Search has no lines; a quote lists them.
+	Taxes TaxSummary `json:"taxes"`
 	// The fare's terms.
-	Details *FlightOfferDetails `json:"details,omitempty"`
+	Details FlightOfferDetails `json:"details"`
 }
+
+type _FlightOffer FlightOffer
 
 // NewFlightOffer instantiates a new FlightOffer object
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewFlightOffer() *FlightOffer {
+func NewFlightOffer(publicId string, name string, price OfferPrice, taxes TaxSummary, details FlightOfferDetails) *FlightOffer {
 	this := FlightOffer{}
+	this.PublicId = publicId
+	this.Name = name
+	this.Price = price
+	this.Taxes = taxes
+	this.Details = details
 	return &this
 }
 
@@ -49,68 +60,52 @@ func NewFlightOfferWithDefaults() *FlightOffer {
 	return &this
 }
 
-// GetPublicId returns the PublicId field value if set, zero value otherwise.
+// GetPublicId returns the PublicId field value
 func (o *FlightOffer) GetPublicId() string {
-	if o == nil || IsNil(o.PublicId) {
+	if o == nil {
 		var ret string
 		return ret
 	}
-	return *o.PublicId
+
+	return o.PublicId
 }
 
-// GetPublicIdOk returns a tuple with the PublicId field value if set, nil otherwise
+// GetPublicIdOk returns a tuple with the PublicId field value
 // and a boolean to check if the value has been set.
 func (o *FlightOffer) GetPublicIdOk() (*string, bool) {
-	if o == nil || IsNil(o.PublicId) {
+	if o == nil {
 		return nil, false
 	}
-	return o.PublicId, true
+	return &o.PublicId, true
 }
 
-// HasPublicId returns a boolean if a field has been set.
-func (o *FlightOffer) HasPublicId() bool {
-	if o != nil && !IsNil(o.PublicId) {
-		return true
-	}
-
-	return false
-}
-
-// SetPublicId gets a reference to the given string and assigns it to the PublicId field.
+// SetPublicId sets field value
 func (o *FlightOffer) SetPublicId(v string) {
-	o.PublicId = &v
+	o.PublicId = v
 }
 
-// GetName returns the Name field value if set, zero value otherwise.
+// GetName returns the Name field value
 func (o *FlightOffer) GetName() string {
-	if o == nil || IsNil(o.Name) {
+	if o == nil {
 		var ret string
 		return ret
 	}
-	return *o.Name
+
+	return o.Name
 }
 
-// GetNameOk returns a tuple with the Name field value if set, nil otherwise
+// GetNameOk returns a tuple with the Name field value
 // and a boolean to check if the value has been set.
 func (o *FlightOffer) GetNameOk() (*string, bool) {
-	if o == nil || IsNil(o.Name) {
+	if o == nil {
 		return nil, false
 	}
-	return o.Name, true
+	return &o.Name, true
 }
 
-// HasName returns a boolean if a field has been set.
-func (o *FlightOffer) HasName() bool {
-	if o != nil && !IsNil(o.Name) {
-		return true
-	}
-
-	return false
-}
-
-// SetName gets a reference to the given string and assigns it to the Name field.
+// SetName sets field value
 func (o *FlightOffer) SetName(v string) {
-	o.Name = &v
+	o.Name = v
 }
 
 // GetDescription returns the Description field value if set, zero value otherwise (both if not set or set to explicit null).
@@ -155,68 +150,76 @@ func (o *FlightOffer) UnsetDescription() {
 	o.Description.Unset()
 }
 
-// GetPrice returns the Price field value if set, zero value otherwise.
+// GetPrice returns the Price field value
 func (o *FlightOffer) GetPrice() OfferPrice {
-	if o == nil || IsNil(o.Price) {
+	if o == nil {
 		var ret OfferPrice
 		return ret
 	}
-	return *o.Price
+
+	return o.Price
 }
 
-// GetPriceOk returns a tuple with the Price field value if set, nil otherwise
+// GetPriceOk returns a tuple with the Price field value
 // and a boolean to check if the value has been set.
 func (o *FlightOffer) GetPriceOk() (*OfferPrice, bool) {
-	if o == nil || IsNil(o.Price) {
+	if o == nil {
 		return nil, false
 	}
-	return o.Price, true
+	return &o.Price, true
 }
 
-// HasPrice returns a boolean if a field has been set.
-func (o *FlightOffer) HasPrice() bool {
-	if o != nil && !IsNil(o.Price) {
-		return true
+// SetPrice sets field value
+func (o *FlightOffer) SetPrice(v OfferPrice) {
+	o.Price = v
+}
+
+// GetTaxes returns the Taxes field value
+func (o *FlightOffer) GetTaxes() TaxSummary {
+	if o == nil {
+		var ret TaxSummary
+		return ret
 	}
 
-	return false
+	return o.Taxes
 }
 
-// SetPrice gets a reference to the given OfferPrice and assigns it to the Price field.
-func (o *FlightOffer) SetPrice(v OfferPrice) {
-	o.Price = &v
+// GetTaxesOk returns a tuple with the Taxes field value
+// and a boolean to check if the value has been set.
+func (o *FlightOffer) GetTaxesOk() (*TaxSummary, bool) {
+	if o == nil {
+		return nil, false
+	}
+	return &o.Taxes, true
 }
 
-// GetDetails returns the Details field value if set, zero value otherwise.
+// SetTaxes sets field value
+func (o *FlightOffer) SetTaxes(v TaxSummary) {
+	o.Taxes = v
+}
+
+// GetDetails returns the Details field value
 func (o *FlightOffer) GetDetails() FlightOfferDetails {
-	if o == nil || IsNil(o.Details) {
+	if o == nil {
 		var ret FlightOfferDetails
 		return ret
 	}
-	return *o.Details
+
+	return o.Details
 }
 
-// GetDetailsOk returns a tuple with the Details field value if set, nil otherwise
+// GetDetailsOk returns a tuple with the Details field value
 // and a boolean to check if the value has been set.
 func (o *FlightOffer) GetDetailsOk() (*FlightOfferDetails, bool) {
-	if o == nil || IsNil(o.Details) {
+	if o == nil {
 		return nil, false
 	}
-	return o.Details, true
+	return &o.Details, true
 }
 
-// HasDetails returns a boolean if a field has been set.
-func (o *FlightOffer) HasDetails() bool {
-	if o != nil && !IsNil(o.Details) {
-		return true
-	}
-
-	return false
-}
-
-// SetDetails gets a reference to the given FlightOfferDetails and assigns it to the Details field.
+// SetDetails sets field value
 func (o *FlightOffer) SetDetails(v FlightOfferDetails) {
-	o.Details = &v
+	o.Details = v
 }
 
 func (o FlightOffer) MarshalJSON() ([]byte, error) {
@@ -229,22 +232,55 @@ func (o FlightOffer) MarshalJSON() ([]byte, error) {
 
 func (o FlightOffer) ToMap() (map[string]interface{}, error) {
 	toSerialize := map[string]interface{}{}
-	if !IsNil(o.PublicId) {
-		toSerialize["publicId"] = o.PublicId
-	}
-	if !IsNil(o.Name) {
-		toSerialize["name"] = o.Name
-	}
+	toSerialize["publicId"] = o.PublicId
+	toSerialize["name"] = o.Name
 	if o.Description.IsSet() {
 		toSerialize["description"] = o.Description.Get()
 	}
-	if !IsNil(o.Price) {
-		toSerialize["price"] = o.Price
-	}
-	if !IsNil(o.Details) {
-		toSerialize["details"] = o.Details
-	}
+	toSerialize["price"] = o.Price
+	toSerialize["taxes"] = o.Taxes
+	toSerialize["details"] = o.Details
 	return toSerialize, nil
+}
+
+func (o *FlightOffer) UnmarshalJSON(data []byte) (err error) {
+	// This validates that all required properties are included in the JSON object
+	// by unmarshalling the object into a generic map with string keys and checking
+	// that every required field exists as a key in the generic map.
+	requiredProperties := []string{
+		"publicId",
+		"name",
+		"price",
+		"taxes",
+		"details",
+	}
+
+	allProperties := make(map[string]interface{})
+
+	err = json.Unmarshal(data, &allProperties)
+
+	if err != nil {
+		return err;
+	}
+
+	for _, requiredProperty := range(requiredProperties) {
+		if _, exists := allProperties[requiredProperty]; !exists {
+			return fmt.Errorf("no value given for required property %v", requiredProperty)
+		}
+	}
+
+	varFlightOffer := _FlightOffer{}
+
+	decoder := json.NewDecoder(bytes.NewReader(data))
+	err = decoder.Decode(&varFlightOffer)
+
+	if err != nil {
+		return err
+	}
+
+	*o = FlightOffer(varFlightOffer)
+
+	return err
 }
 
 type NullableFlightOffer struct {

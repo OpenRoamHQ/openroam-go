@@ -10,6 +10,10 @@ import (
 // routeCalls calls every client method with the path ids and the sample body or query of its row in testdata/routes.json.
 // routes_test.go checks the request each one makes.
 var routeCalls = map[string]func(t *testing.T, ctx context.Context, c *OpenRoam, ids []string, body []byte, opts ...CallOption) error{
+	"account.listServices": func(t *testing.T, ctx context.Context, c *OpenRoam, ids []string, body []byte, opts ...CallOption) error {
+		_, err := c.Account.ListServices(ctx, opts...)
+		return err
+	},
 	"airtime.listCatalog": func(t *testing.T, ctx context.Context, c *OpenRoam, ids []string, body []byte, opts ...CallOption) error {
 		_, err := c.Airtime.ListCatalog(ctx, &AirtimeListCatalogQuery{CountryCode: PtrString(sampleString), Cursor: PtrString(sampleString), Limit: PtrInt32(2)}, opts...)
 		return err
@@ -40,6 +44,31 @@ var routeCalls = map[string]func(t *testing.T, ctx context.Context, c *OpenRoam,
 		var b AirtimeOrderRequest
 		readSample(t, body, &b)
 		_, err := c.Airtime.Order(ctx, &b, opts...)
+		return err
+	},
+	"browserSessions.create": func(t *testing.T, ctx context.Context, c *OpenRoam, ids []string, body []byte, opts ...CallOption) error {
+		var b BrowserSessionCreateRequest
+		readSample(t, body, &b)
+		_, err := c.BrowserSessions.Create(ctx, &b, opts...)
+		return err
+	},
+	"browserSessions.revoke": func(t *testing.T, ctx context.Context, c *OpenRoam, ids []string, body []byte, opts ...CallOption) error {
+		var b BrowserSessionRevokeRequest
+		readSample(t, body, &b)
+		return c.BrowserSessions.Revoke(ctx, &b, opts...)
+	},
+	"checkouts.get": func(t *testing.T, ctx context.Context, c *OpenRoam, ids []string, body []byte, opts ...CallOption) error {
+		_, err := c.Checkouts.Get(ctx, ids[0], opts...)
+		return err
+	},
+	"checkouts.confirm": func(t *testing.T, ctx context.Context, c *OpenRoam, ids []string, body []byte, opts ...CallOption) error {
+		var b CheckoutConfirmRequest
+		readSample(t, body, &b)
+		_, err := c.Checkouts.Confirm(ctx, ids[0], &b, opts...)
+		return err
+	},
+	"checkouts.fail": func(t *testing.T, ctx context.Context, c *OpenRoam, ids []string, body []byte, opts ...CallOption) error {
+		_, err := c.Checkouts.Fail(ctx, ids[0], opts...)
 		return err
 	},
 	"countries.list": func(t *testing.T, ctx context.Context, c *OpenRoam, ids []string, body []byte, opts ...CallOption) error {
@@ -122,6 +151,10 @@ var routeCalls = map[string]func(t *testing.T, ctx context.Context, c *OpenRoam,
 		_, err := c.Esims.SendSms(ctx, ids[0], &b, opts...)
 		return err
 	},
+	"flights.listPlaces": func(t *testing.T, ctx context.Context, c *OpenRoam, ids []string, body []byte, opts ...CallOption) error {
+		_, err := c.Flights.ListPlaces(ctx, &FlightsListPlacesQuery{Q: sampleString, Category: PtrString(sampleString), Limit: PtrInt32(2)}, opts...)
+		return err
+	},
 	"flights.search": func(t *testing.T, ctx context.Context, c *OpenRoam, ids []string, body []byte, opts ...CallOption) error {
 		var b FlightSearchRequest
 		readSample(t, body, &b)
@@ -172,26 +205,6 @@ var routeCalls = map[string]func(t *testing.T, ctx context.Context, c *OpenRoam,
 		_, err := c.GiftCards.Quote(ctx, &b, opts...)
 		return err
 	},
-	"orderItems.manualAmendments.create": func(t *testing.T, ctx context.Context, c *OpenRoam, ids []string, body []byte, opts ...CallOption) error {
-		var b ManualAmendmentCreateRequest
-		readSample(t, body, &b)
-		_, err := c.OrderItems.ManualAmendments.Create(ctx, ids[0], &b, opts...)
-		return err
-	},
-	"orderItems.manualAmendments.cancel": func(t *testing.T, ctx context.Context, c *OpenRoam, ids []string, body []byte, opts ...CallOption) error {
-		_, err := c.OrderItems.ManualAmendments.Cancel(ctx, ids[0], ids[1], opts...)
-		return err
-	},
-	"orderItems.manualAmendments.approve": func(t *testing.T, ctx context.Context, c *OpenRoam, ids []string, body []byte, opts ...CallOption) error {
-		var b ManualAmendmentApproveRequest
-		readSample(t, body, &b)
-		_, err := c.OrderItems.ManualAmendments.Approve(ctx, ids[0], ids[1], &b, opts...)
-		return err
-	},
-	"orderItems.manualAmendments.decline": func(t *testing.T, ctx context.Context, c *OpenRoam, ids []string, body []byte, opts ...CallOption) error {
-		_, err := c.OrderItems.ManualAmendments.Decline(ctx, ids[0], ids[1], opts...)
-		return err
-	},
 	"hotels.search": func(t *testing.T, ctx context.Context, c *OpenRoam, ids []string, body []byte, opts ...CallOption) error {
 		var b HotelSearchRequest
 		readSample(t, body, &b)
@@ -226,52 +239,36 @@ var routeCalls = map[string]func(t *testing.T, ctx context.Context, c *OpenRoam,
 		_, err := c.Hotels.Order(ctx, &b, opts...)
 		return err
 	},
-	"orderItems.listPartnerAmendments": func(t *testing.T, ctx context.Context, c *OpenRoam, ids []string, body []byte, opts ...CallOption) error {
-		_, err := c.OrderItems.ListPartnerAmendments(ctx, &OrderItemsListPartnerAmendmentsQuery{Page: PtrInt32(2), Limit: PtrInt32(2), Statuses: sampleArray, ProductType: PtrString(sampleString), AmendmentMode: PtrString(sampleString), OrderId: PtrString(sampleString), OrderItemId: PtrString(sampleString), From: PtrTime(sampleTime), To: PtrTime(sampleTime)}, opts...)
-		return err
-	},
 	"orderItems.get": func(t *testing.T, ctx context.Context, c *OpenRoam, ids []string, body []byte, opts ...CallOption) error {
 		_, err := c.OrderItems.Get(ctx, ids[0], opts...)
 		return err
 	},
-	"orderItems.getCancellationPreview": func(t *testing.T, ctx context.Context, c *OpenRoam, ids []string, body []byte, opts ...CallOption) error {
-		_, err := c.OrderItems.GetCancellationPreview(ctx, ids[0], opts...)
-		return err
-	},
-	"orderItems.quoteAmendment": func(t *testing.T, ctx context.Context, c *OpenRoam, ids []string, body []byte, opts ...CallOption) error {
-		var b AmendmentQuoteRequest
+	"orderItems.change": func(t *testing.T, ctx context.Context, c *OpenRoam, ids []string, body []byte, opts ...CallOption) error {
+		var b OrderItemChangeRequest
 		readSample(t, body, &b)
-		_, err := c.OrderItems.QuoteAmendment(ctx, ids[0], &b, opts...)
+		_, err := c.OrderItems.Change(ctx, ids[0], &b, opts...)
 		return err
 	},
-	"orderItems.listAmendments": func(t *testing.T, ctx context.Context, c *OpenRoam, ids []string, body []byte, opts ...CallOption) error {
-		_, err := c.OrderItems.ListAmendments(ctx, ids[0], opts...)
+	"orderItems.listChanges": func(t *testing.T, ctx context.Context, c *OpenRoam, ids []string, body []byte, opts ...CallOption) error {
+		_, err := c.OrderItems.ListChanges(ctx, ids[0], &OrderItemsListChangesQuery{UpdatedSince: PtrTime(sampleTime), Cursor: PtrString(sampleString), Limit: PtrInt32(2)}, opts...)
 		return err
 	},
-	"orderItems.getAmendment": func(t *testing.T, ctx context.Context, c *OpenRoam, ids []string, body []byte, opts ...CallOption) error {
-		_, err := c.OrderItems.GetAmendment(ctx, ids[0], ids[1], opts...)
+	"orderItems.listPartnerChanges": func(t *testing.T, ctx context.Context, c *OpenRoam, ids []string, body []byte, opts ...CallOption) error {
+		_, err := c.OrderItems.ListPartnerChanges(ctx, &OrderItemsListPartnerChangesQuery{UpdatedSince: PtrTime(sampleTime), Cursor: PtrString(sampleString), Limit: PtrInt32(2)}, opts...)
+		return err
+	},
+	"orderItems.getChange": func(t *testing.T, ctx context.Context, c *OpenRoam, ids []string, body []byte, opts ...CallOption) error {
+		_, err := c.OrderItems.GetChange(ctx, ids[0], ids[1], opts...)
 		return err
 	},
 	"orderItems.cancel": func(t *testing.T, ctx context.Context, c *OpenRoam, ids []string, body []byte, opts ...CallOption) error {
-		var b OrderItemCancelRequest
+		var b OrderItemCancellationRequest
 		readSample(t, body, &b)
 		_, err := c.OrderItems.Cancel(ctx, ids[0], &b, opts...)
 		return err
 	},
-	"orderItems.update": func(t *testing.T, ctx context.Context, c *OpenRoam, ids []string, body []byte, opts ...CallOption) error {
-		var b OrderItemUpdateRequest
-		readSample(t, body, &b)
-		_, err := c.OrderItems.Update(ctx, ids[0], &b, opts...)
-		return err
-	},
-	"orderItems.confirmAmendment": func(t *testing.T, ctx context.Context, c *OpenRoam, ids []string, body []byte, opts ...CallOption) error {
-		var b AmendmentConfirmRequest
-		readSample(t, body, &b)
-		_, err := c.OrderItems.ConfirmAmendment(ctx, ids[0], &b, opts...)
-		return err
-	},
 	"orders.list": func(t *testing.T, ctx context.Context, c *OpenRoam, ids []string, body []byte, opts ...CallOption) error {
-		_, err := c.Orders.List(ctx, &OrdersListQuery{Page: PtrInt32(2), Limit: PtrInt32(2), StartDate: PtrTime(sampleTime), EndDate: PtrTime(sampleTime), MinAmount: PtrFloat32(2), MaxAmount: PtrFloat32(2), Search: PtrString(sampleString), ReferenceId: PtrString(sampleString), SalesChannel: PtrString(sampleString), ProductTypes: sampleArray, OrderStatuses: sampleArray}, opts...)
+		_, err := c.Orders.List(ctx, &OrdersListQuery{Page: PtrInt32(2), Limit: PtrInt32(2), StartDate: PtrTime(sampleTime), EndDate: PtrTime(sampleTime), MinAmount: PtrFloat32(2), MaxAmount: PtrFloat32(2), Search: PtrString(sampleString), ReferenceId: PtrString(sampleString), Channel: PtrString(sampleString), ProductTypes: sampleArray, OrderStatuses: sampleArray}, opts...)
 		return err
 	},
 	"orders.order": func(t *testing.T, ctx context.Context, c *OpenRoam, ids []string, body []byte, opts ...CallOption) error {
@@ -290,20 +287,14 @@ var routeCalls = map[string]func(t *testing.T, ctx context.Context, c *OpenRoam,
 		_, err := c.Orders.Quote(ctx, &b, opts...)
 		return err
 	},
-	"orders.retryPayment": func(t *testing.T, ctx context.Context, c *OpenRoam, ids []string, body []byte, opts ...CallOption) error {
-		_, err := c.Orders.RetryPayment(ctx, ids[0], opts...)
-		return err
-	},
-	"orders.retryFulfillment": func(t *testing.T, ctx context.Context, c *OpenRoam, ids []string, body []byte, opts ...CallOption) error {
-		_, err := c.Orders.RetryFulfillment(ctx, ids[0], opts...)
-		return err
-	},
 	"orders.getFulfillmentStatus": func(t *testing.T, ctx context.Context, c *OpenRoam, ids []string, body []byte, opts ...CallOption) error {
 		_, err := c.Orders.GetFulfillmentStatus(ctx, ids[0], opts...)
 		return err
 	},
-	"orders.getCancellationPreview": func(t *testing.T, ctx context.Context, c *OpenRoam, ids []string, body []byte, opts ...CallOption) error {
-		_, err := c.Orders.GetCancellationPreview(ctx, ids[0], opts...)
+	"orders.resendEmail": func(t *testing.T, ctx context.Context, c *OpenRoam, ids []string, body []byte, opts ...CallOption) error {
+		var b OrderEmailResendRequest
+		readSample(t, body, &b)
+		_, err := c.Orders.ResendEmail(ctx, ids[0], &b, opts...)
 		return err
 	},
 	"utilities.search": func(t *testing.T, ctx context.Context, c *OpenRoam, ids []string, body []byte, opts ...CallOption) error {

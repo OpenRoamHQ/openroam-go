@@ -13,6 +13,8 @@ package openroam
 
 import (
 	"encoding/json"
+	"bytes"
+	"fmt"
 )
 
 // checks if the Biller type satisfies the MappedNullable interface at compile time
@@ -20,24 +22,35 @@ var _ MappedNullable = &Biller{}
 
 // Biller One biller as search, the one-biller route and the catalog return it. `id` is the biller's opaque public token; an order names one of its `offers` by public ID. Prices are indicative; quote recalculates them.
 type Biller struct {
-	Id *string `json:"id,omitempty"`
-	Name *string `json:"name,omitempty"`
-	CountryCode *string `json:"countryCode,omitempty"`
+	Id string `json:"id"`
+	Name string `json:"name"`
+	CountryCode string `json:"countryCode"`
 	// The kind of bill a biller collects.
-	Category *string `json:"category,omitempty"`
+	Category string `json:"category"`
 	LogoUrl NullableString `json:"logoUrl,omitempty"`
 	Description NullableString `json:"description,omitempty"`
-	Offers []UtilityOffer `json:"offers,omitempty"`
-	// Biller facts outside the item keys every partner service shares: `serviceType` is `prepaid` or `postpaid`, and `deliveryType` says what a paid bill delivers, a `token` (such as a prepaid meter token or a PIN) or a `directCredit` to the biller.
-	Details *BillerDetails `json:"details,omitempty"`
+	Offers []UtilityOffer `json:"offers"`
+	// Whether the biller sells `prepaid` or `postpaid` service.
+	ServiceType string `json:"serviceType"`
+	// What a paid bill delivers: a `token` (such as a prepaid meter token or a PIN) or a `directCredit` to the biller.
+	DeliveryType string `json:"deliveryType"`
 }
+
+type _Biller Biller
 
 // NewBiller instantiates a new Biller object
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewBiller() *Biller {
+func NewBiller(id string, name string, countryCode string, category string, offers []UtilityOffer, serviceType string, deliveryType string) *Biller {
 	this := Biller{}
+	this.Id = id
+	this.Name = name
+	this.CountryCode = countryCode
+	this.Category = category
+	this.Offers = offers
+	this.ServiceType = serviceType
+	this.DeliveryType = deliveryType
 	return &this
 }
 
@@ -49,132 +62,100 @@ func NewBillerWithDefaults() *Biller {
 	return &this
 }
 
-// GetId returns the Id field value if set, zero value otherwise.
+// GetId returns the Id field value
 func (o *Biller) GetId() string {
-	if o == nil || IsNil(o.Id) {
+	if o == nil {
 		var ret string
 		return ret
 	}
-	return *o.Id
+
+	return o.Id
 }
 
-// GetIdOk returns a tuple with the Id field value if set, nil otherwise
+// GetIdOk returns a tuple with the Id field value
 // and a boolean to check if the value has been set.
 func (o *Biller) GetIdOk() (*string, bool) {
-	if o == nil || IsNil(o.Id) {
+	if o == nil {
 		return nil, false
 	}
-	return o.Id, true
+	return &o.Id, true
 }
 
-// HasId returns a boolean if a field has been set.
-func (o *Biller) HasId() bool {
-	if o != nil && !IsNil(o.Id) {
-		return true
-	}
-
-	return false
-}
-
-// SetId gets a reference to the given string and assigns it to the Id field.
+// SetId sets field value
 func (o *Biller) SetId(v string) {
-	o.Id = &v
+	o.Id = v
 }
 
-// GetName returns the Name field value if set, zero value otherwise.
+// GetName returns the Name field value
 func (o *Biller) GetName() string {
-	if o == nil || IsNil(o.Name) {
+	if o == nil {
 		var ret string
 		return ret
 	}
-	return *o.Name
+
+	return o.Name
 }
 
-// GetNameOk returns a tuple with the Name field value if set, nil otherwise
+// GetNameOk returns a tuple with the Name field value
 // and a boolean to check if the value has been set.
 func (o *Biller) GetNameOk() (*string, bool) {
-	if o == nil || IsNil(o.Name) {
+	if o == nil {
 		return nil, false
 	}
-	return o.Name, true
+	return &o.Name, true
 }
 
-// HasName returns a boolean if a field has been set.
-func (o *Biller) HasName() bool {
-	if o != nil && !IsNil(o.Name) {
-		return true
-	}
-
-	return false
-}
-
-// SetName gets a reference to the given string and assigns it to the Name field.
+// SetName sets field value
 func (o *Biller) SetName(v string) {
-	o.Name = &v
+	o.Name = v
 }
 
-// GetCountryCode returns the CountryCode field value if set, zero value otherwise.
+// GetCountryCode returns the CountryCode field value
 func (o *Biller) GetCountryCode() string {
-	if o == nil || IsNil(o.CountryCode) {
+	if o == nil {
 		var ret string
 		return ret
 	}
-	return *o.CountryCode
+
+	return o.CountryCode
 }
 
-// GetCountryCodeOk returns a tuple with the CountryCode field value if set, nil otherwise
+// GetCountryCodeOk returns a tuple with the CountryCode field value
 // and a boolean to check if the value has been set.
 func (o *Biller) GetCountryCodeOk() (*string, bool) {
-	if o == nil || IsNil(o.CountryCode) {
+	if o == nil {
 		return nil, false
 	}
-	return o.CountryCode, true
+	return &o.CountryCode, true
 }
 
-// HasCountryCode returns a boolean if a field has been set.
-func (o *Biller) HasCountryCode() bool {
-	if o != nil && !IsNil(o.CountryCode) {
-		return true
-	}
-
-	return false
-}
-
-// SetCountryCode gets a reference to the given string and assigns it to the CountryCode field.
+// SetCountryCode sets field value
 func (o *Biller) SetCountryCode(v string) {
-	o.CountryCode = &v
+	o.CountryCode = v
 }
 
-// GetCategory returns the Category field value if set, zero value otherwise.
+// GetCategory returns the Category field value
 func (o *Biller) GetCategory() string {
-	if o == nil || IsNil(o.Category) {
+	if o == nil {
 		var ret string
 		return ret
 	}
-	return *o.Category
+
+	return o.Category
 }
 
-// GetCategoryOk returns a tuple with the Category field value if set, nil otherwise
+// GetCategoryOk returns a tuple with the Category field value
 // and a boolean to check if the value has been set.
 func (o *Biller) GetCategoryOk() (*string, bool) {
-	if o == nil || IsNil(o.Category) {
+	if o == nil {
 		return nil, false
 	}
-	return o.Category, true
+	return &o.Category, true
 }
 
-// HasCategory returns a boolean if a field has been set.
-func (o *Biller) HasCategory() bool {
-	if o != nil && !IsNil(o.Category) {
-		return true
-	}
-
-	return false
-}
-
-// SetCategory gets a reference to the given string and assigns it to the Category field.
+// SetCategory sets field value
 func (o *Biller) SetCategory(v string) {
-	o.Category = &v
+	o.Category = v
 }
 
 // GetLogoUrl returns the LogoUrl field value if set, zero value otherwise (both if not set or set to explicit null).
@@ -261,68 +242,76 @@ func (o *Biller) UnsetDescription() {
 	o.Description.Unset()
 }
 
-// GetOffers returns the Offers field value if set, zero value otherwise.
+// GetOffers returns the Offers field value
 func (o *Biller) GetOffers() []UtilityOffer {
-	if o == nil || IsNil(o.Offers) {
+	if o == nil {
 		var ret []UtilityOffer
 		return ret
 	}
+
 	return o.Offers
 }
 
-// GetOffersOk returns a tuple with the Offers field value if set, nil otherwise
+// GetOffersOk returns a tuple with the Offers field value
 // and a boolean to check if the value has been set.
 func (o *Biller) GetOffersOk() ([]UtilityOffer, bool) {
-	if o == nil || IsNil(o.Offers) {
+	if o == nil {
 		return nil, false
 	}
 	return o.Offers, true
 }
 
-// HasOffers returns a boolean if a field has been set.
-func (o *Biller) HasOffers() bool {
-	if o != nil && !IsNil(o.Offers) {
-		return true
-	}
-
-	return false
-}
-
-// SetOffers gets a reference to the given []UtilityOffer and assigns it to the Offers field.
+// SetOffers sets field value
 func (o *Biller) SetOffers(v []UtilityOffer) {
 	o.Offers = v
 }
 
-// GetDetails returns the Details field value if set, zero value otherwise.
-func (o *Biller) GetDetails() BillerDetails {
-	if o == nil || IsNil(o.Details) {
-		var ret BillerDetails
+// GetServiceType returns the ServiceType field value
+func (o *Biller) GetServiceType() string {
+	if o == nil {
+		var ret string
 		return ret
 	}
-	return *o.Details
+
+	return o.ServiceType
 }
 
-// GetDetailsOk returns a tuple with the Details field value if set, nil otherwise
+// GetServiceTypeOk returns a tuple with the ServiceType field value
 // and a boolean to check if the value has been set.
-func (o *Biller) GetDetailsOk() (*BillerDetails, bool) {
-	if o == nil || IsNil(o.Details) {
+func (o *Biller) GetServiceTypeOk() (*string, bool) {
+	if o == nil {
 		return nil, false
 	}
-	return o.Details, true
+	return &o.ServiceType, true
 }
 
-// HasDetails returns a boolean if a field has been set.
-func (o *Biller) HasDetails() bool {
-	if o != nil && !IsNil(o.Details) {
-		return true
+// SetServiceType sets field value
+func (o *Biller) SetServiceType(v string) {
+	o.ServiceType = v
+}
+
+// GetDeliveryType returns the DeliveryType field value
+func (o *Biller) GetDeliveryType() string {
+	if o == nil {
+		var ret string
+		return ret
 	}
 
-	return false
+	return o.DeliveryType
 }
 
-// SetDetails gets a reference to the given BillerDetails and assigns it to the Details field.
-func (o *Biller) SetDetails(v BillerDetails) {
-	o.Details = &v
+// GetDeliveryTypeOk returns a tuple with the DeliveryType field value
+// and a boolean to check if the value has been set.
+func (o *Biller) GetDeliveryTypeOk() (*string, bool) {
+	if o == nil {
+		return nil, false
+	}
+	return &o.DeliveryType, true
+}
+
+// SetDeliveryType sets field value
+func (o *Biller) SetDeliveryType(v string) {
+	o.DeliveryType = v
 }
 
 func (o Biller) MarshalJSON() ([]byte, error) {
@@ -335,31 +324,62 @@ func (o Biller) MarshalJSON() ([]byte, error) {
 
 func (o Biller) ToMap() (map[string]interface{}, error) {
 	toSerialize := map[string]interface{}{}
-	if !IsNil(o.Id) {
-		toSerialize["id"] = o.Id
-	}
-	if !IsNil(o.Name) {
-		toSerialize["name"] = o.Name
-	}
-	if !IsNil(o.CountryCode) {
-		toSerialize["countryCode"] = o.CountryCode
-	}
-	if !IsNil(o.Category) {
-		toSerialize["category"] = o.Category
-	}
+	toSerialize["id"] = o.Id
+	toSerialize["name"] = o.Name
+	toSerialize["countryCode"] = o.CountryCode
+	toSerialize["category"] = o.Category
 	if o.LogoUrl.IsSet() {
 		toSerialize["logoUrl"] = o.LogoUrl.Get()
 	}
 	if o.Description.IsSet() {
 		toSerialize["description"] = o.Description.Get()
 	}
-	if !IsNil(o.Offers) {
-		toSerialize["offers"] = o.Offers
-	}
-	if !IsNil(o.Details) {
-		toSerialize["details"] = o.Details
-	}
+	toSerialize["offers"] = o.Offers
+	toSerialize["serviceType"] = o.ServiceType
+	toSerialize["deliveryType"] = o.DeliveryType
 	return toSerialize, nil
+}
+
+func (o *Biller) UnmarshalJSON(data []byte) (err error) {
+	// This validates that all required properties are included in the JSON object
+	// by unmarshalling the object into a generic map with string keys and checking
+	// that every required field exists as a key in the generic map.
+	requiredProperties := []string{
+		"id",
+		"name",
+		"countryCode",
+		"category",
+		"offers",
+		"serviceType",
+		"deliveryType",
+	}
+
+	allProperties := make(map[string]interface{})
+
+	err = json.Unmarshal(data, &allProperties)
+
+	if err != nil {
+		return err;
+	}
+
+	for _, requiredProperty := range(requiredProperties) {
+		if _, exists := allProperties[requiredProperty]; !exists {
+			return fmt.Errorf("no value given for required property %v", requiredProperty)
+		}
+	}
+
+	varBiller := _Biller{}
+
+	decoder := json.NewDecoder(bytes.NewReader(data))
+	err = decoder.Decode(&varBiller)
+
+	if err != nil {
+		return err
+	}
+
+	*o = Biller(varBiller)
+
+	return err
 }
 
 type NullableBiller struct {

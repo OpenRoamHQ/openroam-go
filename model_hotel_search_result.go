@@ -13,6 +13,8 @@ package openroam
 
 import (
 	"encoding/json"
+	"bytes"
+	"fmt"
 )
 
 // checks if the HotelSearchResult type satisfies the MappedNullable interface at compile time
@@ -21,21 +23,25 @@ var _ MappedNullable = &HotelSearchResult{}
 // HotelSearchResult One page of hotels with their offers. A location search is paged with `nextCursor`; a `hotelIds` search is one complete page. A hotel without an orderable offer is not listed.
 type HotelSearchResult struct {
 	// The hotels of this page, each with its offers.
-	Items []Hotel `json:"items,omitempty"`
-	// Where this page sits. On a location search `totalCount` counts the candidate hotels of the area, an upper bound of what the pages list.
-	Pagination *Pagination `json:"pagination,omitempty"`
+	Items []Hotel `json:"items"`
+	// Where this page sits. A location search walks the area's hotels with a cursor, so it states no page number and no total.
+	Pagination HotelSearchPagination `json:"pagination"`
 	// Send it back as `cursor`, with the same body, for the next page; null on the last page. A location page can hold fewer hotels than the limit, even none, while it is set.
 	NextCursor NullableString `json:"nextCursor,omitempty"`
-	// Hotel search facts outside the keys every partner service shares.
-	Details *HotelSearchDetails `json:"details,omitempty"`
+	// Amenity filter values for this search with hotel counts. Computed for a `cityCode` search only; null on `geoNodeId`, coordinate and `hotelIds` searches.
+	AvailableFilters NullableHotelSearchFacets `json:"availableFilters,omitempty"`
 }
+
+type _HotelSearchResult HotelSearchResult
 
 // NewHotelSearchResult instantiates a new HotelSearchResult object
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewHotelSearchResult() *HotelSearchResult {
+func NewHotelSearchResult(items []Hotel, pagination HotelSearchPagination) *HotelSearchResult {
 	this := HotelSearchResult{}
+	this.Items = items
+	this.Pagination = pagination
 	return &this
 }
 
@@ -47,68 +53,52 @@ func NewHotelSearchResultWithDefaults() *HotelSearchResult {
 	return &this
 }
 
-// GetItems returns the Items field value if set, zero value otherwise.
+// GetItems returns the Items field value
 func (o *HotelSearchResult) GetItems() []Hotel {
-	if o == nil || IsNil(o.Items) {
+	if o == nil {
 		var ret []Hotel
 		return ret
 	}
+
 	return o.Items
 }
 
-// GetItemsOk returns a tuple with the Items field value if set, nil otherwise
+// GetItemsOk returns a tuple with the Items field value
 // and a boolean to check if the value has been set.
 func (o *HotelSearchResult) GetItemsOk() ([]Hotel, bool) {
-	if o == nil || IsNil(o.Items) {
+	if o == nil {
 		return nil, false
 	}
 	return o.Items, true
 }
 
-// HasItems returns a boolean if a field has been set.
-func (o *HotelSearchResult) HasItems() bool {
-	if o != nil && !IsNil(o.Items) {
-		return true
-	}
-
-	return false
-}
-
-// SetItems gets a reference to the given []Hotel and assigns it to the Items field.
+// SetItems sets field value
 func (o *HotelSearchResult) SetItems(v []Hotel) {
 	o.Items = v
 }
 
-// GetPagination returns the Pagination field value if set, zero value otherwise.
-func (o *HotelSearchResult) GetPagination() Pagination {
-	if o == nil || IsNil(o.Pagination) {
-		var ret Pagination
+// GetPagination returns the Pagination field value
+func (o *HotelSearchResult) GetPagination() HotelSearchPagination {
+	if o == nil {
+		var ret HotelSearchPagination
 		return ret
 	}
-	return *o.Pagination
+
+	return o.Pagination
 }
 
-// GetPaginationOk returns a tuple with the Pagination field value if set, nil otherwise
+// GetPaginationOk returns a tuple with the Pagination field value
 // and a boolean to check if the value has been set.
-func (o *HotelSearchResult) GetPaginationOk() (*Pagination, bool) {
-	if o == nil || IsNil(o.Pagination) {
+func (o *HotelSearchResult) GetPaginationOk() (*HotelSearchPagination, bool) {
+	if o == nil {
 		return nil, false
 	}
-	return o.Pagination, true
+	return &o.Pagination, true
 }
 
-// HasPagination returns a boolean if a field has been set.
-func (o *HotelSearchResult) HasPagination() bool {
-	if o != nil && !IsNil(o.Pagination) {
-		return true
-	}
-
-	return false
-}
-
-// SetPagination gets a reference to the given Pagination and assigns it to the Pagination field.
-func (o *HotelSearchResult) SetPagination(v Pagination) {
-	o.Pagination = &v
+// SetPagination sets field value
+func (o *HotelSearchResult) SetPagination(v HotelSearchPagination) {
+	o.Pagination = v
 }
 
 // GetNextCursor returns the NextCursor field value if set, zero value otherwise (both if not set or set to explicit null).
@@ -153,36 +143,46 @@ func (o *HotelSearchResult) UnsetNextCursor() {
 	o.NextCursor.Unset()
 }
 
-// GetDetails returns the Details field value if set, zero value otherwise.
-func (o *HotelSearchResult) GetDetails() HotelSearchDetails {
-	if o == nil || IsNil(o.Details) {
-		var ret HotelSearchDetails
+// GetAvailableFilters returns the AvailableFilters field value if set, zero value otherwise (both if not set or set to explicit null).
+func (o *HotelSearchResult) GetAvailableFilters() HotelSearchFacets {
+	if o == nil || IsNil(o.AvailableFilters.Get()) {
+		var ret HotelSearchFacets
 		return ret
 	}
-	return *o.Details
+	return *o.AvailableFilters.Get()
 }
 
-// GetDetailsOk returns a tuple with the Details field value if set, nil otherwise
+// GetAvailableFiltersOk returns a tuple with the AvailableFilters field value if set, nil otherwise
 // and a boolean to check if the value has been set.
-func (o *HotelSearchResult) GetDetailsOk() (*HotelSearchDetails, bool) {
-	if o == nil || IsNil(o.Details) {
+// NOTE: If the value is an explicit nil, `nil, true` will be returned
+func (o *HotelSearchResult) GetAvailableFiltersOk() (*HotelSearchFacets, bool) {
+	if o == nil {
 		return nil, false
 	}
-	return o.Details, true
+	return o.AvailableFilters.Get(), o.AvailableFilters.IsSet()
 }
 
-// HasDetails returns a boolean if a field has been set.
-func (o *HotelSearchResult) HasDetails() bool {
-	if o != nil && !IsNil(o.Details) {
+// HasAvailableFilters returns a boolean if a field has been set.
+func (o *HotelSearchResult) HasAvailableFilters() bool {
+	if o != nil && o.AvailableFilters.IsSet() {
 		return true
 	}
 
 	return false
 }
 
-// SetDetails gets a reference to the given HotelSearchDetails and assigns it to the Details field.
-func (o *HotelSearchResult) SetDetails(v HotelSearchDetails) {
-	o.Details = &v
+// SetAvailableFilters gets a reference to the given NullableHotelSearchFacets and assigns it to the AvailableFilters field.
+func (o *HotelSearchResult) SetAvailableFilters(v HotelSearchFacets) {
+	o.AvailableFilters.Set(&v)
+}
+// SetAvailableFiltersNil sets the value for AvailableFilters to be an explicit nil
+func (o *HotelSearchResult) SetAvailableFiltersNil() {
+	o.AvailableFilters.Set(nil)
+}
+
+// UnsetAvailableFilters ensures that no value is present for AvailableFilters, not even an explicit nil
+func (o *HotelSearchResult) UnsetAvailableFilters() {
+	o.AvailableFilters.Unset()
 }
 
 func (o HotelSearchResult) MarshalJSON() ([]byte, error) {
@@ -195,19 +195,52 @@ func (o HotelSearchResult) MarshalJSON() ([]byte, error) {
 
 func (o HotelSearchResult) ToMap() (map[string]interface{}, error) {
 	toSerialize := map[string]interface{}{}
-	if !IsNil(o.Items) {
-		toSerialize["items"] = o.Items
-	}
-	if !IsNil(o.Pagination) {
-		toSerialize["pagination"] = o.Pagination
-	}
+	toSerialize["items"] = o.Items
+	toSerialize["pagination"] = o.Pagination
 	if o.NextCursor.IsSet() {
 		toSerialize["nextCursor"] = o.NextCursor.Get()
 	}
-	if !IsNil(o.Details) {
-		toSerialize["details"] = o.Details
+	if o.AvailableFilters.IsSet() {
+		toSerialize["availableFilters"] = o.AvailableFilters.Get()
 	}
 	return toSerialize, nil
+}
+
+func (o *HotelSearchResult) UnmarshalJSON(data []byte) (err error) {
+	// This validates that all required properties are included in the JSON object
+	// by unmarshalling the object into a generic map with string keys and checking
+	// that every required field exists as a key in the generic map.
+	requiredProperties := []string{
+		"items",
+		"pagination",
+	}
+
+	allProperties := make(map[string]interface{})
+
+	err = json.Unmarshal(data, &allProperties)
+
+	if err != nil {
+		return err;
+	}
+
+	for _, requiredProperty := range(requiredProperties) {
+		if _, exists := allProperties[requiredProperty]; !exists {
+			return fmt.Errorf("no value given for required property %v", requiredProperty)
+		}
+	}
+
+	varHotelSearchResult := _HotelSearchResult{}
+
+	decoder := json.NewDecoder(bytes.NewReader(data))
+	err = decoder.Decode(&varHotelSearchResult)
+
+	if err != nil {
+		return err
+	}
+
+	*o = HotelSearchResult(varHotelSearchResult)
+
+	return err
 }
 
 type NullableHotelSearchResult struct {

@@ -202,7 +202,6 @@ func (o *AirtimeMixedOrderRequestItem) UnmarshalJSON(data []byte) (err error) {
 	varAirtimeMixedOrderRequestItem := _AirtimeMixedOrderRequestItem{}
 
 	decoder := json.NewDecoder(bytes.NewReader(data))
-	decoder.DisallowUnknownFields()
 	err = decoder.Decode(&varAirtimeMixedOrderRequestItem)
 
 	if err != nil {

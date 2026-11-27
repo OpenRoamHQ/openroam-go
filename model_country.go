@@ -13,6 +13,8 @@ package openroam
 
 import (
 	"encoding/json"
+	"bytes"
+	"fmt"
 )
 
 // checks if the Country type satisfies the MappedNullable interface at compile time
@@ -20,19 +22,23 @@ var _ MappedNullable = &Country{}
 
 // Country One country or territory. `countryCode` is the ISO 3166-1 alpha-2 code every service filters and reports by; the ISO-reserved codes for places (such as AC, IC) and XK for Kosovo have no `numericCode`. `dialCode` is the international calling code with its leading plus (for example \"+994\"); it is null for the few territories without one. Parse national input using the country's numbering rules before formatting it as E.164, including removal of a national trunk prefix when required. Several countries can share a calling code, such as \"+1\". `flagUrl` is an SVG image, null where no flag is published.
 type Country struct {
-	CountryCode *string `json:"countryCode,omitempty"`
+	CountryCode string `json:"countryCode"`
 	NumericCode NullableString `json:"numericCode,omitempty"`
-	Name *string `json:"name,omitempty"`
+	Name string `json:"name"`
 	DialCode NullableString `json:"dialCode,omitempty"`
 	FlagUrl NullableString `json:"flagUrl,omitempty"`
 }
+
+type _Country Country
 
 // NewCountry instantiates a new Country object
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewCountry() *Country {
+func NewCountry(countryCode string, name string) *Country {
 	this := Country{}
+	this.CountryCode = countryCode
+	this.Name = name
 	return &this
 }
 
@@ -44,36 +50,28 @@ func NewCountryWithDefaults() *Country {
 	return &this
 }
 
-// GetCountryCode returns the CountryCode field value if set, zero value otherwise.
+// GetCountryCode returns the CountryCode field value
 func (o *Country) GetCountryCode() string {
-	if o == nil || IsNil(o.CountryCode) {
+	if o == nil {
 		var ret string
 		return ret
 	}
-	return *o.CountryCode
+
+	return o.CountryCode
 }
 
-// GetCountryCodeOk returns a tuple with the CountryCode field value if set, nil otherwise
+// GetCountryCodeOk returns a tuple with the CountryCode field value
 // and a boolean to check if the value has been set.
 func (o *Country) GetCountryCodeOk() (*string, bool) {
-	if o == nil || IsNil(o.CountryCode) {
+	if o == nil {
 		return nil, false
 	}
-	return o.CountryCode, true
+	return &o.CountryCode, true
 }
 
-// HasCountryCode returns a boolean if a field has been set.
-func (o *Country) HasCountryCode() bool {
-	if o != nil && !IsNil(o.CountryCode) {
-		return true
-	}
-
-	return false
-}
-
-// SetCountryCode gets a reference to the given string and assigns it to the CountryCode field.
+// SetCountryCode sets field value
 func (o *Country) SetCountryCode(v string) {
-	o.CountryCode = &v
+	o.CountryCode = v
 }
 
 // GetNumericCode returns the NumericCode field value if set, zero value otherwise (both if not set or set to explicit null).
@@ -118,36 +116,28 @@ func (o *Country) UnsetNumericCode() {
 	o.NumericCode.Unset()
 }
 
-// GetName returns the Name field value if set, zero value otherwise.
+// GetName returns the Name field value
 func (o *Country) GetName() string {
-	if o == nil || IsNil(o.Name) {
+	if o == nil {
 		var ret string
 		return ret
 	}
-	return *o.Name
+
+	return o.Name
 }
 
-// GetNameOk returns a tuple with the Name field value if set, nil otherwise
+// GetNameOk returns a tuple with the Name field value
 // and a boolean to check if the value has been set.
 func (o *Country) GetNameOk() (*string, bool) {
-	if o == nil || IsNil(o.Name) {
+	if o == nil {
 		return nil, false
 	}
-	return o.Name, true
+	return &o.Name, true
 }
 
-// HasName returns a boolean if a field has been set.
-func (o *Country) HasName() bool {
-	if o != nil && !IsNil(o.Name) {
-		return true
-	}
-
-	return false
-}
-
-// SetName gets a reference to the given string and assigns it to the Name field.
+// SetName sets field value
 func (o *Country) SetName(v string) {
-	o.Name = &v
+	o.Name = v
 }
 
 // GetDialCode returns the DialCode field value if set, zero value otherwise (both if not set or set to explicit null).
@@ -244,15 +234,11 @@ func (o Country) MarshalJSON() ([]byte, error) {
 
 func (o Country) ToMap() (map[string]interface{}, error) {
 	toSerialize := map[string]interface{}{}
-	if !IsNil(o.CountryCode) {
-		toSerialize["countryCode"] = o.CountryCode
-	}
+	toSerialize["countryCode"] = o.CountryCode
 	if o.NumericCode.IsSet() {
 		toSerialize["numericCode"] = o.NumericCode.Get()
 	}
-	if !IsNil(o.Name) {
-		toSerialize["name"] = o.Name
-	}
+	toSerialize["name"] = o.Name
 	if o.DialCode.IsSet() {
 		toSerialize["dialCode"] = o.DialCode.Get()
 	}
@@ -260,6 +246,43 @@ func (o Country) ToMap() (map[string]interface{}, error) {
 		toSerialize["flagUrl"] = o.FlagUrl.Get()
 	}
 	return toSerialize, nil
+}
+
+func (o *Country) UnmarshalJSON(data []byte) (err error) {
+	// This validates that all required properties are included in the JSON object
+	// by unmarshalling the object into a generic map with string keys and checking
+	// that every required field exists as a key in the generic map.
+	requiredProperties := []string{
+		"countryCode",
+		"name",
+	}
+
+	allProperties := make(map[string]interface{})
+
+	err = json.Unmarshal(data, &allProperties)
+
+	if err != nil {
+		return err;
+	}
+
+	for _, requiredProperty := range(requiredProperties) {
+		if _, exists := allProperties[requiredProperty]; !exists {
+			return fmt.Errorf("no value given for required property %v", requiredProperty)
+		}
+	}
+
+	varCountry := _Country{}
+
+	decoder := json.NewDecoder(bytes.NewReader(data))
+	err = decoder.Decode(&varCountry)
+
+	if err != nil {
+		return err
+	}
+
+	*o = Country(varCountry)
+
+	return err
 }
 
 type NullableCountry struct {

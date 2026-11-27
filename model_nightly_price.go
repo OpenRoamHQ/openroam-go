@@ -164,7 +164,6 @@ func (o *NightlyPrice) UnmarshalJSON(data []byte) (err error) {
 	varNightlyPrice := _NightlyPrice{}
 
 	decoder := json.NewDecoder(bytes.NewReader(data))
-	decoder.DisallowUnknownFields()
 	err = decoder.Decode(&varNightlyPrice)
 
 	if err != nil {

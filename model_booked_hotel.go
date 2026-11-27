@@ -13,6 +13,8 @@ package openroam
 
 import (
 	"encoding/json"
+	"bytes"
+	"fmt"
 )
 
 // checks if the BookedHotel type satisfies the MappedNullable interface at compile time
@@ -21,7 +23,7 @@ var _ MappedNullable = &BookedHotel{}
 // BookedHotel The hotel of the stay, as the offer described it.
 type BookedHotel struct {
 	// The hotel's name, the first part of the purchased product's `name`.
-	Name *string `json:"name,omitempty"`
+	Name string `json:"name"`
 	// The hotel's star rating; null when unknown.
 	StarRating NullableFloat32 `json:"starRating,omitempty"`
 	// The hotel's address; null when unknown.
@@ -31,19 +33,24 @@ type BookedHotel struct {
 	// The hotel description stored at purchase, in HTML; null when there was none.
 	Description NullableString `json:"description,omitempty"`
 	// The gallery images stored at purchase.
-	ImageUrls []string `json:"imageUrls,omitempty"`
+	ImageUrls []string `json:"imageUrls"`
 	// The amenities stored at purchase, as codes in display groups; label them from `hotels/amenities/catalog`.
-	AmenityGroups []HotelAmenityGroup `json:"amenityGroups,omitempty"`
+	AmenityGroups []HotelAmenityGroup `json:"amenityGroups"`
 	// The hotel's phone, email and website; null when unknown.
 	Contact NullableHotelContact `json:"contact,omitempty"`
 }
+
+type _BookedHotel BookedHotel
 
 // NewBookedHotel instantiates a new BookedHotel object
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewBookedHotel() *BookedHotel {
+func NewBookedHotel(name string, imageUrls []string, amenityGroups []HotelAmenityGroup) *BookedHotel {
 	this := BookedHotel{}
+	this.Name = name
+	this.ImageUrls = imageUrls
+	this.AmenityGroups = amenityGroups
 	return &this
 }
 
@@ -55,36 +62,28 @@ func NewBookedHotelWithDefaults() *BookedHotel {
 	return &this
 }
 
-// GetName returns the Name field value if set, zero value otherwise.
+// GetName returns the Name field value
 func (o *BookedHotel) GetName() string {
-	if o == nil || IsNil(o.Name) {
+	if o == nil {
 		var ret string
 		return ret
 	}
-	return *o.Name
+
+	return o.Name
 }
 
-// GetNameOk returns a tuple with the Name field value if set, nil otherwise
+// GetNameOk returns a tuple with the Name field value
 // and a boolean to check if the value has been set.
 func (o *BookedHotel) GetNameOk() (*string, bool) {
-	if o == nil || IsNil(o.Name) {
+	if o == nil {
 		return nil, false
 	}
-	return o.Name, true
+	return &o.Name, true
 }
 
-// HasName returns a boolean if a field has been set.
-func (o *BookedHotel) HasName() bool {
-	if o != nil && !IsNil(o.Name) {
-		return true
-	}
-
-	return false
-}
-
-// SetName gets a reference to the given string and assigns it to the Name field.
+// SetName sets field value
 func (o *BookedHotel) SetName(v string) {
-	o.Name = &v
+	o.Name = v
 }
 
 // GetStarRating returns the StarRating field value if set, zero value otherwise (both if not set or set to explicit null).
@@ -255,66 +254,50 @@ func (o *BookedHotel) UnsetDescription() {
 	o.Description.Unset()
 }
 
-// GetImageUrls returns the ImageUrls field value if set, zero value otherwise.
+// GetImageUrls returns the ImageUrls field value
 func (o *BookedHotel) GetImageUrls() []string {
-	if o == nil || IsNil(o.ImageUrls) {
+	if o == nil {
 		var ret []string
 		return ret
 	}
+
 	return o.ImageUrls
 }
 
-// GetImageUrlsOk returns a tuple with the ImageUrls field value if set, nil otherwise
+// GetImageUrlsOk returns a tuple with the ImageUrls field value
 // and a boolean to check if the value has been set.
 func (o *BookedHotel) GetImageUrlsOk() ([]string, bool) {
-	if o == nil || IsNil(o.ImageUrls) {
+	if o == nil {
 		return nil, false
 	}
 	return o.ImageUrls, true
 }
 
-// HasImageUrls returns a boolean if a field has been set.
-func (o *BookedHotel) HasImageUrls() bool {
-	if o != nil && !IsNil(o.ImageUrls) {
-		return true
-	}
-
-	return false
-}
-
-// SetImageUrls gets a reference to the given []string and assigns it to the ImageUrls field.
+// SetImageUrls sets field value
 func (o *BookedHotel) SetImageUrls(v []string) {
 	o.ImageUrls = v
 }
 
-// GetAmenityGroups returns the AmenityGroups field value if set, zero value otherwise.
+// GetAmenityGroups returns the AmenityGroups field value
 func (o *BookedHotel) GetAmenityGroups() []HotelAmenityGroup {
-	if o == nil || IsNil(o.AmenityGroups) {
+	if o == nil {
 		var ret []HotelAmenityGroup
 		return ret
 	}
+
 	return o.AmenityGroups
 }
 
-// GetAmenityGroupsOk returns a tuple with the AmenityGroups field value if set, nil otherwise
+// GetAmenityGroupsOk returns a tuple with the AmenityGroups field value
 // and a boolean to check if the value has been set.
 func (o *BookedHotel) GetAmenityGroupsOk() ([]HotelAmenityGroup, bool) {
-	if o == nil || IsNil(o.AmenityGroups) {
+	if o == nil {
 		return nil, false
 	}
 	return o.AmenityGroups, true
 }
 
-// HasAmenityGroups returns a boolean if a field has been set.
-func (o *BookedHotel) HasAmenityGroups() bool {
-	if o != nil && !IsNil(o.AmenityGroups) {
-		return true
-	}
-
-	return false
-}
-
-// SetAmenityGroups gets a reference to the given []HotelAmenityGroup and assigns it to the AmenityGroups field.
+// SetAmenityGroups sets field value
 func (o *BookedHotel) SetAmenityGroups(v []HotelAmenityGroup) {
 	o.AmenityGroups = v
 }
@@ -371,9 +354,7 @@ func (o BookedHotel) MarshalJSON() ([]byte, error) {
 
 func (o BookedHotel) ToMap() (map[string]interface{}, error) {
 	toSerialize := map[string]interface{}{}
-	if !IsNil(o.Name) {
-		toSerialize["name"] = o.Name
-	}
+	toSerialize["name"] = o.Name
 	if o.StarRating.IsSet() {
 		toSerialize["starRating"] = o.StarRating.Get()
 	}
@@ -386,16 +367,50 @@ func (o BookedHotel) ToMap() (map[string]interface{}, error) {
 	if o.Description.IsSet() {
 		toSerialize["description"] = o.Description.Get()
 	}
-	if !IsNil(o.ImageUrls) {
-		toSerialize["imageUrls"] = o.ImageUrls
-	}
-	if !IsNil(o.AmenityGroups) {
-		toSerialize["amenityGroups"] = o.AmenityGroups
-	}
+	toSerialize["imageUrls"] = o.ImageUrls
+	toSerialize["amenityGroups"] = o.AmenityGroups
 	if o.Contact.IsSet() {
 		toSerialize["contact"] = o.Contact.Get()
 	}
 	return toSerialize, nil
+}
+
+func (o *BookedHotel) UnmarshalJSON(data []byte) (err error) {
+	// This validates that all required properties are included in the JSON object
+	// by unmarshalling the object into a generic map with string keys and checking
+	// that every required field exists as a key in the generic map.
+	requiredProperties := []string{
+		"name",
+		"imageUrls",
+		"amenityGroups",
+	}
+
+	allProperties := make(map[string]interface{})
+
+	err = json.Unmarshal(data, &allProperties)
+
+	if err != nil {
+		return err;
+	}
+
+	for _, requiredProperty := range(requiredProperties) {
+		if _, exists := allProperties[requiredProperty]; !exists {
+			return fmt.Errorf("no value given for required property %v", requiredProperty)
+		}
+	}
+
+	varBookedHotel := _BookedHotel{}
+
+	decoder := json.NewDecoder(bytes.NewReader(data))
+	err = decoder.Decode(&varBookedHotel)
+
+	if err != nil {
+		return err
+	}
+
+	*o = BookedHotel(varBookedHotel)
+
+	return err
 }
 
 type NullableBookedHotel struct {

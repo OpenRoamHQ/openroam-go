@@ -13,6 +13,8 @@ package openroam
 
 import (
 	"encoding/json"
+	"bytes"
+	"fmt"
 )
 
 // checks if the EsimAddon type satisfies the MappedNullable interface at compile time
@@ -21,17 +23,20 @@ var _ MappedNullable = &EsimAddon{}
 // EsimAddon A top-up applied to the eSIM, with the usage last read for it.
 type EsimAddon struct {
 	// Display name of the top-up plan.
-	PackageName *string `json:"packageName,omitempty"`
+	PackageName string `json:"packageName"`
 	// The top-up's usage last read, or null.
 	Usage NullableEsimUsage `json:"usage,omitempty"`
 }
+
+type _EsimAddon EsimAddon
 
 // NewEsimAddon instantiates a new EsimAddon object
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewEsimAddon() *EsimAddon {
+func NewEsimAddon(packageName string) *EsimAddon {
 	this := EsimAddon{}
+	this.PackageName = packageName
 	return &this
 }
 
@@ -43,36 +48,28 @@ func NewEsimAddonWithDefaults() *EsimAddon {
 	return &this
 }
 
-// GetPackageName returns the PackageName field value if set, zero value otherwise.
+// GetPackageName returns the PackageName field value
 func (o *EsimAddon) GetPackageName() string {
-	if o == nil || IsNil(o.PackageName) {
+	if o == nil {
 		var ret string
 		return ret
 	}
-	return *o.PackageName
+
+	return o.PackageName
 }
 
-// GetPackageNameOk returns a tuple with the PackageName field value if set, nil otherwise
+// GetPackageNameOk returns a tuple with the PackageName field value
 // and a boolean to check if the value has been set.
 func (o *EsimAddon) GetPackageNameOk() (*string, bool) {
-	if o == nil || IsNil(o.PackageName) {
+	if o == nil {
 		return nil, false
 	}
-	return o.PackageName, true
+	return &o.PackageName, true
 }
 
-// HasPackageName returns a boolean if a field has been set.
-func (o *EsimAddon) HasPackageName() bool {
-	if o != nil && !IsNil(o.PackageName) {
-		return true
-	}
-
-	return false
-}
-
-// SetPackageName gets a reference to the given string and assigns it to the PackageName field.
+// SetPackageName sets field value
 func (o *EsimAddon) SetPackageName(v string) {
-	o.PackageName = &v
+	o.PackageName = v
 }
 
 // GetUsage returns the Usage field value if set, zero value otherwise (both if not set or set to explicit null).
@@ -127,13 +124,47 @@ func (o EsimAddon) MarshalJSON() ([]byte, error) {
 
 func (o EsimAddon) ToMap() (map[string]interface{}, error) {
 	toSerialize := map[string]interface{}{}
-	if !IsNil(o.PackageName) {
-		toSerialize["packageName"] = o.PackageName
-	}
+	toSerialize["packageName"] = o.PackageName
 	if o.Usage.IsSet() {
 		toSerialize["usage"] = o.Usage.Get()
 	}
 	return toSerialize, nil
+}
+
+func (o *EsimAddon) UnmarshalJSON(data []byte) (err error) {
+	// This validates that all required properties are included in the JSON object
+	// by unmarshalling the object into a generic map with string keys and checking
+	// that every required field exists as a key in the generic map.
+	requiredProperties := []string{
+		"packageName",
+	}
+
+	allProperties := make(map[string]interface{})
+
+	err = json.Unmarshal(data, &allProperties)
+
+	if err != nil {
+		return err;
+	}
+
+	for _, requiredProperty := range(requiredProperties) {
+		if _, exists := allProperties[requiredProperty]; !exists {
+			return fmt.Errorf("no value given for required property %v", requiredProperty)
+		}
+	}
+
+	varEsimAddon := _EsimAddon{}
+
+	decoder := json.NewDecoder(bytes.NewReader(data))
+	err = decoder.Decode(&varEsimAddon)
+
+	if err != nil {
+		return err
+	}
+
+	*o = EsimAddon(varEsimAddon)
+
+	return err
 }
 
 type NullableEsimAddon struct {

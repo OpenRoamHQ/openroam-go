@@ -19,9 +19,9 @@ import (
 type Environment string
 
 const (
-	// Production is https://b2b-api.openroam.com, the default.
+	// Production is https://api.openroam.com, the default.
 	Production Environment = "production"
-	// Sandbox is https://b2b-api-sandbox.openroam.com.
+	// Sandbox is https://api.sandbox.openroam.com.
 	Sandbox Environment = "sandbox"
 )
 
@@ -42,7 +42,7 @@ func WithEnvironment(environment Environment) Option {
 	return func(s *clientSettings) { s.environment = environment }
 }
 
-// WithBaseURL sends requests to this URL instead of an environment, for example a development host.
+// WithBaseURL sends requests to this URL instead of a named environment. Optional unnamed override only — not a third environment.
 func WithBaseURL(baseURL string) Option {
 	return func(s *clientSettings) { s.baseURL = baseURL }
 }

@@ -13,17 +13,19 @@ package openroam
 
 import (
 	"encoding/json"
+	"bytes"
+	"fmt"
 )
 
 // checks if the Itinerary type satisfies the MappedNullable interface at compile time
 var _ MappedNullable = &Itinerary{}
 
-// Itinerary One itinerary: the same flights sold by the same airline, with the fares bookable on it as offers, cheapest first. `id` names the itinerary within this response only and is never orderable: quote and order an offer's `publicId`. Prices are indicative; quote recalculates them.
+// Itinerary One itinerary: the same flights sold by the same airline, with the fares bookable on it as offers, cheapest first. `id` names the itinerary within this response only and is never orderable: quote and order an offer's `publicId`. Prices are indicative; quote recalculates them. The flights and the airlines are shared by every fare.
 type Itinerary struct {
-	// Search-scoped itinerary id (`flight_it_…`), new in every response; quote, order and the seat map reject it with 400 / 11004.
-	Id *string `json:"id,omitempty"`
+	// Search-scoped itinerary id (`itin_…`), new in every response; quote, order and the seat map reject it with 400 / 11004.
+	Id string `json:"id"`
 	// \"{route} · {dates} · {airline}\", for example \"LHR ⇄ JFK · 12–19 Dec · British Airways\".
-	Name *string `json:"name,omitempty"`
+	Name string `json:"name"`
 	// ISO 3166-1 alpha-2 country of the trip's destination; null when unknown.
 	CountryCode NullableString `json:"countryCode,omitempty"`
 	// Always null: trip type and market are fixed by the request.
@@ -33,17 +35,40 @@ type Itinerary struct {
 	// Always null.
 	Description NullableString `json:"description,omitempty"`
 	// The fares bookable on this itinerary, cheapest first.
-	Offers []FlightOffer `json:"offers,omitempty"`
-	// The flights and the airlines, shared by every fare.
-	Details *ItineraryDetails `json:"details,omitempty"`
+	Offers []FlightOffer `json:"offers"`
+	// The airline that sells the itinerary.
+	Owner Airline `json:"owner"`
+	// The flights of the trip, in order. Fare facts (cabin and baggage per segment, fare basis) are on each offer.
+	Slices []Slice `json:"slices"`
+	// Airlines that market a segment.
+	MarketingCarriers []Airline `json:"marketingCarriers"`
+	// Airlines that fly a segment.
+	OperatingCarriers []Airline `json:"operatingCarriers"`
+	// Flying and connection time across all slices.
+	TotalDurationMinutes int32 `json:"totalDurationMinutes"`
+	// Connections across all slices.
+	TotalStops int32 `json:"totalStops"`
+	// The CO₂ estimate for all passengers on this itinerary, as given with its cheapest fare; null when not given.
+	TotalEmissionsKg NullableFloat32 `json:"totalEmissionsKg,omitempty"`
 }
+
+type _Itinerary Itinerary
 
 // NewItinerary instantiates a new Itinerary object
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewItinerary() *Itinerary {
+func NewItinerary(id string, name string, offers []FlightOffer, owner Airline, slices []Slice, marketingCarriers []Airline, operatingCarriers []Airline, totalDurationMinutes int32, totalStops int32) *Itinerary {
 	this := Itinerary{}
+	this.Id = id
+	this.Name = name
+	this.Offers = offers
+	this.Owner = owner
+	this.Slices = slices
+	this.MarketingCarriers = marketingCarriers
+	this.OperatingCarriers = operatingCarriers
+	this.TotalDurationMinutes = totalDurationMinutes
+	this.TotalStops = totalStops
 	return &this
 }
 
@@ -55,68 +80,52 @@ func NewItineraryWithDefaults() *Itinerary {
 	return &this
 }
 
-// GetId returns the Id field value if set, zero value otherwise.
+// GetId returns the Id field value
 func (o *Itinerary) GetId() string {
-	if o == nil || IsNil(o.Id) {
+	if o == nil {
 		var ret string
 		return ret
 	}
-	return *o.Id
+
+	return o.Id
 }
 
-// GetIdOk returns a tuple with the Id field value if set, nil otherwise
+// GetIdOk returns a tuple with the Id field value
 // and a boolean to check if the value has been set.
 func (o *Itinerary) GetIdOk() (*string, bool) {
-	if o == nil || IsNil(o.Id) {
+	if o == nil {
 		return nil, false
 	}
-	return o.Id, true
+	return &o.Id, true
 }
 
-// HasId returns a boolean if a field has been set.
-func (o *Itinerary) HasId() bool {
-	if o != nil && !IsNil(o.Id) {
-		return true
-	}
-
-	return false
-}
-
-// SetId gets a reference to the given string and assigns it to the Id field.
+// SetId sets field value
 func (o *Itinerary) SetId(v string) {
-	o.Id = &v
+	o.Id = v
 }
 
-// GetName returns the Name field value if set, zero value otherwise.
+// GetName returns the Name field value
 func (o *Itinerary) GetName() string {
-	if o == nil || IsNil(o.Name) {
+	if o == nil {
 		var ret string
 		return ret
 	}
-	return *o.Name
+
+	return o.Name
 }
 
-// GetNameOk returns a tuple with the Name field value if set, nil otherwise
+// GetNameOk returns a tuple with the Name field value
 // and a boolean to check if the value has been set.
 func (o *Itinerary) GetNameOk() (*string, bool) {
-	if o == nil || IsNil(o.Name) {
+	if o == nil {
 		return nil, false
 	}
-	return o.Name, true
+	return &o.Name, true
 }
 
-// HasName returns a boolean if a field has been set.
-func (o *Itinerary) HasName() bool {
-	if o != nil && !IsNil(o.Name) {
-		return true
-	}
-
-	return false
-}
-
-// SetName gets a reference to the given string and assigns it to the Name field.
+// SetName sets field value
 func (o *Itinerary) SetName(v string) {
-	o.Name = &v
+	o.Name = v
 }
 
 // GetCountryCode returns the CountryCode field value if set, zero value otherwise (both if not set or set to explicit null).
@@ -287,68 +296,214 @@ func (o *Itinerary) UnsetDescription() {
 	o.Description.Unset()
 }
 
-// GetOffers returns the Offers field value if set, zero value otherwise.
+// GetOffers returns the Offers field value
 func (o *Itinerary) GetOffers() []FlightOffer {
-	if o == nil || IsNil(o.Offers) {
+	if o == nil {
 		var ret []FlightOffer
 		return ret
 	}
+
 	return o.Offers
 }
 
-// GetOffersOk returns a tuple with the Offers field value if set, nil otherwise
+// GetOffersOk returns a tuple with the Offers field value
 // and a boolean to check if the value has been set.
 func (o *Itinerary) GetOffersOk() ([]FlightOffer, bool) {
-	if o == nil || IsNil(o.Offers) {
+	if o == nil {
 		return nil, false
 	}
 	return o.Offers, true
 }
 
-// HasOffers returns a boolean if a field has been set.
-func (o *Itinerary) HasOffers() bool {
-	if o != nil && !IsNil(o.Offers) {
-		return true
-	}
-
-	return false
-}
-
-// SetOffers gets a reference to the given []FlightOffer and assigns it to the Offers field.
+// SetOffers sets field value
 func (o *Itinerary) SetOffers(v []FlightOffer) {
 	o.Offers = v
 }
 
-// GetDetails returns the Details field value if set, zero value otherwise.
-func (o *Itinerary) GetDetails() ItineraryDetails {
-	if o == nil || IsNil(o.Details) {
-		var ret ItineraryDetails
+// GetOwner returns the Owner field value
+func (o *Itinerary) GetOwner() Airline {
+	if o == nil {
+		var ret Airline
 		return ret
 	}
-	return *o.Details
+
+	return o.Owner
 }
 
-// GetDetailsOk returns a tuple with the Details field value if set, nil otherwise
+// GetOwnerOk returns a tuple with the Owner field value
 // and a boolean to check if the value has been set.
-func (o *Itinerary) GetDetailsOk() (*ItineraryDetails, bool) {
-	if o == nil || IsNil(o.Details) {
+func (o *Itinerary) GetOwnerOk() (*Airline, bool) {
+	if o == nil {
 		return nil, false
 	}
-	return o.Details, true
+	return &o.Owner, true
 }
 
-// HasDetails returns a boolean if a field has been set.
-func (o *Itinerary) HasDetails() bool {
-	if o != nil && !IsNil(o.Details) {
+// SetOwner sets field value
+func (o *Itinerary) SetOwner(v Airline) {
+	o.Owner = v
+}
+
+// GetSlices returns the Slices field value
+func (o *Itinerary) GetSlices() []Slice {
+	if o == nil {
+		var ret []Slice
+		return ret
+	}
+
+	return o.Slices
+}
+
+// GetSlicesOk returns a tuple with the Slices field value
+// and a boolean to check if the value has been set.
+func (o *Itinerary) GetSlicesOk() ([]Slice, bool) {
+	if o == nil {
+		return nil, false
+	}
+	return o.Slices, true
+}
+
+// SetSlices sets field value
+func (o *Itinerary) SetSlices(v []Slice) {
+	o.Slices = v
+}
+
+// GetMarketingCarriers returns the MarketingCarriers field value
+func (o *Itinerary) GetMarketingCarriers() []Airline {
+	if o == nil {
+		var ret []Airline
+		return ret
+	}
+
+	return o.MarketingCarriers
+}
+
+// GetMarketingCarriersOk returns a tuple with the MarketingCarriers field value
+// and a boolean to check if the value has been set.
+func (o *Itinerary) GetMarketingCarriersOk() ([]Airline, bool) {
+	if o == nil {
+		return nil, false
+	}
+	return o.MarketingCarriers, true
+}
+
+// SetMarketingCarriers sets field value
+func (o *Itinerary) SetMarketingCarriers(v []Airline) {
+	o.MarketingCarriers = v
+}
+
+// GetOperatingCarriers returns the OperatingCarriers field value
+func (o *Itinerary) GetOperatingCarriers() []Airline {
+	if o == nil {
+		var ret []Airline
+		return ret
+	}
+
+	return o.OperatingCarriers
+}
+
+// GetOperatingCarriersOk returns a tuple with the OperatingCarriers field value
+// and a boolean to check if the value has been set.
+func (o *Itinerary) GetOperatingCarriersOk() ([]Airline, bool) {
+	if o == nil {
+		return nil, false
+	}
+	return o.OperatingCarriers, true
+}
+
+// SetOperatingCarriers sets field value
+func (o *Itinerary) SetOperatingCarriers(v []Airline) {
+	o.OperatingCarriers = v
+}
+
+// GetTotalDurationMinutes returns the TotalDurationMinutes field value
+func (o *Itinerary) GetTotalDurationMinutes() int32 {
+	if o == nil {
+		var ret int32
+		return ret
+	}
+
+	return o.TotalDurationMinutes
+}
+
+// GetTotalDurationMinutesOk returns a tuple with the TotalDurationMinutes field value
+// and a boolean to check if the value has been set.
+func (o *Itinerary) GetTotalDurationMinutesOk() (*int32, bool) {
+	if o == nil {
+		return nil, false
+	}
+	return &o.TotalDurationMinutes, true
+}
+
+// SetTotalDurationMinutes sets field value
+func (o *Itinerary) SetTotalDurationMinutes(v int32) {
+	o.TotalDurationMinutes = v
+}
+
+// GetTotalStops returns the TotalStops field value
+func (o *Itinerary) GetTotalStops() int32 {
+	if o == nil {
+		var ret int32
+		return ret
+	}
+
+	return o.TotalStops
+}
+
+// GetTotalStopsOk returns a tuple with the TotalStops field value
+// and a boolean to check if the value has been set.
+func (o *Itinerary) GetTotalStopsOk() (*int32, bool) {
+	if o == nil {
+		return nil, false
+	}
+	return &o.TotalStops, true
+}
+
+// SetTotalStops sets field value
+func (o *Itinerary) SetTotalStops(v int32) {
+	o.TotalStops = v
+}
+
+// GetTotalEmissionsKg returns the TotalEmissionsKg field value if set, zero value otherwise (both if not set or set to explicit null).
+func (o *Itinerary) GetTotalEmissionsKg() float32 {
+	if o == nil || IsNil(o.TotalEmissionsKg.Get()) {
+		var ret float32
+		return ret
+	}
+	return *o.TotalEmissionsKg.Get()
+}
+
+// GetTotalEmissionsKgOk returns a tuple with the TotalEmissionsKg field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+// NOTE: If the value is an explicit nil, `nil, true` will be returned
+func (o *Itinerary) GetTotalEmissionsKgOk() (*float32, bool) {
+	if o == nil {
+		return nil, false
+	}
+	return o.TotalEmissionsKg.Get(), o.TotalEmissionsKg.IsSet()
+}
+
+// HasTotalEmissionsKg returns a boolean if a field has been set.
+func (o *Itinerary) HasTotalEmissionsKg() bool {
+	if o != nil && o.TotalEmissionsKg.IsSet() {
 		return true
 	}
 
 	return false
 }
 
-// SetDetails gets a reference to the given ItineraryDetails and assigns it to the Details field.
-func (o *Itinerary) SetDetails(v ItineraryDetails) {
-	o.Details = &v
+// SetTotalEmissionsKg gets a reference to the given NullableFloat32 and assigns it to the TotalEmissionsKg field.
+func (o *Itinerary) SetTotalEmissionsKg(v float32) {
+	o.TotalEmissionsKg.Set(&v)
+}
+// SetTotalEmissionsKgNil sets the value for TotalEmissionsKg to be an explicit nil
+func (o *Itinerary) SetTotalEmissionsKgNil() {
+	o.TotalEmissionsKg.Set(nil)
+}
+
+// UnsetTotalEmissionsKg ensures that no value is present for TotalEmissionsKg, not even an explicit nil
+func (o *Itinerary) UnsetTotalEmissionsKg() {
+	o.TotalEmissionsKg.Unset()
 }
 
 func (o Itinerary) MarshalJSON() ([]byte, error) {
@@ -361,12 +516,8 @@ func (o Itinerary) MarshalJSON() ([]byte, error) {
 
 func (o Itinerary) ToMap() (map[string]interface{}, error) {
 	toSerialize := map[string]interface{}{}
-	if !IsNil(o.Id) {
-		toSerialize["id"] = o.Id
-	}
-	if !IsNil(o.Name) {
-		toSerialize["name"] = o.Name
-	}
+	toSerialize["id"] = o.Id
+	toSerialize["name"] = o.Name
 	if o.CountryCode.IsSet() {
 		toSerialize["countryCode"] = o.CountryCode.Get()
 	}
@@ -379,13 +530,61 @@ func (o Itinerary) ToMap() (map[string]interface{}, error) {
 	if o.Description.IsSet() {
 		toSerialize["description"] = o.Description.Get()
 	}
-	if !IsNil(o.Offers) {
-		toSerialize["offers"] = o.Offers
-	}
-	if !IsNil(o.Details) {
-		toSerialize["details"] = o.Details
+	toSerialize["offers"] = o.Offers
+	toSerialize["owner"] = o.Owner
+	toSerialize["slices"] = o.Slices
+	toSerialize["marketingCarriers"] = o.MarketingCarriers
+	toSerialize["operatingCarriers"] = o.OperatingCarriers
+	toSerialize["totalDurationMinutes"] = o.TotalDurationMinutes
+	toSerialize["totalStops"] = o.TotalStops
+	if o.TotalEmissionsKg.IsSet() {
+		toSerialize["totalEmissionsKg"] = o.TotalEmissionsKg.Get()
 	}
 	return toSerialize, nil
+}
+
+func (o *Itinerary) UnmarshalJSON(data []byte) (err error) {
+	// This validates that all required properties are included in the JSON object
+	// by unmarshalling the object into a generic map with string keys and checking
+	// that every required field exists as a key in the generic map.
+	requiredProperties := []string{
+		"id",
+		"name",
+		"offers",
+		"owner",
+		"slices",
+		"marketingCarriers",
+		"operatingCarriers",
+		"totalDurationMinutes",
+		"totalStops",
+	}
+
+	allProperties := make(map[string]interface{})
+
+	err = json.Unmarshal(data, &allProperties)
+
+	if err != nil {
+		return err;
+	}
+
+	for _, requiredProperty := range(requiredProperties) {
+		if _, exists := allProperties[requiredProperty]; !exists {
+			return fmt.Errorf("no value given for required property %v", requiredProperty)
+		}
+	}
+
+	varItinerary := _Itinerary{}
+
+	decoder := json.NewDecoder(bytes.NewReader(data))
+	err = decoder.Decode(&varItinerary)
+
+	if err != nil {
+		return err
+	}
+
+	*o = Itinerary(varItinerary)
+
+	return err
 }
 
 type NullableItinerary struct {

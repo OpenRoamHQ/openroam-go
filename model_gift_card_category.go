@@ -13,6 +13,8 @@ package openroam
 
 import (
 	"encoding/json"
+	"bytes"
+	"fmt"
 )
 
 // checks if the GiftCardCategory type satisfies the MappedNullable interface at compile time
@@ -20,16 +22,20 @@ var _ MappedNullable = &GiftCardCategory{}
 
 // GiftCardCategory A value of the item `category` and of the `category` filter, with its display name.
 type GiftCardCategory struct {
-	Category *string `json:"category,omitempty"`
-	Name *string `json:"name,omitempty"`
+	Category string `json:"category"`
+	Name string `json:"name"`
 }
+
+type _GiftCardCategory GiftCardCategory
 
 // NewGiftCardCategory instantiates a new GiftCardCategory object
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewGiftCardCategory() *GiftCardCategory {
+func NewGiftCardCategory(category string, name string) *GiftCardCategory {
 	this := GiftCardCategory{}
+	this.Category = category
+	this.Name = name
 	return &this
 }
 
@@ -41,68 +47,52 @@ func NewGiftCardCategoryWithDefaults() *GiftCardCategory {
 	return &this
 }
 
-// GetCategory returns the Category field value if set, zero value otherwise.
+// GetCategory returns the Category field value
 func (o *GiftCardCategory) GetCategory() string {
-	if o == nil || IsNil(o.Category) {
+	if o == nil {
 		var ret string
 		return ret
 	}
-	return *o.Category
+
+	return o.Category
 }
 
-// GetCategoryOk returns a tuple with the Category field value if set, nil otherwise
+// GetCategoryOk returns a tuple with the Category field value
 // and a boolean to check if the value has been set.
 func (o *GiftCardCategory) GetCategoryOk() (*string, bool) {
-	if o == nil || IsNil(o.Category) {
+	if o == nil {
 		return nil, false
 	}
-	return o.Category, true
+	return &o.Category, true
 }
 
-// HasCategory returns a boolean if a field has been set.
-func (o *GiftCardCategory) HasCategory() bool {
-	if o != nil && !IsNil(o.Category) {
-		return true
-	}
-
-	return false
-}
-
-// SetCategory gets a reference to the given string and assigns it to the Category field.
+// SetCategory sets field value
 func (o *GiftCardCategory) SetCategory(v string) {
-	o.Category = &v
+	o.Category = v
 }
 
-// GetName returns the Name field value if set, zero value otherwise.
+// GetName returns the Name field value
 func (o *GiftCardCategory) GetName() string {
-	if o == nil || IsNil(o.Name) {
+	if o == nil {
 		var ret string
 		return ret
 	}
-	return *o.Name
+
+	return o.Name
 }
 
-// GetNameOk returns a tuple with the Name field value if set, nil otherwise
+// GetNameOk returns a tuple with the Name field value
 // and a boolean to check if the value has been set.
 func (o *GiftCardCategory) GetNameOk() (*string, bool) {
-	if o == nil || IsNil(o.Name) {
+	if o == nil {
 		return nil, false
 	}
-	return o.Name, true
+	return &o.Name, true
 }
 
-// HasName returns a boolean if a field has been set.
-func (o *GiftCardCategory) HasName() bool {
-	if o != nil && !IsNil(o.Name) {
-		return true
-	}
-
-	return false
-}
-
-// SetName gets a reference to the given string and assigns it to the Name field.
+// SetName sets field value
 func (o *GiftCardCategory) SetName(v string) {
-	o.Name = &v
+	o.Name = v
 }
 
 func (o GiftCardCategory) MarshalJSON() ([]byte, error) {
@@ -115,13 +105,46 @@ func (o GiftCardCategory) MarshalJSON() ([]byte, error) {
 
 func (o GiftCardCategory) ToMap() (map[string]interface{}, error) {
 	toSerialize := map[string]interface{}{}
-	if !IsNil(o.Category) {
-		toSerialize["category"] = o.Category
-	}
-	if !IsNil(o.Name) {
-		toSerialize["name"] = o.Name
-	}
+	toSerialize["category"] = o.Category
+	toSerialize["name"] = o.Name
 	return toSerialize, nil
+}
+
+func (o *GiftCardCategory) UnmarshalJSON(data []byte) (err error) {
+	// This validates that all required properties are included in the JSON object
+	// by unmarshalling the object into a generic map with string keys and checking
+	// that every required field exists as a key in the generic map.
+	requiredProperties := []string{
+		"category",
+		"name",
+	}
+
+	allProperties := make(map[string]interface{})
+
+	err = json.Unmarshal(data, &allProperties)
+
+	if err != nil {
+		return err;
+	}
+
+	for _, requiredProperty := range(requiredProperties) {
+		if _, exists := allProperties[requiredProperty]; !exists {
+			return fmt.Errorf("no value given for required property %v", requiredProperty)
+		}
+	}
+
+	varGiftCardCategory := _GiftCardCategory{}
+
+	decoder := json.NewDecoder(bytes.NewReader(data))
+	err = decoder.Decode(&varGiftCardCategory)
+
+	if err != nil {
+		return err
+	}
+
+	*o = GiftCardCategory(varGiftCardCategory)
+
+	return err
 }
 
 type NullableGiftCardCategory struct {

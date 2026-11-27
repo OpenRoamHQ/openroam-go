@@ -353,7 +353,6 @@ func (o *FlightSearchRequest) UnmarshalJSON(data []byte) (err error) {
 	varFlightSearchRequest := _FlightSearchRequest{}
 
 	decoder := json.NewDecoder(bytes.NewReader(data))
-	decoder.DisallowUnknownFields()
 	err = decoder.Decode(&varFlightSearchRequest)
 
 	if err != nil {

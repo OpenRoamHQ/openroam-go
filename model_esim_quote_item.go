@@ -20,12 +20,14 @@ import (
 // checks if the EsimQuoteItem type satisfies the MappedNullable interface at compile time
 var _ MappedNullable = &EsimQuoteItem{}
 
-// EsimQuoteItem One quoted item: the offer's package name and its current unit price in the quote currency, the price the order charges. An eSIM has no monetary value, so the item has no `value`.
+// EsimQuoteItem One quoted item: the offer's package name and its current unit price in the quote currency, the price the order charges. An eSIM has no monetary value, so the item has no `value`. `taxes` is `notStated`: no tax is stated for eSIM prices yet.
 type EsimQuoteItem struct {
 	PublicId string `json:"publicId"`
-	Quantity *int32 `json:"quantity,omitempty"`
-	Name *string `json:"name,omitempty"`
-	Price *Money `json:"price,omitempty"`
+	Quantity int32 `json:"quantity"`
+	Name string `json:"name"`
+	Price Money `json:"price"`
+	// The taxes inside one unit of the `price` beside it, in one shape for every service. The server sets every field; a client never derives a treatment, never adds up `lines` and never computes an amount.
+	Taxes TaxSummary `json:"taxes"`
 }
 
 type _EsimQuoteItem EsimQuoteItem
@@ -34,9 +36,13 @@ type _EsimQuoteItem EsimQuoteItem
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewEsimQuoteItem(publicId string) *EsimQuoteItem {
+func NewEsimQuoteItem(publicId string, quantity int32, name string, price Money, taxes TaxSummary) *EsimQuoteItem {
 	this := EsimQuoteItem{}
 	this.PublicId = publicId
+	this.Quantity = quantity
+	this.Name = name
+	this.Price = price
+	this.Taxes = taxes
 	return &this
 }
 
@@ -72,100 +78,100 @@ func (o *EsimQuoteItem) SetPublicId(v string) {
 	o.PublicId = v
 }
 
-// GetQuantity returns the Quantity field value if set, zero value otherwise.
+// GetQuantity returns the Quantity field value
 func (o *EsimQuoteItem) GetQuantity() int32 {
-	if o == nil || IsNil(o.Quantity) {
+	if o == nil {
 		var ret int32
 		return ret
 	}
-	return *o.Quantity
+
+	return o.Quantity
 }
 
-// GetQuantityOk returns a tuple with the Quantity field value if set, nil otherwise
+// GetQuantityOk returns a tuple with the Quantity field value
 // and a boolean to check if the value has been set.
 func (o *EsimQuoteItem) GetQuantityOk() (*int32, bool) {
-	if o == nil || IsNil(o.Quantity) {
+	if o == nil {
 		return nil, false
 	}
-	return o.Quantity, true
+	return &o.Quantity, true
 }
 
-// HasQuantity returns a boolean if a field has been set.
-func (o *EsimQuoteItem) HasQuantity() bool {
-	if o != nil && !IsNil(o.Quantity) {
-		return true
-	}
-
-	return false
-}
-
-// SetQuantity gets a reference to the given int32 and assigns it to the Quantity field.
+// SetQuantity sets field value
 func (o *EsimQuoteItem) SetQuantity(v int32) {
-	o.Quantity = &v
+	o.Quantity = v
 }
 
-// GetName returns the Name field value if set, zero value otherwise.
+// GetName returns the Name field value
 func (o *EsimQuoteItem) GetName() string {
-	if o == nil || IsNil(o.Name) {
+	if o == nil {
 		var ret string
 		return ret
 	}
-	return *o.Name
+
+	return o.Name
 }
 
-// GetNameOk returns a tuple with the Name field value if set, nil otherwise
+// GetNameOk returns a tuple with the Name field value
 // and a boolean to check if the value has been set.
 func (o *EsimQuoteItem) GetNameOk() (*string, bool) {
-	if o == nil || IsNil(o.Name) {
+	if o == nil {
 		return nil, false
 	}
-	return o.Name, true
+	return &o.Name, true
 }
 
-// HasName returns a boolean if a field has been set.
-func (o *EsimQuoteItem) HasName() bool {
-	if o != nil && !IsNil(o.Name) {
-		return true
-	}
-
-	return false
-}
-
-// SetName gets a reference to the given string and assigns it to the Name field.
+// SetName sets field value
 func (o *EsimQuoteItem) SetName(v string) {
-	o.Name = &v
+	o.Name = v
 }
 
-// GetPrice returns the Price field value if set, zero value otherwise.
+// GetPrice returns the Price field value
 func (o *EsimQuoteItem) GetPrice() Money {
-	if o == nil || IsNil(o.Price) {
+	if o == nil {
 		var ret Money
 		return ret
 	}
-	return *o.Price
+
+	return o.Price
 }
 
-// GetPriceOk returns a tuple with the Price field value if set, nil otherwise
+// GetPriceOk returns a tuple with the Price field value
 // and a boolean to check if the value has been set.
 func (o *EsimQuoteItem) GetPriceOk() (*Money, bool) {
-	if o == nil || IsNil(o.Price) {
+	if o == nil {
 		return nil, false
 	}
-	return o.Price, true
+	return &o.Price, true
 }
 
-// HasPrice returns a boolean if a field has been set.
-func (o *EsimQuoteItem) HasPrice() bool {
-	if o != nil && !IsNil(o.Price) {
-		return true
+// SetPrice sets field value
+func (o *EsimQuoteItem) SetPrice(v Money) {
+	o.Price = v
+}
+
+// GetTaxes returns the Taxes field value
+func (o *EsimQuoteItem) GetTaxes() TaxSummary {
+	if o == nil {
+		var ret TaxSummary
+		return ret
 	}
 
-	return false
+	return o.Taxes
 }
 
-// SetPrice gets a reference to the given Money and assigns it to the Price field.
-func (o *EsimQuoteItem) SetPrice(v Money) {
-	o.Price = &v
+// GetTaxesOk returns a tuple with the Taxes field value
+// and a boolean to check if the value has been set.
+func (o *EsimQuoteItem) GetTaxesOk() (*TaxSummary, bool) {
+	if o == nil {
+		return nil, false
+	}
+	return &o.Taxes, true
+}
+
+// SetTaxes sets field value
+func (o *EsimQuoteItem) SetTaxes(v TaxSummary) {
+	o.Taxes = v
 }
 
 func (o EsimQuoteItem) MarshalJSON() ([]byte, error) {
@@ -179,15 +185,10 @@ func (o EsimQuoteItem) MarshalJSON() ([]byte, error) {
 func (o EsimQuoteItem) ToMap() (map[string]interface{}, error) {
 	toSerialize := map[string]interface{}{}
 	toSerialize["publicId"] = o.PublicId
-	if !IsNil(o.Quantity) {
-		toSerialize["quantity"] = o.Quantity
-	}
-	if !IsNil(o.Name) {
-		toSerialize["name"] = o.Name
-	}
-	if !IsNil(o.Price) {
-		toSerialize["price"] = o.Price
-	}
+	toSerialize["quantity"] = o.Quantity
+	toSerialize["name"] = o.Name
+	toSerialize["price"] = o.Price
+	toSerialize["taxes"] = o.Taxes
 	return toSerialize, nil
 }
 
@@ -197,6 +198,10 @@ func (o *EsimQuoteItem) UnmarshalJSON(data []byte) (err error) {
 	// that every required field exists as a key in the generic map.
 	requiredProperties := []string{
 		"publicId",
+		"quantity",
+		"name",
+		"price",
+		"taxes",
 	}
 
 	allProperties := make(map[string]interface{})
@@ -216,7 +221,6 @@ func (o *EsimQuoteItem) UnmarshalJSON(data []byte) (err error) {
 	varEsimQuoteItem := _EsimQuoteItem{}
 
 	decoder := json.NewDecoder(bytes.NewReader(data))
-	decoder.DisallowUnknownFields()
 	err = decoder.Decode(&varEsimQuoteItem)
 
 	if err != nil {

@@ -13,6 +13,8 @@ package openroam
 
 import (
 	"encoding/json"
+	"bytes"
+	"fmt"
 )
 
 // checks if the PriceLine type satisfies the MappedNullable interface at compile time
@@ -20,19 +22,25 @@ var _ MappedNullable = &PriceLine{}
 
 // PriceLine One line of what the item cost; `amount` is the line's total in the order currency.
 type PriceLine struct {
-	Description *string `json:"description,omitempty"`
-	Amount *Money `json:"amount,omitempty"`
-	Quantity *int32 `json:"quantity,omitempty"`
+	Description string `json:"description"`
+	Amount Money `json:"amount"`
+	Quantity int32 `json:"quantity"`
 	ServiceType NullableString `json:"serviceType,omitempty"`
-	Category *string `json:"category,omitempty"`
+	Category string `json:"category"`
 }
+
+type _PriceLine PriceLine
 
 // NewPriceLine instantiates a new PriceLine object
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewPriceLine() *PriceLine {
+func NewPriceLine(description string, amount Money, quantity int32, category string) *PriceLine {
 	this := PriceLine{}
+	this.Description = description
+	this.Amount = amount
+	this.Quantity = quantity
+	this.Category = category
 	return &this
 }
 
@@ -44,100 +52,76 @@ func NewPriceLineWithDefaults() *PriceLine {
 	return &this
 }
 
-// GetDescription returns the Description field value if set, zero value otherwise.
+// GetDescription returns the Description field value
 func (o *PriceLine) GetDescription() string {
-	if o == nil || IsNil(o.Description) {
+	if o == nil {
 		var ret string
 		return ret
 	}
-	return *o.Description
+
+	return o.Description
 }
 
-// GetDescriptionOk returns a tuple with the Description field value if set, nil otherwise
+// GetDescriptionOk returns a tuple with the Description field value
 // and a boolean to check if the value has been set.
 func (o *PriceLine) GetDescriptionOk() (*string, bool) {
-	if o == nil || IsNil(o.Description) {
+	if o == nil {
 		return nil, false
 	}
-	return o.Description, true
+	return &o.Description, true
 }
 
-// HasDescription returns a boolean if a field has been set.
-func (o *PriceLine) HasDescription() bool {
-	if o != nil && !IsNil(o.Description) {
-		return true
-	}
-
-	return false
-}
-
-// SetDescription gets a reference to the given string and assigns it to the Description field.
+// SetDescription sets field value
 func (o *PriceLine) SetDescription(v string) {
-	o.Description = &v
+	o.Description = v
 }
 
-// GetAmount returns the Amount field value if set, zero value otherwise.
+// GetAmount returns the Amount field value
 func (o *PriceLine) GetAmount() Money {
-	if o == nil || IsNil(o.Amount) {
+	if o == nil {
 		var ret Money
 		return ret
 	}
-	return *o.Amount
+
+	return o.Amount
 }
 
-// GetAmountOk returns a tuple with the Amount field value if set, nil otherwise
+// GetAmountOk returns a tuple with the Amount field value
 // and a boolean to check if the value has been set.
 func (o *PriceLine) GetAmountOk() (*Money, bool) {
-	if o == nil || IsNil(o.Amount) {
+	if o == nil {
 		return nil, false
 	}
-	return o.Amount, true
+	return &o.Amount, true
 }
 
-// HasAmount returns a boolean if a field has been set.
-func (o *PriceLine) HasAmount() bool {
-	if o != nil && !IsNil(o.Amount) {
-		return true
-	}
-
-	return false
-}
-
-// SetAmount gets a reference to the given Money and assigns it to the Amount field.
+// SetAmount sets field value
 func (o *PriceLine) SetAmount(v Money) {
-	o.Amount = &v
+	o.Amount = v
 }
 
-// GetQuantity returns the Quantity field value if set, zero value otherwise.
+// GetQuantity returns the Quantity field value
 func (o *PriceLine) GetQuantity() int32 {
-	if o == nil || IsNil(o.Quantity) {
+	if o == nil {
 		var ret int32
 		return ret
 	}
-	return *o.Quantity
+
+	return o.Quantity
 }
 
-// GetQuantityOk returns a tuple with the Quantity field value if set, nil otherwise
+// GetQuantityOk returns a tuple with the Quantity field value
 // and a boolean to check if the value has been set.
 func (o *PriceLine) GetQuantityOk() (*int32, bool) {
-	if o == nil || IsNil(o.Quantity) {
+	if o == nil {
 		return nil, false
 	}
-	return o.Quantity, true
+	return &o.Quantity, true
 }
 
-// HasQuantity returns a boolean if a field has been set.
-func (o *PriceLine) HasQuantity() bool {
-	if o != nil && !IsNil(o.Quantity) {
-		return true
-	}
-
-	return false
-}
-
-// SetQuantity gets a reference to the given int32 and assigns it to the Quantity field.
+// SetQuantity sets field value
 func (o *PriceLine) SetQuantity(v int32) {
-	o.Quantity = &v
+	o.Quantity = v
 }
 
 // GetServiceType returns the ServiceType field value if set, zero value otherwise (both if not set or set to explicit null).
@@ -182,36 +166,28 @@ func (o *PriceLine) UnsetServiceType() {
 	o.ServiceType.Unset()
 }
 
-// GetCategory returns the Category field value if set, zero value otherwise.
+// GetCategory returns the Category field value
 func (o *PriceLine) GetCategory() string {
-	if o == nil || IsNil(o.Category) {
+	if o == nil {
 		var ret string
 		return ret
 	}
-	return *o.Category
+
+	return o.Category
 }
 
-// GetCategoryOk returns a tuple with the Category field value if set, nil otherwise
+// GetCategoryOk returns a tuple with the Category field value
 // and a boolean to check if the value has been set.
 func (o *PriceLine) GetCategoryOk() (*string, bool) {
-	if o == nil || IsNil(o.Category) {
+	if o == nil {
 		return nil, false
 	}
-	return o.Category, true
+	return &o.Category, true
 }
 
-// HasCategory returns a boolean if a field has been set.
-func (o *PriceLine) HasCategory() bool {
-	if o != nil && !IsNil(o.Category) {
-		return true
-	}
-
-	return false
-}
-
-// SetCategory gets a reference to the given string and assigns it to the Category field.
+// SetCategory sets field value
 func (o *PriceLine) SetCategory(v string) {
-	o.Category = &v
+	o.Category = v
 }
 
 func (o PriceLine) MarshalJSON() ([]byte, error) {
@@ -224,22 +200,53 @@ func (o PriceLine) MarshalJSON() ([]byte, error) {
 
 func (o PriceLine) ToMap() (map[string]interface{}, error) {
 	toSerialize := map[string]interface{}{}
-	if !IsNil(o.Description) {
-		toSerialize["description"] = o.Description
-	}
-	if !IsNil(o.Amount) {
-		toSerialize["amount"] = o.Amount
-	}
-	if !IsNil(o.Quantity) {
-		toSerialize["quantity"] = o.Quantity
-	}
+	toSerialize["description"] = o.Description
+	toSerialize["amount"] = o.Amount
+	toSerialize["quantity"] = o.Quantity
 	if o.ServiceType.IsSet() {
 		toSerialize["serviceType"] = o.ServiceType.Get()
 	}
-	if !IsNil(o.Category) {
-		toSerialize["category"] = o.Category
-	}
+	toSerialize["category"] = o.Category
 	return toSerialize, nil
+}
+
+func (o *PriceLine) UnmarshalJSON(data []byte) (err error) {
+	// This validates that all required properties are included in the JSON object
+	// by unmarshalling the object into a generic map with string keys and checking
+	// that every required field exists as a key in the generic map.
+	requiredProperties := []string{
+		"description",
+		"amount",
+		"quantity",
+		"category",
+	}
+
+	allProperties := make(map[string]interface{})
+
+	err = json.Unmarshal(data, &allProperties)
+
+	if err != nil {
+		return err;
+	}
+
+	for _, requiredProperty := range(requiredProperties) {
+		if _, exists := allProperties[requiredProperty]; !exists {
+			return fmt.Errorf("no value given for required property %v", requiredProperty)
+		}
+	}
+
+	varPriceLine := _PriceLine{}
+
+	decoder := json.NewDecoder(bytes.NewReader(data))
+	err = decoder.Decode(&varPriceLine)
+
+	if err != nil {
+		return err
+	}
+
+	*o = PriceLine(varPriceLine)
+
+	return err
 }
 
 type NullablePriceLine struct {

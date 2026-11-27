@@ -13,6 +13,8 @@ package openroam
 
 import (
 	"encoding/json"
+	"bytes"
+	"fmt"
 )
 
 // checks if the SpecialRequestOption type satisfies the MappedNullable interface at compile time
@@ -21,17 +23,21 @@ var _ MappedNullable = &SpecialRequestOption{}
 // SpecialRequestOption An optional request, subject to availability at check-in.
 type SpecialRequestOption struct {
 	// Opaque option code; pass back unchanged in inputs.specialRequestCodes.
-	Code *string `json:"code,omitempty"`
+	Code string `json:"code"`
 	// The request's display name.
-	Name *string `json:"name,omitempty"`
+	Name string `json:"name"`
 }
+
+type _SpecialRequestOption SpecialRequestOption
 
 // NewSpecialRequestOption instantiates a new SpecialRequestOption object
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewSpecialRequestOption() *SpecialRequestOption {
+func NewSpecialRequestOption(code string, name string) *SpecialRequestOption {
 	this := SpecialRequestOption{}
+	this.Code = code
+	this.Name = name
 	return &this
 }
 
@@ -43,68 +49,52 @@ func NewSpecialRequestOptionWithDefaults() *SpecialRequestOption {
 	return &this
 }
 
-// GetCode returns the Code field value if set, zero value otherwise.
+// GetCode returns the Code field value
 func (o *SpecialRequestOption) GetCode() string {
-	if o == nil || IsNil(o.Code) {
+	if o == nil {
 		var ret string
 		return ret
 	}
-	return *o.Code
+
+	return o.Code
 }
 
-// GetCodeOk returns a tuple with the Code field value if set, nil otherwise
+// GetCodeOk returns a tuple with the Code field value
 // and a boolean to check if the value has been set.
 func (o *SpecialRequestOption) GetCodeOk() (*string, bool) {
-	if o == nil || IsNil(o.Code) {
+	if o == nil {
 		return nil, false
 	}
-	return o.Code, true
+	return &o.Code, true
 }
 
-// HasCode returns a boolean if a field has been set.
-func (o *SpecialRequestOption) HasCode() bool {
-	if o != nil && !IsNil(o.Code) {
-		return true
-	}
-
-	return false
-}
-
-// SetCode gets a reference to the given string and assigns it to the Code field.
+// SetCode sets field value
 func (o *SpecialRequestOption) SetCode(v string) {
-	o.Code = &v
+	o.Code = v
 }
 
-// GetName returns the Name field value if set, zero value otherwise.
+// GetName returns the Name field value
 func (o *SpecialRequestOption) GetName() string {
-	if o == nil || IsNil(o.Name) {
+	if o == nil {
 		var ret string
 		return ret
 	}
-	return *o.Name
+
+	return o.Name
 }
 
-// GetNameOk returns a tuple with the Name field value if set, nil otherwise
+// GetNameOk returns a tuple with the Name field value
 // and a boolean to check if the value has been set.
 func (o *SpecialRequestOption) GetNameOk() (*string, bool) {
-	if o == nil || IsNil(o.Name) {
+	if o == nil {
 		return nil, false
 	}
-	return o.Name, true
+	return &o.Name, true
 }
 
-// HasName returns a boolean if a field has been set.
-func (o *SpecialRequestOption) HasName() bool {
-	if o != nil && !IsNil(o.Name) {
-		return true
-	}
-
-	return false
-}
-
-// SetName gets a reference to the given string and assigns it to the Name field.
+// SetName sets field value
 func (o *SpecialRequestOption) SetName(v string) {
-	o.Name = &v
+	o.Name = v
 }
 
 func (o SpecialRequestOption) MarshalJSON() ([]byte, error) {
@@ -117,13 +107,46 @@ func (o SpecialRequestOption) MarshalJSON() ([]byte, error) {
 
 func (o SpecialRequestOption) ToMap() (map[string]interface{}, error) {
 	toSerialize := map[string]interface{}{}
-	if !IsNil(o.Code) {
-		toSerialize["code"] = o.Code
-	}
-	if !IsNil(o.Name) {
-		toSerialize["name"] = o.Name
-	}
+	toSerialize["code"] = o.Code
+	toSerialize["name"] = o.Name
 	return toSerialize, nil
+}
+
+func (o *SpecialRequestOption) UnmarshalJSON(data []byte) (err error) {
+	// This validates that all required properties are included in the JSON object
+	// by unmarshalling the object into a generic map with string keys and checking
+	// that every required field exists as a key in the generic map.
+	requiredProperties := []string{
+		"code",
+		"name",
+	}
+
+	allProperties := make(map[string]interface{})
+
+	err = json.Unmarshal(data, &allProperties)
+
+	if err != nil {
+		return err;
+	}
+
+	for _, requiredProperty := range(requiredProperties) {
+		if _, exists := allProperties[requiredProperty]; !exists {
+			return fmt.Errorf("no value given for required property %v", requiredProperty)
+		}
+	}
+
+	varSpecialRequestOption := _SpecialRequestOption{}
+
+	decoder := json.NewDecoder(bytes.NewReader(data))
+	err = decoder.Decode(&varSpecialRequestOption)
+
+	if err != nil {
+		return err
+	}
+
+	*o = SpecialRequestOption(varSpecialRequestOption)
+
+	return err
 }
 
 type NullableSpecialRequestOption struct {

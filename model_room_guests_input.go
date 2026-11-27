@@ -138,7 +138,6 @@ func (o *RoomGuestsInput) UnmarshalJSON(data []byte) (err error) {
 	varRoomGuestsInput := _RoomGuestsInput{}
 
 	decoder := json.NewDecoder(bytes.NewReader(data))
-	decoder.DisallowUnknownFields()
 	err = decoder.Decode(&varRoomGuestsInput)
 
 	if err != nil {

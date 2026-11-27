@@ -136,7 +136,6 @@ func (o *FixedPrice) UnmarshalJSON(data []byte) (err error) {
 	varFixedPrice := _FixedPrice{}
 
 	decoder := json.NewDecoder(bytes.NewReader(data))
-	decoder.DisallowUnknownFields()
 	err = decoder.Decode(&varFixedPrice)
 
 	if err != nil {

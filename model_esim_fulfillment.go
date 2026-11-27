@@ -13,6 +13,8 @@ package openroam
 
 import (
 	"encoding/json"
+	"bytes"
+	"fmt"
 )
 
 // checks if the EsimFulfillment type satisfies the MappedNullable interface at compile time
@@ -21,19 +23,22 @@ var _ MappedNullable = &EsimFulfillment{}
 // EsimFulfillment struct for EsimFulfillment
 type EsimFulfillment struct {
 	// `pending`, `fulfilled` or `rejected`.
-	Status *string `json:"status,omitempty"`
+	Status string `json:"status"`
 	Result NullableEsimFulfillmentResult `json:"result,omitempty"`
 	// Why delivery was rejected (`11001`, `FULFILLMENT_REJECTED`); set only when             `rejected`.
 	Failure NullableFulfillmentFailure `json:"failure,omitempty"`
 	Progress NullableFulfillmentProgress `json:"progress,omitempty"`
 }
 
+type _EsimFulfillment EsimFulfillment
+
 // NewEsimFulfillment instantiates a new EsimFulfillment object
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewEsimFulfillment() *EsimFulfillment {
+func NewEsimFulfillment(status string) *EsimFulfillment {
 	this := EsimFulfillment{}
+	this.Status = status
 	return &this
 }
 
@@ -45,36 +50,28 @@ func NewEsimFulfillmentWithDefaults() *EsimFulfillment {
 	return &this
 }
 
-// GetStatus returns the Status field value if set, zero value otherwise.
+// GetStatus returns the Status field value
 func (o *EsimFulfillment) GetStatus() string {
-	if o == nil || IsNil(o.Status) {
+	if o == nil {
 		var ret string
 		return ret
 	}
-	return *o.Status
+
+	return o.Status
 }
 
-// GetStatusOk returns a tuple with the Status field value if set, nil otherwise
+// GetStatusOk returns a tuple with the Status field value
 // and a boolean to check if the value has been set.
 func (o *EsimFulfillment) GetStatusOk() (*string, bool) {
-	if o == nil || IsNil(o.Status) {
+	if o == nil {
 		return nil, false
 	}
-	return o.Status, true
+	return &o.Status, true
 }
 
-// HasStatus returns a boolean if a field has been set.
-func (o *EsimFulfillment) HasStatus() bool {
-	if o != nil && !IsNil(o.Status) {
-		return true
-	}
-
-	return false
-}
-
-// SetStatus gets a reference to the given string and assigns it to the Status field.
+// SetStatus sets field value
 func (o *EsimFulfillment) SetStatus(v string) {
-	o.Status = &v
+	o.Status = v
 }
 
 // GetResult returns the Result field value if set, zero value otherwise (both if not set or set to explicit null).
@@ -213,9 +210,7 @@ func (o EsimFulfillment) MarshalJSON() ([]byte, error) {
 
 func (o EsimFulfillment) ToMap() (map[string]interface{}, error) {
 	toSerialize := map[string]interface{}{}
-	if !IsNil(o.Status) {
-		toSerialize["status"] = o.Status
-	}
+	toSerialize["status"] = o.Status
 	if o.Result.IsSet() {
 		toSerialize["result"] = o.Result.Get()
 	}
@@ -226,6 +221,42 @@ func (o EsimFulfillment) ToMap() (map[string]interface{}, error) {
 		toSerialize["progress"] = o.Progress.Get()
 	}
 	return toSerialize, nil
+}
+
+func (o *EsimFulfillment) UnmarshalJSON(data []byte) (err error) {
+	// This validates that all required properties are included in the JSON object
+	// by unmarshalling the object into a generic map with string keys and checking
+	// that every required field exists as a key in the generic map.
+	requiredProperties := []string{
+		"status",
+	}
+
+	allProperties := make(map[string]interface{})
+
+	err = json.Unmarshal(data, &allProperties)
+
+	if err != nil {
+		return err;
+	}
+
+	for _, requiredProperty := range(requiredProperties) {
+		if _, exists := allProperties[requiredProperty]; !exists {
+			return fmt.Errorf("no value given for required property %v", requiredProperty)
+		}
+	}
+
+	varEsimFulfillment := _EsimFulfillment{}
+
+	decoder := json.NewDecoder(bytes.NewReader(data))
+	err = decoder.Decode(&varEsimFulfillment)
+
+	if err != nil {
+		return err
+	}
+
+	*o = EsimFulfillment(varEsimFulfillment)
+
+	return err
 }
 
 type NullableEsimFulfillment struct {

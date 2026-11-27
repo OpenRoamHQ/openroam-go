@@ -13,6 +13,8 @@ package openroam
 
 import (
 	"encoding/json"
+	"bytes"
+	"fmt"
 )
 
 // checks if the UnitAvailability type satisfies the MappedNullable interface at compile time
@@ -20,16 +22,20 @@ var _ MappedNullable = &UnitAvailability{}
 
 // UnitAvailability struct for UnitAvailability
 type UnitAvailability struct {
-	AvailableUnitCount *int32 `json:"availableUnitCount,omitempty"`
-	BookingRequiresUnitSelection *bool `json:"bookingRequiresUnitSelection,omitempty"`
+	AvailableUnitCount int32 `json:"availableUnitCount"`
+	BookingRequiresUnitSelection bool `json:"bookingRequiresUnitSelection"`
 }
+
+type _UnitAvailability UnitAvailability
 
 // NewUnitAvailability instantiates a new UnitAvailability object
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewUnitAvailability() *UnitAvailability {
+func NewUnitAvailability(availableUnitCount int32, bookingRequiresUnitSelection bool) *UnitAvailability {
 	this := UnitAvailability{}
+	this.AvailableUnitCount = availableUnitCount
+	this.BookingRequiresUnitSelection = bookingRequiresUnitSelection
 	return &this
 }
 
@@ -41,68 +47,52 @@ func NewUnitAvailabilityWithDefaults() *UnitAvailability {
 	return &this
 }
 
-// GetAvailableUnitCount returns the AvailableUnitCount field value if set, zero value otherwise.
+// GetAvailableUnitCount returns the AvailableUnitCount field value
 func (o *UnitAvailability) GetAvailableUnitCount() int32 {
-	if o == nil || IsNil(o.AvailableUnitCount) {
+	if o == nil {
 		var ret int32
 		return ret
 	}
-	return *o.AvailableUnitCount
+
+	return o.AvailableUnitCount
 }
 
-// GetAvailableUnitCountOk returns a tuple with the AvailableUnitCount field value if set, nil otherwise
+// GetAvailableUnitCountOk returns a tuple with the AvailableUnitCount field value
 // and a boolean to check if the value has been set.
 func (o *UnitAvailability) GetAvailableUnitCountOk() (*int32, bool) {
-	if o == nil || IsNil(o.AvailableUnitCount) {
+	if o == nil {
 		return nil, false
 	}
-	return o.AvailableUnitCount, true
+	return &o.AvailableUnitCount, true
 }
 
-// HasAvailableUnitCount returns a boolean if a field has been set.
-func (o *UnitAvailability) HasAvailableUnitCount() bool {
-	if o != nil && !IsNil(o.AvailableUnitCount) {
-		return true
-	}
-
-	return false
-}
-
-// SetAvailableUnitCount gets a reference to the given int32 and assigns it to the AvailableUnitCount field.
+// SetAvailableUnitCount sets field value
 func (o *UnitAvailability) SetAvailableUnitCount(v int32) {
-	o.AvailableUnitCount = &v
+	o.AvailableUnitCount = v
 }
 
-// GetBookingRequiresUnitSelection returns the BookingRequiresUnitSelection field value if set, zero value otherwise.
+// GetBookingRequiresUnitSelection returns the BookingRequiresUnitSelection field value
 func (o *UnitAvailability) GetBookingRequiresUnitSelection() bool {
-	if o == nil || IsNil(o.BookingRequiresUnitSelection) {
+	if o == nil {
 		var ret bool
 		return ret
 	}
-	return *o.BookingRequiresUnitSelection
+
+	return o.BookingRequiresUnitSelection
 }
 
-// GetBookingRequiresUnitSelectionOk returns a tuple with the BookingRequiresUnitSelection field value if set, nil otherwise
+// GetBookingRequiresUnitSelectionOk returns a tuple with the BookingRequiresUnitSelection field value
 // and a boolean to check if the value has been set.
 func (o *UnitAvailability) GetBookingRequiresUnitSelectionOk() (*bool, bool) {
-	if o == nil || IsNil(o.BookingRequiresUnitSelection) {
+	if o == nil {
 		return nil, false
 	}
-	return o.BookingRequiresUnitSelection, true
+	return &o.BookingRequiresUnitSelection, true
 }
 
-// HasBookingRequiresUnitSelection returns a boolean if a field has been set.
-func (o *UnitAvailability) HasBookingRequiresUnitSelection() bool {
-	if o != nil && !IsNil(o.BookingRequiresUnitSelection) {
-		return true
-	}
-
-	return false
-}
-
-// SetBookingRequiresUnitSelection gets a reference to the given bool and assigns it to the BookingRequiresUnitSelection field.
+// SetBookingRequiresUnitSelection sets field value
 func (o *UnitAvailability) SetBookingRequiresUnitSelection(v bool) {
-	o.BookingRequiresUnitSelection = &v
+	o.BookingRequiresUnitSelection = v
 }
 
 func (o UnitAvailability) MarshalJSON() ([]byte, error) {
@@ -115,13 +105,46 @@ func (o UnitAvailability) MarshalJSON() ([]byte, error) {
 
 func (o UnitAvailability) ToMap() (map[string]interface{}, error) {
 	toSerialize := map[string]interface{}{}
-	if !IsNil(o.AvailableUnitCount) {
-		toSerialize["availableUnitCount"] = o.AvailableUnitCount
-	}
-	if !IsNil(o.BookingRequiresUnitSelection) {
-		toSerialize["bookingRequiresUnitSelection"] = o.BookingRequiresUnitSelection
-	}
+	toSerialize["availableUnitCount"] = o.AvailableUnitCount
+	toSerialize["bookingRequiresUnitSelection"] = o.BookingRequiresUnitSelection
 	return toSerialize, nil
+}
+
+func (o *UnitAvailability) UnmarshalJSON(data []byte) (err error) {
+	// This validates that all required properties are included in the JSON object
+	// by unmarshalling the object into a generic map with string keys and checking
+	// that every required field exists as a key in the generic map.
+	requiredProperties := []string{
+		"availableUnitCount",
+		"bookingRequiresUnitSelection",
+	}
+
+	allProperties := make(map[string]interface{})
+
+	err = json.Unmarshal(data, &allProperties)
+
+	if err != nil {
+		return err;
+	}
+
+	for _, requiredProperty := range(requiredProperties) {
+		if _, exists := allProperties[requiredProperty]; !exists {
+			return fmt.Errorf("no value given for required property %v", requiredProperty)
+		}
+	}
+
+	varUnitAvailability := _UnitAvailability{}
+
+	decoder := json.NewDecoder(bytes.NewReader(data))
+	err = decoder.Decode(&varUnitAvailability)
+
+	if err != nil {
+		return err
+	}
+
+	*o = UnitAvailability(varUnitAvailability)
+
+	return err
 }
 
 type NullableUnitAvailability struct {

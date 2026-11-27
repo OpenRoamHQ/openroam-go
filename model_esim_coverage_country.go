@@ -13,6 +13,8 @@ package openroam
 
 import (
 	"encoding/json"
+	"bytes"
+	"fmt"
 )
 
 // checks if the EsimCoverageCountry type satisfies the MappedNullable interface at compile time
@@ -20,18 +22,24 @@ var _ MappedNullable = &EsimCoverageCountry{}
 
 // EsimCoverageCountry A country a destination's plans work in; `countryCode` is what the `countryCode` filter matches.
 type EsimCoverageCountry struct {
-	CountryCode *string `json:"countryCode,omitempty"`
-	Name *string `json:"name,omitempty"`
-	Networks []string `json:"networks,omitempty"`
-	Carriers []string `json:"carriers,omitempty"`
+	CountryCode string `json:"countryCode"`
+	Name string `json:"name"`
+	Networks []string `json:"networks"`
+	Carriers []string `json:"carriers"`
 }
+
+type _EsimCoverageCountry EsimCoverageCountry
 
 // NewEsimCoverageCountry instantiates a new EsimCoverageCountry object
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewEsimCoverageCountry() *EsimCoverageCountry {
+func NewEsimCoverageCountry(countryCode string, name string, networks []string, carriers []string) *EsimCoverageCountry {
 	this := EsimCoverageCountry{}
+	this.CountryCode = countryCode
+	this.Name = name
+	this.Networks = networks
+	this.Carriers = carriers
 	return &this
 }
 
@@ -43,130 +51,98 @@ func NewEsimCoverageCountryWithDefaults() *EsimCoverageCountry {
 	return &this
 }
 
-// GetCountryCode returns the CountryCode field value if set, zero value otherwise.
+// GetCountryCode returns the CountryCode field value
 func (o *EsimCoverageCountry) GetCountryCode() string {
-	if o == nil || IsNil(o.CountryCode) {
+	if o == nil {
 		var ret string
 		return ret
 	}
-	return *o.CountryCode
+
+	return o.CountryCode
 }
 
-// GetCountryCodeOk returns a tuple with the CountryCode field value if set, nil otherwise
+// GetCountryCodeOk returns a tuple with the CountryCode field value
 // and a boolean to check if the value has been set.
 func (o *EsimCoverageCountry) GetCountryCodeOk() (*string, bool) {
-	if o == nil || IsNil(o.CountryCode) {
+	if o == nil {
 		return nil, false
 	}
-	return o.CountryCode, true
+	return &o.CountryCode, true
 }
 
-// HasCountryCode returns a boolean if a field has been set.
-func (o *EsimCoverageCountry) HasCountryCode() bool {
-	if o != nil && !IsNil(o.CountryCode) {
-		return true
-	}
-
-	return false
-}
-
-// SetCountryCode gets a reference to the given string and assigns it to the CountryCode field.
+// SetCountryCode sets field value
 func (o *EsimCoverageCountry) SetCountryCode(v string) {
-	o.CountryCode = &v
+	o.CountryCode = v
 }
 
-// GetName returns the Name field value if set, zero value otherwise.
+// GetName returns the Name field value
 func (o *EsimCoverageCountry) GetName() string {
-	if o == nil || IsNil(o.Name) {
+	if o == nil {
 		var ret string
 		return ret
 	}
-	return *o.Name
+
+	return o.Name
 }
 
-// GetNameOk returns a tuple with the Name field value if set, nil otherwise
+// GetNameOk returns a tuple with the Name field value
 // and a boolean to check if the value has been set.
 func (o *EsimCoverageCountry) GetNameOk() (*string, bool) {
-	if o == nil || IsNil(o.Name) {
+	if o == nil {
 		return nil, false
 	}
-	return o.Name, true
+	return &o.Name, true
 }
 
-// HasName returns a boolean if a field has been set.
-func (o *EsimCoverageCountry) HasName() bool {
-	if o != nil && !IsNil(o.Name) {
-		return true
-	}
-
-	return false
-}
-
-// SetName gets a reference to the given string and assigns it to the Name field.
+// SetName sets field value
 func (o *EsimCoverageCountry) SetName(v string) {
-	o.Name = &v
+	o.Name = v
 }
 
-// GetNetworks returns the Networks field value if set, zero value otherwise.
+// GetNetworks returns the Networks field value
 func (o *EsimCoverageCountry) GetNetworks() []string {
-	if o == nil || IsNil(o.Networks) {
+	if o == nil {
 		var ret []string
 		return ret
 	}
+
 	return o.Networks
 }
 
-// GetNetworksOk returns a tuple with the Networks field value if set, nil otherwise
+// GetNetworksOk returns a tuple with the Networks field value
 // and a boolean to check if the value has been set.
 func (o *EsimCoverageCountry) GetNetworksOk() ([]string, bool) {
-	if o == nil || IsNil(o.Networks) {
+	if o == nil {
 		return nil, false
 	}
 	return o.Networks, true
 }
 
-// HasNetworks returns a boolean if a field has been set.
-func (o *EsimCoverageCountry) HasNetworks() bool {
-	if o != nil && !IsNil(o.Networks) {
-		return true
-	}
-
-	return false
-}
-
-// SetNetworks gets a reference to the given []string and assigns it to the Networks field.
+// SetNetworks sets field value
 func (o *EsimCoverageCountry) SetNetworks(v []string) {
 	o.Networks = v
 }
 
-// GetCarriers returns the Carriers field value if set, zero value otherwise.
+// GetCarriers returns the Carriers field value
 func (o *EsimCoverageCountry) GetCarriers() []string {
-	if o == nil || IsNil(o.Carriers) {
+	if o == nil {
 		var ret []string
 		return ret
 	}
+
 	return o.Carriers
 }
 
-// GetCarriersOk returns a tuple with the Carriers field value if set, nil otherwise
+// GetCarriersOk returns a tuple with the Carriers field value
 // and a boolean to check if the value has been set.
 func (o *EsimCoverageCountry) GetCarriersOk() ([]string, bool) {
-	if o == nil || IsNil(o.Carriers) {
+	if o == nil {
 		return nil, false
 	}
 	return o.Carriers, true
 }
 
-// HasCarriers returns a boolean if a field has been set.
-func (o *EsimCoverageCountry) HasCarriers() bool {
-	if o != nil && !IsNil(o.Carriers) {
-		return true
-	}
-
-	return false
-}
-
-// SetCarriers gets a reference to the given []string and assigns it to the Carriers field.
+// SetCarriers sets field value
 func (o *EsimCoverageCountry) SetCarriers(v []string) {
 	o.Carriers = v
 }
@@ -181,19 +157,50 @@ func (o EsimCoverageCountry) MarshalJSON() ([]byte, error) {
 
 func (o EsimCoverageCountry) ToMap() (map[string]interface{}, error) {
 	toSerialize := map[string]interface{}{}
-	if !IsNil(o.CountryCode) {
-		toSerialize["countryCode"] = o.CountryCode
-	}
-	if !IsNil(o.Name) {
-		toSerialize["name"] = o.Name
-	}
-	if !IsNil(o.Networks) {
-		toSerialize["networks"] = o.Networks
-	}
-	if !IsNil(o.Carriers) {
-		toSerialize["carriers"] = o.Carriers
-	}
+	toSerialize["countryCode"] = o.CountryCode
+	toSerialize["name"] = o.Name
+	toSerialize["networks"] = o.Networks
+	toSerialize["carriers"] = o.Carriers
 	return toSerialize, nil
+}
+
+func (o *EsimCoverageCountry) UnmarshalJSON(data []byte) (err error) {
+	// This validates that all required properties are included in the JSON object
+	// by unmarshalling the object into a generic map with string keys and checking
+	// that every required field exists as a key in the generic map.
+	requiredProperties := []string{
+		"countryCode",
+		"name",
+		"networks",
+		"carriers",
+	}
+
+	allProperties := make(map[string]interface{})
+
+	err = json.Unmarshal(data, &allProperties)
+
+	if err != nil {
+		return err;
+	}
+
+	for _, requiredProperty := range(requiredProperties) {
+		if _, exists := allProperties[requiredProperty]; !exists {
+			return fmt.Errorf("no value given for required property %v", requiredProperty)
+		}
+	}
+
+	varEsimCoverageCountry := _EsimCoverageCountry{}
+
+	decoder := json.NewDecoder(bytes.NewReader(data))
+	err = decoder.Decode(&varEsimCoverageCountry)
+
+	if err != nil {
+		return err
+	}
+
+	*o = EsimCoverageCountry(varEsimCoverageCountry)
+
+	return err
 }
 
 type NullableEsimCoverageCountry struct {

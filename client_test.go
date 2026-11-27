@@ -91,7 +91,8 @@ func asOpenRoamError(t *testing.T, err error) *OpenRoamError {
 }
 
 var (
-	okReply       = reply{status: 200, body: `{"items":[],"pagination":{}}`}
+	okReply       = reply{status: 200, body: sample("EsimSearchResult")}
+	orderedReply  = reply{status: 200, body: sample("EsimOrder")}
 	esimOrderJSON = `{"currency":"USD","items":[{"publicId":"esim_1","quantity":1,"inputs":{}}]}`
 )
 
@@ -124,7 +125,7 @@ func TestASearchIsOneCallOnTheProductWithTheKeyAsXPartnerKey(t *testing.T) {
 		t.Errorf("found %+v", found)
 	}
 	r := requests()[0]
-	if r.method != "GET" || r.url != "/api/v1/b2b/esims/search?countryCode=JP" || r.header.Get("X-Partner-Key") != "secret" {
+	if r.method != "GET" || r.url != "/v1/esims/search?countryCode=JP" || r.header.Get("X-Partner-Key") != "secret" {
 		t.Errorf("request %s %s, key %q", r.method, r.url, r.header.Get("X-Partner-Key"))
 	}
 }
@@ -144,7 +145,7 @@ func TestTheKeyIsAddedByTheTransportSoTheGeneratedDebugLogNeverHoldsIt(t *testin
 	if got := requests()[0].header.Get("X-Partner-Key"); got != "secret-key" {
 		t.Errorf("X-Partner-Key %q", got)
 	}
-	if !strings.Contains(logged.String(), "/api/v1/b2b/esims/search") || strings.Contains(logged.String(), "secret-key") {
+	if !strings.Contains(logged.String(), "/v1/esims/search") || strings.Contains(logged.String(), "secret-key") {
 		t.Errorf("debug log %q", logged.String())
 	}
 	// Your own client is used through a copy and stays as it was.
@@ -161,18 +162,18 @@ func TestTheKeyGoesOnlyToTheConfiguredOriginEvenAcrossARedirect(t *testing.T) {
 	elsewhere := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		elsewhereHeaders = append(elsewhereHeaders, r.Header.Clone())
 		w.Header().Set("Content-Type", "application/json")
-		_, _ = w.Write([]byte(`{"items":[],"pagination":{}}`))
+		_, _ = w.Write([]byte(sample("EsimSearchResult")))
 	}))
 	defer elsewhere.Close()
 	var configuredHeaders []http.Header
 	configured := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		configuredHeaders = append(configuredHeaders, r.Header.Clone())
 		switch r.URL.Path {
-		case "/api/v1/b2b/esims/search":
+		case "/v1/esims/search":
 			http.Redirect(w, r, elsewhere.URL+"/stolen", http.StatusFound)
 		default:
 			w.Header().Set("Content-Type", "application/json")
-			_, _ = w.Write([]byte(`{"items":[],"pagination":{}}`))
+			_, _ = w.Write([]byte(sample("EsimSearchResult")))
 		}
 	}))
 	defer configured.Close()
@@ -198,10 +199,10 @@ func TestOneOriginMeansTheSameSchemeHostAndPortWithDefaultPortsMadeExplicit(t *t
 		a, b string
 		same bool
 	}{
-		{"https://b2b-api.openroam.com", "https://b2b-api.openroam.com:443", true},
-		{"https://B2B-API.openroam.com/x", "https://b2b-api.openroam.com/y", true},
-		{"https://b2b-api.openroam.com", "http://b2b-api.openroam.com", false},
-		{"https://b2b-api.openroam.com", "https://b2b-api-sandbox.openroam.com", false},
+		{"https://api.openroam.com", "https://api.openroam.com:443", true},
+		{"https://API.openroam.com/x", "https://api.openroam.com/y", true},
+		{"https://api.openroam.com", "http://api.openroam.com", false},
+		{"https://api.openroam.com", "https://api.sandbox.openroam.com", false},
 		{"http://127.0.0.1:8080", "http://127.0.0.1:8081", false},
 	}
 	for _, c := range cases {
@@ -243,7 +244,7 @@ type recordingTransport struct{ urls []string }
 func (r *recordingTransport) RoundTrip(req *http.Request) (*http.Response, error) {
 	r.urls = append(r.urls, req.URL.String())
 	return &http.Response{StatusCode: 200, Header: http.Header{"Content-Type": {"application/json"}},
-		Body: io.NopCloser(strings.NewReader("{}")), Request: req}, nil
+		Body: io.NopCloser(strings.NewReader(sample("EsimSearchResult"))), Request: req}, nil
 }
 
 func TestTheEnvironmentPicksTheURLAndAnUnknownOneIsRefused(t *testing.T) {
@@ -256,7 +257,7 @@ func TestTheEnvironmentPicksTheURLAndAnUnknownOneIsRefused(t *testing.T) {
 	if _, err := mustNew(t, "k", WithHTTPClient(client), WithEnvironment(Sandbox)).Esims.Search(ctx, nil); err != nil {
 		t.Fatal(err)
 	}
-	if transport.urls[0] != "https://b2b-api.openroam.com/api/v1/b2b/esims/search" || !strings.HasPrefix(transport.urls[1], "https://b2b-api-sandbox.openroam.com/") {
+	if transport.urls[0] != "https://api.openroam.com/v1/esims/search" || !strings.HasPrefix(transport.urls[1], "https://api.sandbox.openroam.com/") {
 		t.Errorf("urls %v", transport.urls)
 	}
 	_, err := New("k", WithEnvironment("staging"))
@@ -273,18 +274,18 @@ func TestATrailingSlashOnTheBaseURLIsIgnored(t *testing.T) {
 	if _, err := mustNew(t, "k", WithBaseURL(baseURL+"///")).Esims.Search(context.Background(), nil); err != nil {
 		t.Fatal(err)
 	}
-	if got := requests()[0].url; got != "/api/v1/b2b/esims/search" {
+	if got := requests()[0].url; got != "/v1/esims/search" {
 		t.Errorf("url %s", got)
 	}
 }
 
 func TestAQuoteSendsTheBodyAsGivenNotWrapped(t *testing.T) {
-	baseURL, requests := scriptedServer(t, reply{status: 200, body: `{"currency":"USD"}`})
+	baseURL, requests := scriptedServer(t, reply{status: 200, body: sample("EsimQuote")})
 	if _, err := mustNew(t, "k", WithBaseURL(baseURL)).Esims.Quote(context.Background(), esimOrder(t)); err != nil {
 		t.Fatal(err)
 	}
 	r := requests()[0]
-	if r.method != "POST" || r.url != "/api/v1/b2b/esims/quote" {
+	if r.method != "POST" || r.url != "/v1/esims/quote" {
 		t.Errorf("request %s %s", r.method, r.url)
 	}
 	sameJSON(t, r.body, esimOrderJSON)
@@ -294,7 +295,7 @@ func TestAQuoteSendsTheBodyAsGivenNotWrapped(t *testing.T) {
 }
 
 func TestAnOrderGetsItsOwnIdempotencyKeyAndYourOwnKeyWins(t *testing.T) {
-	baseURL, requests := scriptedServer(t, okReply)
+	baseURL, requests := scriptedServer(t, orderedReply)
 	c := mustNew(t, "k", WithBaseURL(baseURL))
 	ctx := context.Background()
 	for _, opts := range [][]CallOption{nil, nil, {WithIdempotencyKey("my-order-42")}} {
@@ -320,10 +321,10 @@ func TestPathIdsComeFirstInPathOrderAndQueryParametersAreOneStruct(t *testing.T)
 	c := mustNew(t, "k", WithBaseURL(baseURL))
 	ctx := context.Background()
 	_, _ = c.Esims.GetUsage(ctx, "8988-1")
-	_, _ = c.OrderItems.GetAmendment(ctx, "item-1", "amend-2")
+	_, _ = c.OrderItems.GetChange(ctx, "item-1", "change-2")
 	_, _ = c.Esims.ListUsageHistory(ctx, "8988-1", &EsimsListUsageHistoryQuery{Limit: PtrInt32(5)})
 	// A query parameter left out that has a documented default (page) is sent with that default by the generated service.
-	want := []string{"/api/v1/b2b/esims/8988-1/usage", "/api/v1/b2b/order-items/item-1/amendments/amend-2", "/api/v1/b2b/esims/8988-1/usage/history?limit=5&page=1"}
+	want := []string{"/v1/esims/8988-1/usage", "/v1/order-items/item-1/changes/change-2", "/v1/esims/8988-1/usage/history?limit=5&page=1"}
 	for i, r := range requests() {
 		if r.url != want[i] {
 			t.Errorf("url %s, want %s", r.url, want[i])
@@ -342,20 +343,20 @@ func TestAQueryValueCannotReplaceAPositionalId(t *testing.T) {
 	}
 	baseURL, requests := scriptedServer(t, reply{status: 200})
 	_, _ = mustNew(t, "k", WithBaseURL(baseURL)).Esims.GetDestination(context.Background(), "A", &EsimsGetDestinationQuery{Currency: PtrString("USD")})
-	if got := requests()[0].url; got != "/api/v1/b2b/esims/destinations/A?currency=USD" {
+	if got := requests()[0].url; got != "/v1/esims/destinations/A?currency=USD" {
 		t.Errorf("url %s", got)
 	}
 }
 
-func TestTheNestedOrderItemsManualAmendmentsResourcePostsWithAKey(t *testing.T) {
+func TestAnOrderItemChangePostsWithAKey(t *testing.T) {
 	baseURL, requests := scriptedServer(t, okReply)
-	_, _ = mustNew(t, "k", WithBaseURL(baseURL)).OrderItems.ManualAmendments.Create(context.Background(), "item-1",
-		&ManualAmendmentCreateRequest{Attributes: map[string]any{"checkInDate": "2026-01-02"}})
+	_, _ = mustNew(t, "k", WithBaseURL(baseURL)).OrderItems.Change(context.Background(), "item-1",
+		NewOrderItemChangeRequest(*NewNullableString(PtrString("request"))))
 	r := requests()[0]
-	if r.method != "POST" || r.url != "/api/v1/b2b/order-items/item-1/manual-amendments" || r.header.Get("Idempotency-Key") == "" {
+	if r.method != "POST" || r.url != "/v1/order-items/item-1/changes" || r.header.Get("Idempotency-Key") == "" {
 		t.Errorf("request %s %s, key %q", r.method, r.url, r.header.Get("Idempotency-Key"))
 	}
-	sameJSON(t, r.body, `{"attributes":{"checkInDate":"2026-01-02"}}`)
+	sameJSON(t, r.body, `{"operation":"request"}`)
 }
 
 func TestAFailedCallReturnsAnOpenRoamErrorCarryingTheErrorBody(t *testing.T) {
@@ -433,13 +434,13 @@ func TestACtxThatEndsWhileAnErrorBodyIsReadStaysDetectable(t *testing.T) {
 }
 
 func TestRetriesAreOffUntilWithMaxRetriesThenAnOrderIsSentAgainWithTheSameKeyAndBody(t *testing.T) {
-	baseURL, requests := scriptedServer(t, reply{status: 503}, okReply)
+	baseURL, requests := scriptedServer(t, reply{status: 503}, orderedReply)
 	_, err := mustNew(t, "k", WithBaseURL(baseURL)).Esims.Order(context.Background(), esimOrder(t))
 	if e := asOpenRoamError(t, err); e.Status != 503 || len(requests()) != 1 {
 		t.Errorf("error %+v after %d requests", e, len(requests()))
 	}
 
-	baseURL, requests = scriptedServer(t, reply{status: 503, headers: map[string]string{"Retry-After": "0"}}, okReply)
+	baseURL, requests = scriptedServer(t, reply{status: 503, headers: map[string]string{"Retry-After": "0"}}, orderedReply)
 	if _, err := mustNew(t, "k", WithBaseURL(baseURL), WithMaxRetries(2)).Esims.Order(context.Background(), esimOrder(t)); err != nil {
 		t.Fatal(err)
 	}
@@ -465,7 +466,7 @@ func TestA202ThatSaysStillRunningIsAnErrorNotAnOrder(t *testing.T) {
 }
 
 func TestWithRetriesOnA12002AnswerIsRetriedAndTheFinalAnswerWins(t *testing.T) {
-	baseURL, requests := scriptedServer(t, reply{status: 202, body: `{"code":12002}`, headers: map[string]string{"Retry-After": "0"}}, okReply)
+	baseURL, requests := scriptedServer(t, reply{status: 202, body: `{"code":12002}`, headers: map[string]string{"Retry-After": "0"}}, orderedReply)
 	if _, err := mustNew(t, "k", WithBaseURL(baseURL), WithMaxRetries(2)).Esims.Order(context.Background(), esimOrder(t)); err != nil {
 		t.Fatal(err)
 	}
@@ -484,13 +485,15 @@ func TestAMistakeInTheCallItselfIsAlsoAnOpenRoamErrorWithTheOriginalAsCause(t *t
 
 func TestEveryAPIRouteHasItsMethodWithTheAgreedNames(t *testing.T) {
 	methods := clientMethods(t)
-	if len(methods) != 75 {
-		t.Errorf("%d methods, want 75: %v", len(methods), methods)
+	if len(methods) != 73 {
+		t.Errorf("%d methods, want 73: %v", len(methods), methods)
 	}
 	for _, name := range []string{"Esims.Search", "Esims.Quote", "Esims.Order", "Esims.ListDailyUsage", "Esims.ListCatalog",
-		"Esims.ListCompatibleDevices", "Esims.GetProfile", "OrderItems.Get", "OrderItems.Update", "OrderItems.Cancel", "OrderItems.ConfirmAmendment", "OrderItems.ManualAmendments.Cancel", "Airtime.LookupNumber", "Utilities.GetBiller", "GiftCards.GetGiftCard", "Hotels.GetHotel",
-		"Hotels.ExportCatalog", "OrderItems.ManualAmendments.Approve", "Flights.GetSeatMap", "Orders.Order", "Orders.GetCancellationPreview",
-		"OrderItems.GetCancellationPreview", "Wallets.SetDefault", "Countries.List", "MobileNetworks.List", "Currencies.List"} {
+		"Esims.ListCompatibleDevices", "Esims.GetProfile", "OrderItems.Get", "OrderItems.Cancel", "Airtime.LookupNumber", "Utilities.GetBiller", "GiftCards.GetGiftCard", "Hotels.GetHotel",
+		"Hotels.ExportCatalog", "Flights.GetSeatMap", "Flights.ListPlaces", "Orders.Order",
+		"OrderItems.Change", "OrderItems.ListChanges", "OrderItems.ListPartnerChanges", "OrderItems.GetChange",
+		"Wallets.SetDefault", "Countries.List", "MobileNetworks.List", "Currencies.List",
+		"Orders.ResendEmail", "Account.ListServices", "BrowserSessions.Create", "BrowserSessions.Revoke", "Checkouts.Get", "Checkouts.Confirm", "Checkouts.Fail"} {
 		if !slices.Contains(methods, name) {
 			t.Errorf("%s is missing", name)
 		}

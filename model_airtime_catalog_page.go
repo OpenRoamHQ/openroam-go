@@ -13,6 +13,8 @@ package openroam
 
 import (
 	"encoding/json"
+	"bytes"
+	"fmt"
 )
 
 // checks if the AirtimeCatalogPage type satisfies the MappedNullable interface at compile time
@@ -20,16 +22,19 @@ var _ MappedNullable = &AirtimeCatalogPage{}
 
 // AirtimeCatalogPage A page of the operator directory, ordered by operator ID. Continue with `nextCursor` and the same filters until it is null; a page may hold fewer items than the limit.
 type AirtimeCatalogPage struct {
-	Items []AirtimeOperatorSummary `json:"items,omitempty"`
+	Items []AirtimeOperatorSummary `json:"items"`
 	NextCursor NullableString `json:"nextCursor,omitempty"`
 }
+
+type _AirtimeCatalogPage AirtimeCatalogPage
 
 // NewAirtimeCatalogPage instantiates a new AirtimeCatalogPage object
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewAirtimeCatalogPage() *AirtimeCatalogPage {
+func NewAirtimeCatalogPage(items []AirtimeOperatorSummary) *AirtimeCatalogPage {
 	this := AirtimeCatalogPage{}
+	this.Items = items
 	return &this
 }
 
@@ -41,34 +46,26 @@ func NewAirtimeCatalogPageWithDefaults() *AirtimeCatalogPage {
 	return &this
 }
 
-// GetItems returns the Items field value if set, zero value otherwise.
+// GetItems returns the Items field value
 func (o *AirtimeCatalogPage) GetItems() []AirtimeOperatorSummary {
-	if o == nil || IsNil(o.Items) {
+	if o == nil {
 		var ret []AirtimeOperatorSummary
 		return ret
 	}
+
 	return o.Items
 }
 
-// GetItemsOk returns a tuple with the Items field value if set, nil otherwise
+// GetItemsOk returns a tuple with the Items field value
 // and a boolean to check if the value has been set.
 func (o *AirtimeCatalogPage) GetItemsOk() ([]AirtimeOperatorSummary, bool) {
-	if o == nil || IsNil(o.Items) {
+	if o == nil {
 		return nil, false
 	}
 	return o.Items, true
 }
 
-// HasItems returns a boolean if a field has been set.
-func (o *AirtimeCatalogPage) HasItems() bool {
-	if o != nil && !IsNil(o.Items) {
-		return true
-	}
-
-	return false
-}
-
-// SetItems gets a reference to the given []AirtimeOperatorSummary and assigns it to the Items field.
+// SetItems sets field value
 func (o *AirtimeCatalogPage) SetItems(v []AirtimeOperatorSummary) {
 	o.Items = v
 }
@@ -125,13 +122,47 @@ func (o AirtimeCatalogPage) MarshalJSON() ([]byte, error) {
 
 func (o AirtimeCatalogPage) ToMap() (map[string]interface{}, error) {
 	toSerialize := map[string]interface{}{}
-	if !IsNil(o.Items) {
-		toSerialize["items"] = o.Items
-	}
+	toSerialize["items"] = o.Items
 	if o.NextCursor.IsSet() {
 		toSerialize["nextCursor"] = o.NextCursor.Get()
 	}
 	return toSerialize, nil
+}
+
+func (o *AirtimeCatalogPage) UnmarshalJSON(data []byte) (err error) {
+	// This validates that all required properties are included in the JSON object
+	// by unmarshalling the object into a generic map with string keys and checking
+	// that every required field exists as a key in the generic map.
+	requiredProperties := []string{
+		"items",
+	}
+
+	allProperties := make(map[string]interface{})
+
+	err = json.Unmarshal(data, &allProperties)
+
+	if err != nil {
+		return err;
+	}
+
+	for _, requiredProperty := range(requiredProperties) {
+		if _, exists := allProperties[requiredProperty]; !exists {
+			return fmt.Errorf("no value given for required property %v", requiredProperty)
+		}
+	}
+
+	varAirtimeCatalogPage := _AirtimeCatalogPage{}
+
+	decoder := json.NewDecoder(bytes.NewReader(data))
+	err = decoder.Decode(&varAirtimeCatalogPage)
+
+	if err != nil {
+		return err
+	}
+
+	*o = AirtimeCatalogPage(varAirtimeCatalogPage)
+
+	return err
 }
 
 type NullableAirtimeCatalogPage struct {

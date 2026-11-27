@@ -13,6 +13,8 @@ package openroam
 
 import (
 	"encoding/json"
+	"bytes"
+	"fmt"
 )
 
 // checks if the FulfillmentProgress type satisfies the MappedNullable interface at compile time
@@ -20,16 +22,20 @@ var _ MappedNullable = &FulfillmentProgress{}
 
 // FulfillmentProgress struct for FulfillmentProgress
 type FulfillmentProgress struct {
-	Code *string `json:"code,omitempty"`
-	Message *string `json:"message,omitempty"`
+	Code string `json:"code"`
+	Message string `json:"message"`
 }
+
+type _FulfillmentProgress FulfillmentProgress
 
 // NewFulfillmentProgress instantiates a new FulfillmentProgress object
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewFulfillmentProgress() *FulfillmentProgress {
+func NewFulfillmentProgress(code string, message string) *FulfillmentProgress {
 	this := FulfillmentProgress{}
+	this.Code = code
+	this.Message = message
 	return &this
 }
 
@@ -41,68 +47,52 @@ func NewFulfillmentProgressWithDefaults() *FulfillmentProgress {
 	return &this
 }
 
-// GetCode returns the Code field value if set, zero value otherwise.
+// GetCode returns the Code field value
 func (o *FulfillmentProgress) GetCode() string {
-	if o == nil || IsNil(o.Code) {
+	if o == nil {
 		var ret string
 		return ret
 	}
-	return *o.Code
+
+	return o.Code
 }
 
-// GetCodeOk returns a tuple with the Code field value if set, nil otherwise
+// GetCodeOk returns a tuple with the Code field value
 // and a boolean to check if the value has been set.
 func (o *FulfillmentProgress) GetCodeOk() (*string, bool) {
-	if o == nil || IsNil(o.Code) {
+	if o == nil {
 		return nil, false
 	}
-	return o.Code, true
+	return &o.Code, true
 }
 
-// HasCode returns a boolean if a field has been set.
-func (o *FulfillmentProgress) HasCode() bool {
-	if o != nil && !IsNil(o.Code) {
-		return true
-	}
-
-	return false
-}
-
-// SetCode gets a reference to the given string and assigns it to the Code field.
+// SetCode sets field value
 func (o *FulfillmentProgress) SetCode(v string) {
-	o.Code = &v
+	o.Code = v
 }
 
-// GetMessage returns the Message field value if set, zero value otherwise.
+// GetMessage returns the Message field value
 func (o *FulfillmentProgress) GetMessage() string {
-	if o == nil || IsNil(o.Message) {
+	if o == nil {
 		var ret string
 		return ret
 	}
-	return *o.Message
+
+	return o.Message
 }
 
-// GetMessageOk returns a tuple with the Message field value if set, nil otherwise
+// GetMessageOk returns a tuple with the Message field value
 // and a boolean to check if the value has been set.
 func (o *FulfillmentProgress) GetMessageOk() (*string, bool) {
-	if o == nil || IsNil(o.Message) {
+	if o == nil {
 		return nil, false
 	}
-	return o.Message, true
+	return &o.Message, true
 }
 
-// HasMessage returns a boolean if a field has been set.
-func (o *FulfillmentProgress) HasMessage() bool {
-	if o != nil && !IsNil(o.Message) {
-		return true
-	}
-
-	return false
-}
-
-// SetMessage gets a reference to the given string and assigns it to the Message field.
+// SetMessage sets field value
 func (o *FulfillmentProgress) SetMessage(v string) {
-	o.Message = &v
+	o.Message = v
 }
 
 func (o FulfillmentProgress) MarshalJSON() ([]byte, error) {
@@ -115,13 +105,46 @@ func (o FulfillmentProgress) MarshalJSON() ([]byte, error) {
 
 func (o FulfillmentProgress) ToMap() (map[string]interface{}, error) {
 	toSerialize := map[string]interface{}{}
-	if !IsNil(o.Code) {
-		toSerialize["code"] = o.Code
-	}
-	if !IsNil(o.Message) {
-		toSerialize["message"] = o.Message
-	}
+	toSerialize["code"] = o.Code
+	toSerialize["message"] = o.Message
 	return toSerialize, nil
+}
+
+func (o *FulfillmentProgress) UnmarshalJSON(data []byte) (err error) {
+	// This validates that all required properties are included in the JSON object
+	// by unmarshalling the object into a generic map with string keys and checking
+	// that every required field exists as a key in the generic map.
+	requiredProperties := []string{
+		"code",
+		"message",
+	}
+
+	allProperties := make(map[string]interface{})
+
+	err = json.Unmarshal(data, &allProperties)
+
+	if err != nil {
+		return err;
+	}
+
+	for _, requiredProperty := range(requiredProperties) {
+		if _, exists := allProperties[requiredProperty]; !exists {
+			return fmt.Errorf("no value given for required property %v", requiredProperty)
+		}
+	}
+
+	varFulfillmentProgress := _FulfillmentProgress{}
+
+	decoder := json.NewDecoder(bytes.NewReader(data))
+	err = decoder.Decode(&varFulfillmentProgress)
+
+	if err != nil {
+		return err
+	}
+
+	*o = FulfillmentProgress(varFulfillmentProgress)
+
+	return err
 }
 
 type NullableFulfillmentProgress struct {

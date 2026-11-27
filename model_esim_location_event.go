@@ -273,7 +273,6 @@ func (o *EsimLocationEvent) UnmarshalJSON(data []byte) (err error) {
 	varEsimLocationEvent := _EsimLocationEvent{}
 
 	decoder := json.NewDecoder(bytes.NewReader(data))
-	decoder.DisallowUnknownFields()
 	err = decoder.Decode(&varEsimLocationEvent)
 
 	if err != nil {

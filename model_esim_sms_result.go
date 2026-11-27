@@ -20,11 +20,10 @@ import (
 // checks if the EsimSmsResult type satisfies the MappedNullable interface at compile time
 var _ MappedNullable = &EsimSmsResult{}
 
-// EsimSmsResult struct for EsimSmsResult
+// EsimSmsResult The answer to `POST /esims/{id}/sms`, given only when the message was sent.
 type EsimSmsResult struct {
+	// The ICCID of the eSIM the message was sent to.
 	Iccid string `json:"iccid"`
-	Success bool `json:"success"`
-	IsSupported *bool `json:"isSupported,omitempty"`
 }
 
 type _EsimSmsResult EsimSmsResult
@@ -33,10 +32,9 @@ type _EsimSmsResult EsimSmsResult
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewEsimSmsResult(iccid string, success bool) *EsimSmsResult {
+func NewEsimSmsResult(iccid string) *EsimSmsResult {
 	this := EsimSmsResult{}
 	this.Iccid = iccid
-	this.Success = success
 	return &this
 }
 
@@ -72,62 +70,6 @@ func (o *EsimSmsResult) SetIccid(v string) {
 	o.Iccid = v
 }
 
-// GetSuccess returns the Success field value
-func (o *EsimSmsResult) GetSuccess() bool {
-	if o == nil {
-		var ret bool
-		return ret
-	}
-
-	return o.Success
-}
-
-// GetSuccessOk returns a tuple with the Success field value
-// and a boolean to check if the value has been set.
-func (o *EsimSmsResult) GetSuccessOk() (*bool, bool) {
-	if o == nil {
-		return nil, false
-	}
-	return &o.Success, true
-}
-
-// SetSuccess sets field value
-func (o *EsimSmsResult) SetSuccess(v bool) {
-	o.Success = v
-}
-
-// GetIsSupported returns the IsSupported field value if set, zero value otherwise.
-func (o *EsimSmsResult) GetIsSupported() bool {
-	if o == nil || IsNil(o.IsSupported) {
-		var ret bool
-		return ret
-	}
-	return *o.IsSupported
-}
-
-// GetIsSupportedOk returns a tuple with the IsSupported field value if set, nil otherwise
-// and a boolean to check if the value has been set.
-func (o *EsimSmsResult) GetIsSupportedOk() (*bool, bool) {
-	if o == nil || IsNil(o.IsSupported) {
-		return nil, false
-	}
-	return o.IsSupported, true
-}
-
-// HasIsSupported returns a boolean if a field has been set.
-func (o *EsimSmsResult) HasIsSupported() bool {
-	if o != nil && !IsNil(o.IsSupported) {
-		return true
-	}
-
-	return false
-}
-
-// SetIsSupported gets a reference to the given bool and assigns it to the IsSupported field.
-func (o *EsimSmsResult) SetIsSupported(v bool) {
-	o.IsSupported = &v
-}
-
 func (o EsimSmsResult) MarshalJSON() ([]byte, error) {
 	toSerialize,err := o.ToMap()
 	if err != nil {
@@ -139,10 +81,6 @@ func (o EsimSmsResult) MarshalJSON() ([]byte, error) {
 func (o EsimSmsResult) ToMap() (map[string]interface{}, error) {
 	toSerialize := map[string]interface{}{}
 	toSerialize["iccid"] = o.Iccid
-	toSerialize["success"] = o.Success
-	if !IsNil(o.IsSupported) {
-		toSerialize["isSupported"] = o.IsSupported
-	}
 	return toSerialize, nil
 }
 
@@ -152,7 +90,6 @@ func (o *EsimSmsResult) UnmarshalJSON(data []byte) (err error) {
 	// that every required field exists as a key in the generic map.
 	requiredProperties := []string{
 		"iccid",
-		"success",
 	}
 
 	allProperties := make(map[string]interface{})
@@ -172,7 +109,6 @@ func (o *EsimSmsResult) UnmarshalJSON(data []byte) (err error) {
 	varEsimSmsResult := _EsimSmsResult{}
 
 	decoder := json.NewDecoder(bytes.NewReader(data))
-	decoder.DisallowUnknownFields()
 	err = decoder.Decode(&varEsimSmsResult)
 
 	if err != nil {

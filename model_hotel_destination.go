@@ -13,6 +13,8 @@ package openroam
 
 import (
 	"encoding/json"
+	"bytes"
+	"fmt"
 )
 
 // checks if the HotelDestination type satisfies the MappedNullable interface at compile time
@@ -21,23 +23,28 @@ var _ MappedNullable = &HotelDestination{}
 // HotelDestination One place to search hotels in, such as a country, a city or a district.
 type HotelDestination struct {
 	// The place's ID (a UUID). Send it as `searchCriteria.location.geoNodeId` in a hotel search; it finds the hotels of every place inside this one. Stable: it can be stored.
-	Id *string `json:"id,omitempty"`
+	Id string `json:"id"`
 	// The place with its parents, for example `Downtown Dubai, Dubai, United Arab Emirates`.
-	Name *string `json:"name,omitempty"`
+	Name string `json:"name"`
 	// The ISO 3166-1 alpha-2 code of the place's country, or null when it is not known.
 	CountryCode NullableString `json:"countryCode,omitempty"`
 	// The place's level: `country`, `region`, `city` or `area` (a district or neighbourhood).
-	Category *string `json:"category,omitempty"`
+	Category string `json:"category"`
 	// Always null: places have no image.
 	LogoUrl NullableString `json:"logoUrl,omitempty"`
 }
+
+type _HotelDestination HotelDestination
 
 // NewHotelDestination instantiates a new HotelDestination object
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewHotelDestination() *HotelDestination {
+func NewHotelDestination(id string, name string, category string) *HotelDestination {
 	this := HotelDestination{}
+	this.Id = id
+	this.Name = name
+	this.Category = category
 	return &this
 }
 
@@ -49,68 +56,52 @@ func NewHotelDestinationWithDefaults() *HotelDestination {
 	return &this
 }
 
-// GetId returns the Id field value if set, zero value otherwise.
+// GetId returns the Id field value
 func (o *HotelDestination) GetId() string {
-	if o == nil || IsNil(o.Id) {
+	if o == nil {
 		var ret string
 		return ret
 	}
-	return *o.Id
+
+	return o.Id
 }
 
-// GetIdOk returns a tuple with the Id field value if set, nil otherwise
+// GetIdOk returns a tuple with the Id field value
 // and a boolean to check if the value has been set.
 func (o *HotelDestination) GetIdOk() (*string, bool) {
-	if o == nil || IsNil(o.Id) {
+	if o == nil {
 		return nil, false
 	}
-	return o.Id, true
+	return &o.Id, true
 }
 
-// HasId returns a boolean if a field has been set.
-func (o *HotelDestination) HasId() bool {
-	if o != nil && !IsNil(o.Id) {
-		return true
-	}
-
-	return false
-}
-
-// SetId gets a reference to the given string and assigns it to the Id field.
+// SetId sets field value
 func (o *HotelDestination) SetId(v string) {
-	o.Id = &v
+	o.Id = v
 }
 
-// GetName returns the Name field value if set, zero value otherwise.
+// GetName returns the Name field value
 func (o *HotelDestination) GetName() string {
-	if o == nil || IsNil(o.Name) {
+	if o == nil {
 		var ret string
 		return ret
 	}
-	return *o.Name
+
+	return o.Name
 }
 
-// GetNameOk returns a tuple with the Name field value if set, nil otherwise
+// GetNameOk returns a tuple with the Name field value
 // and a boolean to check if the value has been set.
 func (o *HotelDestination) GetNameOk() (*string, bool) {
-	if o == nil || IsNil(o.Name) {
+	if o == nil {
 		return nil, false
 	}
-	return o.Name, true
+	return &o.Name, true
 }
 
-// HasName returns a boolean if a field has been set.
-func (o *HotelDestination) HasName() bool {
-	if o != nil && !IsNil(o.Name) {
-		return true
-	}
-
-	return false
-}
-
-// SetName gets a reference to the given string and assigns it to the Name field.
+// SetName sets field value
 func (o *HotelDestination) SetName(v string) {
-	o.Name = &v
+	o.Name = v
 }
 
 // GetCountryCode returns the CountryCode field value if set, zero value otherwise (both if not set or set to explicit null).
@@ -155,36 +146,28 @@ func (o *HotelDestination) UnsetCountryCode() {
 	o.CountryCode.Unset()
 }
 
-// GetCategory returns the Category field value if set, zero value otherwise.
+// GetCategory returns the Category field value
 func (o *HotelDestination) GetCategory() string {
-	if o == nil || IsNil(o.Category) {
+	if o == nil {
 		var ret string
 		return ret
 	}
-	return *o.Category
+
+	return o.Category
 }
 
-// GetCategoryOk returns a tuple with the Category field value if set, nil otherwise
+// GetCategoryOk returns a tuple with the Category field value
 // and a boolean to check if the value has been set.
 func (o *HotelDestination) GetCategoryOk() (*string, bool) {
-	if o == nil || IsNil(o.Category) {
+	if o == nil {
 		return nil, false
 	}
-	return o.Category, true
+	return &o.Category, true
 }
 
-// HasCategory returns a boolean if a field has been set.
-func (o *HotelDestination) HasCategory() bool {
-	if o != nil && !IsNil(o.Category) {
-		return true
-	}
-
-	return false
-}
-
-// SetCategory gets a reference to the given string and assigns it to the Category field.
+// SetCategory sets field value
 func (o *HotelDestination) SetCategory(v string) {
-	o.Category = &v
+	o.Category = v
 }
 
 // GetLogoUrl returns the LogoUrl field value if set, zero value otherwise (both if not set or set to explicit null).
@@ -239,22 +222,54 @@ func (o HotelDestination) MarshalJSON() ([]byte, error) {
 
 func (o HotelDestination) ToMap() (map[string]interface{}, error) {
 	toSerialize := map[string]interface{}{}
-	if !IsNil(o.Id) {
-		toSerialize["id"] = o.Id
-	}
-	if !IsNil(o.Name) {
-		toSerialize["name"] = o.Name
-	}
+	toSerialize["id"] = o.Id
+	toSerialize["name"] = o.Name
 	if o.CountryCode.IsSet() {
 		toSerialize["countryCode"] = o.CountryCode.Get()
 	}
-	if !IsNil(o.Category) {
-		toSerialize["category"] = o.Category
-	}
+	toSerialize["category"] = o.Category
 	if o.LogoUrl.IsSet() {
 		toSerialize["logoUrl"] = o.LogoUrl.Get()
 	}
 	return toSerialize, nil
+}
+
+func (o *HotelDestination) UnmarshalJSON(data []byte) (err error) {
+	// This validates that all required properties are included in the JSON object
+	// by unmarshalling the object into a generic map with string keys and checking
+	// that every required field exists as a key in the generic map.
+	requiredProperties := []string{
+		"id",
+		"name",
+		"category",
+	}
+
+	allProperties := make(map[string]interface{})
+
+	err = json.Unmarshal(data, &allProperties)
+
+	if err != nil {
+		return err;
+	}
+
+	for _, requiredProperty := range(requiredProperties) {
+		if _, exists := allProperties[requiredProperty]; !exists {
+			return fmt.Errorf("no value given for required property %v", requiredProperty)
+		}
+	}
+
+	varHotelDestination := _HotelDestination{}
+
+	decoder := json.NewDecoder(bytes.NewReader(data))
+	err = decoder.Decode(&varHotelDestination)
+
+	if err != nil {
+		return err
+	}
+
+	*o = HotelDestination(varHotelDestination)
+
+	return err
 }
 
 type NullableHotelDestination struct {

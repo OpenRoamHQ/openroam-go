@@ -13,24 +13,31 @@ package openroam
 
 import (
 	"encoding/json"
+	"bytes"
+	"fmt"
 )
 
 // checks if the FlightQuote type satisfies the MappedNullable interface at compile time
 var _ MappedNullable = &FlightQuote{}
 
-// FlightQuote Current prices for the requested items, in request order, in `currency`. `total` is the sum of each item's unit price times its quantity. Each item has a new `publicId` that keeps its fare price: order with it before its `details.expiresAt`. Nothing is charged or held.
+// FlightQuote Current prices for the requested items, in request order, in `currency`. `total` is the sum of each item's unit price times its quantity. Each item has a new `publicId` that keeps its fare price: order with it before its `expiresAt`. Nothing is charged or held.
 type FlightQuote struct {
-	Currency *string `json:"currency,omitempty"`
-	Items []FlightQuoteItem `json:"items,omitempty"`
-	Total *Money `json:"total,omitempty"`
+	Currency string `json:"currency"`
+	Items []FlightQuoteItem `json:"items"`
+	Total Money `json:"total"`
 }
+
+type _FlightQuote FlightQuote
 
 // NewFlightQuote instantiates a new FlightQuote object
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewFlightQuote() *FlightQuote {
+func NewFlightQuote(currency string, items []FlightQuoteItem, total Money) *FlightQuote {
 	this := FlightQuote{}
+	this.Currency = currency
+	this.Items = items
+	this.Total = total
 	return &this
 }
 
@@ -42,100 +49,76 @@ func NewFlightQuoteWithDefaults() *FlightQuote {
 	return &this
 }
 
-// GetCurrency returns the Currency field value if set, zero value otherwise.
+// GetCurrency returns the Currency field value
 func (o *FlightQuote) GetCurrency() string {
-	if o == nil || IsNil(o.Currency) {
+	if o == nil {
 		var ret string
 		return ret
 	}
-	return *o.Currency
+
+	return o.Currency
 }
 
-// GetCurrencyOk returns a tuple with the Currency field value if set, nil otherwise
+// GetCurrencyOk returns a tuple with the Currency field value
 // and a boolean to check if the value has been set.
 func (o *FlightQuote) GetCurrencyOk() (*string, bool) {
-	if o == nil || IsNil(o.Currency) {
+	if o == nil {
 		return nil, false
 	}
-	return o.Currency, true
+	return &o.Currency, true
 }
 
-// HasCurrency returns a boolean if a field has been set.
-func (o *FlightQuote) HasCurrency() bool {
-	if o != nil && !IsNil(o.Currency) {
-		return true
-	}
-
-	return false
-}
-
-// SetCurrency gets a reference to the given string and assigns it to the Currency field.
+// SetCurrency sets field value
 func (o *FlightQuote) SetCurrency(v string) {
-	o.Currency = &v
+	o.Currency = v
 }
 
-// GetItems returns the Items field value if set, zero value otherwise.
+// GetItems returns the Items field value
 func (o *FlightQuote) GetItems() []FlightQuoteItem {
-	if o == nil || IsNil(o.Items) {
+	if o == nil {
 		var ret []FlightQuoteItem
 		return ret
 	}
+
 	return o.Items
 }
 
-// GetItemsOk returns a tuple with the Items field value if set, nil otherwise
+// GetItemsOk returns a tuple with the Items field value
 // and a boolean to check if the value has been set.
 func (o *FlightQuote) GetItemsOk() ([]FlightQuoteItem, bool) {
-	if o == nil || IsNil(o.Items) {
+	if o == nil {
 		return nil, false
 	}
 	return o.Items, true
 }
 
-// HasItems returns a boolean if a field has been set.
-func (o *FlightQuote) HasItems() bool {
-	if o != nil && !IsNil(o.Items) {
-		return true
-	}
-
-	return false
-}
-
-// SetItems gets a reference to the given []FlightQuoteItem and assigns it to the Items field.
+// SetItems sets field value
 func (o *FlightQuote) SetItems(v []FlightQuoteItem) {
 	o.Items = v
 }
 
-// GetTotal returns the Total field value if set, zero value otherwise.
+// GetTotal returns the Total field value
 func (o *FlightQuote) GetTotal() Money {
-	if o == nil || IsNil(o.Total) {
+	if o == nil {
 		var ret Money
 		return ret
 	}
-	return *o.Total
+
+	return o.Total
 }
 
-// GetTotalOk returns a tuple with the Total field value if set, nil otherwise
+// GetTotalOk returns a tuple with the Total field value
 // and a boolean to check if the value has been set.
 func (o *FlightQuote) GetTotalOk() (*Money, bool) {
-	if o == nil || IsNil(o.Total) {
+	if o == nil {
 		return nil, false
 	}
-	return o.Total, true
+	return &o.Total, true
 }
 
-// HasTotal returns a boolean if a field has been set.
-func (o *FlightQuote) HasTotal() bool {
-	if o != nil && !IsNil(o.Total) {
-		return true
-	}
-
-	return false
-}
-
-// SetTotal gets a reference to the given Money and assigns it to the Total field.
+// SetTotal sets field value
 func (o *FlightQuote) SetTotal(v Money) {
-	o.Total = &v
+	o.Total = v
 }
 
 func (o FlightQuote) MarshalJSON() ([]byte, error) {
@@ -148,16 +131,48 @@ func (o FlightQuote) MarshalJSON() ([]byte, error) {
 
 func (o FlightQuote) ToMap() (map[string]interface{}, error) {
 	toSerialize := map[string]interface{}{}
-	if !IsNil(o.Currency) {
-		toSerialize["currency"] = o.Currency
-	}
-	if !IsNil(o.Items) {
-		toSerialize["items"] = o.Items
-	}
-	if !IsNil(o.Total) {
-		toSerialize["total"] = o.Total
-	}
+	toSerialize["currency"] = o.Currency
+	toSerialize["items"] = o.Items
+	toSerialize["total"] = o.Total
 	return toSerialize, nil
+}
+
+func (o *FlightQuote) UnmarshalJSON(data []byte) (err error) {
+	// This validates that all required properties are included in the JSON object
+	// by unmarshalling the object into a generic map with string keys and checking
+	// that every required field exists as a key in the generic map.
+	requiredProperties := []string{
+		"currency",
+		"items",
+		"total",
+	}
+
+	allProperties := make(map[string]interface{})
+
+	err = json.Unmarshal(data, &allProperties)
+
+	if err != nil {
+		return err;
+	}
+
+	for _, requiredProperty := range(requiredProperties) {
+		if _, exists := allProperties[requiredProperty]; !exists {
+			return fmt.Errorf("no value given for required property %v", requiredProperty)
+		}
+	}
+
+	varFlightQuote := _FlightQuote{}
+
+	decoder := json.NewDecoder(bytes.NewReader(data))
+	err = decoder.Decode(&varFlightQuote)
+
+	if err != nil {
+		return err
+	}
+
+	*o = FlightQuote(varFlightQuote)
+
+	return err
 }
 
 type NullableFlightQuote struct {

@@ -13,6 +13,8 @@ package openroam
 
 import (
 	"encoding/json"
+	"bytes"
+	"fmt"
 )
 
 // checks if the AmenityGroup type satisfies the MappedNullable interface at compile time
@@ -21,19 +23,24 @@ var _ MappedNullable = &AmenityGroup{}
 // AmenityGroup One grouped section of the amenity filter rail.
 type AmenityGroup struct {
 	// Stable group key, as listed by `hotels/amenities/catalog`.
-	Key *string `json:"key,omitempty"`
+	Key string `json:"key"`
 	// Display text in the request's language.
-	Label *string `json:"label,omitempty"`
+	Label string `json:"label"`
 	// Canonical amenity codes in this group that have positive candidate counts.
-	Codes []string `json:"codes,omitempty"`
+	Codes []string `json:"codes"`
 }
+
+type _AmenityGroup AmenityGroup
 
 // NewAmenityGroup instantiates a new AmenityGroup object
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewAmenityGroup() *AmenityGroup {
+func NewAmenityGroup(key string, label string, codes []string) *AmenityGroup {
 	this := AmenityGroup{}
+	this.Key = key
+	this.Label = label
+	this.Codes = codes
 	return &this
 }
 
@@ -45,98 +52,74 @@ func NewAmenityGroupWithDefaults() *AmenityGroup {
 	return &this
 }
 
-// GetKey returns the Key field value if set, zero value otherwise.
+// GetKey returns the Key field value
 func (o *AmenityGroup) GetKey() string {
-	if o == nil || IsNil(o.Key) {
+	if o == nil {
 		var ret string
 		return ret
 	}
-	return *o.Key
+
+	return o.Key
 }
 
-// GetKeyOk returns a tuple with the Key field value if set, nil otherwise
+// GetKeyOk returns a tuple with the Key field value
 // and a boolean to check if the value has been set.
 func (o *AmenityGroup) GetKeyOk() (*string, bool) {
-	if o == nil || IsNil(o.Key) {
+	if o == nil {
 		return nil, false
 	}
-	return o.Key, true
+	return &o.Key, true
 }
 
-// HasKey returns a boolean if a field has been set.
-func (o *AmenityGroup) HasKey() bool {
-	if o != nil && !IsNil(o.Key) {
-		return true
-	}
-
-	return false
-}
-
-// SetKey gets a reference to the given string and assigns it to the Key field.
+// SetKey sets field value
 func (o *AmenityGroup) SetKey(v string) {
-	o.Key = &v
+	o.Key = v
 }
 
-// GetLabel returns the Label field value if set, zero value otherwise.
+// GetLabel returns the Label field value
 func (o *AmenityGroup) GetLabel() string {
-	if o == nil || IsNil(o.Label) {
+	if o == nil {
 		var ret string
 		return ret
 	}
-	return *o.Label
+
+	return o.Label
 }
 
-// GetLabelOk returns a tuple with the Label field value if set, nil otherwise
+// GetLabelOk returns a tuple with the Label field value
 // and a boolean to check if the value has been set.
 func (o *AmenityGroup) GetLabelOk() (*string, bool) {
-	if o == nil || IsNil(o.Label) {
+	if o == nil {
 		return nil, false
 	}
-	return o.Label, true
+	return &o.Label, true
 }
 
-// HasLabel returns a boolean if a field has been set.
-func (o *AmenityGroup) HasLabel() bool {
-	if o != nil && !IsNil(o.Label) {
-		return true
-	}
-
-	return false
-}
-
-// SetLabel gets a reference to the given string and assigns it to the Label field.
+// SetLabel sets field value
 func (o *AmenityGroup) SetLabel(v string) {
-	o.Label = &v
+	o.Label = v
 }
 
-// GetCodes returns the Codes field value if set, zero value otherwise.
+// GetCodes returns the Codes field value
 func (o *AmenityGroup) GetCodes() []string {
-	if o == nil || IsNil(o.Codes) {
+	if o == nil {
 		var ret []string
 		return ret
 	}
+
 	return o.Codes
 }
 
-// GetCodesOk returns a tuple with the Codes field value if set, nil otherwise
+// GetCodesOk returns a tuple with the Codes field value
 // and a boolean to check if the value has been set.
 func (o *AmenityGroup) GetCodesOk() ([]string, bool) {
-	if o == nil || IsNil(o.Codes) {
+	if o == nil {
 		return nil, false
 	}
 	return o.Codes, true
 }
 
-// HasCodes returns a boolean if a field has been set.
-func (o *AmenityGroup) HasCodes() bool {
-	if o != nil && !IsNil(o.Codes) {
-		return true
-	}
-
-	return false
-}
-
-// SetCodes gets a reference to the given []string and assigns it to the Codes field.
+// SetCodes sets field value
 func (o *AmenityGroup) SetCodes(v []string) {
 	o.Codes = v
 }
@@ -151,16 +134,48 @@ func (o AmenityGroup) MarshalJSON() ([]byte, error) {
 
 func (o AmenityGroup) ToMap() (map[string]interface{}, error) {
 	toSerialize := map[string]interface{}{}
-	if !IsNil(o.Key) {
-		toSerialize["key"] = o.Key
-	}
-	if !IsNil(o.Label) {
-		toSerialize["label"] = o.Label
-	}
-	if !IsNil(o.Codes) {
-		toSerialize["codes"] = o.Codes
-	}
+	toSerialize["key"] = o.Key
+	toSerialize["label"] = o.Label
+	toSerialize["codes"] = o.Codes
 	return toSerialize, nil
+}
+
+func (o *AmenityGroup) UnmarshalJSON(data []byte) (err error) {
+	// This validates that all required properties are included in the JSON object
+	// by unmarshalling the object into a generic map with string keys and checking
+	// that every required field exists as a key in the generic map.
+	requiredProperties := []string{
+		"key",
+		"label",
+		"codes",
+	}
+
+	allProperties := make(map[string]interface{})
+
+	err = json.Unmarshal(data, &allProperties)
+
+	if err != nil {
+		return err;
+	}
+
+	for _, requiredProperty := range(requiredProperties) {
+		if _, exists := allProperties[requiredProperty]; !exists {
+			return fmt.Errorf("no value given for required property %v", requiredProperty)
+		}
+	}
+
+	varAmenityGroup := _AmenityGroup{}
+
+	decoder := json.NewDecoder(bytes.NewReader(data))
+	err = decoder.Decode(&varAmenityGroup)
+
+	if err != nil {
+		return err
+	}
+
+	*o = AmenityGroup(varAmenityGroup)
+
+	return err
 }
 
 type NullableAmenityGroup struct {

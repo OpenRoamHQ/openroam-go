@@ -13,30 +13,41 @@ package openroam
 
 import (
 	"encoding/json"
+	"bytes"
+	"fmt"
 )
 
 // checks if the GiftCard type satisfies the MappedNullable interface at compile time
 var _ MappedNullable = &GiftCard{}
 
-// GiftCard One card (brand and issuing country, plus the face currency when a brand sells several) as search, the one-card route and the catalog return it. `id` is the card's SKU, an opaque ID; an order names one of its `offers` by public ID. `countryCode` is the issuing country's ISO 3166-1 alpha-2 code, or null for a card without a country, such as a global card. Prices are indicative; quote recalculates them.
+// GiftCard One card (brand and issuing country, plus the face currency when a brand sells several) as search, the one-card route and the catalog return it. `id` is the card ID `card_…`, an opaque ID that is never orderable; an order names one of its `offers` by public ID. `countryCode` is the issuing country's ISO 3166-1 alpha-2 code, or null for a card without a country, such as a global card. Prices are indicative; quote recalculates them.
 type GiftCard struct {
-	Id *string `json:"id,omitempty"`
-	Name *string `json:"name,omitempty"`
+	Id string `json:"id"`
+	Name string `json:"name"`
 	CountryCode NullableString `json:"countryCode,omitempty"`
-	Category *string `json:"category,omitempty"`
+	Category string `json:"category"`
 	LogoUrl NullableString `json:"logoUrl,omitempty"`
 	Description NullableString `json:"description,omitempty"`
-	Offers []GiftCardOffer `json:"offers,omitempty"`
-	// Gift card facts outside the item keys every partner service shares. `isRedeemableGlobally` is true when the card can be redeemed outside its issuing country; `redemptionInstructions` is the detailed redemption text, or null.
-	Details *GiftCardDetails `json:"details,omitempty"`
+	Offers []GiftCardOffer `json:"offers"`
+	// Whether the card can be redeemed outside its issuing country.
+	IsRedeemableGlobally bool `json:"isRedeemableGlobally"`
+	// The detailed redemption text, or null.
+	RedemptionInstructions NullableString `json:"redemptionInstructions,omitempty"`
 }
+
+type _GiftCard GiftCard
 
 // NewGiftCard instantiates a new GiftCard object
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewGiftCard() *GiftCard {
+func NewGiftCard(id string, name string, category string, offers []GiftCardOffer, isRedeemableGlobally bool) *GiftCard {
 	this := GiftCard{}
+	this.Id = id
+	this.Name = name
+	this.Category = category
+	this.Offers = offers
+	this.IsRedeemableGlobally = isRedeemableGlobally
 	return &this
 }
 
@@ -48,68 +59,52 @@ func NewGiftCardWithDefaults() *GiftCard {
 	return &this
 }
 
-// GetId returns the Id field value if set, zero value otherwise.
+// GetId returns the Id field value
 func (o *GiftCard) GetId() string {
-	if o == nil || IsNil(o.Id) {
+	if o == nil {
 		var ret string
 		return ret
 	}
-	return *o.Id
+
+	return o.Id
 }
 
-// GetIdOk returns a tuple with the Id field value if set, nil otherwise
+// GetIdOk returns a tuple with the Id field value
 // and a boolean to check if the value has been set.
 func (o *GiftCard) GetIdOk() (*string, bool) {
-	if o == nil || IsNil(o.Id) {
+	if o == nil {
 		return nil, false
 	}
-	return o.Id, true
+	return &o.Id, true
 }
 
-// HasId returns a boolean if a field has been set.
-func (o *GiftCard) HasId() bool {
-	if o != nil && !IsNil(o.Id) {
-		return true
-	}
-
-	return false
-}
-
-// SetId gets a reference to the given string and assigns it to the Id field.
+// SetId sets field value
 func (o *GiftCard) SetId(v string) {
-	o.Id = &v
+	o.Id = v
 }
 
-// GetName returns the Name field value if set, zero value otherwise.
+// GetName returns the Name field value
 func (o *GiftCard) GetName() string {
-	if o == nil || IsNil(o.Name) {
+	if o == nil {
 		var ret string
 		return ret
 	}
-	return *o.Name
+
+	return o.Name
 }
 
-// GetNameOk returns a tuple with the Name field value if set, nil otherwise
+// GetNameOk returns a tuple with the Name field value
 // and a boolean to check if the value has been set.
 func (o *GiftCard) GetNameOk() (*string, bool) {
-	if o == nil || IsNil(o.Name) {
+	if o == nil {
 		return nil, false
 	}
-	return o.Name, true
+	return &o.Name, true
 }
 
-// HasName returns a boolean if a field has been set.
-func (o *GiftCard) HasName() bool {
-	if o != nil && !IsNil(o.Name) {
-		return true
-	}
-
-	return false
-}
-
-// SetName gets a reference to the given string and assigns it to the Name field.
+// SetName sets field value
 func (o *GiftCard) SetName(v string) {
-	o.Name = &v
+	o.Name = v
 }
 
 // GetCountryCode returns the CountryCode field value if set, zero value otherwise (both if not set or set to explicit null).
@@ -154,36 +149,28 @@ func (o *GiftCard) UnsetCountryCode() {
 	o.CountryCode.Unset()
 }
 
-// GetCategory returns the Category field value if set, zero value otherwise.
+// GetCategory returns the Category field value
 func (o *GiftCard) GetCategory() string {
-	if o == nil || IsNil(o.Category) {
+	if o == nil {
 		var ret string
 		return ret
 	}
-	return *o.Category
+
+	return o.Category
 }
 
-// GetCategoryOk returns a tuple with the Category field value if set, nil otherwise
+// GetCategoryOk returns a tuple with the Category field value
 // and a boolean to check if the value has been set.
 func (o *GiftCard) GetCategoryOk() (*string, bool) {
-	if o == nil || IsNil(o.Category) {
+	if o == nil {
 		return nil, false
 	}
-	return o.Category, true
+	return &o.Category, true
 }
 
-// HasCategory returns a boolean if a field has been set.
-func (o *GiftCard) HasCategory() bool {
-	if o != nil && !IsNil(o.Category) {
-		return true
-	}
-
-	return false
-}
-
-// SetCategory gets a reference to the given string and assigns it to the Category field.
+// SetCategory sets field value
 func (o *GiftCard) SetCategory(v string) {
-	o.Category = &v
+	o.Category = v
 }
 
 // GetLogoUrl returns the LogoUrl field value if set, zero value otherwise (both if not set or set to explicit null).
@@ -270,68 +257,94 @@ func (o *GiftCard) UnsetDescription() {
 	o.Description.Unset()
 }
 
-// GetOffers returns the Offers field value if set, zero value otherwise.
+// GetOffers returns the Offers field value
 func (o *GiftCard) GetOffers() []GiftCardOffer {
-	if o == nil || IsNil(o.Offers) {
+	if o == nil {
 		var ret []GiftCardOffer
 		return ret
 	}
+
 	return o.Offers
 }
 
-// GetOffersOk returns a tuple with the Offers field value if set, nil otherwise
+// GetOffersOk returns a tuple with the Offers field value
 // and a boolean to check if the value has been set.
 func (o *GiftCard) GetOffersOk() ([]GiftCardOffer, bool) {
-	if o == nil || IsNil(o.Offers) {
+	if o == nil {
 		return nil, false
 	}
 	return o.Offers, true
 }
 
-// HasOffers returns a boolean if a field has been set.
-func (o *GiftCard) HasOffers() bool {
-	if o != nil && !IsNil(o.Offers) {
-		return true
-	}
-
-	return false
-}
-
-// SetOffers gets a reference to the given []GiftCardOffer and assigns it to the Offers field.
+// SetOffers sets field value
 func (o *GiftCard) SetOffers(v []GiftCardOffer) {
 	o.Offers = v
 }
 
-// GetDetails returns the Details field value if set, zero value otherwise.
-func (o *GiftCard) GetDetails() GiftCardDetails {
-	if o == nil || IsNil(o.Details) {
-		var ret GiftCardDetails
+// GetIsRedeemableGlobally returns the IsRedeemableGlobally field value
+func (o *GiftCard) GetIsRedeemableGlobally() bool {
+	if o == nil {
+		var ret bool
 		return ret
 	}
-	return *o.Details
+
+	return o.IsRedeemableGlobally
 }
 
-// GetDetailsOk returns a tuple with the Details field value if set, nil otherwise
+// GetIsRedeemableGloballyOk returns a tuple with the IsRedeemableGlobally field value
 // and a boolean to check if the value has been set.
-func (o *GiftCard) GetDetailsOk() (*GiftCardDetails, bool) {
-	if o == nil || IsNil(o.Details) {
+func (o *GiftCard) GetIsRedeemableGloballyOk() (*bool, bool) {
+	if o == nil {
 		return nil, false
 	}
-	return o.Details, true
+	return &o.IsRedeemableGlobally, true
 }
 
-// HasDetails returns a boolean if a field has been set.
-func (o *GiftCard) HasDetails() bool {
-	if o != nil && !IsNil(o.Details) {
+// SetIsRedeemableGlobally sets field value
+func (o *GiftCard) SetIsRedeemableGlobally(v bool) {
+	o.IsRedeemableGlobally = v
+}
+
+// GetRedemptionInstructions returns the RedemptionInstructions field value if set, zero value otherwise (both if not set or set to explicit null).
+func (o *GiftCard) GetRedemptionInstructions() string {
+	if o == nil || IsNil(o.RedemptionInstructions.Get()) {
+		var ret string
+		return ret
+	}
+	return *o.RedemptionInstructions.Get()
+}
+
+// GetRedemptionInstructionsOk returns a tuple with the RedemptionInstructions field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+// NOTE: If the value is an explicit nil, `nil, true` will be returned
+func (o *GiftCard) GetRedemptionInstructionsOk() (*string, bool) {
+	if o == nil {
+		return nil, false
+	}
+	return o.RedemptionInstructions.Get(), o.RedemptionInstructions.IsSet()
+}
+
+// HasRedemptionInstructions returns a boolean if a field has been set.
+func (o *GiftCard) HasRedemptionInstructions() bool {
+	if o != nil && o.RedemptionInstructions.IsSet() {
 		return true
 	}
 
 	return false
 }
 
-// SetDetails gets a reference to the given GiftCardDetails and assigns it to the Details field.
-func (o *GiftCard) SetDetails(v GiftCardDetails) {
-	o.Details = &v
+// SetRedemptionInstructions gets a reference to the given NullableString and assigns it to the RedemptionInstructions field.
+func (o *GiftCard) SetRedemptionInstructions(v string) {
+	o.RedemptionInstructions.Set(&v)
+}
+// SetRedemptionInstructionsNil sets the value for RedemptionInstructions to be an explicit nil
+func (o *GiftCard) SetRedemptionInstructionsNil() {
+	o.RedemptionInstructions.Set(nil)
+}
+
+// UnsetRedemptionInstructions ensures that no value is present for RedemptionInstructions, not even an explicit nil
+func (o *GiftCard) UnsetRedemptionInstructions() {
+	o.RedemptionInstructions.Unset()
 }
 
 func (o GiftCard) MarshalJSON() ([]byte, error) {
@@ -344,31 +357,64 @@ func (o GiftCard) MarshalJSON() ([]byte, error) {
 
 func (o GiftCard) ToMap() (map[string]interface{}, error) {
 	toSerialize := map[string]interface{}{}
-	if !IsNil(o.Id) {
-		toSerialize["id"] = o.Id
-	}
-	if !IsNil(o.Name) {
-		toSerialize["name"] = o.Name
-	}
+	toSerialize["id"] = o.Id
+	toSerialize["name"] = o.Name
 	if o.CountryCode.IsSet() {
 		toSerialize["countryCode"] = o.CountryCode.Get()
 	}
-	if !IsNil(o.Category) {
-		toSerialize["category"] = o.Category
-	}
+	toSerialize["category"] = o.Category
 	if o.LogoUrl.IsSet() {
 		toSerialize["logoUrl"] = o.LogoUrl.Get()
 	}
 	if o.Description.IsSet() {
 		toSerialize["description"] = o.Description.Get()
 	}
-	if !IsNil(o.Offers) {
-		toSerialize["offers"] = o.Offers
-	}
-	if !IsNil(o.Details) {
-		toSerialize["details"] = o.Details
+	toSerialize["offers"] = o.Offers
+	toSerialize["isRedeemableGlobally"] = o.IsRedeemableGlobally
+	if o.RedemptionInstructions.IsSet() {
+		toSerialize["redemptionInstructions"] = o.RedemptionInstructions.Get()
 	}
 	return toSerialize, nil
+}
+
+func (o *GiftCard) UnmarshalJSON(data []byte) (err error) {
+	// This validates that all required properties are included in the JSON object
+	// by unmarshalling the object into a generic map with string keys and checking
+	// that every required field exists as a key in the generic map.
+	requiredProperties := []string{
+		"id",
+		"name",
+		"category",
+		"offers",
+		"isRedeemableGlobally",
+	}
+
+	allProperties := make(map[string]interface{})
+
+	err = json.Unmarshal(data, &allProperties)
+
+	if err != nil {
+		return err;
+	}
+
+	for _, requiredProperty := range(requiredProperties) {
+		if _, exists := allProperties[requiredProperty]; !exists {
+			return fmt.Errorf("no value given for required property %v", requiredProperty)
+		}
+	}
+
+	varGiftCard := _GiftCard{}
+
+	decoder := json.NewDecoder(bytes.NewReader(data))
+	err = decoder.Decode(&varGiftCard)
+
+	if err != nil {
+		return err
+	}
+
+	*o = GiftCard(varGiftCard)
+
+	return err
 }
 
 type NullableGiftCard struct {

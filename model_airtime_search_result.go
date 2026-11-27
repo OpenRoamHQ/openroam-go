@@ -13,26 +13,33 @@ package openroam
 
 import (
 	"encoding/json"
+	"bytes"
+	"fmt"
 )
 
 // checks if the AirtimeSearchResult type satisfies the MappedNullable interface at compile time
 var _ MappedNullable = &AirtimeSearchResult{}
 
-// AirtimeSearchResult The detected flow: at most one item, the operator the phone lookup detected, with its offers. `items` is empty unless `details.phoneLookup.status` is `detected` and an offer is left after filtering; the partner then falls back to the operator list.
+// AirtimeSearchResult The detected flow: at most one item, the operator the phone lookup detected, with its offers. `items` is empty unless `phoneLookup.status` is `detected` and an offer is left after filtering; the partner then falls back to the operator list.
 type AirtimeSearchResult struct {
-	Items []AirtimeOperator `json:"items,omitempty"`
+	Items []AirtimeOperator `json:"items"`
 	// Paging of a list response.
-	Pagination *Pagination `json:"pagination,omitempty"`
-	// Airtime search facts outside the root keys every partner service shares.
-	Details *AirtimeSearchDetails `json:"details,omitempty"`
+	Pagination Pagination `json:"pagination"`
+	// The outcome of the phone number's carrier lookup.
+	PhoneLookup CarrierDetection `json:"phoneLookup"`
 }
+
+type _AirtimeSearchResult AirtimeSearchResult
 
 // NewAirtimeSearchResult instantiates a new AirtimeSearchResult object
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewAirtimeSearchResult() *AirtimeSearchResult {
+func NewAirtimeSearchResult(items []AirtimeOperator, pagination Pagination, phoneLookup CarrierDetection) *AirtimeSearchResult {
 	this := AirtimeSearchResult{}
+	this.Items = items
+	this.Pagination = pagination
+	this.PhoneLookup = phoneLookup
 	return &this
 }
 
@@ -44,100 +51,76 @@ func NewAirtimeSearchResultWithDefaults() *AirtimeSearchResult {
 	return &this
 }
 
-// GetItems returns the Items field value if set, zero value otherwise.
+// GetItems returns the Items field value
 func (o *AirtimeSearchResult) GetItems() []AirtimeOperator {
-	if o == nil || IsNil(o.Items) {
+	if o == nil {
 		var ret []AirtimeOperator
 		return ret
 	}
+
 	return o.Items
 }
 
-// GetItemsOk returns a tuple with the Items field value if set, nil otherwise
+// GetItemsOk returns a tuple with the Items field value
 // and a boolean to check if the value has been set.
 func (o *AirtimeSearchResult) GetItemsOk() ([]AirtimeOperator, bool) {
-	if o == nil || IsNil(o.Items) {
+	if o == nil {
 		return nil, false
 	}
 	return o.Items, true
 }
 
-// HasItems returns a boolean if a field has been set.
-func (o *AirtimeSearchResult) HasItems() bool {
-	if o != nil && !IsNil(o.Items) {
-		return true
-	}
-
-	return false
-}
-
-// SetItems gets a reference to the given []AirtimeOperator and assigns it to the Items field.
+// SetItems sets field value
 func (o *AirtimeSearchResult) SetItems(v []AirtimeOperator) {
 	o.Items = v
 }
 
-// GetPagination returns the Pagination field value if set, zero value otherwise.
+// GetPagination returns the Pagination field value
 func (o *AirtimeSearchResult) GetPagination() Pagination {
-	if o == nil || IsNil(o.Pagination) {
+	if o == nil {
 		var ret Pagination
 		return ret
 	}
-	return *o.Pagination
+
+	return o.Pagination
 }
 
-// GetPaginationOk returns a tuple with the Pagination field value if set, nil otherwise
+// GetPaginationOk returns a tuple with the Pagination field value
 // and a boolean to check if the value has been set.
 func (o *AirtimeSearchResult) GetPaginationOk() (*Pagination, bool) {
-	if o == nil || IsNil(o.Pagination) {
+	if o == nil {
 		return nil, false
 	}
-	return o.Pagination, true
+	return &o.Pagination, true
 }
 
-// HasPagination returns a boolean if a field has been set.
-func (o *AirtimeSearchResult) HasPagination() bool {
-	if o != nil && !IsNil(o.Pagination) {
-		return true
-	}
-
-	return false
-}
-
-// SetPagination gets a reference to the given Pagination and assigns it to the Pagination field.
+// SetPagination sets field value
 func (o *AirtimeSearchResult) SetPagination(v Pagination) {
-	o.Pagination = &v
+	o.Pagination = v
 }
 
-// GetDetails returns the Details field value if set, zero value otherwise.
-func (o *AirtimeSearchResult) GetDetails() AirtimeSearchDetails {
-	if o == nil || IsNil(o.Details) {
-		var ret AirtimeSearchDetails
+// GetPhoneLookup returns the PhoneLookup field value
+func (o *AirtimeSearchResult) GetPhoneLookup() CarrierDetection {
+	if o == nil {
+		var ret CarrierDetection
 		return ret
 	}
-	return *o.Details
+
+	return o.PhoneLookup
 }
 
-// GetDetailsOk returns a tuple with the Details field value if set, nil otherwise
+// GetPhoneLookupOk returns a tuple with the PhoneLookup field value
 // and a boolean to check if the value has been set.
-func (o *AirtimeSearchResult) GetDetailsOk() (*AirtimeSearchDetails, bool) {
-	if o == nil || IsNil(o.Details) {
+func (o *AirtimeSearchResult) GetPhoneLookupOk() (*CarrierDetection, bool) {
+	if o == nil {
 		return nil, false
 	}
-	return o.Details, true
+	return &o.PhoneLookup, true
 }
 
-// HasDetails returns a boolean if a field has been set.
-func (o *AirtimeSearchResult) HasDetails() bool {
-	if o != nil && !IsNil(o.Details) {
-		return true
-	}
-
-	return false
-}
-
-// SetDetails gets a reference to the given AirtimeSearchDetails and assigns it to the Details field.
-func (o *AirtimeSearchResult) SetDetails(v AirtimeSearchDetails) {
-	o.Details = &v
+// SetPhoneLookup sets field value
+func (o *AirtimeSearchResult) SetPhoneLookup(v CarrierDetection) {
+	o.PhoneLookup = v
 }
 
 func (o AirtimeSearchResult) MarshalJSON() ([]byte, error) {
@@ -150,16 +133,48 @@ func (o AirtimeSearchResult) MarshalJSON() ([]byte, error) {
 
 func (o AirtimeSearchResult) ToMap() (map[string]interface{}, error) {
 	toSerialize := map[string]interface{}{}
-	if !IsNil(o.Items) {
-		toSerialize["items"] = o.Items
-	}
-	if !IsNil(o.Pagination) {
-		toSerialize["pagination"] = o.Pagination
-	}
-	if !IsNil(o.Details) {
-		toSerialize["details"] = o.Details
-	}
+	toSerialize["items"] = o.Items
+	toSerialize["pagination"] = o.Pagination
+	toSerialize["phoneLookup"] = o.PhoneLookup
 	return toSerialize, nil
+}
+
+func (o *AirtimeSearchResult) UnmarshalJSON(data []byte) (err error) {
+	// This validates that all required properties are included in the JSON object
+	// by unmarshalling the object into a generic map with string keys and checking
+	// that every required field exists as a key in the generic map.
+	requiredProperties := []string{
+		"items",
+		"pagination",
+		"phoneLookup",
+	}
+
+	allProperties := make(map[string]interface{})
+
+	err = json.Unmarshal(data, &allProperties)
+
+	if err != nil {
+		return err;
+	}
+
+	for _, requiredProperty := range(requiredProperties) {
+		if _, exists := allProperties[requiredProperty]; !exists {
+			return fmt.Errorf("no value given for required property %v", requiredProperty)
+		}
+	}
+
+	varAirtimeSearchResult := _AirtimeSearchResult{}
+
+	decoder := json.NewDecoder(bytes.NewReader(data))
+	err = decoder.Decode(&varAirtimeSearchResult)
+
+	if err != nil {
+		return err
+	}
+
+	*o = AirtimeSearchResult(varAirtimeSearchResult)
+
+	return err
 }
 
 type NullableAirtimeSearchResult struct {

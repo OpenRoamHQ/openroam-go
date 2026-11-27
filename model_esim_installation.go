@@ -18,7 +18,7 @@ import (
 // checks if the EsimInstallation type satisfies the MappedNullable interface at compile time
 var _ MappedNullable = &EsimInstallation{}
 
-// EsimInstallation How to install the eSIM. `lpaCode` is the activation string `LPA:1$smdpAddress$activationCode`, and the quick-install links open it on iOS and Android. An eSIM delivered only as a QR code image fills `qrCodeUrl` instead.
+// EsimInstallation How to install the eSIM. `lpaCode` is the activation string `LPA:1$smdpAddress$activationCode`, and the quick-install links open it on iOS and Android. `qrCodeUrl` is a PNG QR code of it, or the only way to install an eSIM delivered as a QR code image; the URL does not expire and needs no key.
 type EsimInstallation struct {
 	LpaCode NullableString `json:"lpaCode,omitempty"`
 	SmdpAddress NullableString `json:"smdpAddress,omitempty"`

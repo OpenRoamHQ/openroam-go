@@ -26,11 +26,11 @@ type Room struct {
 	RoomGroupKey NullableString `json:"roomGroupKey,omitempty"`
 	Name string `json:"name"`
 	Description NullableString `json:"description,omitempty"`
-	Beds []Bed `json:"beds,omitempty"`
+	Beds []Bed `json:"beds"`
 	MaxOccupancy NullableInt32 `json:"maxOccupancy,omitempty"`
 	SizeSquareMeters NullableFloat32 `json:"sizeSquareMeters,omitempty"`
-	Amenities []string `json:"amenities,omitempty"`
-	ImageUrls []string `json:"imageUrls,omitempty"`
+	Amenities []string `json:"amenities"`
+	ImageUrls []string `json:"imageUrls"`
 	// 1-based room index (1 = first room, 2 = second room, and so on). Send the same index with each room's guests when ordering, so every room is matched to its occupancy in a multi-room booking.
 	RoomIndex int32 `json:"roomIndex"`
 	// Number of adults for this specific room
@@ -47,9 +47,12 @@ type _Room Room
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewRoom(name string, roomIndex int32) *Room {
+func NewRoom(name string, beds []Bed, amenities []string, imageUrls []string, roomIndex int32) *Room {
 	this := Room{}
 	this.Name = name
+	this.Beds = beds
+	this.Amenities = amenities
+	this.ImageUrls = imageUrls
 	this.RoomIndex = roomIndex
 	return &this
 }
@@ -170,34 +173,26 @@ func (o *Room) UnsetDescription() {
 	o.Description.Unset()
 }
 
-// GetBeds returns the Beds field value if set, zero value otherwise.
+// GetBeds returns the Beds field value
 func (o *Room) GetBeds() []Bed {
-	if o == nil || IsNil(o.Beds) {
+	if o == nil {
 		var ret []Bed
 		return ret
 	}
+
 	return o.Beds
 }
 
-// GetBedsOk returns a tuple with the Beds field value if set, nil otherwise
+// GetBedsOk returns a tuple with the Beds field value
 // and a boolean to check if the value has been set.
 func (o *Room) GetBedsOk() ([]Bed, bool) {
-	if o == nil || IsNil(o.Beds) {
+	if o == nil {
 		return nil, false
 	}
 	return o.Beds, true
 }
 
-// HasBeds returns a boolean if a field has been set.
-func (o *Room) HasBeds() bool {
-	if o != nil && !IsNil(o.Beds) {
-		return true
-	}
-
-	return false
-}
-
-// SetBeds gets a reference to the given []Bed and assigns it to the Beds field.
+// SetBeds sets field value
 func (o *Room) SetBeds(v []Bed) {
 	o.Beds = v
 }
@@ -286,66 +281,50 @@ func (o *Room) UnsetSizeSquareMeters() {
 	o.SizeSquareMeters.Unset()
 }
 
-// GetAmenities returns the Amenities field value if set, zero value otherwise.
+// GetAmenities returns the Amenities field value
 func (o *Room) GetAmenities() []string {
-	if o == nil || IsNil(o.Amenities) {
+	if o == nil {
 		var ret []string
 		return ret
 	}
+
 	return o.Amenities
 }
 
-// GetAmenitiesOk returns a tuple with the Amenities field value if set, nil otherwise
+// GetAmenitiesOk returns a tuple with the Amenities field value
 // and a boolean to check if the value has been set.
 func (o *Room) GetAmenitiesOk() ([]string, bool) {
-	if o == nil || IsNil(o.Amenities) {
+	if o == nil {
 		return nil, false
 	}
 	return o.Amenities, true
 }
 
-// HasAmenities returns a boolean if a field has been set.
-func (o *Room) HasAmenities() bool {
-	if o != nil && !IsNil(o.Amenities) {
-		return true
-	}
-
-	return false
-}
-
-// SetAmenities gets a reference to the given []string and assigns it to the Amenities field.
+// SetAmenities sets field value
 func (o *Room) SetAmenities(v []string) {
 	o.Amenities = v
 }
 
-// GetImageUrls returns the ImageUrls field value if set, zero value otherwise.
+// GetImageUrls returns the ImageUrls field value
 func (o *Room) GetImageUrls() []string {
-	if o == nil || IsNil(o.ImageUrls) {
+	if o == nil {
 		var ret []string
 		return ret
 	}
+
 	return o.ImageUrls
 }
 
-// GetImageUrlsOk returns a tuple with the ImageUrls field value if set, nil otherwise
+// GetImageUrlsOk returns a tuple with the ImageUrls field value
 // and a boolean to check if the value has been set.
 func (o *Room) GetImageUrlsOk() ([]string, bool) {
-	if o == nil || IsNil(o.ImageUrls) {
+	if o == nil {
 		return nil, false
 	}
 	return o.ImageUrls, true
 }
 
-// HasImageUrls returns a boolean if a field has been set.
-func (o *Room) HasImageUrls() bool {
-	if o != nil && !IsNil(o.ImageUrls) {
-		return true
-	}
-
-	return false
-}
-
-// SetImageUrls gets a reference to the given []string and assigns it to the ImageUrls field.
+// SetImageUrls sets field value
 func (o *Room) SetImageUrls(v []string) {
 	o.ImageUrls = v
 }
@@ -508,21 +487,15 @@ func (o Room) ToMap() (map[string]interface{}, error) {
 	if o.Description.IsSet() {
 		toSerialize["description"] = o.Description.Get()
 	}
-	if !IsNil(o.Beds) {
-		toSerialize["beds"] = o.Beds
-	}
+	toSerialize["beds"] = o.Beds
 	if o.MaxOccupancy.IsSet() {
 		toSerialize["maxOccupancy"] = o.MaxOccupancy.Get()
 	}
 	if o.SizeSquareMeters.IsSet() {
 		toSerialize["sizeSquareMeters"] = o.SizeSquareMeters.Get()
 	}
-	if !IsNil(o.Amenities) {
-		toSerialize["amenities"] = o.Amenities
-	}
-	if !IsNil(o.ImageUrls) {
-		toSerialize["imageUrls"] = o.ImageUrls
-	}
+	toSerialize["amenities"] = o.Amenities
+	toSerialize["imageUrls"] = o.ImageUrls
 	toSerialize["roomIndex"] = o.RoomIndex
 	if o.AdultsCount.IsSet() {
 		toSerialize["adultsCount"] = o.AdultsCount.Get()
@@ -542,6 +515,9 @@ func (o *Room) UnmarshalJSON(data []byte) (err error) {
 	// that every required field exists as a key in the generic map.
 	requiredProperties := []string{
 		"name",
+		"beds",
+		"amenities",
+		"imageUrls",
 		"roomIndex",
 	}
 
@@ -562,7 +538,6 @@ func (o *Room) UnmarshalJSON(data []byte) (err error) {
 	varRoom := _Room{}
 
 	decoder := json.NewDecoder(bytes.NewReader(data))
-	decoder.DisallowUnknownFields()
 	err = decoder.Decode(&varRoom)
 
 	if err != nil {

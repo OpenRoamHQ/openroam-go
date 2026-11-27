@@ -25,8 +25,8 @@ var _ MappedNullable = &EsimStatusEvent{}
 type EsimStatusEvent struct {
 	// The eSIM's ICCID.
 	Iccid string `json:"iccid"`
-	// The eSIM's lifecycle status after the change.
-	Status string `json:"status"`
+	// The eSIM's lifecycle status after the change, with the values of `esimStatus`.
+	EsimStatus string `json:"esimStatus"`
 	// The installed profile's status after the change.
 	ProfileStatus string `json:"profileStatus"`
 	// When the change happened, in UTC.
@@ -39,10 +39,10 @@ type _EsimStatusEvent EsimStatusEvent
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewEsimStatusEvent(iccid string, status string, profileStatus string, occurredAt time.Time) *EsimStatusEvent {
+func NewEsimStatusEvent(iccid string, esimStatus string, profileStatus string, occurredAt time.Time) *EsimStatusEvent {
 	this := EsimStatusEvent{}
 	this.Iccid = iccid
-	this.Status = status
+	this.EsimStatus = esimStatus
 	this.ProfileStatus = profileStatus
 	this.OccurredAt = occurredAt
 	return &this
@@ -80,28 +80,28 @@ func (o *EsimStatusEvent) SetIccid(v string) {
 	o.Iccid = v
 }
 
-// GetStatus returns the Status field value
-func (o *EsimStatusEvent) GetStatus() string {
+// GetEsimStatus returns the EsimStatus field value
+func (o *EsimStatusEvent) GetEsimStatus() string {
 	if o == nil {
 		var ret string
 		return ret
 	}
 
-	return o.Status
+	return o.EsimStatus
 }
 
-// GetStatusOk returns a tuple with the Status field value
+// GetEsimStatusOk returns a tuple with the EsimStatus field value
 // and a boolean to check if the value has been set.
-func (o *EsimStatusEvent) GetStatusOk() (*string, bool) {
+func (o *EsimStatusEvent) GetEsimStatusOk() (*string, bool) {
 	if o == nil {
 		return nil, false
 	}
-	return &o.Status, true
+	return &o.EsimStatus, true
 }
 
-// SetStatus sets field value
-func (o *EsimStatusEvent) SetStatus(v string) {
-	o.Status = v
+// SetEsimStatus sets field value
+func (o *EsimStatusEvent) SetEsimStatus(v string) {
+	o.EsimStatus = v
 }
 
 // GetProfileStatus returns the ProfileStatus field value
@@ -163,7 +163,7 @@ func (o EsimStatusEvent) MarshalJSON() ([]byte, error) {
 func (o EsimStatusEvent) ToMap() (map[string]interface{}, error) {
 	toSerialize := map[string]interface{}{}
 	toSerialize["iccid"] = o.Iccid
-	toSerialize["status"] = o.Status
+	toSerialize["esimStatus"] = o.EsimStatus
 	toSerialize["profileStatus"] = o.ProfileStatus
 	toSerialize["occurredAt"] = o.OccurredAt
 	return toSerialize, nil
@@ -175,7 +175,7 @@ func (o *EsimStatusEvent) UnmarshalJSON(data []byte) (err error) {
 	// that every required field exists as a key in the generic map.
 	requiredProperties := []string{
 		"iccid",
-		"status",
+		"esimStatus",
 		"profileStatus",
 		"occurredAt",
 	}
@@ -197,7 +197,6 @@ func (o *EsimStatusEvent) UnmarshalJSON(data []byte) (err error) {
 	varEsimStatusEvent := _EsimStatusEvent{}
 
 	decoder := json.NewDecoder(bytes.NewReader(data))
-	decoder.DisallowUnknownFields()
 	err = decoder.Decode(&varEsimStatusEvent)
 
 	if err != nil {

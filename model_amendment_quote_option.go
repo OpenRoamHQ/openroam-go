@@ -13,6 +13,8 @@ package openroam
 
 import (
 	"encoding/json"
+	"bytes"
+	"fmt"
 )
 
 // checks if the AmendmentQuoteOption type satisfies the MappedNullable interface at compile time
@@ -21,21 +23,30 @@ var _ MappedNullable = &AmendmentQuoteOption{}
 // AmendmentQuoteOption One priced way to make the requested change.
 type AmendmentQuoteOption struct {
 	// Option id, sent as `selectedOptionId` when confirming.
-	Id *string `json:"id,omitempty"`
+	Id string `json:"id"`
 	// The surcharge charged on confirm, including any amendment fee.
-	AmountToPay *Money `json:"amountToPay,omitempty"`
+	AmountToPay Money `json:"amountToPay"`
 	// The credit returned on confirm, after any amendment fee.
-	AmountToRefund *Money `json:"amountToRefund,omitempty"`
+	AmountToRefund Money `json:"amountToRefund"`
 	// A fee for the change, already included in amountToPay or amountToRefund; null when none             applies.
 	AmendmentFee NullableMoney `json:"amendmentFee,omitempty"`
+	// On an order placed on one of your sites where the traveller paid OpenRoam by card: what             confirming this option would return to their card now, their share of the part of amountToRefund left after any             earlier charges to your wallet for the item come back to it; 0 when nothing goes back. Null on every other order,             where all of amountToRefund goes to your wallet, and when the card's part cannot be stated before you confirm.
+	TravellerRefund NullableMoney `json:"travellerRefund,omitempty"`
+	// The part of travellerRefund that is the tax OpenRoam added when the traveller             paid by card, already in it. Null when travellerRefund is null, and when the checkout added no tax.
+	TravellerRefundCheckoutTax NullableCheckoutTax `json:"travellerRefundCheckoutTax,omitempty"`
 }
+
+type _AmendmentQuoteOption AmendmentQuoteOption
 
 // NewAmendmentQuoteOption instantiates a new AmendmentQuoteOption object
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewAmendmentQuoteOption() *AmendmentQuoteOption {
+func NewAmendmentQuoteOption(id string, amountToPay Money, amountToRefund Money) *AmendmentQuoteOption {
 	this := AmendmentQuoteOption{}
+	this.Id = id
+	this.AmountToPay = amountToPay
+	this.AmountToRefund = amountToRefund
 	return &this
 }
 
@@ -47,100 +58,76 @@ func NewAmendmentQuoteOptionWithDefaults() *AmendmentQuoteOption {
 	return &this
 }
 
-// GetId returns the Id field value if set, zero value otherwise.
+// GetId returns the Id field value
 func (o *AmendmentQuoteOption) GetId() string {
-	if o == nil || IsNil(o.Id) {
+	if o == nil {
 		var ret string
 		return ret
 	}
-	return *o.Id
+
+	return o.Id
 }
 
-// GetIdOk returns a tuple with the Id field value if set, nil otherwise
+// GetIdOk returns a tuple with the Id field value
 // and a boolean to check if the value has been set.
 func (o *AmendmentQuoteOption) GetIdOk() (*string, bool) {
-	if o == nil || IsNil(o.Id) {
+	if o == nil {
 		return nil, false
 	}
-	return o.Id, true
+	return &o.Id, true
 }
 
-// HasId returns a boolean if a field has been set.
-func (o *AmendmentQuoteOption) HasId() bool {
-	if o != nil && !IsNil(o.Id) {
-		return true
-	}
-
-	return false
-}
-
-// SetId gets a reference to the given string and assigns it to the Id field.
+// SetId sets field value
 func (o *AmendmentQuoteOption) SetId(v string) {
-	o.Id = &v
+	o.Id = v
 }
 
-// GetAmountToPay returns the AmountToPay field value if set, zero value otherwise.
+// GetAmountToPay returns the AmountToPay field value
 func (o *AmendmentQuoteOption) GetAmountToPay() Money {
-	if o == nil || IsNil(o.AmountToPay) {
+	if o == nil {
 		var ret Money
 		return ret
 	}
-	return *o.AmountToPay
+
+	return o.AmountToPay
 }
 
-// GetAmountToPayOk returns a tuple with the AmountToPay field value if set, nil otherwise
+// GetAmountToPayOk returns a tuple with the AmountToPay field value
 // and a boolean to check if the value has been set.
 func (o *AmendmentQuoteOption) GetAmountToPayOk() (*Money, bool) {
-	if o == nil || IsNil(o.AmountToPay) {
+	if o == nil {
 		return nil, false
 	}
-	return o.AmountToPay, true
+	return &o.AmountToPay, true
 }
 
-// HasAmountToPay returns a boolean if a field has been set.
-func (o *AmendmentQuoteOption) HasAmountToPay() bool {
-	if o != nil && !IsNil(o.AmountToPay) {
-		return true
-	}
-
-	return false
-}
-
-// SetAmountToPay gets a reference to the given Money and assigns it to the AmountToPay field.
+// SetAmountToPay sets field value
 func (o *AmendmentQuoteOption) SetAmountToPay(v Money) {
-	o.AmountToPay = &v
+	o.AmountToPay = v
 }
 
-// GetAmountToRefund returns the AmountToRefund field value if set, zero value otherwise.
+// GetAmountToRefund returns the AmountToRefund field value
 func (o *AmendmentQuoteOption) GetAmountToRefund() Money {
-	if o == nil || IsNil(o.AmountToRefund) {
+	if o == nil {
 		var ret Money
 		return ret
 	}
-	return *o.AmountToRefund
+
+	return o.AmountToRefund
 }
 
-// GetAmountToRefundOk returns a tuple with the AmountToRefund field value if set, nil otherwise
+// GetAmountToRefundOk returns a tuple with the AmountToRefund field value
 // and a boolean to check if the value has been set.
 func (o *AmendmentQuoteOption) GetAmountToRefundOk() (*Money, bool) {
-	if o == nil || IsNil(o.AmountToRefund) {
+	if o == nil {
 		return nil, false
 	}
-	return o.AmountToRefund, true
+	return &o.AmountToRefund, true
 }
 
-// HasAmountToRefund returns a boolean if a field has been set.
-func (o *AmendmentQuoteOption) HasAmountToRefund() bool {
-	if o != nil && !IsNil(o.AmountToRefund) {
-		return true
-	}
-
-	return false
-}
-
-// SetAmountToRefund gets a reference to the given Money and assigns it to the AmountToRefund field.
+// SetAmountToRefund sets field value
 func (o *AmendmentQuoteOption) SetAmountToRefund(v Money) {
-	o.AmountToRefund = &v
+	o.AmountToRefund = v
 }
 
 // GetAmendmentFee returns the AmendmentFee field value if set, zero value otherwise (both if not set or set to explicit null).
@@ -185,6 +172,90 @@ func (o *AmendmentQuoteOption) UnsetAmendmentFee() {
 	o.AmendmentFee.Unset()
 }
 
+// GetTravellerRefund returns the TravellerRefund field value if set, zero value otherwise (both if not set or set to explicit null).
+func (o *AmendmentQuoteOption) GetTravellerRefund() Money {
+	if o == nil || IsNil(o.TravellerRefund.Get()) {
+		var ret Money
+		return ret
+	}
+	return *o.TravellerRefund.Get()
+}
+
+// GetTravellerRefundOk returns a tuple with the TravellerRefund field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+// NOTE: If the value is an explicit nil, `nil, true` will be returned
+func (o *AmendmentQuoteOption) GetTravellerRefundOk() (*Money, bool) {
+	if o == nil {
+		return nil, false
+	}
+	return o.TravellerRefund.Get(), o.TravellerRefund.IsSet()
+}
+
+// HasTravellerRefund returns a boolean if a field has been set.
+func (o *AmendmentQuoteOption) HasTravellerRefund() bool {
+	if o != nil && o.TravellerRefund.IsSet() {
+		return true
+	}
+
+	return false
+}
+
+// SetTravellerRefund gets a reference to the given NullableMoney and assigns it to the TravellerRefund field.
+func (o *AmendmentQuoteOption) SetTravellerRefund(v Money) {
+	o.TravellerRefund.Set(&v)
+}
+// SetTravellerRefundNil sets the value for TravellerRefund to be an explicit nil
+func (o *AmendmentQuoteOption) SetTravellerRefundNil() {
+	o.TravellerRefund.Set(nil)
+}
+
+// UnsetTravellerRefund ensures that no value is present for TravellerRefund, not even an explicit nil
+func (o *AmendmentQuoteOption) UnsetTravellerRefund() {
+	o.TravellerRefund.Unset()
+}
+
+// GetTravellerRefundCheckoutTax returns the TravellerRefundCheckoutTax field value if set, zero value otherwise (both if not set or set to explicit null).
+func (o *AmendmentQuoteOption) GetTravellerRefundCheckoutTax() CheckoutTax {
+	if o == nil || IsNil(o.TravellerRefundCheckoutTax.Get()) {
+		var ret CheckoutTax
+		return ret
+	}
+	return *o.TravellerRefundCheckoutTax.Get()
+}
+
+// GetTravellerRefundCheckoutTaxOk returns a tuple with the TravellerRefundCheckoutTax field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+// NOTE: If the value is an explicit nil, `nil, true` will be returned
+func (o *AmendmentQuoteOption) GetTravellerRefundCheckoutTaxOk() (*CheckoutTax, bool) {
+	if o == nil {
+		return nil, false
+	}
+	return o.TravellerRefundCheckoutTax.Get(), o.TravellerRefundCheckoutTax.IsSet()
+}
+
+// HasTravellerRefundCheckoutTax returns a boolean if a field has been set.
+func (o *AmendmentQuoteOption) HasTravellerRefundCheckoutTax() bool {
+	if o != nil && o.TravellerRefundCheckoutTax.IsSet() {
+		return true
+	}
+
+	return false
+}
+
+// SetTravellerRefundCheckoutTax gets a reference to the given NullableCheckoutTax and assigns it to the TravellerRefundCheckoutTax field.
+func (o *AmendmentQuoteOption) SetTravellerRefundCheckoutTax(v CheckoutTax) {
+	o.TravellerRefundCheckoutTax.Set(&v)
+}
+// SetTravellerRefundCheckoutTaxNil sets the value for TravellerRefundCheckoutTax to be an explicit nil
+func (o *AmendmentQuoteOption) SetTravellerRefundCheckoutTaxNil() {
+	o.TravellerRefundCheckoutTax.Set(nil)
+}
+
+// UnsetTravellerRefundCheckoutTax ensures that no value is present for TravellerRefundCheckoutTax, not even an explicit nil
+func (o *AmendmentQuoteOption) UnsetTravellerRefundCheckoutTax() {
+	o.TravellerRefundCheckoutTax.Unset()
+}
+
 func (o AmendmentQuoteOption) MarshalJSON() ([]byte, error) {
 	toSerialize,err := o.ToMap()
 	if err != nil {
@@ -195,19 +266,57 @@ func (o AmendmentQuoteOption) MarshalJSON() ([]byte, error) {
 
 func (o AmendmentQuoteOption) ToMap() (map[string]interface{}, error) {
 	toSerialize := map[string]interface{}{}
-	if !IsNil(o.Id) {
-		toSerialize["id"] = o.Id
-	}
-	if !IsNil(o.AmountToPay) {
-		toSerialize["amountToPay"] = o.AmountToPay
-	}
-	if !IsNil(o.AmountToRefund) {
-		toSerialize["amountToRefund"] = o.AmountToRefund
-	}
+	toSerialize["id"] = o.Id
+	toSerialize["amountToPay"] = o.AmountToPay
+	toSerialize["amountToRefund"] = o.AmountToRefund
 	if o.AmendmentFee.IsSet() {
 		toSerialize["amendmentFee"] = o.AmendmentFee.Get()
 	}
+	if o.TravellerRefund.IsSet() {
+		toSerialize["travellerRefund"] = o.TravellerRefund.Get()
+	}
+	if o.TravellerRefundCheckoutTax.IsSet() {
+		toSerialize["travellerRefundCheckoutTax"] = o.TravellerRefundCheckoutTax.Get()
+	}
 	return toSerialize, nil
+}
+
+func (o *AmendmentQuoteOption) UnmarshalJSON(data []byte) (err error) {
+	// This validates that all required properties are included in the JSON object
+	// by unmarshalling the object into a generic map with string keys and checking
+	// that every required field exists as a key in the generic map.
+	requiredProperties := []string{
+		"id",
+		"amountToPay",
+		"amountToRefund",
+	}
+
+	allProperties := make(map[string]interface{})
+
+	err = json.Unmarshal(data, &allProperties)
+
+	if err != nil {
+		return err;
+	}
+
+	for _, requiredProperty := range(requiredProperties) {
+		if _, exists := allProperties[requiredProperty]; !exists {
+			return fmt.Errorf("no value given for required property %v", requiredProperty)
+		}
+	}
+
+	varAmendmentQuoteOption := _AmendmentQuoteOption{}
+
+	decoder := json.NewDecoder(bytes.NewReader(data))
+	err = decoder.Decode(&varAmendmentQuoteOption)
+
+	if err != nil {
+		return err
+	}
+
+	*o = AmendmentQuoteOption(varAmendmentQuoteOption)
+
+	return err
 }
 
 type NullableAmendmentQuoteOption struct {

@@ -70,20 +70,22 @@ price times its quantity, in the order currency. Its currency must be the order 
 priced and before anything is charged; a total equal to it is accepted.
             
 The order total is charged to the partner's selected wallet. On success the order is
-`paid` and its items start as `pending`; delivery continues after the response, so follow it with
-`GET orders/{id}`, `GET orders/{orderId}/fulfillment/status` or the
-`order.fulfillment.updated` webhook. If the charge fails the order stays `paymentPending`,
-`payment.failure` carries `16000` (`PAYMENT_FAILED`) and the response is still `200`;
-top up the wallet and call payment retry.
+`processing` and its items start as `pending`; delivery continues after the response, so follow
+it with `GET orders/{id}`, `GET orders/{orderId}/fulfillment/status` or the
+`order.fulfillment.updated` webhook. If the charge fails, no order is created and the call returns
+`402` with code `16000` (`PAYMENT_FAILED`); when the reason is known,
+`details[0]` names `wallet` with reason `INSUFFICIENT_BALANCE` or `WALLET_BLOCKED`.
+Top up or unblock the wallet and send the same request again with the same `Idempotency-Key`.
             
 Requires an `Idempotency-Key` header (a UUID) per purchase. Repeating the same request with the
 same key never charges twice: once the order is accepted it returns `200` with that order's current
-state; while the first request is still running it returns `202` with code `12002`
+state; while the first request is still running it returns `409` with code `12002`
 (`IDEMPOTENCY_KEY_IN_PROGRESS`) and a `Retry-After` header, after which you send the same
 request again; a different body with the same key returns `409` with code `12001`
 (`IDEMPOTENCY_KEY_REQUEST_MISMATCH`). After a timeout or `5xx`, retry with the same key and
 body rather than a new key. A `referenceId` already used by another order of the partner returns
-`409` with code `10005` (`CONFLICT`).
+`409` with code `10005` (`CONFLICT`). An eSIM top-up whose `inputs.iccid` is not one
+of your eSIMs returns `404` with code `10004` (`NOT_FOUND`) and charges nothing.
 
  @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
  @return ApiOrdersCreateOrderRequest
@@ -110,7 +112,7 @@ func (a *OrdersAPIService) OrdersCreateOrderExecute(r ApiOrdersCreateOrderReques
 		return localVarReturnValue, nil, &GenericOpenAPIError{error: err.Error()}
 	}
 
-	localVarPath := localBasePath + "/api/v1/b2b/orders"
+	localVarPath := localBasePath + "/v1/orders"
 
 	localVarHeaderParams := make(map[string]string)
 	localVarQueryParams := url.Values{}
@@ -197,7 +199,29 @@ func (a *OrdersAPIService) OrdersCreateOrderExecute(r ApiOrdersCreateOrderReques
 					newErr.model = v
 			return localVarReturnValue, localVarHTTPResponse, newErr
 		}
+		if localVarHTTPResponse.StatusCode == 402 {
+			var v ErrorResponse
+			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = err.Error()
+				return localVarReturnValue, localVarHTTPResponse, newErr
+			}
+					newErr.error = formatErrorMessage(localVarHTTPResponse.Status, &v)
+					newErr.model = v
+			return localVarReturnValue, localVarHTTPResponse, newErr
+		}
 		if localVarHTTPResponse.StatusCode == 403 {
+			var v ErrorResponse
+			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = err.Error()
+				return localVarReturnValue, localVarHTTPResponse, newErr
+			}
+					newErr.error = formatErrorMessage(localVarHTTPResponse.Status, &v)
+					newErr.model = v
+			return localVarReturnValue, localVarHTTPResponse, newErr
+		}
+		if localVarHTTPResponse.StatusCode == 404 {
 			var v ErrorResponse
 			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 			if err != nil {
@@ -277,7 +301,7 @@ type ApiOrdersGetAllRequest struct {
 	maxAmount *float32
 	search *string
 	referenceId *string
-	salesChannel *string
+	channel *string
 	productTypes *[]string
 	orderStatuses *[]string
 }
@@ -294,13 +318,13 @@ func (r ApiOrdersGetAllRequest) Limit(limit int32) ApiOrdersGetAllRequest {
 	return r
 }
 
-// Only orders created at or after this time (UTC).
+// Only orders created at or after this time (UTC). ISO 8601 date-time. A value with Z or an offset is converted to UTC; a value without a zone is read as UTC, and a date alone means 00:00 UTC on that day.
 func (r ApiOrdersGetAllRequest) StartDate(startDate time.Time) ApiOrdersGetAllRequest {
 	r.startDate = &startDate
 	return r
 }
 
-// Only orders created at or before this time (UTC).
+// Only orders created at or before this time (UTC). ISO 8601 date-time. A value with Z or an offset is converted to UTC; a value without a zone is read as UTC, and a date alone means 00:00 UTC on that day.
 func (r ApiOrdersGetAllRequest) EndDate(endDate time.Time) ApiOrdersGetAllRequest {
 	r.endDate = &endDate
 	return r
@@ -330,9 +354,9 @@ func (r ApiOrdersGetAllRequest) ReferenceId(referenceId string) ApiOrdersGetAllR
 	return r
 }
 
-// Only orders created through this channel: the dashboard or the API.
-func (r ApiOrdersGetAllRequest) SalesChannel(salesChannel string) ApiOrdersGetAllRequest {
-	r.salesChannel = &salesChannel
+// Only orders created through this channel, the same values as &#x60;origin.channel&#x60;: &#x60;api&#x60;,             &#x60;dashboard&#x60; or &#x60;site&#x60;.
+func (r ApiOrdersGetAllRequest) Channel(channel string) ApiOrdersGetAllRequest {
+	r.channel = &channel
 	return r
 }
 
@@ -342,7 +366,7 @@ func (r ApiOrdersGetAllRequest) ProductTypes(productTypes []string) ApiOrdersGet
 	return r
 }
 
-// Only orders currently in one of these statuses. Repeat the parameter for several statuses.
+// Only orders currently in one of these statuses, the same values as &#x60;status&#x60;. Repeat the parameter for several statuses.
 func (r ApiOrdersGetAllRequest) OrderStatuses(orderStatuses []string) ApiOrdersGetAllRequest {
 	r.orderStatuses = &orderStatuses
 	return r
@@ -358,10 +382,13 @@ OrdersGetAll List orders
 Lists the partner's orders, newest first, with optional filters.
 
 Returns `{ orders, pagination }`. Each summary has `id`, `referenceId`, `origin`,
-`status`, `total`, the latest `payment` and `itemCount`; read one order for its items,
-actions and timeline.
+`status`, `total`, the latest `payment` and `itemCount`; read one order for its items
+and timeline.
             
-Orders created through the API and through the dashboard are both listed. Filters combine with AND;
+Orders created through the API, the dashboard and the partner's sites are all listed; `channel`
+(`api`, `dashboard` or `site`, the values of `origin.channel`) keeps one of them. With a
+site credential, only the orders of that site are listed. `orderStatuses` takes the
+values of `status` and matches the status the order reads now. Filters combine with AND;
 repeated `productTypes` or `orderStatuses` values combine with OR. A `productTypes` filter
 selects orders containing at least one item of that type and still returns the whole order. Filters apply
 before counting and paging, so send the same filters on every page.
@@ -395,7 +422,7 @@ func (a *OrdersAPIService) OrdersGetAllExecute(r ApiOrdersGetAllRequest) (*Order
 		return localVarReturnValue, nil, &GenericOpenAPIError{error: err.Error()}
 	}
 
-	localVarPath := localBasePath + "/api/v1/b2b/orders"
+	localVarPath := localBasePath + "/v1/orders"
 
 	localVarHeaderParams := make(map[string]string)
 	localVarQueryParams := url.Values{}
@@ -425,8 +452,8 @@ func (a *OrdersAPIService) OrdersGetAllExecute(r ApiOrdersGetAllRequest) (*Order
 	if r.referenceId != nil {
 		parameterAddToHeaderOrQuery(localVarQueryParams, "referenceId", r.referenceId, "form", "")
 	}
-	if r.salesChannel != nil {
-		parameterAddToHeaderOrQuery(localVarQueryParams, "salesChannel", r.salesChannel, "form", "")
+	if r.channel != nil {
+		parameterAddToHeaderOrQuery(localVarQueryParams, "channel", r.channel, "form", "")
 	}
 	if r.productTypes != nil {
 		t := *r.productTypes
@@ -577,17 +604,25 @@ OrdersGetById Get an order
 Gets the current state of one order.
 
 Returns the same shape as order creation: `id`, `referenceId`, `origin`, `status`,
-`total`, `payment`, `actions`, `items`, `timeline`, `createdAt`,
-`updatedAt` and `fulfillmentVersion`. This is the source of truth for the order: webhooks are
-snapshots of an event, so read the order again after a missed or out-of-order delivery.
+`total`, `payment`, `items`, `timeline`, `createdAt`, `updatedAt` and
+`fulfillmentVersion`. This is the source of truth for the order: webhooks are snapshots of an event, so
+read the order again after a missed or out-of-order delivery. `updatedAt` moves whenever anything in
+the order changes: its status, an item's fulfillment, a refund or an amendment.
             
-Order `status` moves from `paymentPending` to `paid` once the wallet is charged, then to
-`processing` while items are delivered, and ends as `completed` (every item fulfilled),
-`partiallyFulfilled` (some items fulfilled, the rest rejected), `fulfillmentFailed` (no item
-fulfilled) or `cancelled`. Each item reports its own `fulfillment.status`: `pending`,
-`fulfilled` with a typed `result`, or `rejected` with a safe `failure`
-(`11001`, `FULFILLMENT_REJECTED`). `actions` and `items[].actions` say whether
-payment retry, fulfillment retry, amendment and cancellation are available now.
+Order `status` is `processing` from the moment the wallet is charged until every item has an
+outcome, then `completed` (every item fulfilled), `partiallyFulfilled` (some items fulfilled,
+the rest rejected) or `fulfillmentFailed` (no item fulfilled). Cancelling delivered items makes it
+`partiallyRefunded` (some delivered items cancelled and refunded) or `refunded` (every delivered
+item cancelled and refunded). Every order's `timeline` starts with `paymentPending`. An order
+reads `paymentPending` as its status while a dashboard order awaits its payment, and, rarely, when a
+wallet charge was taken but could not be confirmed. Sending the order request again with the same
+`Idempotency-Key` and body completes such an order from that charge, and OpenRoam also completes it
+automatically, usually within two hours; the wallet is never charged twice. `cancelled` is
+an unpaid order that expired. A rejected item is refunded automatically when
+nothing is held for it; its `refund` shows the release. Each item reports its own
+`fulfillment.status`: `pending`, `fulfilled` with a typed `result`, or
+`rejected` with a safe `failure` (`11001`, `FULFILLMENT_REJECTED`).
+`items[].actions` say whether amendment, cancellation and update are available now.
             
 An order of another partner, or an unknown id, returns `404` with code `10004`.
 
@@ -618,7 +653,7 @@ func (a *OrdersAPIService) OrdersGetByIdExecute(r ApiOrdersGetByIdRequest) (*Ord
 		return localVarReturnValue, nil, &GenericOpenAPIError{error: err.Error()}
 	}
 
-	localVarPath := localBasePath + "/api/v1/b2b/orders/{id}"
+	localVarPath := localBasePath + "/v1/orders/{id}"
 	localVarPath = strings.Replace(localVarPath, "{"+"id"+"}", url.PathEscape(parameterValueToString(r.id, "id")), -1)
 
 	localVarHeaderParams := make(map[string]string)
@@ -747,204 +782,6 @@ func (a *OrdersAPIService) OrdersGetByIdExecute(r ApiOrdersGetByIdRequest) (*Ord
 	return localVarReturnValue, localVarHTTPResponse, nil
 }
 
-type ApiOrdersGetCancellationPreviewRequest struct {
-	ctx context.Context
-	ApiService *OrdersAPIService
-	id string
-}
-
-func (r ApiOrdersGetCancellationPreviewRequest) Execute() (*OrderCancellationPreview, *http.Response, error) {
-	return r.ApiService.OrdersGetCancellationPreviewExecute(r)
-}
-
-/*
-OrdersGetCancellationPreview Preview an order cancellation
-
-Previews cancelling every item of an order now, with the totals.
-
-Requires the `read` order permission. Returns `{ orderId, currency, items, totals }`, every amount
-in the order currency. Each item has `orderItemId`, `productType` and `status`.
-`previewable` items carry `preview`, the same payload as
-`GET order-items/{id}/cancellation-preview` (`isRefundable: false` included);
-`notCancellable` items carry a `reason`: `notFulfilled` (not delivered), `refunded`,
-`refundInProgress` (a refund was started and has not finished), `amendmentInProgress`,
-`manualReview` (contact support) or `notAllowed` (the product's rules do not allow cancelling it
-now). `totals` sums `penaltyAmount`, `cancellationFee` and `refundAmount` over the
-`previewable` items; `totals.isComplete` is `true` only when every item is
-`previewable`.
-            
-The preview cancels nothing, changes no state and locks no amount: cancelling an item prices its
-cancellation again. Only an item the item preview refuses is `notAllowed`: a booking system that cannot answer
-right now fails this whole call, with `503` when it is unavailable, as it fails the item preview.
-Retry later. An order of another partner, or an unknown id, returns `404` with code `10004`.
-
- @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- @param id Order id (`id` from the order response).
- @return ApiOrdersGetCancellationPreviewRequest
-*/
-func (a *OrdersAPIService) OrdersGetCancellationPreview(ctx context.Context, id string) ApiOrdersGetCancellationPreviewRequest {
-	return ApiOrdersGetCancellationPreviewRequest{
-		ApiService: a,
-		ctx: ctx,
-		id: id,
-	}
-}
-
-// Execute executes the request
-//  @return OrderCancellationPreview
-func (a *OrdersAPIService) OrdersGetCancellationPreviewExecute(r ApiOrdersGetCancellationPreviewRequest) (*OrderCancellationPreview, *http.Response, error) {
-	var (
-		localVarHTTPMethod   = http.MethodGet
-		localVarPostBody     interface{}
-		formFiles            []formFile
-		localVarReturnValue  *OrderCancellationPreview
-	)
-
-	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "OrdersAPIService.OrdersGetCancellationPreview")
-	if err != nil {
-		return localVarReturnValue, nil, &GenericOpenAPIError{error: err.Error()}
-	}
-
-	localVarPath := localBasePath + "/api/v1/b2b/orders/{id}/cancellation-preview"
-	localVarPath = strings.Replace(localVarPath, "{"+"id"+"}", url.PathEscape(parameterValueToString(r.id, "id")), -1)
-
-	localVarHeaderParams := make(map[string]string)
-	localVarQueryParams := url.Values{}
-	localVarFormParams := url.Values{}
-
-	// to determine the Content-Type header
-	localVarHTTPContentTypes := []string{}
-
-	// set Content-Type header
-	localVarHTTPContentType := selectHeaderContentType(localVarHTTPContentTypes)
-	if localVarHTTPContentType != "" {
-		localVarHeaderParams["Content-Type"] = localVarHTTPContentType
-	}
-
-	// to determine the Accept header
-	localVarHTTPHeaderAccepts := []string{"text/plain", "application/json", "text/json"}
-
-	// set Accept header
-	localVarHTTPHeaderAccept := selectHeaderAccept(localVarHTTPHeaderAccepts)
-	if localVarHTTPHeaderAccept != "" {
-		localVarHeaderParams["Accept"] = localVarHTTPHeaderAccept
-	}
-	if r.ctx != nil {
-		// API Key Authentication
-		if auth, ok := r.ctx.Value(ContextAPIKeys).(map[string]APIKey); ok {
-			if apiKey, ok := auth["PartnerApiKey"]; ok {
-				var key string
-				if apiKey.Prefix != "" {
-					key = apiKey.Prefix + " " + apiKey.Key
-				} else {
-					key = apiKey.Key
-				}
-				localVarHeaderParams["X-Partner-Key"] = key
-			}
-		}
-	}
-	req, err := a.client.prepareRequest(r.ctx, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, formFiles)
-	if err != nil {
-		return localVarReturnValue, nil, err
-	}
-
-	localVarHTTPResponse, err := a.client.callAPI(req)
-	if err != nil || localVarHTTPResponse == nil {
-		return localVarReturnValue, localVarHTTPResponse, err
-	}
-
-	localVarBody, err := io.ReadAll(localVarHTTPResponse.Body)
-	localVarHTTPResponse.Body.Close()
-	localVarHTTPResponse.Body = io.NopCloser(bytes.NewBuffer(localVarBody))
-	if err != nil {
-		return localVarReturnValue, localVarHTTPResponse, err
-	}
-
-	if localVarHTTPResponse.StatusCode >= 300 {
-		newErr := &GenericOpenAPIError{
-			body:  localVarBody,
-			error: localVarHTTPResponse.Status,
-		}
-		if localVarHTTPResponse.StatusCode == 400 {
-			var v ErrorResponse
-			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
-			if err != nil {
-				newErr.error = err.Error()
-				return localVarReturnValue, localVarHTTPResponse, newErr
-			}
-					newErr.error = formatErrorMessage(localVarHTTPResponse.Status, &v)
-					newErr.model = v
-			return localVarReturnValue, localVarHTTPResponse, newErr
-		}
-		if localVarHTTPResponse.StatusCode == 401 {
-			var v ErrorResponse
-			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
-			if err != nil {
-				newErr.error = err.Error()
-				return localVarReturnValue, localVarHTTPResponse, newErr
-			}
-					newErr.error = formatErrorMessage(localVarHTTPResponse.Status, &v)
-					newErr.model = v
-			return localVarReturnValue, localVarHTTPResponse, newErr
-		}
-		if localVarHTTPResponse.StatusCode == 403 {
-			var v ErrorResponse
-			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
-			if err != nil {
-				newErr.error = err.Error()
-				return localVarReturnValue, localVarHTTPResponse, newErr
-			}
-					newErr.error = formatErrorMessage(localVarHTTPResponse.Status, &v)
-					newErr.model = v
-			return localVarReturnValue, localVarHTTPResponse, newErr
-		}
-		if localVarHTTPResponse.StatusCode == 404 {
-			var v ErrorResponse
-			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
-			if err != nil {
-				newErr.error = err.Error()
-				return localVarReturnValue, localVarHTTPResponse, newErr
-			}
-					newErr.error = formatErrorMessage(localVarHTTPResponse.Status, &v)
-					newErr.model = v
-			return localVarReturnValue, localVarHTTPResponse, newErr
-		}
-		if localVarHTTPResponse.StatusCode == 429 {
-			var v ErrorResponse
-			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
-			if err != nil {
-				newErr.error = err.Error()
-				return localVarReturnValue, localVarHTTPResponse, newErr
-			}
-					newErr.error = formatErrorMessage(localVarHTTPResponse.Status, &v)
-					newErr.model = v
-			return localVarReturnValue, localVarHTTPResponse, newErr
-		}
-		if localVarHTTPResponse.StatusCode == 503 {
-			var v ErrorResponse
-			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
-			if err != nil {
-				newErr.error = err.Error()
-				return localVarReturnValue, localVarHTTPResponse, newErr
-			}
-					newErr.error = formatErrorMessage(localVarHTTPResponse.Status, &v)
-					newErr.model = v
-		}
-		return localVarReturnValue, localVarHTTPResponse, newErr
-	}
-
-	err = a.client.decode(&localVarReturnValue, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
-	if err != nil {
-		newErr := &GenericOpenAPIError{
-			body:  localVarBody,
-			error: err.Error(),
-		}
-		return localVarReturnValue, localVarHTTPResponse, newErr
-	}
-
-	return localVarReturnValue, localVarHTTPResponse, nil
-}
-
 type ApiOrdersGetFulfillmentStatusRequest struct {
 	ctx context.Context
 	ApiService *OrdersAPIService
@@ -963,9 +800,11 @@ Gets the current fulfillment state of every item in an order.
 Returns the order `id`, its `items` (the same item shape as the order, with each item's
 `fulfillment` status, typed `result` and `failure`) and `fulfillmentVersion`. The
 version increases with every meaningful fulfillment change, including a later revision of an already
-delivered result, and matches `fulfillmentVersion` in the `order.fulfillment.updated` webhook:
-keep the highest version you have seen and use this endpoint to recover after a missed delivery.
-Refunds and amendments do not change the version. An order of another partner, or an unknown id, returns
+delivered result, the cancellation of a delivered item and the completed refund of a delivered item, which
+changes the order's `status`, and matches `fulfillmentVersion` in the
+`order.fulfillment.updated` webhook: keep the highest version you have seen and use this endpoint to
+recover after a missed delivery. The refund of an item that was not delivered and an amendment do not
+change the version; read the order for those. An order of another partner, or an unknown id, returns
 `404` with code `10004`.
 
  @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
@@ -995,7 +834,7 @@ func (a *OrdersAPIService) OrdersGetFulfillmentStatusExecute(r ApiOrdersGetFulfi
 		return localVarReturnValue, nil, &GenericOpenAPIError{error: err.Error()}
 	}
 
-	localVarPath := localBasePath + "/api/v1/b2b/orders/{orderId}/fulfillment/status"
+	localVarPath := localBasePath + "/v1/orders/{orderId}/fulfillment/status"
 	localVarPath = strings.Replace(localVarPath, "{"+"orderId"+"}", url.PathEscape(parameterValueToString(r.orderId, "orderId")), -1)
 
 	localVarHeaderParams := make(map[string]string)
@@ -1118,14 +957,21 @@ is checked for its format and not for uniqueness. Returns `currency`, `items`, `
 `expiresAt`. Each item is the quote item that its product's own quote route returns, with
 `productType`; its `publicId` can be a new one (gift cards, hotels and flights issue one), so order
 with the `publicId` of the quote. `total` is the sum of each item's `price` times its
-`quantity` in the quote currency. `expiresAt` is the earliest `details.expiresAt` of the items
-that have one, and `null` when none has.
+`quantity` in the quote currency. `expiresAt` is the earliest expiry of the items that have one (a
+hotel or flight item's `expiresAt`), and `null` when none has.
             
 Items are checked as the order checks them: first the `inputs` of every item, then the offer of every
 item, then each item is priced in request order. The first failing item ends the quote with the code and
 path of its product's quote route, under `items[i]`, for example `409` / `11002` at
-`items[i].inputs.maxPrice` when the current price is above the guard. A quote does not reserve a price:
-to hold the quoted price, send it as `inputs.maxPrice` in the order.
+`items[i].inputs.maxPrice` when the current price is above the guard. An eSIM top-up whose
+`inputs.iccid` is not one of your eSIMs returns `404` with code `10004` (`NOT_FOUND`).
+A quote does not reserve a price: to hold the quoted price, send it as `inputs.maxPrice` in the order.
+            
+A browser session quotes only the products it was minted for that its site still sells: once the body is
+valid, and before any item's inputs, offer or access is checked, the first item of another product gives
+403 / 10003, `NOT_ALLOWED`, at `items[i].productType`. Each item is then refused what its
+product's quote route refuses a browser session, such as `items[i].inputs.maxPrice`, before its inputs
+are otherwise checked, and every `price` and the `total` are the site's traveller prices.
 
  @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
  @return ApiOrdersQuoteOrderRequest
@@ -1152,7 +998,7 @@ func (a *OrdersAPIService) OrdersQuoteOrderExecute(r ApiOrdersQuoteOrderRequest)
 		return localVarReturnValue, nil, &GenericOpenAPIError{error: err.Error()}
 	}
 
-	localVarPath := localBasePath + "/api/v1/b2b/orders/quote"
+	localVarPath := localBasePath + "/v1/orders/quote"
 
 	localVarHeaderParams := make(map[string]string)
 	localVarQueryParams := url.Values{}
@@ -1246,180 +1092,7 @@ func (a *OrdersAPIService) OrdersQuoteOrderExecute(r ApiOrdersQuoteOrderRequest)
 					newErr.model = v
 			return localVarReturnValue, localVarHTTPResponse, newErr
 		}
-		if localVarHTTPResponse.StatusCode == 409 {
-			var v ErrorResponse
-			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
-			if err != nil {
-				newErr.error = err.Error()
-				return localVarReturnValue, localVarHTTPResponse, newErr
-			}
-					newErr.error = formatErrorMessage(localVarHTTPResponse.Status, &v)
-					newErr.model = v
-			return localVarReturnValue, localVarHTTPResponse, newErr
-		}
-		if localVarHTTPResponse.StatusCode == 429 {
-			var v ErrorResponse
-			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
-			if err != nil {
-				newErr.error = err.Error()
-				return localVarReturnValue, localVarHTTPResponse, newErr
-			}
-					newErr.error = formatErrorMessage(localVarHTTPResponse.Status, &v)
-					newErr.model = v
-			return localVarReturnValue, localVarHTTPResponse, newErr
-		}
-		if localVarHTTPResponse.StatusCode == 503 {
-			var v ErrorResponse
-			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
-			if err != nil {
-				newErr.error = err.Error()
-				return localVarReturnValue, localVarHTTPResponse, newErr
-			}
-					newErr.error = formatErrorMessage(localVarHTTPResponse.Status, &v)
-					newErr.model = v
-		}
-		return localVarReturnValue, localVarHTTPResponse, newErr
-	}
-
-	err = a.client.decode(&localVarReturnValue, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
-	if err != nil {
-		newErr := &GenericOpenAPIError{
-			body:  localVarBody,
-			error: err.Error(),
-		}
-		return localVarReturnValue, localVarHTTPResponse, newErr
-	}
-
-	return localVarReturnValue, localVarHTTPResponse, nil
-}
-
-type ApiOrdersRetryFulfillmentRequest struct {
-	ctx context.Context
-	ApiService *OrdersAPIService
-	orderId string
-	idempotencyKey *string
-}
-
-// UUID idempotency key for safe retries of this operation.
-func (r ApiOrdersRetryFulfillmentRequest) IdempotencyKey(idempotencyKey string) ApiOrdersRetryFulfillmentRequest {
-	r.idempotencyKey = &idempotencyKey
-	return r
-}
-
-func (r ApiOrdersRetryFulfillmentRequest) Execute() (*OrderFulfillmentRetryResult, *http.Response, error) {
-	return r.ApiService.OrdersRetryFulfillmentExecute(r)
-}
-
-/*
-OrdersRetryFulfillment Retry an order's fulfillment
-
-Starts delivery again for the order items that failed and can safely be bought again.
-
-Available when the order is `processing`, `partiallyFulfilled` or `fulfillmentFailed` and
-at least one item is confirmed as not delivered and not refunded, as `actions.fulfillmentRetry`
-shows. Fulfilled items are never bought again. Returns `202` with the order `id` and
-`retriedItemIds`, the `items[].id` values being retried; the outcome arrives later through the
-order, the fulfillment status endpoint and the `order.fulfillment.updated` webhook.
-            
-An order that is not eligible, including one created in the dashboard, which must be retried there,
-returns `400` with code `10001`. A concurrent retry of the same order returns `409`.
-            
-Requires an `Idempotency-Key` header (a UUID). Repeating a completed request with the same key
-returns `409` with code `12000` (`IDEMPOTENCY_KEY_ALREADY_USED`); one still running returns
-`409` with code `12002`. Use a new key for each new retry attempt.
-
- @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- @param orderId Order id.
- @return ApiOrdersRetryFulfillmentRequest
-*/
-func (a *OrdersAPIService) OrdersRetryFulfillment(ctx context.Context, orderId string) ApiOrdersRetryFulfillmentRequest {
-	return ApiOrdersRetryFulfillmentRequest{
-		ApiService: a,
-		ctx: ctx,
-		orderId: orderId,
-	}
-}
-
-// Execute executes the request
-//  @return OrderFulfillmentRetryResult
-func (a *OrdersAPIService) OrdersRetryFulfillmentExecute(r ApiOrdersRetryFulfillmentRequest) (*OrderFulfillmentRetryResult, *http.Response, error) {
-	var (
-		localVarHTTPMethod   = http.MethodPost
-		localVarPostBody     interface{}
-		formFiles            []formFile
-		localVarReturnValue  *OrderFulfillmentRetryResult
-	)
-
-	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "OrdersAPIService.OrdersRetryFulfillment")
-	if err != nil {
-		return localVarReturnValue, nil, &GenericOpenAPIError{error: err.Error()}
-	}
-
-	localVarPath := localBasePath + "/api/v1/b2b/orders/{orderId}/fulfillment/retry"
-	localVarPath = strings.Replace(localVarPath, "{"+"orderId"+"}", url.PathEscape(parameterValueToString(r.orderId, "orderId")), -1)
-
-	localVarHeaderParams := make(map[string]string)
-	localVarQueryParams := url.Values{}
-	localVarFormParams := url.Values{}
-	if r.idempotencyKey == nil {
-		return localVarReturnValue, nil, reportError("idempotencyKey is required and must be specified")
-	}
-
-	// to determine the Content-Type header
-	localVarHTTPContentTypes := []string{}
-
-	// set Content-Type header
-	localVarHTTPContentType := selectHeaderContentType(localVarHTTPContentTypes)
-	if localVarHTTPContentType != "" {
-		localVarHeaderParams["Content-Type"] = localVarHTTPContentType
-	}
-
-	// to determine the Accept header
-	localVarHTTPHeaderAccepts := []string{"text/plain", "application/json", "text/json"}
-
-	// set Accept header
-	localVarHTTPHeaderAccept := selectHeaderAccept(localVarHTTPHeaderAccepts)
-	if localVarHTTPHeaderAccept != "" {
-		localVarHeaderParams["Accept"] = localVarHTTPHeaderAccept
-	}
-	parameterAddToHeaderOrQuery(localVarHeaderParams, "Idempotency-Key", r.idempotencyKey, "simple", "")
-	if r.ctx != nil {
-		// API Key Authentication
-		if auth, ok := r.ctx.Value(ContextAPIKeys).(map[string]APIKey); ok {
-			if apiKey, ok := auth["PartnerApiKey"]; ok {
-				var key string
-				if apiKey.Prefix != "" {
-					key = apiKey.Prefix + " " + apiKey.Key
-				} else {
-					key = apiKey.Key
-				}
-				localVarHeaderParams["X-Partner-Key"] = key
-			}
-		}
-	}
-	req, err := a.client.prepareRequest(r.ctx, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, formFiles)
-	if err != nil {
-		return localVarReturnValue, nil, err
-	}
-
-	localVarHTTPResponse, err := a.client.callAPI(req)
-	if err != nil || localVarHTTPResponse == nil {
-		return localVarReturnValue, localVarHTTPResponse, err
-	}
-
-	localVarBody, err := io.ReadAll(localVarHTTPResponse.Body)
-	localVarHTTPResponse.Body.Close()
-	localVarHTTPResponse.Body = io.NopCloser(bytes.NewBuffer(localVarBody))
-	if err != nil {
-		return localVarReturnValue, localVarHTTPResponse, err
-	}
-
-	if localVarHTTPResponse.StatusCode >= 300 {
-		newErr := &GenericOpenAPIError{
-			body:  localVarBody,
-			error: localVarHTTPResponse.Status,
-		}
-		if localVarHTTPResponse.StatusCode == 400 {
+		if localVarHTTPResponse.StatusCode == 404 {
 			var v ErrorResponse
 			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 			if err != nil {
@@ -1477,69 +1150,91 @@ func (a *OrdersAPIService) OrdersRetryFulfillmentExecute(r ApiOrdersRetryFulfill
 	return localVarReturnValue, localVarHTTPResponse, nil
 }
 
-type ApiOrdersRetryPaymentRequest struct {
+type ApiOrdersResendEmailRequest struct {
 	ctx context.Context
 	ApiService *OrdersAPIService
-	orderId string
+	id string
 	idempotencyKey *string
+	orderEmailResendRequest *OrderEmailResendRequest
 }
 
 // UUID idempotency key for safe retries of this operation.
-func (r ApiOrdersRetryPaymentRequest) IdempotencyKey(idempotencyKey string) ApiOrdersRetryPaymentRequest {
+func (r ApiOrdersResendEmailRequest) IdempotencyKey(idempotencyKey string) ApiOrdersResendEmailRequest {
 	r.idempotencyKey = &idempotencyKey
 	return r
 }
 
-func (r ApiOrdersRetryPaymentRequest) Execute() (*OrderPaymentRetryResult, *http.Response, error) {
-	return r.ApiService.OrdersRetryPaymentExecute(r)
+// The email to send again.
+func (r ApiOrdersResendEmailRequest) OrderEmailResendRequest(orderEmailResendRequest OrderEmailResendRequest) ApiOrdersResendEmailRequest {
+	r.orderEmailResendRequest = &orderEmailResendRequest
+	return r
+}
+
+func (r ApiOrdersResendEmailRequest) Execute() (*OrderEmailResendResult, *http.Response, error) {
+	return r.ApiService.OrdersResendEmailExecute(r)
 }
 
 /*
-OrdersRetryPayment Retry an order's payment
+OrdersResendEmail Resend a traveller email
 
-Charges the wallet again for an order whose payment failed.
+Sends an email of a hosted-site order to its traveller again.
 
-Available only while the order is `paymentPending` and has no completed payment, as
-`actions.paymentRetry` shows; otherwise the call returns `400` with code `10001`. Orders
-created in the dashboard and paid by card must be retried in the dashboard. Returns the order
-`id`, its `status` and the new `payment` attempt. When the charge succeeds the order becomes
-`paid` and fulfillment starts; when it fails again `payment.failure` carries `16000`
-(`PAYMENT_FAILED`). A concurrent retry of the same order returns `409`.
+For a traveller who did not receive an email. The body names the email: `{"type":"receipt"}`, the receipt
+of what was charged to the traveller's card, or `{"type":"delivery","orderItemId":"..."}`, one item's
+delivery email (its codes, eSIM installation, top-up or booking confirmation). The email is built as the order
+reads now, in the site's brand and the traveller's language, and goes only to the address the traveller gave
+at checkout; the body takes no address. Requires the `manage` order permission; a site credential can
+send its own site's emails.
             
-Requires an `Idempotency-Key` header (a UUID). Repeating a completed request with the same key
-returns `409` with code `12000` (`IDEMPOTENCY_KEY_ALREADY_USED`) instead of charging again;
-one still running returns `409` with code `12002`. A request that ended in an error can be sent
-again with the same key and body. Use a new key for each new retry attempt.
+Returns `{ orderId, type, orderItemId, recipient }`, the address masked, once the email service took the
+email. An order of another partner, or an item not in the order, is `404` / `10004`. An order with
+no traveller email address (not placed on a hosted site, or the traveller's details were erased) is
+`422` / `18006` (`EMAIL_NOT_SUPPORTED`), reason `NO_TRAVELLER_EMAIL`. An email that cannot
+be sent now is `409` / `18007` (`EMAIL_NOT_AVAILABLE`) with `details[0].reason`:
+`NOTHING_TO_SEND` (nothing was charged yet, or the item is not delivered yet), `NOT_ELIGIBLE` (the
+item was rejected or refunded, its codes are withheld, or what it delivered has ended; or a receipt of an order
+paid on the site's own page, which has none), `IN_PROGRESS` (a
+refund or another change of the order is running; try again shortly), `EMAILS_OFF`, or
+`UNSUBSCRIBED` (path `id`: the traveller unsubscribed from the site's emails; it stays so until they
+resubscribe). An order's emails
+can be sent again five times in any hour, across every credential; past that, `429` / `10006`
+(`RATE_LIMITED`), reason `RATE_LIMITED`, with `Retry-After`. A refusal of the email service
+is `503` / `10007` (with `Retry-After` when known) or `502` / `10008`; nothing was
+sent, so send the same request again.
+            
+Requires an `Idempotency-Key` header (a UUID). The same key and body never send twice: a completed request
+answers as it did, one still running is `409` / `12002`, and a different body `409` /
+`12001`. Sending the email again later needs a new key.
 
  @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- @param orderId Order id.
- @return ApiOrdersRetryPaymentRequest
+ @param id Order id (`id` from the order response).
+ @return ApiOrdersResendEmailRequest
 */
-func (a *OrdersAPIService) OrdersRetryPayment(ctx context.Context, orderId string) ApiOrdersRetryPaymentRequest {
-	return ApiOrdersRetryPaymentRequest{
+func (a *OrdersAPIService) OrdersResendEmail(ctx context.Context, id string) ApiOrdersResendEmailRequest {
+	return ApiOrdersResendEmailRequest{
 		ApiService: a,
 		ctx: ctx,
-		orderId: orderId,
+		id: id,
 	}
 }
 
 // Execute executes the request
-//  @return OrderPaymentRetryResult
-func (a *OrdersAPIService) OrdersRetryPaymentExecute(r ApiOrdersRetryPaymentRequest) (*OrderPaymentRetryResult, *http.Response, error) {
+//  @return OrderEmailResendResult
+func (a *OrdersAPIService) OrdersResendEmailExecute(r ApiOrdersResendEmailRequest) (*OrderEmailResendResult, *http.Response, error) {
 	var (
 		localVarHTTPMethod   = http.MethodPost
 		localVarPostBody     interface{}
 		formFiles            []formFile
-		localVarReturnValue  *OrderPaymentRetryResult
+		localVarReturnValue  *OrderEmailResendResult
 	)
 
-	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "OrdersAPIService.OrdersRetryPayment")
+	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "OrdersAPIService.OrdersResendEmail")
 	if err != nil {
 		return localVarReturnValue, nil, &GenericOpenAPIError{error: err.Error()}
 	}
 
-	localVarPath := localBasePath + "/api/v1/b2b/orders/{orderId}/payment/retry"
-	localVarPath = strings.Replace(localVarPath, "{"+"orderId"+"}", url.PathEscape(parameterValueToString(r.orderId, "orderId")), -1)
+	localVarPath := localBasePath + "/v1/orders/{id}/emails/resend"
+	localVarPath = strings.Replace(localVarPath, "{"+"id"+"}", url.PathEscape(parameterValueToString(r.id, "id")), -1)
 
 	localVarHeaderParams := make(map[string]string)
 	localVarQueryParams := url.Values{}
@@ -1549,7 +1244,7 @@ func (a *OrdersAPIService) OrdersRetryPaymentExecute(r ApiOrdersRetryPaymentRequ
 	}
 
 	// to determine the Content-Type header
-	localVarHTTPContentTypes := []string{}
+	localVarHTTPContentTypes := []string{"application/json", "text/json", "application/*+json"}
 
 	// set Content-Type header
 	localVarHTTPContentType := selectHeaderContentType(localVarHTTPContentTypes)
@@ -1566,6 +1261,8 @@ func (a *OrdersAPIService) OrdersRetryPaymentExecute(r ApiOrdersRetryPaymentRequ
 		localVarHeaderParams["Accept"] = localVarHTTPHeaderAccept
 	}
 	parameterAddToHeaderOrQuery(localVarHeaderParams, "Idempotency-Key", r.idempotencyKey, "simple", "")
+	// body params
+	localVarPostBody = r.orderEmailResendRequest
 	if r.ctx != nil {
 		// API Key Authentication
 		if auth, ok := r.ctx.Value(ContextAPIKeys).(map[string]APIKey); ok {
@@ -1624,7 +1321,40 @@ func (a *OrdersAPIService) OrdersRetryPaymentExecute(r ApiOrdersRetryPaymentRequ
 					newErr.model = v
 			return localVarReturnValue, localVarHTTPResponse, newErr
 		}
+		if localVarHTTPResponse.StatusCode == 403 {
+			var v ErrorResponse
+			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = err.Error()
+				return localVarReturnValue, localVarHTTPResponse, newErr
+			}
+					newErr.error = formatErrorMessage(localVarHTTPResponse.Status, &v)
+					newErr.model = v
+			return localVarReturnValue, localVarHTTPResponse, newErr
+		}
+		if localVarHTTPResponse.StatusCode == 404 {
+			var v ErrorResponse
+			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = err.Error()
+				return localVarReturnValue, localVarHTTPResponse, newErr
+			}
+					newErr.error = formatErrorMessage(localVarHTTPResponse.Status, &v)
+					newErr.model = v
+			return localVarReturnValue, localVarHTTPResponse, newErr
+		}
 		if localVarHTTPResponse.StatusCode == 409 {
+			var v ErrorResponse
+			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = err.Error()
+				return localVarReturnValue, localVarHTTPResponse, newErr
+			}
+					newErr.error = formatErrorMessage(localVarHTTPResponse.Status, &v)
+					newErr.model = v
+			return localVarReturnValue, localVarHTTPResponse, newErr
+		}
+		if localVarHTTPResponse.StatusCode == 422 {
 			var v ErrorResponse
 			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 			if err != nil {
@@ -1646,7 +1376,7 @@ func (a *OrdersAPIService) OrdersRetryPaymentExecute(r ApiOrdersRetryPaymentRequ
 					newErr.model = v
 			return localVarReturnValue, localVarHTTPResponse, newErr
 		}
-		if localVarHTTPResponse.StatusCode == 500 {
+		if localVarHTTPResponse.StatusCode == 502 {
 			var v ErrorResponse
 			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 			if err != nil {

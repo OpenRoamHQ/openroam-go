@@ -13,6 +13,8 @@ package openroam
 
 import (
 	"encoding/json"
+	"bytes"
+	"fmt"
 )
 
 // checks if the PaymentTerms type satisfies the MappedNullable interface at compile time
@@ -21,21 +23,25 @@ var _ MappedNullable = &PaymentTerms{}
 // PaymentTerms struct for PaymentTerms
 type PaymentTerms struct {
 	// `payNow`, `payAtProperty` or `deposit`.
-	Type *string `json:"type,omitempty"`
+	Type string `json:"type"`
 	// What the partner's wallet is charged at order.
-	DueNow *Money `json:"dueNow,omitempty"`
+	DueNow Money `json:"dueNow"`
 	// What the guest pays later, indicative; null for `payNow`.
 	DueLater NullableMoney `json:"dueLater,omitempty"`
 	// `property` when DueLater is set; otherwise null.
 	DueLaterAt NullableString `json:"dueLaterAt,omitempty"`
 }
 
+type _PaymentTerms PaymentTerms
+
 // NewPaymentTerms instantiates a new PaymentTerms object
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewPaymentTerms() *PaymentTerms {
+func NewPaymentTerms(type_ string, dueNow Money) *PaymentTerms {
 	this := PaymentTerms{}
+	this.Type = type_
+	this.DueNow = dueNow
 	return &this
 }
 
@@ -47,68 +53,52 @@ func NewPaymentTermsWithDefaults() *PaymentTerms {
 	return &this
 }
 
-// GetType returns the Type field value if set, zero value otherwise.
+// GetType returns the Type field value
 func (o *PaymentTerms) GetType() string {
-	if o == nil || IsNil(o.Type) {
+	if o == nil {
 		var ret string
 		return ret
 	}
-	return *o.Type
+
+	return o.Type
 }
 
-// GetTypeOk returns a tuple with the Type field value if set, nil otherwise
+// GetTypeOk returns a tuple with the Type field value
 // and a boolean to check if the value has been set.
 func (o *PaymentTerms) GetTypeOk() (*string, bool) {
-	if o == nil || IsNil(o.Type) {
+	if o == nil {
 		return nil, false
 	}
-	return o.Type, true
+	return &o.Type, true
 }
 
-// HasType returns a boolean if a field has been set.
-func (o *PaymentTerms) HasType() bool {
-	if o != nil && !IsNil(o.Type) {
-		return true
-	}
-
-	return false
-}
-
-// SetType gets a reference to the given string and assigns it to the Type field.
+// SetType sets field value
 func (o *PaymentTerms) SetType(v string) {
-	o.Type = &v
+	o.Type = v
 }
 
-// GetDueNow returns the DueNow field value if set, zero value otherwise.
+// GetDueNow returns the DueNow field value
 func (o *PaymentTerms) GetDueNow() Money {
-	if o == nil || IsNil(o.DueNow) {
+	if o == nil {
 		var ret Money
 		return ret
 	}
-	return *o.DueNow
+
+	return o.DueNow
 }
 
-// GetDueNowOk returns a tuple with the DueNow field value if set, nil otherwise
+// GetDueNowOk returns a tuple with the DueNow field value
 // and a boolean to check if the value has been set.
 func (o *PaymentTerms) GetDueNowOk() (*Money, bool) {
-	if o == nil || IsNil(o.DueNow) {
+	if o == nil {
 		return nil, false
 	}
-	return o.DueNow, true
+	return &o.DueNow, true
 }
 
-// HasDueNow returns a boolean if a field has been set.
-func (o *PaymentTerms) HasDueNow() bool {
-	if o != nil && !IsNil(o.DueNow) {
-		return true
-	}
-
-	return false
-}
-
-// SetDueNow gets a reference to the given Money and assigns it to the DueNow field.
+// SetDueNow sets field value
 func (o *PaymentTerms) SetDueNow(v Money) {
-	o.DueNow = &v
+	o.DueNow = v
 }
 
 // GetDueLater returns the DueLater field value if set, zero value otherwise (both if not set or set to explicit null).
@@ -205,12 +195,8 @@ func (o PaymentTerms) MarshalJSON() ([]byte, error) {
 
 func (o PaymentTerms) ToMap() (map[string]interface{}, error) {
 	toSerialize := map[string]interface{}{}
-	if !IsNil(o.Type) {
-		toSerialize["type"] = o.Type
-	}
-	if !IsNil(o.DueNow) {
-		toSerialize["dueNow"] = o.DueNow
-	}
+	toSerialize["type"] = o.Type
+	toSerialize["dueNow"] = o.DueNow
 	if o.DueLater.IsSet() {
 		toSerialize["dueLater"] = o.DueLater.Get()
 	}
@@ -218,6 +204,43 @@ func (o PaymentTerms) ToMap() (map[string]interface{}, error) {
 		toSerialize["dueLaterAt"] = o.DueLaterAt.Get()
 	}
 	return toSerialize, nil
+}
+
+func (o *PaymentTerms) UnmarshalJSON(data []byte) (err error) {
+	// This validates that all required properties are included in the JSON object
+	// by unmarshalling the object into a generic map with string keys and checking
+	// that every required field exists as a key in the generic map.
+	requiredProperties := []string{
+		"type",
+		"dueNow",
+	}
+
+	allProperties := make(map[string]interface{})
+
+	err = json.Unmarshal(data, &allProperties)
+
+	if err != nil {
+		return err;
+	}
+
+	for _, requiredProperty := range(requiredProperties) {
+		if _, exists := allProperties[requiredProperty]; !exists {
+			return fmt.Errorf("no value given for required property %v", requiredProperty)
+		}
+	}
+
+	varPaymentTerms := _PaymentTerms{}
+
+	decoder := json.NewDecoder(bytes.NewReader(data))
+	err = decoder.Decode(&varPaymentTerms)
+
+	if err != nil {
+		return err
+	}
+
+	*o = PaymentTerms(varPaymentTerms)
+
+	return err
 }
 
 type NullablePaymentTerms struct {

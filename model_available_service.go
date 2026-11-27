@@ -26,8 +26,8 @@ type AvailableService struct {
 	Type string `json:"type"`
 	Price Money `json:"price"`
 	// 1-based positions in the offer's passenger list.
-	PassengerIndexes []int32 `json:"passengerIndexes,omitempty"`
-	Segments []SegmentPosition `json:"segments,omitempty"`
+	PassengerIndexes []int32 `json:"passengerIndexes"`
+	Segments []SegmentPosition `json:"segments"`
 	MaxQuantity NullableInt32 `json:"maxQuantity,omitempty"`
 	// Allowance of a bookable baggage service.
 	Baggage NullableBaggageLimits `json:"baggage,omitempty"`
@@ -39,11 +39,13 @@ type _AvailableService AvailableService
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewAvailableService(id string, type_ string, price Money) *AvailableService {
+func NewAvailableService(id string, type_ string, price Money, passengerIndexes []int32, segments []SegmentPosition) *AvailableService {
 	this := AvailableService{}
 	this.Id = id
 	this.Type = type_
 	this.Price = price
+	this.PassengerIndexes = passengerIndexes
+	this.Segments = segments
 	return &this
 }
 
@@ -127,66 +129,50 @@ func (o *AvailableService) SetPrice(v Money) {
 	o.Price = v
 }
 
-// GetPassengerIndexes returns the PassengerIndexes field value if set, zero value otherwise.
+// GetPassengerIndexes returns the PassengerIndexes field value
 func (o *AvailableService) GetPassengerIndexes() []int32 {
-	if o == nil || IsNil(o.PassengerIndexes) {
+	if o == nil {
 		var ret []int32
 		return ret
 	}
+
 	return o.PassengerIndexes
 }
 
-// GetPassengerIndexesOk returns a tuple with the PassengerIndexes field value if set, nil otherwise
+// GetPassengerIndexesOk returns a tuple with the PassengerIndexes field value
 // and a boolean to check if the value has been set.
 func (o *AvailableService) GetPassengerIndexesOk() ([]int32, bool) {
-	if o == nil || IsNil(o.PassengerIndexes) {
+	if o == nil {
 		return nil, false
 	}
 	return o.PassengerIndexes, true
 }
 
-// HasPassengerIndexes returns a boolean if a field has been set.
-func (o *AvailableService) HasPassengerIndexes() bool {
-	if o != nil && !IsNil(o.PassengerIndexes) {
-		return true
-	}
-
-	return false
-}
-
-// SetPassengerIndexes gets a reference to the given []int32 and assigns it to the PassengerIndexes field.
+// SetPassengerIndexes sets field value
 func (o *AvailableService) SetPassengerIndexes(v []int32) {
 	o.PassengerIndexes = v
 }
 
-// GetSegments returns the Segments field value if set, zero value otherwise.
+// GetSegments returns the Segments field value
 func (o *AvailableService) GetSegments() []SegmentPosition {
-	if o == nil || IsNil(o.Segments) {
+	if o == nil {
 		var ret []SegmentPosition
 		return ret
 	}
+
 	return o.Segments
 }
 
-// GetSegmentsOk returns a tuple with the Segments field value if set, nil otherwise
+// GetSegmentsOk returns a tuple with the Segments field value
 // and a boolean to check if the value has been set.
 func (o *AvailableService) GetSegmentsOk() ([]SegmentPosition, bool) {
-	if o == nil || IsNil(o.Segments) {
+	if o == nil {
 		return nil, false
 	}
 	return o.Segments, true
 }
 
-// HasSegments returns a boolean if a field has been set.
-func (o *AvailableService) HasSegments() bool {
-	if o != nil && !IsNil(o.Segments) {
-		return true
-	}
-
-	return false
-}
-
-// SetSegments gets a reference to the given []SegmentPosition and assigns it to the Segments field.
+// SetSegments sets field value
 func (o *AvailableService) SetSegments(v []SegmentPosition) {
 	o.Segments = v
 }
@@ -288,12 +274,8 @@ func (o AvailableService) ToMap() (map[string]interface{}, error) {
 	toSerialize["id"] = o.Id
 	toSerialize["type"] = o.Type
 	toSerialize["price"] = o.Price
-	if !IsNil(o.PassengerIndexes) {
-		toSerialize["passengerIndexes"] = o.PassengerIndexes
-	}
-	if !IsNil(o.Segments) {
-		toSerialize["segments"] = o.Segments
-	}
+	toSerialize["passengerIndexes"] = o.PassengerIndexes
+	toSerialize["segments"] = o.Segments
 	if o.MaxQuantity.IsSet() {
 		toSerialize["maxQuantity"] = o.MaxQuantity.Get()
 	}
@@ -311,6 +293,8 @@ func (o *AvailableService) UnmarshalJSON(data []byte) (err error) {
 		"id",
 		"type",
 		"price",
+		"passengerIndexes",
+		"segments",
 	}
 
 	allProperties := make(map[string]interface{})
@@ -330,7 +314,6 @@ func (o *AvailableService) UnmarshalJSON(data []byte) (err error) {
 	varAvailableService := _AvailableService{}
 
 	decoder := json.NewDecoder(bytes.NewReader(data))
-	decoder.DisallowUnknownFields()
 	err = decoder.Decode(&varAvailableService)
 
 	if err != nil {

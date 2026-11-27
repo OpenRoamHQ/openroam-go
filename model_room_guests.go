@@ -13,6 +13,8 @@ package openroam
 
 import (
 	"encoding/json"
+	"bytes"
+	"fmt"
 )
 
 // checks if the RoomGuests type satisfies the MappedNullable interface at compile time
@@ -21,17 +23,21 @@ var _ MappedNullable = &RoomGuests{}
 // RoomGuests The guests of one room.
 type RoomGuests struct {
 	// 1-based position of the room in the searched rooms.
-	RoomIndex *int32 `json:"roomIndex,omitempty"`
+	RoomIndex int32 `json:"roomIndex"`
 	// Every guest staying in the room, adults and children, in the order they were sent.
-	Guests []Guest `json:"guests,omitempty"`
+	Guests []Guest `json:"guests"`
 }
+
+type _RoomGuests RoomGuests
 
 // NewRoomGuests instantiates a new RoomGuests object
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewRoomGuests() *RoomGuests {
+func NewRoomGuests(roomIndex int32, guests []Guest) *RoomGuests {
 	this := RoomGuests{}
+	this.RoomIndex = roomIndex
+	this.Guests = guests
 	return &this
 }
 
@@ -43,66 +49,50 @@ func NewRoomGuestsWithDefaults() *RoomGuests {
 	return &this
 }
 
-// GetRoomIndex returns the RoomIndex field value if set, zero value otherwise.
+// GetRoomIndex returns the RoomIndex field value
 func (o *RoomGuests) GetRoomIndex() int32 {
-	if o == nil || IsNil(o.RoomIndex) {
+	if o == nil {
 		var ret int32
 		return ret
 	}
-	return *o.RoomIndex
+
+	return o.RoomIndex
 }
 
-// GetRoomIndexOk returns a tuple with the RoomIndex field value if set, nil otherwise
+// GetRoomIndexOk returns a tuple with the RoomIndex field value
 // and a boolean to check if the value has been set.
 func (o *RoomGuests) GetRoomIndexOk() (*int32, bool) {
-	if o == nil || IsNil(o.RoomIndex) {
+	if o == nil {
 		return nil, false
 	}
-	return o.RoomIndex, true
+	return &o.RoomIndex, true
 }
 
-// HasRoomIndex returns a boolean if a field has been set.
-func (o *RoomGuests) HasRoomIndex() bool {
-	if o != nil && !IsNil(o.RoomIndex) {
-		return true
-	}
-
-	return false
-}
-
-// SetRoomIndex gets a reference to the given int32 and assigns it to the RoomIndex field.
+// SetRoomIndex sets field value
 func (o *RoomGuests) SetRoomIndex(v int32) {
-	o.RoomIndex = &v
+	o.RoomIndex = v
 }
 
-// GetGuests returns the Guests field value if set, zero value otherwise.
+// GetGuests returns the Guests field value
 func (o *RoomGuests) GetGuests() []Guest {
-	if o == nil || IsNil(o.Guests) {
+	if o == nil {
 		var ret []Guest
 		return ret
 	}
+
 	return o.Guests
 }
 
-// GetGuestsOk returns a tuple with the Guests field value if set, nil otherwise
+// GetGuestsOk returns a tuple with the Guests field value
 // and a boolean to check if the value has been set.
 func (o *RoomGuests) GetGuestsOk() ([]Guest, bool) {
-	if o == nil || IsNil(o.Guests) {
+	if o == nil {
 		return nil, false
 	}
 	return o.Guests, true
 }
 
-// HasGuests returns a boolean if a field has been set.
-func (o *RoomGuests) HasGuests() bool {
-	if o != nil && !IsNil(o.Guests) {
-		return true
-	}
-
-	return false
-}
-
-// SetGuests gets a reference to the given []Guest and assigns it to the Guests field.
+// SetGuests sets field value
 func (o *RoomGuests) SetGuests(v []Guest) {
 	o.Guests = v
 }
@@ -117,13 +107,46 @@ func (o RoomGuests) MarshalJSON() ([]byte, error) {
 
 func (o RoomGuests) ToMap() (map[string]interface{}, error) {
 	toSerialize := map[string]interface{}{}
-	if !IsNil(o.RoomIndex) {
-		toSerialize["roomIndex"] = o.RoomIndex
-	}
-	if !IsNil(o.Guests) {
-		toSerialize["guests"] = o.Guests
-	}
+	toSerialize["roomIndex"] = o.RoomIndex
+	toSerialize["guests"] = o.Guests
 	return toSerialize, nil
+}
+
+func (o *RoomGuests) UnmarshalJSON(data []byte) (err error) {
+	// This validates that all required properties are included in the JSON object
+	// by unmarshalling the object into a generic map with string keys and checking
+	// that every required field exists as a key in the generic map.
+	requiredProperties := []string{
+		"roomIndex",
+		"guests",
+	}
+
+	allProperties := make(map[string]interface{})
+
+	err = json.Unmarshal(data, &allProperties)
+
+	if err != nil {
+		return err;
+	}
+
+	for _, requiredProperty := range(requiredProperties) {
+		if _, exists := allProperties[requiredProperty]; !exists {
+			return fmt.Errorf("no value given for required property %v", requiredProperty)
+		}
+	}
+
+	varRoomGuests := _RoomGuests{}
+
+	decoder := json.NewDecoder(bytes.NewReader(data))
+	err = decoder.Decode(&varRoomGuests)
+
+	if err != nil {
+		return err
+	}
+
+	*o = RoomGuests(varRoomGuests)
+
+	return err
 }
 
 type NullableRoomGuests struct {

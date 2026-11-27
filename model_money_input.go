@@ -136,7 +136,6 @@ func (o *MoneyInput) UnmarshalJSON(data []byte) (err error) {
 	varMoneyInput := _MoneyInput{}
 
 	decoder := json.NewDecoder(bytes.NewReader(data))
-	decoder.DisallowUnknownFields()
 	err = decoder.Decode(&varMoneyInput)
 
 	if err != nil {

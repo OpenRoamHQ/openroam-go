@@ -13,6 +13,8 @@ package openroam
 
 import (
 	"encoding/json"
+	"bytes"
+	"fmt"
 )
 
 // checks if the MobileNetworkList type satisfies the MappedNullable interface at compile time
@@ -20,15 +22,18 @@ var _ MappedNullable = &MobileNetworkList{}
 
 // MobileNetworkList Mobile network codes ordered by MCC then MNC. The list is a few thousand rows of reference data, so it is not paged.
 type MobileNetworkList struct {
-	Items []MobileNetwork `json:"items,omitempty"`
+	Items []MobileNetwork `json:"items"`
 }
+
+type _MobileNetworkList MobileNetworkList
 
 // NewMobileNetworkList instantiates a new MobileNetworkList object
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewMobileNetworkList() *MobileNetworkList {
+func NewMobileNetworkList(items []MobileNetwork) *MobileNetworkList {
 	this := MobileNetworkList{}
+	this.Items = items
 	return &this
 }
 
@@ -40,34 +45,26 @@ func NewMobileNetworkListWithDefaults() *MobileNetworkList {
 	return &this
 }
 
-// GetItems returns the Items field value if set, zero value otherwise.
+// GetItems returns the Items field value
 func (o *MobileNetworkList) GetItems() []MobileNetwork {
-	if o == nil || IsNil(o.Items) {
+	if o == nil {
 		var ret []MobileNetwork
 		return ret
 	}
+
 	return o.Items
 }
 
-// GetItemsOk returns a tuple with the Items field value if set, nil otherwise
+// GetItemsOk returns a tuple with the Items field value
 // and a boolean to check if the value has been set.
 func (o *MobileNetworkList) GetItemsOk() ([]MobileNetwork, bool) {
-	if o == nil || IsNil(o.Items) {
+	if o == nil {
 		return nil, false
 	}
 	return o.Items, true
 }
 
-// HasItems returns a boolean if a field has been set.
-func (o *MobileNetworkList) HasItems() bool {
-	if o != nil && !IsNil(o.Items) {
-		return true
-	}
-
-	return false
-}
-
-// SetItems gets a reference to the given []MobileNetwork and assigns it to the Items field.
+// SetItems sets field value
 func (o *MobileNetworkList) SetItems(v []MobileNetwork) {
 	o.Items = v
 }
@@ -82,10 +79,44 @@ func (o MobileNetworkList) MarshalJSON() ([]byte, error) {
 
 func (o MobileNetworkList) ToMap() (map[string]interface{}, error) {
 	toSerialize := map[string]interface{}{}
-	if !IsNil(o.Items) {
-		toSerialize["items"] = o.Items
-	}
+	toSerialize["items"] = o.Items
 	return toSerialize, nil
+}
+
+func (o *MobileNetworkList) UnmarshalJSON(data []byte) (err error) {
+	// This validates that all required properties are included in the JSON object
+	// by unmarshalling the object into a generic map with string keys and checking
+	// that every required field exists as a key in the generic map.
+	requiredProperties := []string{
+		"items",
+	}
+
+	allProperties := make(map[string]interface{})
+
+	err = json.Unmarshal(data, &allProperties)
+
+	if err != nil {
+		return err;
+	}
+
+	for _, requiredProperty := range(requiredProperties) {
+		if _, exists := allProperties[requiredProperty]; !exists {
+			return fmt.Errorf("no value given for required property %v", requiredProperty)
+		}
+	}
+
+	varMobileNetworkList := _MobileNetworkList{}
+
+	decoder := json.NewDecoder(bytes.NewReader(data))
+	err = decoder.Decode(&varMobileNetworkList)
+
+	if err != nil {
+		return err
+	}
+
+	*o = MobileNetworkList(varMobileNetworkList)
+
+	return err
 }
 
 type NullableMobileNetworkList struct {

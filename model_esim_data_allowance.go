@@ -13,24 +13,36 @@ package openroam
 
 import (
 	"encoding/json"
+	"bytes"
+	"fmt"
 )
 
 // checks if the EsimDataAllowance type satisfies the MappedNullable interface at compile time
 var _ MappedNullable = &EsimDataAllowance{}
 
-// EsimDataAllowance The plan's data allowance as the catalogue stores it: amount, unit and display label.
+// EsimDataAllowance A plan's data allowance. Data is always counted in MB (1 MB = 1024 KB).
 type EsimDataAllowance struct {
-	Amount *int64 `json:"amount,omitempty"`
-	Unit NullableString `json:"unit,omitempty"`
-	Label *string `json:"label,omitempty"`
+	// The data in MB; null when the data is unlimited or the plan does not state it.
+	Amount NullableInt64 `json:"amount,omitempty"`
+	// Always `MB`.
+	Unit string `json:"unit"`
+	// Whether the data is unlimited; `amount` is then null.
+	IsUnlimited bool `json:"isUnlimited"`
+	// The allowance as the plan displays it, for example `3 GB`.
+	Label string `json:"label"`
 }
+
+type _EsimDataAllowance EsimDataAllowance
 
 // NewEsimDataAllowance instantiates a new EsimDataAllowance object
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewEsimDataAllowance() *EsimDataAllowance {
+func NewEsimDataAllowance(unit string, isUnlimited bool, label string) *EsimDataAllowance {
 	this := EsimDataAllowance{}
+	this.Unit = unit
+	this.IsUnlimited = isUnlimited
+	this.Label = label
 	return &this
 }
 
@@ -42,110 +54,118 @@ func NewEsimDataAllowanceWithDefaults() *EsimDataAllowance {
 	return &this
 }
 
-// GetAmount returns the Amount field value if set, zero value otherwise.
+// GetAmount returns the Amount field value if set, zero value otherwise (both if not set or set to explicit null).
 func (o *EsimDataAllowance) GetAmount() int64 {
-	if o == nil || IsNil(o.Amount) {
+	if o == nil || IsNil(o.Amount.Get()) {
 		var ret int64
 		return ret
 	}
-	return *o.Amount
+	return *o.Amount.Get()
 }
 
 // GetAmountOk returns a tuple with the Amount field value if set, nil otherwise
 // and a boolean to check if the value has been set.
+// NOTE: If the value is an explicit nil, `nil, true` will be returned
 func (o *EsimDataAllowance) GetAmountOk() (*int64, bool) {
-	if o == nil || IsNil(o.Amount) {
+	if o == nil {
 		return nil, false
 	}
-	return o.Amount, true
+	return o.Amount.Get(), o.Amount.IsSet()
 }
 
 // HasAmount returns a boolean if a field has been set.
 func (o *EsimDataAllowance) HasAmount() bool {
-	if o != nil && !IsNil(o.Amount) {
+	if o != nil && o.Amount.IsSet() {
 		return true
 	}
 
 	return false
 }
 
-// SetAmount gets a reference to the given int64 and assigns it to the Amount field.
+// SetAmount gets a reference to the given NullableInt64 and assigns it to the Amount field.
 func (o *EsimDataAllowance) SetAmount(v int64) {
-	o.Amount = &v
+	o.Amount.Set(&v)
+}
+// SetAmountNil sets the value for Amount to be an explicit nil
+func (o *EsimDataAllowance) SetAmountNil() {
+	o.Amount.Set(nil)
 }
 
-// GetUnit returns the Unit field value if set, zero value otherwise (both if not set or set to explicit null).
+// UnsetAmount ensures that no value is present for Amount, not even an explicit nil
+func (o *EsimDataAllowance) UnsetAmount() {
+	o.Amount.Unset()
+}
+
+// GetUnit returns the Unit field value
 func (o *EsimDataAllowance) GetUnit() string {
-	if o == nil || IsNil(o.Unit.Get()) {
+	if o == nil {
 		var ret string
 		return ret
 	}
-	return *o.Unit.Get()
+
+	return o.Unit
 }
 
-// GetUnitOk returns a tuple with the Unit field value if set, nil otherwise
+// GetUnitOk returns a tuple with the Unit field value
 // and a boolean to check if the value has been set.
-// NOTE: If the value is an explicit nil, `nil, true` will be returned
 func (o *EsimDataAllowance) GetUnitOk() (*string, bool) {
 	if o == nil {
 		return nil, false
 	}
-	return o.Unit.Get(), o.Unit.IsSet()
+	return &o.Unit, true
 }
 
-// HasUnit returns a boolean if a field has been set.
-func (o *EsimDataAllowance) HasUnit() bool {
-	if o != nil && o.Unit.IsSet() {
-		return true
+// SetUnit sets field value
+func (o *EsimDataAllowance) SetUnit(v string) {
+	o.Unit = v
+}
+
+// GetIsUnlimited returns the IsUnlimited field value
+func (o *EsimDataAllowance) GetIsUnlimited() bool {
+	if o == nil {
+		var ret bool
+		return ret
 	}
 
-	return false
+	return o.IsUnlimited
 }
 
-// SetUnit gets a reference to the given NullableString and assigns it to the Unit field.
-func (o *EsimDataAllowance) SetUnit(v string) {
-	o.Unit.Set(&v)
-}
-// SetUnitNil sets the value for Unit to be an explicit nil
-func (o *EsimDataAllowance) SetUnitNil() {
-	o.Unit.Set(nil)
-}
-
-// UnsetUnit ensures that no value is present for Unit, not even an explicit nil
-func (o *EsimDataAllowance) UnsetUnit() {
-	o.Unit.Unset()
+// GetIsUnlimitedOk returns a tuple with the IsUnlimited field value
+// and a boolean to check if the value has been set.
+func (o *EsimDataAllowance) GetIsUnlimitedOk() (*bool, bool) {
+	if o == nil {
+		return nil, false
+	}
+	return &o.IsUnlimited, true
 }
 
-// GetLabel returns the Label field value if set, zero value otherwise.
+// SetIsUnlimited sets field value
+func (o *EsimDataAllowance) SetIsUnlimited(v bool) {
+	o.IsUnlimited = v
+}
+
+// GetLabel returns the Label field value
 func (o *EsimDataAllowance) GetLabel() string {
-	if o == nil || IsNil(o.Label) {
+	if o == nil {
 		var ret string
 		return ret
 	}
-	return *o.Label
+
+	return o.Label
 }
 
-// GetLabelOk returns a tuple with the Label field value if set, nil otherwise
+// GetLabelOk returns a tuple with the Label field value
 // and a boolean to check if the value has been set.
 func (o *EsimDataAllowance) GetLabelOk() (*string, bool) {
-	if o == nil || IsNil(o.Label) {
+	if o == nil {
 		return nil, false
 	}
-	return o.Label, true
+	return &o.Label, true
 }
 
-// HasLabel returns a boolean if a field has been set.
-func (o *EsimDataAllowance) HasLabel() bool {
-	if o != nil && !IsNil(o.Label) {
-		return true
-	}
-
-	return false
-}
-
-// SetLabel gets a reference to the given string and assigns it to the Label field.
+// SetLabel sets field value
 func (o *EsimDataAllowance) SetLabel(v string) {
-	o.Label = &v
+	o.Label = v
 }
 
 func (o EsimDataAllowance) MarshalJSON() ([]byte, error) {
@@ -158,16 +178,51 @@ func (o EsimDataAllowance) MarshalJSON() ([]byte, error) {
 
 func (o EsimDataAllowance) ToMap() (map[string]interface{}, error) {
 	toSerialize := map[string]interface{}{}
-	if !IsNil(o.Amount) {
-		toSerialize["amount"] = o.Amount
+	if o.Amount.IsSet() {
+		toSerialize["amount"] = o.Amount.Get()
 	}
-	if o.Unit.IsSet() {
-		toSerialize["unit"] = o.Unit.Get()
-	}
-	if !IsNil(o.Label) {
-		toSerialize["label"] = o.Label
-	}
+	toSerialize["unit"] = o.Unit
+	toSerialize["isUnlimited"] = o.IsUnlimited
+	toSerialize["label"] = o.Label
 	return toSerialize, nil
+}
+
+func (o *EsimDataAllowance) UnmarshalJSON(data []byte) (err error) {
+	// This validates that all required properties are included in the JSON object
+	// by unmarshalling the object into a generic map with string keys and checking
+	// that every required field exists as a key in the generic map.
+	requiredProperties := []string{
+		"unit",
+		"isUnlimited",
+		"label",
+	}
+
+	allProperties := make(map[string]interface{})
+
+	err = json.Unmarshal(data, &allProperties)
+
+	if err != nil {
+		return err;
+	}
+
+	for _, requiredProperty := range(requiredProperties) {
+		if _, exists := allProperties[requiredProperty]; !exists {
+			return fmt.Errorf("no value given for required property %v", requiredProperty)
+		}
+	}
+
+	varEsimDataAllowance := _EsimDataAllowance{}
+
+	decoder := json.NewDecoder(bytes.NewReader(data))
+	err = decoder.Decode(&varEsimDataAllowance)
+
+	if err != nil {
+		return err
+	}
+
+	*o = EsimDataAllowance(varEsimDataAllowance)
+
+	return err
 }
 
 type NullableEsimDataAllowance struct {

@@ -13,6 +13,8 @@ package openroam
 
 import (
 	"encoding/json"
+	"bytes"
+	"fmt"
 )
 
 // checks if the AirtimeQuote type satisfies the MappedNullable interface at compile time
@@ -20,17 +22,22 @@ var _ MappedNullable = &AirtimeQuote{}
 
 // AirtimeQuote Current prices for the requested items, in request order. `total` is the sum of each item's unit price times its quantity. A quote reserves nothing and does not expire.
 type AirtimeQuote struct {
-	Currency *string `json:"currency,omitempty"`
-	Items []AirtimeQuoteItem `json:"items,omitempty"`
-	Total *Money `json:"total,omitempty"`
+	Currency string `json:"currency"`
+	Items []AirtimeQuoteItem `json:"items"`
+	Total Money `json:"total"`
 }
+
+type _AirtimeQuote AirtimeQuote
 
 // NewAirtimeQuote instantiates a new AirtimeQuote object
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewAirtimeQuote() *AirtimeQuote {
+func NewAirtimeQuote(currency string, items []AirtimeQuoteItem, total Money) *AirtimeQuote {
 	this := AirtimeQuote{}
+	this.Currency = currency
+	this.Items = items
+	this.Total = total
 	return &this
 }
 
@@ -42,100 +49,76 @@ func NewAirtimeQuoteWithDefaults() *AirtimeQuote {
 	return &this
 }
 
-// GetCurrency returns the Currency field value if set, zero value otherwise.
+// GetCurrency returns the Currency field value
 func (o *AirtimeQuote) GetCurrency() string {
-	if o == nil || IsNil(o.Currency) {
+	if o == nil {
 		var ret string
 		return ret
 	}
-	return *o.Currency
+
+	return o.Currency
 }
 
-// GetCurrencyOk returns a tuple with the Currency field value if set, nil otherwise
+// GetCurrencyOk returns a tuple with the Currency field value
 // and a boolean to check if the value has been set.
 func (o *AirtimeQuote) GetCurrencyOk() (*string, bool) {
-	if o == nil || IsNil(o.Currency) {
+	if o == nil {
 		return nil, false
 	}
-	return o.Currency, true
+	return &o.Currency, true
 }
 
-// HasCurrency returns a boolean if a field has been set.
-func (o *AirtimeQuote) HasCurrency() bool {
-	if o != nil && !IsNil(o.Currency) {
-		return true
-	}
-
-	return false
-}
-
-// SetCurrency gets a reference to the given string and assigns it to the Currency field.
+// SetCurrency sets field value
 func (o *AirtimeQuote) SetCurrency(v string) {
-	o.Currency = &v
+	o.Currency = v
 }
 
-// GetItems returns the Items field value if set, zero value otherwise.
+// GetItems returns the Items field value
 func (o *AirtimeQuote) GetItems() []AirtimeQuoteItem {
-	if o == nil || IsNil(o.Items) {
+	if o == nil {
 		var ret []AirtimeQuoteItem
 		return ret
 	}
+
 	return o.Items
 }
 
-// GetItemsOk returns a tuple with the Items field value if set, nil otherwise
+// GetItemsOk returns a tuple with the Items field value
 // and a boolean to check if the value has been set.
 func (o *AirtimeQuote) GetItemsOk() ([]AirtimeQuoteItem, bool) {
-	if o == nil || IsNil(o.Items) {
+	if o == nil {
 		return nil, false
 	}
 	return o.Items, true
 }
 
-// HasItems returns a boolean if a field has been set.
-func (o *AirtimeQuote) HasItems() bool {
-	if o != nil && !IsNil(o.Items) {
-		return true
-	}
-
-	return false
-}
-
-// SetItems gets a reference to the given []AirtimeQuoteItem and assigns it to the Items field.
+// SetItems sets field value
 func (o *AirtimeQuote) SetItems(v []AirtimeQuoteItem) {
 	o.Items = v
 }
 
-// GetTotal returns the Total field value if set, zero value otherwise.
+// GetTotal returns the Total field value
 func (o *AirtimeQuote) GetTotal() Money {
-	if o == nil || IsNil(o.Total) {
+	if o == nil {
 		var ret Money
 		return ret
 	}
-	return *o.Total
+
+	return o.Total
 }
 
-// GetTotalOk returns a tuple with the Total field value if set, nil otherwise
+// GetTotalOk returns a tuple with the Total field value
 // and a boolean to check if the value has been set.
 func (o *AirtimeQuote) GetTotalOk() (*Money, bool) {
-	if o == nil || IsNil(o.Total) {
+	if o == nil {
 		return nil, false
 	}
-	return o.Total, true
+	return &o.Total, true
 }
 
-// HasTotal returns a boolean if a field has been set.
-func (o *AirtimeQuote) HasTotal() bool {
-	if o != nil && !IsNil(o.Total) {
-		return true
-	}
-
-	return false
-}
-
-// SetTotal gets a reference to the given Money and assigns it to the Total field.
+// SetTotal sets field value
 func (o *AirtimeQuote) SetTotal(v Money) {
-	o.Total = &v
+	o.Total = v
 }
 
 func (o AirtimeQuote) MarshalJSON() ([]byte, error) {
@@ -148,16 +131,48 @@ func (o AirtimeQuote) MarshalJSON() ([]byte, error) {
 
 func (o AirtimeQuote) ToMap() (map[string]interface{}, error) {
 	toSerialize := map[string]interface{}{}
-	if !IsNil(o.Currency) {
-		toSerialize["currency"] = o.Currency
-	}
-	if !IsNil(o.Items) {
-		toSerialize["items"] = o.Items
-	}
-	if !IsNil(o.Total) {
-		toSerialize["total"] = o.Total
-	}
+	toSerialize["currency"] = o.Currency
+	toSerialize["items"] = o.Items
+	toSerialize["total"] = o.Total
 	return toSerialize, nil
+}
+
+func (o *AirtimeQuote) UnmarshalJSON(data []byte) (err error) {
+	// This validates that all required properties are included in the JSON object
+	// by unmarshalling the object into a generic map with string keys and checking
+	// that every required field exists as a key in the generic map.
+	requiredProperties := []string{
+		"currency",
+		"items",
+		"total",
+	}
+
+	allProperties := make(map[string]interface{})
+
+	err = json.Unmarshal(data, &allProperties)
+
+	if err != nil {
+		return err;
+	}
+
+	for _, requiredProperty := range(requiredProperties) {
+		if _, exists := allProperties[requiredProperty]; !exists {
+			return fmt.Errorf("no value given for required property %v", requiredProperty)
+		}
+	}
+
+	varAirtimeQuote := _AirtimeQuote{}
+
+	decoder := json.NewDecoder(bytes.NewReader(data))
+	err = decoder.Decode(&varAirtimeQuote)
+
+	if err != nil {
+		return err
+	}
+
+	*o = AirtimeQuote(varAirtimeQuote)
+
+	return err
 }
 
 type NullableAirtimeQuote struct {

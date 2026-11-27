@@ -53,7 +53,8 @@ Places and pays for flight bookings, one fare per item.
 
 Takes the same body as quote, with `inputs` required. Requires an `Idempotency-Key` header (a new UUID
 per purchase) and an API key with order-manage permission. Repeating the same request with the same key returns
-the original order; while the first request is still running the response is 202. The order is paid from your
+the original order; while the first request is still running the response is 409 / 12002 with
+`Retry-After`, after which you send the same request again. The order is paid from your
 wallet balance and ticketing completes asynchronously: track it with `GET /orders/{id}` or the
 `order.fulfillment.updated` webhook.
             
@@ -73,8 +74,10 @@ returns, or send `inputs.maxPrice`.
 Each item is checked completely before the next one, and the first failure names its item: an invalid input or
 missing `inputs` gives 400 / 10001 at its path under `items[i]`, for example
 `items[0].inputs.passengers[0].email`; an unknown, expired or another partner's `publicId`
-400 / 11004 at `items[i]`; an offer the airline no longer sells 409 / 11003 at `items[i]`. Nothing is
-created or charged when the order is refused.
+400 / 11004 at `items[i]`; an offer the airline no longer sells 409 / 11003 at `items[i]`. A wallet
+charge that fails gives 402 / 16000, with `details[0]` naming `wallet` and
+`INSUFFICIENT_BALANCE` or `WALLET_BLOCKED`; send the same request with the same key after a top-up.
+Nothing is created or charged when the order is refused.
 
  @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
  @return ApiFlightsCreateOrderRequest
@@ -101,7 +104,7 @@ func (a *FlightsAPIService) FlightsCreateOrderExecute(r ApiFlightsCreateOrderReq
 		return localVarReturnValue, nil, &GenericOpenAPIError{error: err.Error()}
 	}
 
-	localVarPath := localBasePath + "/api/v1/b2b/flights/order"
+	localVarPath := localBasePath + "/v1/flights/order"
 
 	localVarHeaderParams := make(map[string]string)
 	localVarQueryParams := url.Values{}
@@ -177,7 +180,208 @@ func (a *FlightsAPIService) FlightsCreateOrderExecute(r ApiFlightsCreateOrderReq
 					newErr.model = v
 			return localVarReturnValue, localVarHTTPResponse, newErr
 		}
+		if localVarHTTPResponse.StatusCode == 402 {
+			var v ErrorResponse
+			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = err.Error()
+				return localVarReturnValue, localVarHTTPResponse, newErr
+			}
+					newErr.error = formatErrorMessage(localVarHTTPResponse.Status, &v)
+					newErr.model = v
+			return localVarReturnValue, localVarHTTPResponse, newErr
+		}
 		if localVarHTTPResponse.StatusCode == 409 {
+			var v ErrorResponse
+			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = err.Error()
+				return localVarReturnValue, localVarHTTPResponse, newErr
+			}
+					newErr.error = formatErrorMessage(localVarHTTPResponse.Status, &v)
+					newErr.model = v
+			return localVarReturnValue, localVarHTTPResponse, newErr
+		}
+		if localVarHTTPResponse.StatusCode == 429 {
+			var v ErrorResponse
+			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = err.Error()
+				return localVarReturnValue, localVarHTTPResponse, newErr
+			}
+					newErr.error = formatErrorMessage(localVarHTTPResponse.Status, &v)
+					newErr.model = v
+			return localVarReturnValue, localVarHTTPResponse, newErr
+		}
+		if localVarHTTPResponse.StatusCode == 503 {
+			var v ErrorResponse
+			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = err.Error()
+				return localVarReturnValue, localVarHTTPResponse, newErr
+			}
+					newErr.error = formatErrorMessage(localVarHTTPResponse.Status, &v)
+					newErr.model = v
+		}
+		return localVarReturnValue, localVarHTTPResponse, newErr
+	}
+
+	err = a.client.decode(&localVarReturnValue, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
+	if err != nil {
+		newErr := &GenericOpenAPIError{
+			body:  localVarBody,
+			error: err.Error(),
+		}
+		return localVarReturnValue, localVarHTTPResponse, newErr
+	}
+
+	return localVarReturnValue, localVarHTTPResponse, nil
+}
+
+type ApiFlightsGetPlacesRequest struct {
+	ctx context.Context
+	ApiService *FlightsAPIService
+	q *string
+	category *string
+	limit *int32
+}
+
+// Required. Free text over city and airport names and codes, for example &#x60;lond&#x60; or &#x60;LHR&#x60;; at most 100 characters, without control characters.
+func (r ApiFlightsGetPlacesRequest) Q(q string) ApiFlightsGetPlacesRequest {
+	r.q = &q
+	return r
+}
+
+// Optional: &#x60;city&#x60; or &#x60;airport&#x60; keeps only places of that kind.
+func (r ApiFlightsGetPlacesRequest) Category(category string) ApiFlightsGetPlacesRequest {
+	r.category = &category
+	return r
+}
+
+// The most places to return, 1 to 100; default 10.
+func (r ApiFlightsGetPlacesRequest) Limit(limit int32) ApiFlightsGetPlacesRequest {
+	r.limit = &limit
+	return r
+}
+
+func (r ApiFlightsGetPlacesRequest) Execute() (*FlightPlaceList, *http.Response, error) {
+	return r.ApiService.FlightsGetPlacesExecute(r)
+}
+
+/*
+FlightsGetPlaces Find flight places
+
+Finds the cities and airports to search flights between, by name or IATA code.
+
+Returns `{ items }`: at most `limit` places whose names or codes match `q`, most relevant first,
+without paging. Send a place's `id`, its three-letter IATA code, as `slices[].origin` or
+`slices[].destination` in a search. `category` is `city`, which a search reads as every airport
+of the city, or `airport`. A city that matches is followed by all its airports; when only some airports
+match, for example `LHR` or `heathrow`, only those are listed. A city whose single airport has the
+city's own code is listed as that airport. Each place also has `iataCode` (the same as `id`),
+`cityName`, `cityIataCode`, the IANA `timezone` and, for a city, its `airports`. Only cities
+and airports OpenRoam can book are listed.
+            
+`q` is required: plain text, at most 100 characters, without control characters. `category`
+(`city` or `airport`) keeps the places of that kind; `limit` is 1–100 (default 10). An invalid
+or blank value, or any other query parameter, gives 400 / 10001. 503 / 10007 when the airport list is
+unavailable or does not answer within 5 seconds: retry.
+
+ @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+ @return ApiFlightsGetPlacesRequest
+*/
+func (a *FlightsAPIService) FlightsGetPlaces(ctx context.Context) ApiFlightsGetPlacesRequest {
+	return ApiFlightsGetPlacesRequest{
+		ApiService: a,
+		ctx: ctx,
+	}
+}
+
+// Execute executes the request
+//  @return FlightPlaceList
+func (a *FlightsAPIService) FlightsGetPlacesExecute(r ApiFlightsGetPlacesRequest) (*FlightPlaceList, *http.Response, error) {
+	var (
+		localVarHTTPMethod   = http.MethodGet
+		localVarPostBody     interface{}
+		formFiles            []formFile
+		localVarReturnValue  *FlightPlaceList
+	)
+
+	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "FlightsAPIService.FlightsGetPlaces")
+	if err != nil {
+		return localVarReturnValue, nil, &GenericOpenAPIError{error: err.Error()}
+	}
+
+	localVarPath := localBasePath + "/v1/flights/places"
+
+	localVarHeaderParams := make(map[string]string)
+	localVarQueryParams := url.Values{}
+	localVarFormParams := url.Values{}
+	if r.q == nil {
+		return localVarReturnValue, nil, reportError("q is required and must be specified")
+	}
+
+	parameterAddToHeaderOrQuery(localVarQueryParams, "q", r.q, "form", "")
+	if r.category != nil {
+		parameterAddToHeaderOrQuery(localVarQueryParams, "category", r.category, "form", "")
+	}
+	if r.limit != nil {
+		parameterAddToHeaderOrQuery(localVarQueryParams, "limit", r.limit, "form", "")
+	}
+	// to determine the Content-Type header
+	localVarHTTPContentTypes := []string{}
+
+	// set Content-Type header
+	localVarHTTPContentType := selectHeaderContentType(localVarHTTPContentTypes)
+	if localVarHTTPContentType != "" {
+		localVarHeaderParams["Content-Type"] = localVarHTTPContentType
+	}
+
+	// to determine the Accept header
+	localVarHTTPHeaderAccepts := []string{"text/plain", "application/json", "text/json"}
+
+	// set Accept header
+	localVarHTTPHeaderAccept := selectHeaderAccept(localVarHTTPHeaderAccepts)
+	if localVarHTTPHeaderAccept != "" {
+		localVarHeaderParams["Accept"] = localVarHTTPHeaderAccept
+	}
+	if r.ctx != nil {
+		// API Key Authentication
+		if auth, ok := r.ctx.Value(ContextAPIKeys).(map[string]APIKey); ok {
+			if apiKey, ok := auth["PartnerApiKey"]; ok {
+				var key string
+				if apiKey.Prefix != "" {
+					key = apiKey.Prefix + " " + apiKey.Key
+				} else {
+					key = apiKey.Key
+				}
+				localVarHeaderParams["X-Partner-Key"] = key
+			}
+		}
+	}
+	req, err := a.client.prepareRequest(r.ctx, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, formFiles)
+	if err != nil {
+		return localVarReturnValue, nil, err
+	}
+
+	localVarHTTPResponse, err := a.client.callAPI(req)
+	if err != nil || localVarHTTPResponse == nil {
+		return localVarReturnValue, localVarHTTPResponse, err
+	}
+
+	localVarBody, err := io.ReadAll(localVarHTTPResponse.Body)
+	localVarHTTPResponse.Body.Close()
+	localVarHTTPResponse.Body = io.NopCloser(bytes.NewBuffer(localVarBody))
+	if err != nil {
+		return localVarReturnValue, localVarHTTPResponse, err
+	}
+
+	if localVarHTTPResponse.StatusCode >= 300 {
+		newErr := &GenericOpenAPIError{
+			body:  localVarBody,
+			error: localVarHTTPResponse.Status,
+		}
+		if localVarHTTPResponse.StatusCode == 400 {
 			var v ErrorResponse
 			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 			if err != nil {
@@ -273,7 +477,7 @@ func (a *FlightsAPIService) FlightsGetSeatMapExecute(r ApiFlightsGetSeatMapReque
 		return localVarReturnValue, nil, &GenericOpenAPIError{error: err.Error()}
 	}
 
-	localVarPath := localBasePath + "/api/v1/b2b/flights/offers/{publicId}/seat-map"
+	localVarPath := localBasePath + "/v1/flights/offers/{publicId}/seat-map"
 	localVarPath = strings.Replace(localVarPath, "{"+"publicId"+"}", url.PathEscape(parameterValueToString(r.publicId, "publicId")), -1)
 
 	localVarHeaderParams := make(map[string]string)
@@ -395,19 +599,21 @@ the fare alone. Inputs that are sent are checked as the order checks them, and t
 the price. Prices are in `currency`, or in the API key's currency when it is omitted. Nothing is charged or
 held.
             
-Returns `{ currency, items, total }`. Each item has a new `publicId`: order with it before
-`details.expiresAt`. It keeps the fare's price, which caps an order without `inputs.maxPrice`.
-`details` carries the fare's conditions, included baggage and price breakdown, `hasSeatMaps`, the paid
-extras (`availableServices`) that can be sent in the order's `inputs.selectedServices`, and
-`fareOptions`: the fares for the same flights and airline, cheapest first and including the quoted one, each
-with its own `publicId` that can be quoted or ordered.
+Returns `{ currency, items, total }`. Each item has a new `publicId`: order with it before its
+`expiresAt`. It keeps the fare's price, which caps an order without `inputs.maxPrice`.
+Beside the price, the item carries the fare's conditions (`terms`), `includedBaggage`,
+`hasSeatMaps`, the paid extras (`availableServices`) that can be sent in the order's
+`inputs.selectedServices`, and `fareOptions`: the fares for the same flights and airline, cheapest first
+and including the quoted one, each with its own `publicId` that can be quoted or ordered.
+The item's `taxes` lists the airline's tax lines and how they relate to the price.
             
 A higher airline price is returned with 200; only `inputs.maxPrice` stops a quote. Each item is checked
 completely, its inputs, its `publicId` and its price, before the next one, and the first failure names its
 item: an invalid input or a `quantity` other than 1 gives 400 / 10001 at its path under `items[i]`; a
 price above `inputs.maxPrice` 409 / 11002 at `items[i].inputs.maxPrice`; an offer the airline no
 longer sells 409 / 11003 at `items[i]`; an unknown, expired or another partner's `publicId`, or a
-search itinerary `id`, 400 / 11004 at `items[i]`. An unsupported `currency` gives 404 / 10004.
+search itinerary `id`, 400 / 11004 at `items[i]`. An unsupported `currency` gives 400 / 10001 at
+`currency`. A browser session may not send `inputs.maxPrice` (400 / 10001, `NOT_ALLOWED`).
 
  @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
  @return ApiFlightsQuoteRequest
@@ -434,7 +640,7 @@ func (a *FlightsAPIService) FlightsQuoteExecute(r ApiFlightsQuoteRequest) (*Flig
 		return localVarReturnValue, nil, &GenericOpenAPIError{error: err.Error()}
 	}
 
-	localVarPath := localBasePath + "/api/v1/b2b/flights/quote"
+	localVarPath := localBasePath + "/v1/flights/quote"
 
 	localVarHeaderParams := make(map[string]string)
 	localVarQueryParams := url.Values{}
@@ -578,7 +784,7 @@ An item's `id` is valid only within this response and cannot be ordered; quote a
 key's currency, and are indicative.
             
 Errors: an invalid or unknown field, or a query parameter, 400 / 10001; an unsupported `currency`
-404 / 10004.
+404 / 10004. A browser session may not send `filters.maxPrice` (400 / 10001, `NOT_ALLOWED`).
 
  @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
  @return ApiFlightsSearchRequest
@@ -605,7 +811,7 @@ func (a *FlightsAPIService) FlightsSearchExecute(r ApiFlightsSearchRequest) (*Fl
 		return localVarReturnValue, nil, &GenericOpenAPIError{error: err.Error()}
 	}
 
-	localVarPath := localBasePath + "/api/v1/b2b/flights/search"
+	localVarPath := localBasePath + "/v1/flights/search"
 
 	localVarHeaderParams := make(map[string]string)
 	localVarQueryParams := url.Values{}

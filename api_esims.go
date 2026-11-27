@@ -54,12 +54,15 @@ Places an order for new eSIMs or a top-up and returns the accepted order.
 
 Takes the same body as quote and needs the `manage` order permission (403 / 10003 without it).
 An `Idempotency-Key` header with a new UUID is required for every purchase: a retry with the same key and body
-returns the order already accepted, 202 / 12002 with `Retry-After` while it is still being accepted, and a
+returns the order already accepted, 409 / 12002 with `Retry-After` while it is still being accepted, and a
 changed body gives 409 / 12001.
 A top-up is an offer from `search?iccid=` ordered with `inputs.iccid` and quantity 1; without
 `inputs.iccid` the same offer is bought as a new eSIM. A new eSIM is instant unless `inputs.isInstant`
 is false, which delivers an entitlement to provision later. Every price is recalculated: a current price above
-`inputs.maxPrice` gives 409 / 11002 before anything is charged.
+`inputs.maxPrice` gives 409 / 11002 before anything is charged. A wallet charge that fails creates no
+order and gives 402 / 16000, with `details[0]` naming `wallet` and `INSUFFICIENT_BALANCE` or
+`WALLET_BLOCKED`; send the same request with the same key after a top-up. An unknown or foreign
+`inputs.iccid` gives 404 / 10004 and charges nothing.
 
  @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
  @return ApiEsimsCreateOrderRequest
@@ -86,7 +89,7 @@ func (a *EsimsAPIService) EsimsCreateOrderExecute(r ApiEsimsCreateOrderRequest) 
 		return localVarReturnValue, nil, &GenericOpenAPIError{error: err.Error()}
 	}
 
-	localVarPath := localBasePath + "/api/v1/b2b/esims/order"
+	localVarPath := localBasePath + "/v1/esims/order"
 
 	localVarHeaderParams := make(map[string]string)
 	localVarQueryParams := url.Values{}
@@ -152,6 +155,28 @@ func (a *EsimsAPIService) EsimsCreateOrderExecute(r ApiEsimsCreateOrderRequest) 
 			error: localVarHTTPResponse.Status,
 		}
 		if localVarHTTPResponse.StatusCode == 400 {
+			var v ErrorResponse
+			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = err.Error()
+				return localVarReturnValue, localVarHTTPResponse, newErr
+			}
+					newErr.error = formatErrorMessage(localVarHTTPResponse.Status, &v)
+					newErr.model = v
+			return localVarReturnValue, localVarHTTPResponse, newErr
+		}
+		if localVarHTTPResponse.StatusCode == 402 {
+			var v ErrorResponse
+			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = err.Error()
+				return localVarReturnValue, localVarHTTPResponse, newErr
+			}
+					newErr.error = formatErrorMessage(localVarHTTPResponse.Status, &v)
+					newErr.model = v
+			return localVarReturnValue, localVarHTTPResponse, newErr
+		}
+		if localVarHTTPResponse.StatusCode == 404 {
 			var v ErrorResponse
 			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 			if err != nil {
@@ -252,7 +277,7 @@ func (r ApiEsimsGetCatalogRequest) IsUnlimited(isUnlimited bool) ApiEsimsGetCata
 	return r
 }
 
-// Price currency, three letters in either case; the API key&#39;s currency when omitted. An unsupported code gives 404 / 10004.
+// Price currency, three letters in either case; the API key&#39;s currency when omitted. An unsupported code gives 400 / 10001 at &#x60;currency&#x60;, reason &#x60;NOT_SUPPORTED&#x60;.
 func (r ApiEsimsGetCatalogRequest) Currency(currency string) ApiEsimsGetCatalogRequest {
 	r.currency = &currency
 	return r
@@ -279,7 +304,7 @@ EsimsGetCatalog eSIM catalog
 
 Returns every destination with its plans, page by page, for partner inventory.
 
-Returns `{ items, nextCursor }`, ordered by destination ID, with the search filters except `iccid`.
+Returns `{ items, nextCursor }`, in a fixed order, with the search filters except `iccid`.
 Continue with `nextCursor` as `cursor`, the same filters and the same `currency` until it is
 null. A cursor reused with other filters or another currency gives 400 / 10001. Quote confirms the final price
 and availability.
@@ -309,7 +334,7 @@ func (a *EsimsAPIService) EsimsGetCatalogExecute(r ApiEsimsGetCatalogRequest) (*
 		return localVarReturnValue, nil, &GenericOpenAPIError{error: err.Error()}
 	}
 
-	localVarPath := localBasePath + "/api/v1/b2b/esims/catalog"
+	localVarPath := localBasePath + "/v1/esims/catalog"
 
 	localVarHeaderParams := make(map[string]string)
 	localVarQueryParams := url.Values{}
@@ -469,7 +494,7 @@ func (a *EsimsAPIService) EsimsGetCompatibleDevicesExecute(r ApiEsimsGetCompatib
 		return localVarReturnValue, nil, &GenericOpenAPIError{error: err.Error()}
 	}
 
-	localVarPath := localBasePath + "/api/v1/b2b/esims/compatible-devices"
+	localVarPath := localBasePath + "/v1/esims/compatible-devices"
 
 	localVarHeaderParams := make(map[string]string)
 	localVarQueryParams := url.Values{}
@@ -571,7 +596,7 @@ type ApiEsimsGetDestinationRequest struct {
 	currency *string
 }
 
-// Price currency, three letters in either case; the API key&#39;s currency when omitted. An unsupported code gives 404 / 10004.
+// Price currency, three letters in either case; the API key&#39;s currency when omitted. An unsupported code gives 400 / 10001 at &#x60;currency&#x60;, reason &#x60;NOT_SUPPORTED&#x60;.
 func (r ApiEsimsGetDestinationRequest) Currency(currency string) ApiEsimsGetDestinationRequest {
 	r.currency = &currency
 	return r
@@ -616,7 +641,7 @@ func (a *EsimsAPIService) EsimsGetDestinationExecute(r ApiEsimsGetDestinationReq
 		return localVarReturnValue, nil, &GenericOpenAPIError{error: err.Error()}
 	}
 
-	localVarPath := localBasePath + "/api/v1/b2b/esims/destinations/{id}"
+	localVarPath := localBasePath + "/v1/esims/destinations/{id}"
 	localVarPath = strings.Replace(localVarPath, "{"+"id"+"}", url.PathEscape(parameterValueToString(r.id, "id")), -1)
 
 	localVarHeaderParams := make(map[string]string)
@@ -771,7 +796,7 @@ func (a *EsimsAPIService) EsimsGetDestinationsExecute(r ApiEsimsGetDestinationsR
 		return localVarReturnValue, nil, &GenericOpenAPIError{error: err.Error()}
 	}
 
-	localVarPath := localBasePath + "/api/v1/b2b/esims/destinations"
+	localVarPath := localBasePath + "/v1/esims/destinations"
 
 	localVarHeaderParams := make(map[string]string)
 	localVarQueryParams := url.Values{}
@@ -887,9 +912,10 @@ EsimsGetEsim Get an eSIM
 
 Returns one of your eSIMs by its ICCID, with its installation details, plan and top-ups.
 
-Returns the eSIM as last recorded, without a live refresh: the SIM details (LPA code, QR code URL and
-quick-install links), the plan, its data, SMS and voice allowances, and any top-ups. An ICCID that is not one of
-your eSIMs gives 404 / 10004.
+Returns the eSIM as last recorded, without a live refresh: `esimStatus` and `profileStatus` as the
+order item names them, the SIM details (LPA code, QR code URL and quick-install links), the plan, its data
+(MB), SMS (messages) and voice (minutes) allowances, any top-ups, and `expiresAt`, null until the eSIM is
+activated. An ICCID that is not one of your eSIMs gives 404 / 10004.
 
  @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
  @param iccid The eSIM's ICCID, from the order item's `fulfillment.result.details.iccid`.
@@ -918,7 +944,7 @@ func (a *EsimsAPIService) EsimsGetEsimExecute(r ApiEsimsGetEsimRequest) (*EsimPr
 		return localVarReturnValue, nil, &GenericOpenAPIError{error: err.Error()}
 	}
 
-	localVarPath := localBasePath + "/api/v1/b2b/esims/{iccid}/profile"
+	localVarPath := localBasePath + "/v1/esims/{iccid}/profile"
 	localVarPath = strings.Replace(localVarPath, "{"+"iccid"+"}", url.PathEscape(parameterValueToString(r.iccid, "iccid")), -1)
 
 	localVarHeaderParams := make(map[string]string)
@@ -1069,13 +1095,13 @@ func (r ApiEsimsGetLocationEventsRequest) Limit(limit int32) ApiEsimsGetLocation
 	return r
 }
 
-// Only events that occurred at or after this UTC time.
+// Only events that occurred at or after this UTC time. ISO 8601 date-time. A value with Z or an offset is converted to UTC; a value without a zone is read as UTC, and a date alone means 00:00 UTC on that day.
 func (r ApiEsimsGetLocationEventsRequest) From(from time.Time) ApiEsimsGetLocationEventsRequest {
 	r.from = &from
 	return r
 }
 
-// Only events that occurred at or before this UTC time.
+// Only events that occurred at or before this UTC time. ISO 8601 date-time. A value with Z or an offset is converted to UTC; a value without a zone is read as UTC, and a date alone means 00:00 UTC on that day.
 func (r ApiEsimsGetLocationEventsRequest) To(to time.Time) ApiEsimsGetLocationEventsRequest {
 	r.to = &to
 	return r
@@ -1121,7 +1147,7 @@ func (a *EsimsAPIService) EsimsGetLocationEventsExecute(r ApiEsimsGetLocationEve
 		return localVarReturnValue, nil, &GenericOpenAPIError{error: err.Error()}
 	}
 
-	localVarPath := localBasePath + "/api/v1/b2b/esims/{iccid}/location-events"
+	localVarPath := localBasePath + "/v1/esims/{iccid}/location-events"
 	localVarPath = strings.Replace(localVarPath, "{"+"iccid"+"}", url.PathEscape(parameterValueToString(r.iccid, "iccid")), -1)
 
 	localVarHeaderParams := make(map[string]string)
@@ -1281,13 +1307,13 @@ func (r ApiEsimsGetStatusEventsRequest) Limit(limit int32) ApiEsimsGetStatusEven
 	return r
 }
 
-// Only events that occurred at or after this UTC time.
+// Only events that occurred at or after this UTC time. ISO 8601 date-time. A value with Z or an offset is converted to UTC; a value without a zone is read as UTC, and a date alone means 00:00 UTC on that day.
 func (r ApiEsimsGetStatusEventsRequest) From(from time.Time) ApiEsimsGetStatusEventsRequest {
 	r.from = &from
 	return r
 }
 
-// Only events that occurred at or before this UTC time.
+// Only events that occurred at or before this UTC time. ISO 8601 date-time. A value with Z or an offset is converted to UTC; a value without a zone is read as UTC, and a date alone means 00:00 UTC on that day.
 func (r ApiEsimsGetStatusEventsRequest) To(to time.Time) ApiEsimsGetStatusEventsRequest {
 	r.to = &to
 	return r
@@ -1302,7 +1328,7 @@ EsimsGetStatusEvents List eSIM status events
 
 Lists the status changes of an eSIM, newest first.
 
-Returns `{ items, pagination }`, one item per status change with the eSIM status, the profile status and
+Returns `{ items, pagination }`, one item per status change with `esimStatus`, `profileStatus` and
 `occurredAt`. `from` and `to` limit the events by
 `occurredAt`, both inclusive. An ICCID that is not one of your eSIMs gives 404 / 10004.
 
@@ -1333,7 +1359,7 @@ func (a *EsimsAPIService) EsimsGetStatusEventsExecute(r ApiEsimsGetStatusEventsR
 		return localVarReturnValue, nil, &GenericOpenAPIError{error: err.Error()}
 	}
 
-	localVarPath := localBasePath + "/api/v1/b2b/esims/{iccid}/status-events"
+	localVarPath := localBasePath + "/v1/esims/{iccid}/status-events"
 	localVarPath = strings.Replace(localVarPath, "{"+"iccid"+"}", url.PathEscape(parameterValueToString(r.iccid, "iccid")), -1)
 
 	localVarHeaderParams := make(map[string]string)
@@ -1486,9 +1512,11 @@ EsimsGetUsage Get eSIM usage
 
 Returns the current data, SMS and voice usage of an eSIM.
 
-Reads the live usage when the request is made and returns the allowed and remaining data (MB),
-SMS and voice (seconds), including top-ups. When the usage cannot be read live, or the plan does not report
-live usage, it returns the last known usage. An ICCID that is not one of your eSIMs gives 404 / 10004.
+Reads the live usage when the request is made and returns `esimStatus`, `profileStatus` and the allowed
+and remaining data (MB), SMS (messages) and voice (minutes), including top-ups. An amount is null when it is
+unlimited (`isDataUnlimited`, `isSmsUnlimited`, `isVoiceUnlimited`), not reported or not
+included. When the usage cannot be read live, or the plan does not report live usage, it returns the last known
+usage. An ICCID that is not one of your eSIMs gives 404 / 10004.
 
  @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
  @param iccid The eSIM's ICCID, from the order item's `fulfillment.result.details.iccid`.
@@ -1517,7 +1545,7 @@ func (a *EsimsAPIService) EsimsGetUsageExecute(r ApiEsimsGetUsageRequest) (*Esim
 		return localVarReturnValue, nil, &GenericOpenAPIError{error: err.Error()}
 	}
 
-	localVarPath := localBasePath + "/api/v1/b2b/esims/{iccid}/usage"
+	localVarPath := localBasePath + "/v1/esims/{iccid}/usage"
 	localVarPath = strings.Replace(localVarPath, "{"+"iccid"+"}", url.PathEscape(parameterValueToString(r.iccid, "iccid")), -1)
 
 	localVarHeaderParams := make(map[string]string)
@@ -1662,8 +1690,8 @@ EsimsGetUsageDetails Get eSIM usage by day
 Returns the current usage of an eSIM with a per-day breakdown.
 
 Returns the same summary as `usage` plus `usages`, the per-day consumption entries
-`{ date, usage, location }` with the data used in MB. `usages` is empty when the eSIM's plan does not
-report a per-day breakdown or it cannot be read.
+`{ date, usage, location }` with the data used in MB and `location` null when no country was reported.
+`usages` is empty when the eSIM's plan does not report a per-day breakdown or it cannot be read.
 
  @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
  @param iccid The eSIM's ICCID, from the order item's `fulfillment.result.details.iccid`.
@@ -1692,7 +1720,7 @@ func (a *EsimsAPIService) EsimsGetUsageDetailsExecute(r ApiEsimsGetUsageDetailsR
 		return localVarReturnValue, nil, &GenericOpenAPIError{error: err.Error()}
 	}
 
-	localVarPath := localBasePath + "/api/v1/b2b/esims/{iccid}/usage/details"
+	localVarPath := localBasePath + "/v1/esims/{iccid}/usage/details"
 	localVarPath = strings.Replace(localVarPath, "{"+"iccid"+"}", url.PathEscape(parameterValueToString(r.iccid, "iccid")), -1)
 
 	localVarHeaderParams := make(map[string]string)
@@ -1843,13 +1871,13 @@ func (r ApiEsimsGetUsageHistoryRequest) Limit(limit int32) ApiEsimsGetUsageHisto
 	return r
 }
 
-// Only readings captured at or after this UTC time.
+// Only readings captured at or after this UTC time. ISO 8601 date-time. A value with Z or an offset is converted to UTC; a value without a zone is read as UTC, and a date alone means 00:00 UTC on that day.
 func (r ApiEsimsGetUsageHistoryRequest) From(from time.Time) ApiEsimsGetUsageHistoryRequest {
 	r.from = &from
 	return r
 }
 
-// Only readings captured at or before this UTC time.
+// Only readings captured at or before this UTC time. ISO 8601 date-time. A value with Z or an offset is converted to UTC; a value without a zone is read as UTC, and a date alone means 00:00 UTC on that day.
 func (r ApiEsimsGetUsageHistoryRequest) To(to time.Time) ApiEsimsGetUsageHistoryRequest {
 	r.to = &to
 	return r
@@ -1895,7 +1923,7 @@ func (a *EsimsAPIService) EsimsGetUsageHistoryExecute(r ApiEsimsGetUsageHistoryR
 		return localVarReturnValue, nil, &GenericOpenAPIError{error: err.Error()}
 	}
 
-	localVarPath := localBasePath + "/api/v1/b2b/esims/{iccid}/usage/history"
+	localVarPath := localBasePath + "/v1/esims/{iccid}/usage/history"
 	localVarPath = strings.Replace(localVarPath, "{"+"iccid"+"}", url.PathEscape(parameterValueToString(r.iccid, "iccid")), -1)
 
 	localVarHeaderParams := make(map[string]string)
@@ -2065,7 +2093,9 @@ Provisions a deferred eSIM bought with `inputs.isInstant: false` and returns it.
 Creates the eSIM for an order item that delivered an entitlement, and returns it as `GET /esims/{iccid}`
 does. The item's result moves to `provisioning.status` `processing` and then `ready`, and each
 change sends an `order.fulfillment.updated` webhook. An `Idempotency-Key` header with a UUID is
-required; a key already used for a completed call gives 409 / 12000. The optional body
+required: a retry with the same key and body after the call finished returns the eSIM as it reads now and starts
+nothing again, 409 / 12002 with `Retry-After` while the call is still running, and a changed body gives
+409 / 12001. The optional body
 `{ travelStartDate }` is needed when the plan requires the first day of travel and the order did not send
 it (400 / 10001 without it); a date other than the one recorded, or a new date once provisioning has started,
 gives 409 / 10005. An instant eSIM gives 400 / 10001, and an ID that names no eSIM purchase of yours, such as a
@@ -2098,7 +2128,7 @@ func (a *EsimsAPIService) EsimsProvisionExecute(r ApiEsimsProvisionRequest) (*Es
 		return localVarReturnValue, nil, &GenericOpenAPIError{error: err.Error()}
 	}
 
-	localVarPath := localBasePath + "/api/v1/b2b/esims/{id}/provisioning"
+	localVarPath := localBasePath + "/v1/esims/{id}/provisioning"
 	localVarPath = strings.Replace(localVarPath, "{"+"id"+"}", url.PathEscape(parameterValueToString(r.id, "id")), -1)
 
 	localVarHeaderParams := make(map[string]string)
@@ -2186,6 +2216,17 @@ func (a *EsimsAPIService) EsimsProvisionExecute(r ApiEsimsProvisionRequest) (*Es
 					newErr.model = v
 			return localVarReturnValue, localVarHTTPResponse, newErr
 		}
+		if localVarHTTPResponse.StatusCode == 404 {
+			var v ErrorResponse
+			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = err.Error()
+				return localVarReturnValue, localVarHTTPResponse, newErr
+			}
+					newErr.error = formatErrorMessage(localVarHTTPResponse.Status, &v)
+					newErr.model = v
+			return localVarReturnValue, localVarHTTPResponse, newErr
+		}
 		if localVarHTTPResponse.StatusCode == 409 {
 			var v ErrorResponse
 			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
@@ -2258,7 +2299,8 @@ Takes the same body as order and, as the order does, checks each item completely
 item error is named at `items[i]`, for example 409 / 11002 at `items[i].inputs.maxPrice` when the
 current price is above it. An eSIM has no monetary value, so `inputs.value` is an unknown member
 (400 / 10001). An unknown or foreign `inputs.iccid` gives 404 / 10004. A quote reserves nothing and does
-not expire.
+not expire. A browser session quotes new, instant eSIMs only: `inputs.iccid`, `inputs.maxPrice` and
+`inputs.isInstant` false give 400 / 10001, `NOT_ALLOWED`, at that member.
 
  @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
  @return ApiEsimsQuoteRequest
@@ -2285,7 +2327,7 @@ func (a *EsimsAPIService) EsimsQuoteExecute(r ApiEsimsQuoteRequest) (*EsimQuote,
 		return localVarReturnValue, nil, &GenericOpenAPIError{error: err.Error()}
 	}
 
-	localVarPath := localBasePath + "/api/v1/b2b/esims/quote"
+	localVarPath := localBasePath + "/v1/esims/quote"
 
 	localVarHeaderParams := make(map[string]string)
 	localVarQueryParams := url.Values{}
@@ -2347,6 +2389,17 @@ func (a *EsimsAPIService) EsimsQuoteExecute(r ApiEsimsQuoteRequest) (*EsimQuote,
 			error: localVarHTTPResponse.Status,
 		}
 		if localVarHTTPResponse.StatusCode == 400 {
+			var v ErrorResponse
+			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = err.Error()
+				return localVarReturnValue, localVarHTTPResponse, newErr
+			}
+					newErr.error = formatErrorMessage(localVarHTTPResponse.Status, &v)
+					newErr.model = v
+			return localVarReturnValue, localVarHTTPResponse, newErr
+		}
+		if localVarHTTPResponse.StatusCode == 404 {
 			var v ErrorResponse
 			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 			if err != nil {
@@ -2443,7 +2496,7 @@ func (r ApiEsimsSearchRequest) Iccid(iccid string) ApiEsimsSearchRequest {
 	return r
 }
 
-// Price currency, three letters in either case; the API key&#39;s currency when omitted. An unsupported code gives 404 / 10004.
+// Price currency, three letters in either case; the API key&#39;s currency when omitted. An unsupported code gives 400 / 10001 at &#x60;currency&#x60;, reason &#x60;NOT_SUPPORTED&#x60;.
 func (r ApiEsimsSearchRequest) Currency(currency string) ApiEsimsSearchRequest {
 	r.currency = &currency
 	return r
@@ -2475,7 +2528,8 @@ country, so local, regional and global destinations can match; `category` and `r
 destinations, and `validityDays` and `isUnlimited` select plans within them. Pages count destinations
 with an orderable plan. With `iccid` it returns the plans that can top up that eSIM instead, under its
 destination, and takes no filter other than `currency` (400 / 10001, `NOT_ALLOWED`); an unknown or
-foreign ICCID gives 404 / 10004. Prices are indicative, in `currency`.
+foreign ICCID gives 404 / 10004, and a browser session may not send it (400 / 10001, `NOT_ALLOWED`). Prices
+are indicative, in `currency`.
 
  @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
  @return ApiEsimsSearchRequest
@@ -2502,7 +2556,7 @@ func (a *EsimsAPIService) EsimsSearchExecute(r ApiEsimsSearchRequest) (*EsimSear
 		return localVarReturnValue, nil, &GenericOpenAPIError{error: err.Error()}
 	}
 
-	localVarPath := localBasePath + "/api/v1/b2b/esims/search"
+	localVarPath := localBasePath + "/v1/esims/search"
 
 	localVarHeaderParams := make(map[string]string)
 	localVarQueryParams := url.Values{}
@@ -2599,6 +2653,17 @@ func (a *EsimsAPIService) EsimsSearchExecute(r ApiEsimsSearchRequest) (*EsimSear
 					newErr.model = v
 			return localVarReturnValue, localVarHTTPResponse, newErr
 		}
+		if localVarHTTPResponse.StatusCode == 404 {
+			var v ErrorResponse
+			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = err.Error()
+				return localVarReturnValue, localVarHTTPResponse, newErr
+			}
+					newErr.error = formatErrorMessage(localVarHTTPResponse.Status, &v)
+					newErr.model = v
+			return localVarReturnValue, localVarHTTPResponse, newErr
+		}
 		if localVarHTTPResponse.StatusCode == 429 {
 			var v ErrorResponse
 			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
@@ -2646,9 +2711,10 @@ EsimsSendSms Send an SMS to an eSIM
 
 Sends a text message to one of your eSIMs.
 
-Takes `{ message }`, which must not be empty, and returns `{ iccid, success, isSupported }`.
-`isSupported` is false when the eSIM's plan cannot receive messages this way, and `success` is false
-when the message was not sent. An ICCID that is not one of your eSIMs gives 404 / 10004.
+Takes `{ message }`, which must not be empty, and returns `{ iccid }` only when the message was sent.
+An eSIM whose plan cannot be sent messages this way gives 422 / 22000 (`ESIM_SMS_NOT_SUPPORTED`); do not
+retry it. A message that was not sent gives 502 / 10008. An ICCID that is not one of your eSIMs gives
+404 / 10004.
 
  @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
  @param iccid The eSIM's ICCID, from the order item's `fulfillment.result.details.iccid`.
@@ -2677,7 +2743,7 @@ func (a *EsimsAPIService) EsimsSendSmsExecute(r ApiEsimsSendSmsRequest) (*EsimSm
 		return localVarReturnValue, nil, &GenericOpenAPIError{error: err.Error()}
 	}
 
-	localVarPath := localBasePath + "/api/v1/b2b/esims/{iccid}/sms"
+	localVarPath := localBasePath + "/v1/esims/{iccid}/sms"
 	localVarPath = strings.Replace(localVarPath, "{"+"iccid"+"}", url.PathEscape(parameterValueToString(r.iccid, "iccid")), -1)
 
 	localVarHeaderParams := make(map[string]string)
@@ -2761,7 +2827,40 @@ func (a *EsimsAPIService) EsimsSendSmsExecute(r ApiEsimsSendSmsRequest) (*EsimSm
 					newErr.model = v
 			return localVarReturnValue, localVarHTTPResponse, newErr
 		}
+		if localVarHTTPResponse.StatusCode == 404 {
+			var v ErrorResponse
+			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = err.Error()
+				return localVarReturnValue, localVarHTTPResponse, newErr
+			}
+					newErr.error = formatErrorMessage(localVarHTTPResponse.Status, &v)
+					newErr.model = v
+			return localVarReturnValue, localVarHTTPResponse, newErr
+		}
+		if localVarHTTPResponse.StatusCode == 422 {
+			var v ErrorResponse
+			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = err.Error()
+				return localVarReturnValue, localVarHTTPResponse, newErr
+			}
+					newErr.error = formatErrorMessage(localVarHTTPResponse.Status, &v)
+					newErr.model = v
+			return localVarReturnValue, localVarHTTPResponse, newErr
+		}
 		if localVarHTTPResponse.StatusCode == 429 {
+			var v ErrorResponse
+			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = err.Error()
+				return localVarReturnValue, localVarHTTPResponse, newErr
+			}
+					newErr.error = formatErrorMessage(localVarHTTPResponse.Status, &v)
+					newErr.model = v
+			return localVarReturnValue, localVarHTTPResponse, newErr
+		}
+		if localVarHTTPResponse.StatusCode == 502 {
 			var v ErrorResponse
 			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 			if err != nil {

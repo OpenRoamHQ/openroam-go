@@ -202,7 +202,6 @@ func (o *FlightMixedOrderRequestItem) UnmarshalJSON(data []byte) (err error) {
 	varFlightMixedOrderRequestItem := _FlightMixedOrderRequestItem{}
 
 	decoder := json.NewDecoder(bytes.NewReader(data))
-	decoder.DisallowUnknownFields()
 	err = decoder.Decode(&varFlightMixedOrderRequestItem)
 
 	if err != nil {

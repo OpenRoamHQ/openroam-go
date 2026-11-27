@@ -13,26 +13,39 @@ package openroam
 
 import (
 	"encoding/json"
+	"bytes"
+	"fmt"
 )
 
 // checks if the EsimProfileStatusWebhook type satisfies the MappedNullable interface at compile time
 var _ MappedNullable = &EsimProfileStatusWebhook{}
 
-// EsimProfileStatusWebhook struct for EsimProfileStatusWebhook
+// EsimProfileStatusWebhook The `esim.profileStatus.updated` webhook body.
 type EsimProfileStatusWebhook struct {
-	EventId *string `json:"eventId,omitempty"`
-	EventType *string `json:"eventType,omitempty"`
-	Timestamp *int64 `json:"timestamp,omitempty"`
-	// Data of the `esim.profileStatus.updated` webhook. Partners address the eSIM by its order item and ICCID; the offer's public id and internal package ids are not part of it.
-	Data *EsimProfileStatusWebhookData `json:"data,omitempty"`
+	// The event's unique id, the same as the `X-OpenRoam-Event-Id` header. Deduplicate on it.
+	EventId string `json:"eventId"`
+	// Always `esim.profileStatus.updated`.
+	EventType string `json:"eventType"`
+	// When the event was created, in Unix seconds (whole seconds since 1970-01-01T00:00:00Z).
+	Timestamp int64 `json:"timestamp"`
+	// The eSIM and its new profile status.
+	Data EsimProfileStatusWebhookData `json:"data"`
+	// True for a synthetic test delivery. Omitted on live events.
+	IsTest *bool `json:"isTest,omitempty"`
 }
+
+type _EsimProfileStatusWebhook EsimProfileStatusWebhook
 
 // NewEsimProfileStatusWebhook instantiates a new EsimProfileStatusWebhook object
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewEsimProfileStatusWebhook() *EsimProfileStatusWebhook {
+func NewEsimProfileStatusWebhook(eventId string, eventType string, timestamp int64, data EsimProfileStatusWebhookData) *EsimProfileStatusWebhook {
 	this := EsimProfileStatusWebhook{}
+	this.EventId = eventId
+	this.EventType = eventType
+	this.Timestamp = timestamp
+	this.Data = data
 	return &this
 }
 
@@ -44,132 +57,132 @@ func NewEsimProfileStatusWebhookWithDefaults() *EsimProfileStatusWebhook {
 	return &this
 }
 
-// GetEventId returns the EventId field value if set, zero value otherwise.
+// GetEventId returns the EventId field value
 func (o *EsimProfileStatusWebhook) GetEventId() string {
-	if o == nil || IsNil(o.EventId) {
+	if o == nil {
 		var ret string
 		return ret
 	}
-	return *o.EventId
+
+	return o.EventId
 }
 
-// GetEventIdOk returns a tuple with the EventId field value if set, nil otherwise
+// GetEventIdOk returns a tuple with the EventId field value
 // and a boolean to check if the value has been set.
 func (o *EsimProfileStatusWebhook) GetEventIdOk() (*string, bool) {
-	if o == nil || IsNil(o.EventId) {
+	if o == nil {
 		return nil, false
 	}
-	return o.EventId, true
+	return &o.EventId, true
 }
 
-// HasEventId returns a boolean if a field has been set.
-func (o *EsimProfileStatusWebhook) HasEventId() bool {
-	if o != nil && !IsNil(o.EventId) {
-		return true
-	}
-
-	return false
-}
-
-// SetEventId gets a reference to the given string and assigns it to the EventId field.
+// SetEventId sets field value
 func (o *EsimProfileStatusWebhook) SetEventId(v string) {
-	o.EventId = &v
+	o.EventId = v
 }
 
-// GetEventType returns the EventType field value if set, zero value otherwise.
+// GetEventType returns the EventType field value
 func (o *EsimProfileStatusWebhook) GetEventType() string {
-	if o == nil || IsNil(o.EventType) {
+	if o == nil {
 		var ret string
 		return ret
 	}
-	return *o.EventType
+
+	return o.EventType
 }
 
-// GetEventTypeOk returns a tuple with the EventType field value if set, nil otherwise
+// GetEventTypeOk returns a tuple with the EventType field value
 // and a boolean to check if the value has been set.
 func (o *EsimProfileStatusWebhook) GetEventTypeOk() (*string, bool) {
-	if o == nil || IsNil(o.EventType) {
+	if o == nil {
 		return nil, false
 	}
-	return o.EventType, true
+	return &o.EventType, true
 }
 
-// HasEventType returns a boolean if a field has been set.
-func (o *EsimProfileStatusWebhook) HasEventType() bool {
-	if o != nil && !IsNil(o.EventType) {
-		return true
-	}
-
-	return false
-}
-
-// SetEventType gets a reference to the given string and assigns it to the EventType field.
+// SetEventType sets field value
 func (o *EsimProfileStatusWebhook) SetEventType(v string) {
-	o.EventType = &v
+	o.EventType = v
 }
 
-// GetTimestamp returns the Timestamp field value if set, zero value otherwise.
+// GetTimestamp returns the Timestamp field value
 func (o *EsimProfileStatusWebhook) GetTimestamp() int64 {
-	if o == nil || IsNil(o.Timestamp) {
+	if o == nil {
 		var ret int64
 		return ret
 	}
-	return *o.Timestamp
+
+	return o.Timestamp
 }
 
-// GetTimestampOk returns a tuple with the Timestamp field value if set, nil otherwise
+// GetTimestampOk returns a tuple with the Timestamp field value
 // and a boolean to check if the value has been set.
 func (o *EsimProfileStatusWebhook) GetTimestampOk() (*int64, bool) {
-	if o == nil || IsNil(o.Timestamp) {
+	if o == nil {
 		return nil, false
 	}
-	return o.Timestamp, true
+	return &o.Timestamp, true
 }
 
-// HasTimestamp returns a boolean if a field has been set.
-func (o *EsimProfileStatusWebhook) HasTimestamp() bool {
-	if o != nil && !IsNil(o.Timestamp) {
-		return true
-	}
-
-	return false
-}
-
-// SetTimestamp gets a reference to the given int64 and assigns it to the Timestamp field.
+// SetTimestamp sets field value
 func (o *EsimProfileStatusWebhook) SetTimestamp(v int64) {
-	o.Timestamp = &v
+	o.Timestamp = v
 }
 
-// GetData returns the Data field value if set, zero value otherwise.
+// GetData returns the Data field value
 func (o *EsimProfileStatusWebhook) GetData() EsimProfileStatusWebhookData {
-	if o == nil || IsNil(o.Data) {
+	if o == nil {
 		var ret EsimProfileStatusWebhookData
 		return ret
 	}
-	return *o.Data
+
+	return o.Data
 }
 
-// GetDataOk returns a tuple with the Data field value if set, nil otherwise
+// GetDataOk returns a tuple with the Data field value
 // and a boolean to check if the value has been set.
 func (o *EsimProfileStatusWebhook) GetDataOk() (*EsimProfileStatusWebhookData, bool) {
-	if o == nil || IsNil(o.Data) {
+	if o == nil {
 		return nil, false
 	}
-	return o.Data, true
+	return &o.Data, true
 }
 
-// HasData returns a boolean if a field has been set.
-func (o *EsimProfileStatusWebhook) HasData() bool {
-	if o != nil && !IsNil(o.Data) {
+// SetData sets field value
+func (o *EsimProfileStatusWebhook) SetData(v EsimProfileStatusWebhookData) {
+	o.Data = v
+}
+
+// GetIsTest returns the IsTest field value if set, zero value otherwise.
+func (o *EsimProfileStatusWebhook) GetIsTest() bool {
+	if o == nil || IsNil(o.IsTest) {
+		var ret bool
+		return ret
+	}
+	return *o.IsTest
+}
+
+// GetIsTestOk returns a tuple with the IsTest field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+func (o *EsimProfileStatusWebhook) GetIsTestOk() (*bool, bool) {
+	if o == nil || IsNil(o.IsTest) {
+		return nil, false
+	}
+	return o.IsTest, true
+}
+
+// HasIsTest returns a boolean if a field has been set.
+func (o *EsimProfileStatusWebhook) HasIsTest() bool {
+	if o != nil && !IsNil(o.IsTest) {
 		return true
 	}
 
 	return false
 }
 
-// SetData gets a reference to the given EsimProfileStatusWebhookData and assigns it to the Data field.
-func (o *EsimProfileStatusWebhook) SetData(v EsimProfileStatusWebhookData) {
-	o.Data = &v
+// SetIsTest gets a reference to the given bool and assigns it to the IsTest field.
+func (o *EsimProfileStatusWebhook) SetIsTest(v bool) {
+	o.IsTest = &v
 }
 
 func (o EsimProfileStatusWebhook) MarshalJSON() ([]byte, error) {
@@ -182,19 +195,53 @@ func (o EsimProfileStatusWebhook) MarshalJSON() ([]byte, error) {
 
 func (o EsimProfileStatusWebhook) ToMap() (map[string]interface{}, error) {
 	toSerialize := map[string]interface{}{}
-	if !IsNil(o.EventId) {
-		toSerialize["eventId"] = o.EventId
-	}
-	if !IsNil(o.EventType) {
-		toSerialize["eventType"] = o.EventType
-	}
-	if !IsNil(o.Timestamp) {
-		toSerialize["timestamp"] = o.Timestamp
-	}
-	if !IsNil(o.Data) {
-		toSerialize["data"] = o.Data
+	toSerialize["eventId"] = o.EventId
+	toSerialize["eventType"] = o.EventType
+	toSerialize["timestamp"] = o.Timestamp
+	toSerialize["data"] = o.Data
+	if !IsNil(o.IsTest) {
+		toSerialize["isTest"] = o.IsTest
 	}
 	return toSerialize, nil
+}
+
+func (o *EsimProfileStatusWebhook) UnmarshalJSON(data []byte) (err error) {
+	// This validates that all required properties are included in the JSON object
+	// by unmarshalling the object into a generic map with string keys and checking
+	// that every required field exists as a key in the generic map.
+	requiredProperties := []string{
+		"eventId",
+		"eventType",
+		"timestamp",
+		"data",
+	}
+
+	allProperties := make(map[string]interface{})
+
+	err = json.Unmarshal(data, &allProperties)
+
+	if err != nil {
+		return err;
+	}
+
+	for _, requiredProperty := range(requiredProperties) {
+		if _, exists := allProperties[requiredProperty]; !exists {
+			return fmt.Errorf("no value given for required property %v", requiredProperty)
+		}
+	}
+
+	varEsimProfileStatusWebhook := _EsimProfileStatusWebhook{}
+
+	decoder := json.NewDecoder(bytes.NewReader(data))
+	err = decoder.Decode(&varEsimProfileStatusWebhook)
+
+	if err != nil {
+		return err
+	}
+
+	*o = EsimProfileStatusWebhook(varEsimProfileStatusWebhook)
+
+	return err
 }
 
 type NullableEsimProfileStatusWebhook struct {

@@ -210,7 +210,6 @@ func (o *EsimMixedOrderRequestItem) UnmarshalJSON(data []byte) (err error) {
 	varEsimMixedOrderRequestItem := _EsimMixedOrderRequestItem{}
 
 	decoder := json.NewDecoder(bytes.NewReader(data))
-	decoder.DisallowUnknownFields()
 	err = decoder.Decode(&varEsimMixedOrderRequestItem)
 
 	if err != nil {

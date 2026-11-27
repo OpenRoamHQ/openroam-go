@@ -17,7 +17,7 @@ import (
 	"gopkg.in/validator.v2"
 )
 
-// OfferPrice - Price OpenRoam charges the partner for an offer: one amount, or bounds for a range offer. The variants carry no discriminator, so this type is written to responses and never bound.
+// OfferPrice - Price OpenRoam charges the partner for an offer: one amount, or bounds for a range offer. With a browser session, it is the traveller's price on the session's site. The variants carry no discriminator, so this type is written to responses and never bound.
 type OfferPrice struct {
 	FixedPrice *FixedPrice
 	PriceRange *PriceRange

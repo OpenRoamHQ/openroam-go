@@ -14,6 +14,8 @@ package openroam
 import (
 	"encoding/json"
 	"time"
+	"bytes"
+	"fmt"
 )
 
 // checks if the OrderSummary type satisfies the MappedNullable interface at compile time
@@ -22,31 +24,45 @@ var _ MappedNullable = &OrderSummary{}
 // OrderSummary One order in the order list.
 type OrderSummary struct {
 	// Order id.
-	Id *string `json:"id,omitempty"`
+	Id string `json:"id"`
 	// Where the order was created.
-	Origin *OrderOrigin `json:"origin,omitempty"`
-	// Current order status.
-	Status *string `json:"status,omitempty"`
-	// What the order costs, in the order's currency.
-	Total *Money `json:"total,omitempty"`
+	Origin OrderOrigin `json:"origin"`
+	// Current order status: `paymentPending`, `processing`, `completed`,             `partiallyFulfilled`, `fulfillmentFailed`, `partiallyRefunded`, `refunded` or `cancelled`.
+	Status string `json:"status"`
+	// What was charged for the order, in the order's currency, before refunds.
+	Total Money `json:"total"`
+	// What completed item refunds returned, in the order's currency; zero when nothing was             returned. You paid `total` minus `refunded`.
+	Refunded Money `json:"refunded"`
 	// The latest payment attempt; `null` when none was made.
 	Payment NullableOrderPayment `json:"payment,omitempty"`
 	// Number of order items.
-	ItemCount *int32 `json:"itemCount,omitempty"`
+	ItemCount int32 `json:"itemCount"`
 	// When the order was created (UTC).
-	CreatedAt *time.Time `json:"createdAt,omitempty"`
-	// When the order last changed (UTC).
-	UpdatedAt *time.Time `json:"updatedAt,omitempty"`
+	CreatedAt time.Time `json:"createdAt"`
+	// When anything in the order last changed (UTC): its status, an item's fulfillment, a refund             or an amendment.
+	UpdatedAt time.Time `json:"updatedAt"`
 	// Your own order reference, when one was sent.
 	ReferenceId NullableString `json:"referenceId,omitempty"`
+	// The checkout the order was placed from, with your payment reference; `null` unless a traveller             paid for it on your own page, on one of your sites that takes payment itself.
+	Checkout NullableOrderCheckout `json:"checkout,omitempty"`
 }
+
+type _OrderSummary OrderSummary
 
 // NewOrderSummary instantiates a new OrderSummary object
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewOrderSummary() *OrderSummary {
+func NewOrderSummary(id string, origin OrderOrigin, status string, total Money, refunded Money, itemCount int32, createdAt time.Time, updatedAt time.Time) *OrderSummary {
 	this := OrderSummary{}
+	this.Id = id
+	this.Origin = origin
+	this.Status = status
+	this.Total = total
+	this.Refunded = refunded
+	this.ItemCount = itemCount
+	this.CreatedAt = createdAt
+	this.UpdatedAt = updatedAt
 	return &this
 }
 
@@ -58,132 +74,124 @@ func NewOrderSummaryWithDefaults() *OrderSummary {
 	return &this
 }
 
-// GetId returns the Id field value if set, zero value otherwise.
+// GetId returns the Id field value
 func (o *OrderSummary) GetId() string {
-	if o == nil || IsNil(o.Id) {
+	if o == nil {
 		var ret string
 		return ret
 	}
-	return *o.Id
+
+	return o.Id
 }
 
-// GetIdOk returns a tuple with the Id field value if set, nil otherwise
+// GetIdOk returns a tuple with the Id field value
 // and a boolean to check if the value has been set.
 func (o *OrderSummary) GetIdOk() (*string, bool) {
-	if o == nil || IsNil(o.Id) {
+	if o == nil {
 		return nil, false
 	}
-	return o.Id, true
+	return &o.Id, true
 }
 
-// HasId returns a boolean if a field has been set.
-func (o *OrderSummary) HasId() bool {
-	if o != nil && !IsNil(o.Id) {
-		return true
-	}
-
-	return false
-}
-
-// SetId gets a reference to the given string and assigns it to the Id field.
+// SetId sets field value
 func (o *OrderSummary) SetId(v string) {
-	o.Id = &v
+	o.Id = v
 }
 
-// GetOrigin returns the Origin field value if set, zero value otherwise.
+// GetOrigin returns the Origin field value
 func (o *OrderSummary) GetOrigin() OrderOrigin {
-	if o == nil || IsNil(o.Origin) {
+	if o == nil {
 		var ret OrderOrigin
 		return ret
 	}
-	return *o.Origin
+
+	return o.Origin
 }
 
-// GetOriginOk returns a tuple with the Origin field value if set, nil otherwise
+// GetOriginOk returns a tuple with the Origin field value
 // and a boolean to check if the value has been set.
 func (o *OrderSummary) GetOriginOk() (*OrderOrigin, bool) {
-	if o == nil || IsNil(o.Origin) {
+	if o == nil {
 		return nil, false
 	}
-	return o.Origin, true
+	return &o.Origin, true
 }
 
-// HasOrigin returns a boolean if a field has been set.
-func (o *OrderSummary) HasOrigin() bool {
-	if o != nil && !IsNil(o.Origin) {
-		return true
-	}
-
-	return false
-}
-
-// SetOrigin gets a reference to the given OrderOrigin and assigns it to the Origin field.
+// SetOrigin sets field value
 func (o *OrderSummary) SetOrigin(v OrderOrigin) {
-	o.Origin = &v
+	o.Origin = v
 }
 
-// GetStatus returns the Status field value if set, zero value otherwise.
+// GetStatus returns the Status field value
 func (o *OrderSummary) GetStatus() string {
-	if o == nil || IsNil(o.Status) {
+	if o == nil {
 		var ret string
 		return ret
 	}
-	return *o.Status
+
+	return o.Status
 }
 
-// GetStatusOk returns a tuple with the Status field value if set, nil otherwise
+// GetStatusOk returns a tuple with the Status field value
 // and a boolean to check if the value has been set.
 func (o *OrderSummary) GetStatusOk() (*string, bool) {
-	if o == nil || IsNil(o.Status) {
+	if o == nil {
 		return nil, false
 	}
-	return o.Status, true
+	return &o.Status, true
 }
 
-// HasStatus returns a boolean if a field has been set.
-func (o *OrderSummary) HasStatus() bool {
-	if o != nil && !IsNil(o.Status) {
-		return true
-	}
-
-	return false
-}
-
-// SetStatus gets a reference to the given string and assigns it to the Status field.
+// SetStatus sets field value
 func (o *OrderSummary) SetStatus(v string) {
-	o.Status = &v
+	o.Status = v
 }
 
-// GetTotal returns the Total field value if set, zero value otherwise.
+// GetTotal returns the Total field value
 func (o *OrderSummary) GetTotal() Money {
-	if o == nil || IsNil(o.Total) {
+	if o == nil {
 		var ret Money
 		return ret
 	}
-	return *o.Total
+
+	return o.Total
 }
 
-// GetTotalOk returns a tuple with the Total field value if set, nil otherwise
+// GetTotalOk returns a tuple with the Total field value
 // and a boolean to check if the value has been set.
 func (o *OrderSummary) GetTotalOk() (*Money, bool) {
-	if o == nil || IsNil(o.Total) {
+	if o == nil {
 		return nil, false
 	}
-	return o.Total, true
+	return &o.Total, true
 }
 
-// HasTotal returns a boolean if a field has been set.
-func (o *OrderSummary) HasTotal() bool {
-	if o != nil && !IsNil(o.Total) {
-		return true
+// SetTotal sets field value
+func (o *OrderSummary) SetTotal(v Money) {
+	o.Total = v
+}
+
+// GetRefunded returns the Refunded field value
+func (o *OrderSummary) GetRefunded() Money {
+	if o == nil {
+		var ret Money
+		return ret
 	}
 
-	return false
+	return o.Refunded
 }
 
-// SetTotal gets a reference to the given Money and assigns it to the Total field.
-func (o *OrderSummary) SetTotal(v Money) {
-	o.Total = &v
+// GetRefundedOk returns a tuple with the Refunded field value
+// and a boolean to check if the value has been set.
+func (o *OrderSummary) GetRefundedOk() (*Money, bool) {
+	if o == nil {
+		return nil, false
+	}
+	return &o.Refunded, true
+}
+
+// SetRefunded sets field value
+func (o *OrderSummary) SetRefunded(v Money) {
+	o.Refunded = v
 }
 
 // GetPayment returns the Payment field value if set, zero value otherwise (both if not set or set to explicit null).
@@ -228,100 +236,76 @@ func (o *OrderSummary) UnsetPayment() {
 	o.Payment.Unset()
 }
 
-// GetItemCount returns the ItemCount field value if set, zero value otherwise.
+// GetItemCount returns the ItemCount field value
 func (o *OrderSummary) GetItemCount() int32 {
-	if o == nil || IsNil(o.ItemCount) {
+	if o == nil {
 		var ret int32
 		return ret
 	}
-	return *o.ItemCount
+
+	return o.ItemCount
 }
 
-// GetItemCountOk returns a tuple with the ItemCount field value if set, nil otherwise
+// GetItemCountOk returns a tuple with the ItemCount field value
 // and a boolean to check if the value has been set.
 func (o *OrderSummary) GetItemCountOk() (*int32, bool) {
-	if o == nil || IsNil(o.ItemCount) {
+	if o == nil {
 		return nil, false
 	}
-	return o.ItemCount, true
+	return &o.ItemCount, true
 }
 
-// HasItemCount returns a boolean if a field has been set.
-func (o *OrderSummary) HasItemCount() bool {
-	if o != nil && !IsNil(o.ItemCount) {
-		return true
-	}
-
-	return false
-}
-
-// SetItemCount gets a reference to the given int32 and assigns it to the ItemCount field.
+// SetItemCount sets field value
 func (o *OrderSummary) SetItemCount(v int32) {
-	o.ItemCount = &v
+	o.ItemCount = v
 }
 
-// GetCreatedAt returns the CreatedAt field value if set, zero value otherwise.
+// GetCreatedAt returns the CreatedAt field value
 func (o *OrderSummary) GetCreatedAt() time.Time {
-	if o == nil || IsNil(o.CreatedAt) {
+	if o == nil {
 		var ret time.Time
 		return ret
 	}
-	return *o.CreatedAt
+
+	return o.CreatedAt
 }
 
-// GetCreatedAtOk returns a tuple with the CreatedAt field value if set, nil otherwise
+// GetCreatedAtOk returns a tuple with the CreatedAt field value
 // and a boolean to check if the value has been set.
 func (o *OrderSummary) GetCreatedAtOk() (*time.Time, bool) {
-	if o == nil || IsNil(o.CreatedAt) {
+	if o == nil {
 		return nil, false
 	}
-	return o.CreatedAt, true
+	return &o.CreatedAt, true
 }
 
-// HasCreatedAt returns a boolean if a field has been set.
-func (o *OrderSummary) HasCreatedAt() bool {
-	if o != nil && !IsNil(o.CreatedAt) {
-		return true
-	}
-
-	return false
-}
-
-// SetCreatedAt gets a reference to the given time.Time and assigns it to the CreatedAt field.
+// SetCreatedAt sets field value
 func (o *OrderSummary) SetCreatedAt(v time.Time) {
-	o.CreatedAt = &v
+	o.CreatedAt = v
 }
 
-// GetUpdatedAt returns the UpdatedAt field value if set, zero value otherwise.
+// GetUpdatedAt returns the UpdatedAt field value
 func (o *OrderSummary) GetUpdatedAt() time.Time {
-	if o == nil || IsNil(o.UpdatedAt) {
+	if o == nil {
 		var ret time.Time
 		return ret
 	}
-	return *o.UpdatedAt
+
+	return o.UpdatedAt
 }
 
-// GetUpdatedAtOk returns a tuple with the UpdatedAt field value if set, nil otherwise
+// GetUpdatedAtOk returns a tuple with the UpdatedAt field value
 // and a boolean to check if the value has been set.
 func (o *OrderSummary) GetUpdatedAtOk() (*time.Time, bool) {
-	if o == nil || IsNil(o.UpdatedAt) {
+	if o == nil {
 		return nil, false
 	}
-	return o.UpdatedAt, true
+	return &o.UpdatedAt, true
 }
 
-// HasUpdatedAt returns a boolean if a field has been set.
-func (o *OrderSummary) HasUpdatedAt() bool {
-	if o != nil && !IsNil(o.UpdatedAt) {
-		return true
-	}
-
-	return false
-}
-
-// SetUpdatedAt gets a reference to the given time.Time and assigns it to the UpdatedAt field.
+// SetUpdatedAt sets field value
 func (o *OrderSummary) SetUpdatedAt(v time.Time) {
-	o.UpdatedAt = &v
+	o.UpdatedAt = v
 }
 
 // GetReferenceId returns the ReferenceId field value if set, zero value otherwise (both if not set or set to explicit null).
@@ -366,6 +350,48 @@ func (o *OrderSummary) UnsetReferenceId() {
 	o.ReferenceId.Unset()
 }
 
+// GetCheckout returns the Checkout field value if set, zero value otherwise (both if not set or set to explicit null).
+func (o *OrderSummary) GetCheckout() OrderCheckout {
+	if o == nil || IsNil(o.Checkout.Get()) {
+		var ret OrderCheckout
+		return ret
+	}
+	return *o.Checkout.Get()
+}
+
+// GetCheckoutOk returns a tuple with the Checkout field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+// NOTE: If the value is an explicit nil, `nil, true` will be returned
+func (o *OrderSummary) GetCheckoutOk() (*OrderCheckout, bool) {
+	if o == nil {
+		return nil, false
+	}
+	return o.Checkout.Get(), o.Checkout.IsSet()
+}
+
+// HasCheckout returns a boolean if a field has been set.
+func (o *OrderSummary) HasCheckout() bool {
+	if o != nil && o.Checkout.IsSet() {
+		return true
+	}
+
+	return false
+}
+
+// SetCheckout gets a reference to the given NullableOrderCheckout and assigns it to the Checkout field.
+func (o *OrderSummary) SetCheckout(v OrderCheckout) {
+	o.Checkout.Set(&v)
+}
+// SetCheckoutNil sets the value for Checkout to be an explicit nil
+func (o *OrderSummary) SetCheckoutNil() {
+	o.Checkout.Set(nil)
+}
+
+// UnsetCheckout ensures that no value is present for Checkout, not even an explicit nil
+func (o *OrderSummary) UnsetCheckout() {
+	o.Checkout.Unset()
+}
+
 func (o OrderSummary) MarshalJSON() ([]byte, error) {
 	toSerialize,err := o.ToMap()
 	if err != nil {
@@ -376,34 +402,67 @@ func (o OrderSummary) MarshalJSON() ([]byte, error) {
 
 func (o OrderSummary) ToMap() (map[string]interface{}, error) {
 	toSerialize := map[string]interface{}{}
-	if !IsNil(o.Id) {
-		toSerialize["id"] = o.Id
-	}
-	if !IsNil(o.Origin) {
-		toSerialize["origin"] = o.Origin
-	}
-	if !IsNil(o.Status) {
-		toSerialize["status"] = o.Status
-	}
-	if !IsNil(o.Total) {
-		toSerialize["total"] = o.Total
-	}
+	toSerialize["id"] = o.Id
+	toSerialize["origin"] = o.Origin
+	toSerialize["status"] = o.Status
+	toSerialize["total"] = o.Total
+	toSerialize["refunded"] = o.Refunded
 	if o.Payment.IsSet() {
 		toSerialize["payment"] = o.Payment.Get()
 	}
-	if !IsNil(o.ItemCount) {
-		toSerialize["itemCount"] = o.ItemCount
-	}
-	if !IsNil(o.CreatedAt) {
-		toSerialize["createdAt"] = o.CreatedAt
-	}
-	if !IsNil(o.UpdatedAt) {
-		toSerialize["updatedAt"] = o.UpdatedAt
-	}
+	toSerialize["itemCount"] = o.ItemCount
+	toSerialize["createdAt"] = o.CreatedAt
+	toSerialize["updatedAt"] = o.UpdatedAt
 	if o.ReferenceId.IsSet() {
 		toSerialize["referenceId"] = o.ReferenceId.Get()
 	}
+	if o.Checkout.IsSet() {
+		toSerialize["checkout"] = o.Checkout.Get()
+	}
 	return toSerialize, nil
+}
+
+func (o *OrderSummary) UnmarshalJSON(data []byte) (err error) {
+	// This validates that all required properties are included in the JSON object
+	// by unmarshalling the object into a generic map with string keys and checking
+	// that every required field exists as a key in the generic map.
+	requiredProperties := []string{
+		"id",
+		"origin",
+		"status",
+		"total",
+		"refunded",
+		"itemCount",
+		"createdAt",
+		"updatedAt",
+	}
+
+	allProperties := make(map[string]interface{})
+
+	err = json.Unmarshal(data, &allProperties)
+
+	if err != nil {
+		return err;
+	}
+
+	for _, requiredProperty := range(requiredProperties) {
+		if _, exists := allProperties[requiredProperty]; !exists {
+			return fmt.Errorf("no value given for required property %v", requiredProperty)
+		}
+	}
+
+	varOrderSummary := _OrderSummary{}
+
+	decoder := json.NewDecoder(bytes.NewReader(data))
+	err = decoder.Decode(&varOrderSummary)
+
+	if err != nil {
+		return err
+	}
+
+	*o = OrderSummary(varOrderSummary)
+
+	return err
 }
 
 type NullableOrderSummary struct {

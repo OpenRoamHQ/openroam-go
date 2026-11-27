@@ -22,7 +22,7 @@ var _ MappedNullable = &UtilityOrderRequest{}
 
 // UtilityOrderRequest The body B2B utility quote and order both take.
 type UtilityOrderRequest struct {
-	// Order currency, the currency you are charged in, three letters in either case; the API key's currency when omitted. An unsupported code gives 404 / 10004 before any item is checked.
+	// Order currency, the currency you are charged in, three letters in either case; the API key's currency when omitted. An unsupported code gives 400 / 10001 at `currency`, reason `NOT_SUPPORTED`, before any item is checked.
 	Currency NullableString `json:"currency,omitempty"`
 	// Optional partner order reference, unique per partner, at most 128 characters without leading or trailing spaces. A quote validates it and ignores it.
 	ReferenceId NullableString `json:"referenceId,omitempty"`
@@ -203,7 +203,6 @@ func (o *UtilityOrderRequest) UnmarshalJSON(data []byte) (err error) {
 	varUtilityOrderRequest := _UtilityOrderRequest{}
 
 	decoder := json.NewDecoder(bytes.NewReader(data))
-	decoder.DisallowUnknownFields()
 	err = decoder.Decode(&varUtilityOrderRequest)
 
 	if err != nil {

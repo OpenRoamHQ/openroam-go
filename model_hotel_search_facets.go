@@ -13,6 +13,8 @@ package openroam
 
 import (
 	"encoding/json"
+	"bytes"
+	"fmt"
 )
 
 // checks if the HotelSearchFacets type satisfies the MappedNullable interface at compile time
@@ -20,16 +22,20 @@ var _ MappedNullable = &HotelSearchFacets{}
 
 // HotelSearchFacets The filter values worth offering for this search, with how many hotels each would keep.
 type HotelSearchFacets struct {
-	Amenities []AmenityFacet `json:"amenities,omitempty"`
-	AmenityGroups []AmenityGroup `json:"amenityGroups,omitempty"`
+	Amenities []AmenityFacet `json:"amenities"`
+	AmenityGroups []AmenityGroup `json:"amenityGroups"`
 }
+
+type _HotelSearchFacets HotelSearchFacets
 
 // NewHotelSearchFacets instantiates a new HotelSearchFacets object
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewHotelSearchFacets() *HotelSearchFacets {
+func NewHotelSearchFacets(amenities []AmenityFacet, amenityGroups []AmenityGroup) *HotelSearchFacets {
 	this := HotelSearchFacets{}
+	this.Amenities = amenities
+	this.AmenityGroups = amenityGroups
 	return &this
 }
 
@@ -41,66 +47,50 @@ func NewHotelSearchFacetsWithDefaults() *HotelSearchFacets {
 	return &this
 }
 
-// GetAmenities returns the Amenities field value if set, zero value otherwise.
+// GetAmenities returns the Amenities field value
 func (o *HotelSearchFacets) GetAmenities() []AmenityFacet {
-	if o == nil || IsNil(o.Amenities) {
+	if o == nil {
 		var ret []AmenityFacet
 		return ret
 	}
+
 	return o.Amenities
 }
 
-// GetAmenitiesOk returns a tuple with the Amenities field value if set, nil otherwise
+// GetAmenitiesOk returns a tuple with the Amenities field value
 // and a boolean to check if the value has been set.
 func (o *HotelSearchFacets) GetAmenitiesOk() ([]AmenityFacet, bool) {
-	if o == nil || IsNil(o.Amenities) {
+	if o == nil {
 		return nil, false
 	}
 	return o.Amenities, true
 }
 
-// HasAmenities returns a boolean if a field has been set.
-func (o *HotelSearchFacets) HasAmenities() bool {
-	if o != nil && !IsNil(o.Amenities) {
-		return true
-	}
-
-	return false
-}
-
-// SetAmenities gets a reference to the given []AmenityFacet and assigns it to the Amenities field.
+// SetAmenities sets field value
 func (o *HotelSearchFacets) SetAmenities(v []AmenityFacet) {
 	o.Amenities = v
 }
 
-// GetAmenityGroups returns the AmenityGroups field value if set, zero value otherwise.
+// GetAmenityGroups returns the AmenityGroups field value
 func (o *HotelSearchFacets) GetAmenityGroups() []AmenityGroup {
-	if o == nil || IsNil(o.AmenityGroups) {
+	if o == nil {
 		var ret []AmenityGroup
 		return ret
 	}
+
 	return o.AmenityGroups
 }
 
-// GetAmenityGroupsOk returns a tuple with the AmenityGroups field value if set, nil otherwise
+// GetAmenityGroupsOk returns a tuple with the AmenityGroups field value
 // and a boolean to check if the value has been set.
 func (o *HotelSearchFacets) GetAmenityGroupsOk() ([]AmenityGroup, bool) {
-	if o == nil || IsNil(o.AmenityGroups) {
+	if o == nil {
 		return nil, false
 	}
 	return o.AmenityGroups, true
 }
 
-// HasAmenityGroups returns a boolean if a field has been set.
-func (o *HotelSearchFacets) HasAmenityGroups() bool {
-	if o != nil && !IsNil(o.AmenityGroups) {
-		return true
-	}
-
-	return false
-}
-
-// SetAmenityGroups gets a reference to the given []AmenityGroup and assigns it to the AmenityGroups field.
+// SetAmenityGroups sets field value
 func (o *HotelSearchFacets) SetAmenityGroups(v []AmenityGroup) {
 	o.AmenityGroups = v
 }
@@ -115,13 +105,46 @@ func (o HotelSearchFacets) MarshalJSON() ([]byte, error) {
 
 func (o HotelSearchFacets) ToMap() (map[string]interface{}, error) {
 	toSerialize := map[string]interface{}{}
-	if !IsNil(o.Amenities) {
-		toSerialize["amenities"] = o.Amenities
-	}
-	if !IsNil(o.AmenityGroups) {
-		toSerialize["amenityGroups"] = o.AmenityGroups
-	}
+	toSerialize["amenities"] = o.Amenities
+	toSerialize["amenityGroups"] = o.AmenityGroups
 	return toSerialize, nil
+}
+
+func (o *HotelSearchFacets) UnmarshalJSON(data []byte) (err error) {
+	// This validates that all required properties are included in the JSON object
+	// by unmarshalling the object into a generic map with string keys and checking
+	// that every required field exists as a key in the generic map.
+	requiredProperties := []string{
+		"amenities",
+		"amenityGroups",
+	}
+
+	allProperties := make(map[string]interface{})
+
+	err = json.Unmarshal(data, &allProperties)
+
+	if err != nil {
+		return err;
+	}
+
+	for _, requiredProperty := range(requiredProperties) {
+		if _, exists := allProperties[requiredProperty]; !exists {
+			return fmt.Errorf("no value given for required property %v", requiredProperty)
+		}
+	}
+
+	varHotelSearchFacets := _HotelSearchFacets{}
+
+	decoder := json.NewDecoder(bytes.NewReader(data))
+	err = decoder.Decode(&varHotelSearchFacets)
+
+	if err != nil {
+		return err
+	}
+
+	*o = HotelSearchFacets(varHotelSearchFacets)
+
+	return err
 }
 
 type NullableHotelSearchFacets struct {

@@ -13,6 +13,8 @@ package openroam
 
 import (
 	"encoding/json"
+	"bytes"
+	"fmt"
 )
 
 // checks if the GuestNameRules type satisfies the MappedNullable interface at compile time
@@ -21,23 +23,33 @@ var _ MappedNullable = &GuestNameRules{}
 // GuestNameRules What the booking accepts as a holder's or guest's first and last name, so a form can check the names before the order is sent. Quote, order and cart add enforce the same rules.
 type GuestNameRules struct {
 	// Fewest characters in a first or last name.
-	MinLength *int32 `json:"minLength,omitempty"`
+	MinLength int32 `json:"minLength"`
 	// Most characters in a first or last name.
-	MaxLength *int32 `json:"maxLength,omitempty"`
+	MaxLength int32 `json:"maxLength"`
 	// Regular expression every first and last name must match.
-	Pattern *string `json:"pattern,omitempty"`
+	Pattern string `json:"pattern"`
 	// The pattern in words, for a hint next to the field.
-	AllowedCharacters *string `json:"allowedCharacters,omitempty"`
+	AllowedCharacters string `json:"allowedCharacters"`
 	// Whether two guests of the booking may not share the same first and last name together. Sharing only a first name is always accepted.
-	DistinctFullNames *bool `json:"distinctFullNames,omitempty"`
+	DistinctFullNames bool `json:"distinctFullNames"`
+	// Whether both room guest name fields may be omitted. Holder names are required.
+	GuestNamesOptional bool `json:"guestNamesOptional"`
 }
+
+type _GuestNameRules GuestNameRules
 
 // NewGuestNameRules instantiates a new GuestNameRules object
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewGuestNameRules() *GuestNameRules {
+func NewGuestNameRules(minLength int32, maxLength int32, pattern string, allowedCharacters string, distinctFullNames bool, guestNamesOptional bool) *GuestNameRules {
 	this := GuestNameRules{}
+	this.MinLength = minLength
+	this.MaxLength = maxLength
+	this.Pattern = pattern
+	this.AllowedCharacters = allowedCharacters
+	this.DistinctFullNames = distinctFullNames
+	this.GuestNamesOptional = guestNamesOptional
 	return &this
 }
 
@@ -49,164 +61,148 @@ func NewGuestNameRulesWithDefaults() *GuestNameRules {
 	return &this
 }
 
-// GetMinLength returns the MinLength field value if set, zero value otherwise.
+// GetMinLength returns the MinLength field value
 func (o *GuestNameRules) GetMinLength() int32 {
-	if o == nil || IsNil(o.MinLength) {
+	if o == nil {
 		var ret int32
 		return ret
 	}
-	return *o.MinLength
+
+	return o.MinLength
 }
 
-// GetMinLengthOk returns a tuple with the MinLength field value if set, nil otherwise
+// GetMinLengthOk returns a tuple with the MinLength field value
 // and a boolean to check if the value has been set.
 func (o *GuestNameRules) GetMinLengthOk() (*int32, bool) {
-	if o == nil || IsNil(o.MinLength) {
+	if o == nil {
 		return nil, false
 	}
-	return o.MinLength, true
+	return &o.MinLength, true
 }
 
-// HasMinLength returns a boolean if a field has been set.
-func (o *GuestNameRules) HasMinLength() bool {
-	if o != nil && !IsNil(o.MinLength) {
-		return true
-	}
-
-	return false
-}
-
-// SetMinLength gets a reference to the given int32 and assigns it to the MinLength field.
+// SetMinLength sets field value
 func (o *GuestNameRules) SetMinLength(v int32) {
-	o.MinLength = &v
+	o.MinLength = v
 }
 
-// GetMaxLength returns the MaxLength field value if set, zero value otherwise.
+// GetMaxLength returns the MaxLength field value
 func (o *GuestNameRules) GetMaxLength() int32 {
-	if o == nil || IsNil(o.MaxLength) {
+	if o == nil {
 		var ret int32
 		return ret
 	}
-	return *o.MaxLength
+
+	return o.MaxLength
 }
 
-// GetMaxLengthOk returns a tuple with the MaxLength field value if set, nil otherwise
+// GetMaxLengthOk returns a tuple with the MaxLength field value
 // and a boolean to check if the value has been set.
 func (o *GuestNameRules) GetMaxLengthOk() (*int32, bool) {
-	if o == nil || IsNil(o.MaxLength) {
+	if o == nil {
 		return nil, false
 	}
-	return o.MaxLength, true
+	return &o.MaxLength, true
 }
 
-// HasMaxLength returns a boolean if a field has been set.
-func (o *GuestNameRules) HasMaxLength() bool {
-	if o != nil && !IsNil(o.MaxLength) {
-		return true
-	}
-
-	return false
-}
-
-// SetMaxLength gets a reference to the given int32 and assigns it to the MaxLength field.
+// SetMaxLength sets field value
 func (o *GuestNameRules) SetMaxLength(v int32) {
-	o.MaxLength = &v
+	o.MaxLength = v
 }
 
-// GetPattern returns the Pattern field value if set, zero value otherwise.
+// GetPattern returns the Pattern field value
 func (o *GuestNameRules) GetPattern() string {
-	if o == nil || IsNil(o.Pattern) {
+	if o == nil {
 		var ret string
 		return ret
 	}
-	return *o.Pattern
+
+	return o.Pattern
 }
 
-// GetPatternOk returns a tuple with the Pattern field value if set, nil otherwise
+// GetPatternOk returns a tuple with the Pattern field value
 // and a boolean to check if the value has been set.
 func (o *GuestNameRules) GetPatternOk() (*string, bool) {
-	if o == nil || IsNil(o.Pattern) {
+	if o == nil {
 		return nil, false
 	}
-	return o.Pattern, true
+	return &o.Pattern, true
 }
 
-// HasPattern returns a boolean if a field has been set.
-func (o *GuestNameRules) HasPattern() bool {
-	if o != nil && !IsNil(o.Pattern) {
-		return true
-	}
-
-	return false
-}
-
-// SetPattern gets a reference to the given string and assigns it to the Pattern field.
+// SetPattern sets field value
 func (o *GuestNameRules) SetPattern(v string) {
-	o.Pattern = &v
+	o.Pattern = v
 }
 
-// GetAllowedCharacters returns the AllowedCharacters field value if set, zero value otherwise.
+// GetAllowedCharacters returns the AllowedCharacters field value
 func (o *GuestNameRules) GetAllowedCharacters() string {
-	if o == nil || IsNil(o.AllowedCharacters) {
+	if o == nil {
 		var ret string
 		return ret
 	}
-	return *o.AllowedCharacters
+
+	return o.AllowedCharacters
 }
 
-// GetAllowedCharactersOk returns a tuple with the AllowedCharacters field value if set, nil otherwise
+// GetAllowedCharactersOk returns a tuple with the AllowedCharacters field value
 // and a boolean to check if the value has been set.
 func (o *GuestNameRules) GetAllowedCharactersOk() (*string, bool) {
-	if o == nil || IsNil(o.AllowedCharacters) {
+	if o == nil {
 		return nil, false
 	}
-	return o.AllowedCharacters, true
+	return &o.AllowedCharacters, true
 }
 
-// HasAllowedCharacters returns a boolean if a field has been set.
-func (o *GuestNameRules) HasAllowedCharacters() bool {
-	if o != nil && !IsNil(o.AllowedCharacters) {
-		return true
-	}
-
-	return false
-}
-
-// SetAllowedCharacters gets a reference to the given string and assigns it to the AllowedCharacters field.
+// SetAllowedCharacters sets field value
 func (o *GuestNameRules) SetAllowedCharacters(v string) {
-	o.AllowedCharacters = &v
+	o.AllowedCharacters = v
 }
 
-// GetDistinctFullNames returns the DistinctFullNames field value if set, zero value otherwise.
+// GetDistinctFullNames returns the DistinctFullNames field value
 func (o *GuestNameRules) GetDistinctFullNames() bool {
-	if o == nil || IsNil(o.DistinctFullNames) {
+	if o == nil {
 		var ret bool
 		return ret
 	}
-	return *o.DistinctFullNames
+
+	return o.DistinctFullNames
 }
 
-// GetDistinctFullNamesOk returns a tuple with the DistinctFullNames field value if set, nil otherwise
+// GetDistinctFullNamesOk returns a tuple with the DistinctFullNames field value
 // and a boolean to check if the value has been set.
 func (o *GuestNameRules) GetDistinctFullNamesOk() (*bool, bool) {
-	if o == nil || IsNil(o.DistinctFullNames) {
+	if o == nil {
 		return nil, false
 	}
-	return o.DistinctFullNames, true
+	return &o.DistinctFullNames, true
 }
 
-// HasDistinctFullNames returns a boolean if a field has been set.
-func (o *GuestNameRules) HasDistinctFullNames() bool {
-	if o != nil && !IsNil(o.DistinctFullNames) {
-		return true
+// SetDistinctFullNames sets field value
+func (o *GuestNameRules) SetDistinctFullNames(v bool) {
+	o.DistinctFullNames = v
+}
+
+// GetGuestNamesOptional returns the GuestNamesOptional field value
+func (o *GuestNameRules) GetGuestNamesOptional() bool {
+	if o == nil {
+		var ret bool
+		return ret
 	}
 
-	return false
+	return o.GuestNamesOptional
 }
 
-// SetDistinctFullNames gets a reference to the given bool and assigns it to the DistinctFullNames field.
-func (o *GuestNameRules) SetDistinctFullNames(v bool) {
-	o.DistinctFullNames = &v
+// GetGuestNamesOptionalOk returns a tuple with the GuestNamesOptional field value
+// and a boolean to check if the value has been set.
+func (o *GuestNameRules) GetGuestNamesOptionalOk() (*bool, bool) {
+	if o == nil {
+		return nil, false
+	}
+	return &o.GuestNamesOptional, true
+}
+
+// SetGuestNamesOptional sets field value
+func (o *GuestNameRules) SetGuestNamesOptional(v bool) {
+	o.GuestNamesOptional = v
 }
 
 func (o GuestNameRules) MarshalJSON() ([]byte, error) {
@@ -219,22 +215,54 @@ func (o GuestNameRules) MarshalJSON() ([]byte, error) {
 
 func (o GuestNameRules) ToMap() (map[string]interface{}, error) {
 	toSerialize := map[string]interface{}{}
-	if !IsNil(o.MinLength) {
-		toSerialize["minLength"] = o.MinLength
-	}
-	if !IsNil(o.MaxLength) {
-		toSerialize["maxLength"] = o.MaxLength
-	}
-	if !IsNil(o.Pattern) {
-		toSerialize["pattern"] = o.Pattern
-	}
-	if !IsNil(o.AllowedCharacters) {
-		toSerialize["allowedCharacters"] = o.AllowedCharacters
-	}
-	if !IsNil(o.DistinctFullNames) {
-		toSerialize["distinctFullNames"] = o.DistinctFullNames
-	}
+	toSerialize["minLength"] = o.MinLength
+	toSerialize["maxLength"] = o.MaxLength
+	toSerialize["pattern"] = o.Pattern
+	toSerialize["allowedCharacters"] = o.AllowedCharacters
+	toSerialize["distinctFullNames"] = o.DistinctFullNames
+	toSerialize["guestNamesOptional"] = o.GuestNamesOptional
 	return toSerialize, nil
+}
+
+func (o *GuestNameRules) UnmarshalJSON(data []byte) (err error) {
+	// This validates that all required properties are included in the JSON object
+	// by unmarshalling the object into a generic map with string keys and checking
+	// that every required field exists as a key in the generic map.
+	requiredProperties := []string{
+		"minLength",
+		"maxLength",
+		"pattern",
+		"allowedCharacters",
+		"distinctFullNames",
+		"guestNamesOptional",
+	}
+
+	allProperties := make(map[string]interface{})
+
+	err = json.Unmarshal(data, &allProperties)
+
+	if err != nil {
+		return err;
+	}
+
+	for _, requiredProperty := range(requiredProperties) {
+		if _, exists := allProperties[requiredProperty]; !exists {
+			return fmt.Errorf("no value given for required property %v", requiredProperty)
+		}
+	}
+
+	varGuestNameRules := _GuestNameRules{}
+
+	decoder := json.NewDecoder(bytes.NewReader(data))
+	err = decoder.Decode(&varGuestNameRules)
+
+	if err != nil {
+		return err
+	}
+
+	*o = GuestNameRules(varGuestNameRules)
+
+	return err
 }
 
 type NullableGuestNameRules struct {

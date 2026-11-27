@@ -13,6 +13,8 @@ package openroam
 
 import (
 	"encoding/json"
+	"bytes"
+	"fmt"
 )
 
 // checks if the EsimPurchasedProduct type satisfies the MappedNullable interface at compile time
@@ -20,22 +22,27 @@ var _ MappedNullable = &EsimPurchasedProduct{}
 
 // EsimPurchasedProduct The eSIM plan an order item bought. `name` is the package name, as the offer names it, and `logoUrl` is the destination image. An eSIM has no monetary value, so there is no `value`. `inputs` echoes the item's inputs with device and eSIM identifiers masked.
 type EsimPurchasedProduct struct {
-	Name *string `json:"name,omitempty"`
+	Name string `json:"name"`
 	// ISO 3166-1 alpha-2 code of a local destination; null for regional and global ones.
 	CountryCode NullableString `json:"countryCode,omitempty"`
 	LogoUrl NullableString `json:"logoUrl,omitempty"`
 	// The item's `inputs` under the request's keys. `eid`, `imei2` and `iccid` are masked; `travelStartDate` and `isInstant` are returned as applied, so a new eSIM ordered without `isInstant` reads `true`. An input the item did not take is null: a new eSIM has no `iccid`, and a top-up takes no `isInstant`.
-	Inputs *EsimPurchasedInputs `json:"inputs,omitempty"`
+	Inputs EsimPurchasedInputs `json:"inputs"`
 	// eSIM facts outside the purchased-product keys every partner service shares. `isInstant` says whether the eSIM is provisioned when the item is fulfilled; a deferred one waits for `POST /esims/{id}/provisioning`. A top-up is always instant.
-	Details *EsimPurchasedDetails `json:"details,omitempty"`
+	Details EsimPurchasedDetails `json:"details"`
 }
+
+type _EsimPurchasedProduct EsimPurchasedProduct
 
 // NewEsimPurchasedProduct instantiates a new EsimPurchasedProduct object
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewEsimPurchasedProduct() *EsimPurchasedProduct {
+func NewEsimPurchasedProduct(name string, inputs EsimPurchasedInputs, details EsimPurchasedDetails) *EsimPurchasedProduct {
 	this := EsimPurchasedProduct{}
+	this.Name = name
+	this.Inputs = inputs
+	this.Details = details
 	return &this
 }
 
@@ -47,36 +54,28 @@ func NewEsimPurchasedProductWithDefaults() *EsimPurchasedProduct {
 	return &this
 }
 
-// GetName returns the Name field value if set, zero value otherwise.
+// GetName returns the Name field value
 func (o *EsimPurchasedProduct) GetName() string {
-	if o == nil || IsNil(o.Name) {
+	if o == nil {
 		var ret string
 		return ret
 	}
-	return *o.Name
+
+	return o.Name
 }
 
-// GetNameOk returns a tuple with the Name field value if set, nil otherwise
+// GetNameOk returns a tuple with the Name field value
 // and a boolean to check if the value has been set.
 func (o *EsimPurchasedProduct) GetNameOk() (*string, bool) {
-	if o == nil || IsNil(o.Name) {
+	if o == nil {
 		return nil, false
 	}
-	return o.Name, true
+	return &o.Name, true
 }
 
-// HasName returns a boolean if a field has been set.
-func (o *EsimPurchasedProduct) HasName() bool {
-	if o != nil && !IsNil(o.Name) {
-		return true
-	}
-
-	return false
-}
-
-// SetName gets a reference to the given string and assigns it to the Name field.
+// SetName sets field value
 func (o *EsimPurchasedProduct) SetName(v string) {
-	o.Name = &v
+	o.Name = v
 }
 
 // GetCountryCode returns the CountryCode field value if set, zero value otherwise (both if not set or set to explicit null).
@@ -163,68 +162,52 @@ func (o *EsimPurchasedProduct) UnsetLogoUrl() {
 	o.LogoUrl.Unset()
 }
 
-// GetInputs returns the Inputs field value if set, zero value otherwise.
+// GetInputs returns the Inputs field value
 func (o *EsimPurchasedProduct) GetInputs() EsimPurchasedInputs {
-	if o == nil || IsNil(o.Inputs) {
+	if o == nil {
 		var ret EsimPurchasedInputs
 		return ret
 	}
-	return *o.Inputs
+
+	return o.Inputs
 }
 
-// GetInputsOk returns a tuple with the Inputs field value if set, nil otherwise
+// GetInputsOk returns a tuple with the Inputs field value
 // and a boolean to check if the value has been set.
 func (o *EsimPurchasedProduct) GetInputsOk() (*EsimPurchasedInputs, bool) {
-	if o == nil || IsNil(o.Inputs) {
+	if o == nil {
 		return nil, false
 	}
-	return o.Inputs, true
+	return &o.Inputs, true
 }
 
-// HasInputs returns a boolean if a field has been set.
-func (o *EsimPurchasedProduct) HasInputs() bool {
-	if o != nil && !IsNil(o.Inputs) {
-		return true
-	}
-
-	return false
-}
-
-// SetInputs gets a reference to the given EsimPurchasedInputs and assigns it to the Inputs field.
+// SetInputs sets field value
 func (o *EsimPurchasedProduct) SetInputs(v EsimPurchasedInputs) {
-	o.Inputs = &v
+	o.Inputs = v
 }
 
-// GetDetails returns the Details field value if set, zero value otherwise.
+// GetDetails returns the Details field value
 func (o *EsimPurchasedProduct) GetDetails() EsimPurchasedDetails {
-	if o == nil || IsNil(o.Details) {
+	if o == nil {
 		var ret EsimPurchasedDetails
 		return ret
 	}
-	return *o.Details
+
+	return o.Details
 }
 
-// GetDetailsOk returns a tuple with the Details field value if set, nil otherwise
+// GetDetailsOk returns a tuple with the Details field value
 // and a boolean to check if the value has been set.
 func (o *EsimPurchasedProduct) GetDetailsOk() (*EsimPurchasedDetails, bool) {
-	if o == nil || IsNil(o.Details) {
+	if o == nil {
 		return nil, false
 	}
-	return o.Details, true
+	return &o.Details, true
 }
 
-// HasDetails returns a boolean if a field has been set.
-func (o *EsimPurchasedProduct) HasDetails() bool {
-	if o != nil && !IsNil(o.Details) {
-		return true
-	}
-
-	return false
-}
-
-// SetDetails gets a reference to the given EsimPurchasedDetails and assigns it to the Details field.
+// SetDetails sets field value
 func (o *EsimPurchasedProduct) SetDetails(v EsimPurchasedDetails) {
-	o.Details = &v
+	o.Details = v
 }
 
 func (o EsimPurchasedProduct) MarshalJSON() ([]byte, error) {
@@ -237,22 +220,54 @@ func (o EsimPurchasedProduct) MarshalJSON() ([]byte, error) {
 
 func (o EsimPurchasedProduct) ToMap() (map[string]interface{}, error) {
 	toSerialize := map[string]interface{}{}
-	if !IsNil(o.Name) {
-		toSerialize["name"] = o.Name
-	}
+	toSerialize["name"] = o.Name
 	if o.CountryCode.IsSet() {
 		toSerialize["countryCode"] = o.CountryCode.Get()
 	}
 	if o.LogoUrl.IsSet() {
 		toSerialize["logoUrl"] = o.LogoUrl.Get()
 	}
-	if !IsNil(o.Inputs) {
-		toSerialize["inputs"] = o.Inputs
-	}
-	if !IsNil(o.Details) {
-		toSerialize["details"] = o.Details
-	}
+	toSerialize["inputs"] = o.Inputs
+	toSerialize["details"] = o.Details
 	return toSerialize, nil
+}
+
+func (o *EsimPurchasedProduct) UnmarshalJSON(data []byte) (err error) {
+	// This validates that all required properties are included in the JSON object
+	// by unmarshalling the object into a generic map with string keys and checking
+	// that every required field exists as a key in the generic map.
+	requiredProperties := []string{
+		"name",
+		"inputs",
+		"details",
+	}
+
+	allProperties := make(map[string]interface{})
+
+	err = json.Unmarshal(data, &allProperties)
+
+	if err != nil {
+		return err;
+	}
+
+	for _, requiredProperty := range(requiredProperties) {
+		if _, exists := allProperties[requiredProperty]; !exists {
+			return fmt.Errorf("no value given for required property %v", requiredProperty)
+		}
+	}
+
+	varEsimPurchasedProduct := _EsimPurchasedProduct{}
+
+	decoder := json.NewDecoder(bytes.NewReader(data))
+	err = decoder.Decode(&varEsimPurchasedProduct)
+
+	if err != nil {
+		return err
+	}
+
+	*o = EsimPurchasedProduct(varEsimPurchasedProduct)
+
+	return err
 }
 
 type NullableEsimPurchasedProduct struct {

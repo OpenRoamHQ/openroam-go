@@ -13,6 +13,8 @@ package openroam
 
 import (
 	"encoding/json"
+	"bytes"
+	"fmt"
 )
 
 // checks if the EsimStatusEventList type satisfies the MappedNullable interface at compile time
@@ -20,17 +22,21 @@ var _ MappedNullable = &EsimStatusEventList{}
 
 // EsimStatusEventList A page of an eSIM's status changes, newest first.
 type EsimStatusEventList struct {
-	Items []EsimStatusEvent `json:"items,omitempty"`
+	Items []EsimStatusEvent `json:"items"`
 	// Paging of a list response.
-	Pagination *Pagination `json:"pagination,omitempty"`
+	Pagination Pagination `json:"pagination"`
 }
+
+type _EsimStatusEventList EsimStatusEventList
 
 // NewEsimStatusEventList instantiates a new EsimStatusEventList object
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewEsimStatusEventList() *EsimStatusEventList {
+func NewEsimStatusEventList(items []EsimStatusEvent, pagination Pagination) *EsimStatusEventList {
 	this := EsimStatusEventList{}
+	this.Items = items
+	this.Pagination = pagination
 	return &this
 }
 
@@ -42,68 +48,52 @@ func NewEsimStatusEventListWithDefaults() *EsimStatusEventList {
 	return &this
 }
 
-// GetItems returns the Items field value if set, zero value otherwise.
+// GetItems returns the Items field value
 func (o *EsimStatusEventList) GetItems() []EsimStatusEvent {
-	if o == nil || IsNil(o.Items) {
+	if o == nil {
 		var ret []EsimStatusEvent
 		return ret
 	}
+
 	return o.Items
 }
 
-// GetItemsOk returns a tuple with the Items field value if set, nil otherwise
+// GetItemsOk returns a tuple with the Items field value
 // and a boolean to check if the value has been set.
 func (o *EsimStatusEventList) GetItemsOk() ([]EsimStatusEvent, bool) {
-	if o == nil || IsNil(o.Items) {
+	if o == nil {
 		return nil, false
 	}
 	return o.Items, true
 }
 
-// HasItems returns a boolean if a field has been set.
-func (o *EsimStatusEventList) HasItems() bool {
-	if o != nil && !IsNil(o.Items) {
-		return true
-	}
-
-	return false
-}
-
-// SetItems gets a reference to the given []EsimStatusEvent and assigns it to the Items field.
+// SetItems sets field value
 func (o *EsimStatusEventList) SetItems(v []EsimStatusEvent) {
 	o.Items = v
 }
 
-// GetPagination returns the Pagination field value if set, zero value otherwise.
+// GetPagination returns the Pagination field value
 func (o *EsimStatusEventList) GetPagination() Pagination {
-	if o == nil || IsNil(o.Pagination) {
+	if o == nil {
 		var ret Pagination
 		return ret
 	}
-	return *o.Pagination
+
+	return o.Pagination
 }
 
-// GetPaginationOk returns a tuple with the Pagination field value if set, nil otherwise
+// GetPaginationOk returns a tuple with the Pagination field value
 // and a boolean to check if the value has been set.
 func (o *EsimStatusEventList) GetPaginationOk() (*Pagination, bool) {
-	if o == nil || IsNil(o.Pagination) {
+	if o == nil {
 		return nil, false
 	}
-	return o.Pagination, true
+	return &o.Pagination, true
 }
 
-// HasPagination returns a boolean if a field has been set.
-func (o *EsimStatusEventList) HasPagination() bool {
-	if o != nil && !IsNil(o.Pagination) {
-		return true
-	}
-
-	return false
-}
-
-// SetPagination gets a reference to the given Pagination and assigns it to the Pagination field.
+// SetPagination sets field value
 func (o *EsimStatusEventList) SetPagination(v Pagination) {
-	o.Pagination = &v
+	o.Pagination = v
 }
 
 func (o EsimStatusEventList) MarshalJSON() ([]byte, error) {
@@ -116,13 +106,46 @@ func (o EsimStatusEventList) MarshalJSON() ([]byte, error) {
 
 func (o EsimStatusEventList) ToMap() (map[string]interface{}, error) {
 	toSerialize := map[string]interface{}{}
-	if !IsNil(o.Items) {
-		toSerialize["items"] = o.Items
-	}
-	if !IsNil(o.Pagination) {
-		toSerialize["pagination"] = o.Pagination
-	}
+	toSerialize["items"] = o.Items
+	toSerialize["pagination"] = o.Pagination
 	return toSerialize, nil
+}
+
+func (o *EsimStatusEventList) UnmarshalJSON(data []byte) (err error) {
+	// This validates that all required properties are included in the JSON object
+	// by unmarshalling the object into a generic map with string keys and checking
+	// that every required field exists as a key in the generic map.
+	requiredProperties := []string{
+		"items",
+		"pagination",
+	}
+
+	allProperties := make(map[string]interface{})
+
+	err = json.Unmarshal(data, &allProperties)
+
+	if err != nil {
+		return err;
+	}
+
+	for _, requiredProperty := range(requiredProperties) {
+		if _, exists := allProperties[requiredProperty]; !exists {
+			return fmt.Errorf("no value given for required property %v", requiredProperty)
+		}
+	}
+
+	varEsimStatusEventList := _EsimStatusEventList{}
+
+	decoder := json.NewDecoder(bytes.NewReader(data))
+	err = decoder.Decode(&varEsimStatusEventList)
+
+	if err != nil {
+		return err
+	}
+
+	*o = EsimStatusEventList(varEsimStatusEventList)
+
+	return err
 }
 
 type NullableEsimStatusEventList struct {

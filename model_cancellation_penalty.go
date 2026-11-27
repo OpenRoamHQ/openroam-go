@@ -14,6 +14,8 @@ package openroam
 import (
 	"encoding/json"
 	"time"
+	"bytes"
+	"fmt"
 )
 
 // checks if the CancellationPenalty type satisfies the MappedNullable interface at compile time
@@ -22,17 +24,25 @@ var _ MappedNullable = &CancellationPenalty{}
 // CancellationPenalty The cancellation band in effect: cancelling on or after `from` costs `penaltyAmount`.
 type CancellationPenalty struct {
 	// When the band starts applying (UTC).
-	From *time.Time `json:"from,omitempty"`
+	From time.Time `json:"from"`
+	// The clock at the booked place (`timezone`) at `from`; null for a band that applies whatever the date. Written yyyy-MM-ddTHH:mm:ss with no zone, for display only: compute and compare with `from`. Null when the place's time zone is unknown.
+	FromLocalTime NullableString `json:"fromLocalTime,omitempty"`
+	// The IANA time zone of the booked place, such as `Europe/Paris`; null when its location does not tell it.
+	Timezone NullableString `json:"timezone,omitempty"`
 	// What cancelling in this band costs, in the order currency.
-	PenaltyAmount *Money `json:"penaltyAmount,omitempty"`
+	PenaltyAmount Money `json:"penaltyAmount"`
 }
+
+type _CancellationPenalty CancellationPenalty
 
 // NewCancellationPenalty instantiates a new CancellationPenalty object
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewCancellationPenalty() *CancellationPenalty {
+func NewCancellationPenalty(from time.Time, penaltyAmount Money) *CancellationPenalty {
 	this := CancellationPenalty{}
+	this.From = from
+	this.PenaltyAmount = penaltyAmount
 	return &this
 }
 
@@ -44,68 +54,136 @@ func NewCancellationPenaltyWithDefaults() *CancellationPenalty {
 	return &this
 }
 
-// GetFrom returns the From field value if set, zero value otherwise.
+// GetFrom returns the From field value
 func (o *CancellationPenalty) GetFrom() time.Time {
-	if o == nil || IsNil(o.From) {
+	if o == nil {
 		var ret time.Time
 		return ret
 	}
-	return *o.From
+
+	return o.From
 }
 
-// GetFromOk returns a tuple with the From field value if set, nil otherwise
+// GetFromOk returns a tuple with the From field value
 // and a boolean to check if the value has been set.
 func (o *CancellationPenalty) GetFromOk() (*time.Time, bool) {
-	if o == nil || IsNil(o.From) {
+	if o == nil {
 		return nil, false
 	}
-	return o.From, true
+	return &o.From, true
 }
 
-// HasFrom returns a boolean if a field has been set.
-func (o *CancellationPenalty) HasFrom() bool {
-	if o != nil && !IsNil(o.From) {
+// SetFrom sets field value
+func (o *CancellationPenalty) SetFrom(v time.Time) {
+	o.From = v
+}
+
+// GetFromLocalTime returns the FromLocalTime field value if set, zero value otherwise (both if not set or set to explicit null).
+func (o *CancellationPenalty) GetFromLocalTime() string {
+	if o == nil || IsNil(o.FromLocalTime.Get()) {
+		var ret string
+		return ret
+	}
+	return *o.FromLocalTime.Get()
+}
+
+// GetFromLocalTimeOk returns a tuple with the FromLocalTime field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+// NOTE: If the value is an explicit nil, `nil, true` will be returned
+func (o *CancellationPenalty) GetFromLocalTimeOk() (*string, bool) {
+	if o == nil {
+		return nil, false
+	}
+	return o.FromLocalTime.Get(), o.FromLocalTime.IsSet()
+}
+
+// HasFromLocalTime returns a boolean if a field has been set.
+func (o *CancellationPenalty) HasFromLocalTime() bool {
+	if o != nil && o.FromLocalTime.IsSet() {
 		return true
 	}
 
 	return false
 }
 
-// SetFrom gets a reference to the given time.Time and assigns it to the From field.
-func (o *CancellationPenalty) SetFrom(v time.Time) {
-	o.From = &v
+// SetFromLocalTime gets a reference to the given NullableString and assigns it to the FromLocalTime field.
+func (o *CancellationPenalty) SetFromLocalTime(v string) {
+	o.FromLocalTime.Set(&v)
+}
+// SetFromLocalTimeNil sets the value for FromLocalTime to be an explicit nil
+func (o *CancellationPenalty) SetFromLocalTimeNil() {
+	o.FromLocalTime.Set(nil)
 }
 
-// GetPenaltyAmount returns the PenaltyAmount field value if set, zero value otherwise.
+// UnsetFromLocalTime ensures that no value is present for FromLocalTime, not even an explicit nil
+func (o *CancellationPenalty) UnsetFromLocalTime() {
+	o.FromLocalTime.Unset()
+}
+
+// GetTimezone returns the Timezone field value if set, zero value otherwise (both if not set or set to explicit null).
+func (o *CancellationPenalty) GetTimezone() string {
+	if o == nil || IsNil(o.Timezone.Get()) {
+		var ret string
+		return ret
+	}
+	return *o.Timezone.Get()
+}
+
+// GetTimezoneOk returns a tuple with the Timezone field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+// NOTE: If the value is an explicit nil, `nil, true` will be returned
+func (o *CancellationPenalty) GetTimezoneOk() (*string, bool) {
+	if o == nil {
+		return nil, false
+	}
+	return o.Timezone.Get(), o.Timezone.IsSet()
+}
+
+// HasTimezone returns a boolean if a field has been set.
+func (o *CancellationPenalty) HasTimezone() bool {
+	if o != nil && o.Timezone.IsSet() {
+		return true
+	}
+
+	return false
+}
+
+// SetTimezone gets a reference to the given NullableString and assigns it to the Timezone field.
+func (o *CancellationPenalty) SetTimezone(v string) {
+	o.Timezone.Set(&v)
+}
+// SetTimezoneNil sets the value for Timezone to be an explicit nil
+func (o *CancellationPenalty) SetTimezoneNil() {
+	o.Timezone.Set(nil)
+}
+
+// UnsetTimezone ensures that no value is present for Timezone, not even an explicit nil
+func (o *CancellationPenalty) UnsetTimezone() {
+	o.Timezone.Unset()
+}
+
+// GetPenaltyAmount returns the PenaltyAmount field value
 func (o *CancellationPenalty) GetPenaltyAmount() Money {
-	if o == nil || IsNil(o.PenaltyAmount) {
+	if o == nil {
 		var ret Money
 		return ret
 	}
-	return *o.PenaltyAmount
+
+	return o.PenaltyAmount
 }
 
-// GetPenaltyAmountOk returns a tuple with the PenaltyAmount field value if set, nil otherwise
+// GetPenaltyAmountOk returns a tuple with the PenaltyAmount field value
 // and a boolean to check if the value has been set.
 func (o *CancellationPenalty) GetPenaltyAmountOk() (*Money, bool) {
-	if o == nil || IsNil(o.PenaltyAmount) {
+	if o == nil {
 		return nil, false
 	}
-	return o.PenaltyAmount, true
+	return &o.PenaltyAmount, true
 }
 
-// HasPenaltyAmount returns a boolean if a field has been set.
-func (o *CancellationPenalty) HasPenaltyAmount() bool {
-	if o != nil && !IsNil(o.PenaltyAmount) {
-		return true
-	}
-
-	return false
-}
-
-// SetPenaltyAmount gets a reference to the given Money and assigns it to the PenaltyAmount field.
+// SetPenaltyAmount sets field value
 func (o *CancellationPenalty) SetPenaltyAmount(v Money) {
-	o.PenaltyAmount = &v
+	o.PenaltyAmount = v
 }
 
 func (o CancellationPenalty) MarshalJSON() ([]byte, error) {
@@ -118,13 +196,52 @@ func (o CancellationPenalty) MarshalJSON() ([]byte, error) {
 
 func (o CancellationPenalty) ToMap() (map[string]interface{}, error) {
 	toSerialize := map[string]interface{}{}
-	if !IsNil(o.From) {
-		toSerialize["from"] = o.From
+	toSerialize["from"] = o.From
+	if o.FromLocalTime.IsSet() {
+		toSerialize["fromLocalTime"] = o.FromLocalTime.Get()
 	}
-	if !IsNil(o.PenaltyAmount) {
-		toSerialize["penaltyAmount"] = o.PenaltyAmount
+	if o.Timezone.IsSet() {
+		toSerialize["timezone"] = o.Timezone.Get()
 	}
+	toSerialize["penaltyAmount"] = o.PenaltyAmount
 	return toSerialize, nil
+}
+
+func (o *CancellationPenalty) UnmarshalJSON(data []byte) (err error) {
+	// This validates that all required properties are included in the JSON object
+	// by unmarshalling the object into a generic map with string keys and checking
+	// that every required field exists as a key in the generic map.
+	requiredProperties := []string{
+		"from",
+		"penaltyAmount",
+	}
+
+	allProperties := make(map[string]interface{})
+
+	err = json.Unmarshal(data, &allProperties)
+
+	if err != nil {
+		return err;
+	}
+
+	for _, requiredProperty := range(requiredProperties) {
+		if _, exists := allProperties[requiredProperty]; !exists {
+			return fmt.Errorf("no value given for required property %v", requiredProperty)
+		}
+	}
+
+	varCancellationPenalty := _CancellationPenalty{}
+
+	decoder := json.NewDecoder(bytes.NewReader(data))
+	err = decoder.Decode(&varCancellationPenalty)
+
+	if err != nil {
+		return err
+	}
+
+	*o = CancellationPenalty(varCancellationPenalty)
+
+	return err
 }
 
 type NullableCancellationPenalty struct {

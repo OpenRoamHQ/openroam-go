@@ -24,8 +24,8 @@ var _ MappedNullable = &PassengerPricing{}
 type PassengerPricing struct {
 	PassengerType string `json:"passengerType"`
 	Count int32 `json:"count"`
-	PricePerPassenger Money `json:"pricePerPassenger"`
-	PriceBreakdown NullablePriceBreakdown `json:"priceBreakdown,omitempty"`
+	// The price of one passenger of this type, when the fare states it; otherwise, and for a browser session,             null. Never an even share of the total: use the fare's `price` for what the passengers cost together.
+	PricePerPassenger NullableMoney `json:"pricePerPassenger"`
 	FareBasisCode NullableString `json:"fareBasisCode,omitempty"`
 	BookingClass NullableString `json:"bookingClass,omitempty"`
 }
@@ -36,7 +36,7 @@ type _PassengerPricing PassengerPricing
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewPassengerPricing(passengerType string, count int32, pricePerPassenger Money) *PassengerPricing {
+func NewPassengerPricing(passengerType string, count int32, pricePerPassenger NullableMoney) *PassengerPricing {
 	this := PassengerPricing{}
 	this.PassengerType = passengerType
 	this.Count = count
@@ -101,69 +101,29 @@ func (o *PassengerPricing) SetCount(v int32) {
 }
 
 // GetPricePerPassenger returns the PricePerPassenger field value
+// If the value is explicit nil, the zero value for Money will be returned
 func (o *PassengerPricing) GetPricePerPassenger() Money {
-	if o == nil {
+	if o == nil || o.PricePerPassenger.Get() == nil {
 		var ret Money
 		return ret
 	}
 
-	return o.PricePerPassenger
+	return *o.PricePerPassenger.Get()
 }
 
 // GetPricePerPassengerOk returns a tuple with the PricePerPassenger field value
 // and a boolean to check if the value has been set.
+// NOTE: If the value is an explicit nil, `nil, true` will be returned
 func (o *PassengerPricing) GetPricePerPassengerOk() (*Money, bool) {
 	if o == nil {
 		return nil, false
 	}
-	return &o.PricePerPassenger, true
+	return o.PricePerPassenger.Get(), o.PricePerPassenger.IsSet()
 }
 
 // SetPricePerPassenger sets field value
 func (o *PassengerPricing) SetPricePerPassenger(v Money) {
-	o.PricePerPassenger = v
-}
-
-// GetPriceBreakdown returns the PriceBreakdown field value if set, zero value otherwise (both if not set or set to explicit null).
-func (o *PassengerPricing) GetPriceBreakdown() PriceBreakdown {
-	if o == nil || IsNil(o.PriceBreakdown.Get()) {
-		var ret PriceBreakdown
-		return ret
-	}
-	return *o.PriceBreakdown.Get()
-}
-
-// GetPriceBreakdownOk returns a tuple with the PriceBreakdown field value if set, nil otherwise
-// and a boolean to check if the value has been set.
-// NOTE: If the value is an explicit nil, `nil, true` will be returned
-func (o *PassengerPricing) GetPriceBreakdownOk() (*PriceBreakdown, bool) {
-	if o == nil {
-		return nil, false
-	}
-	return o.PriceBreakdown.Get(), o.PriceBreakdown.IsSet()
-}
-
-// HasPriceBreakdown returns a boolean if a field has been set.
-func (o *PassengerPricing) HasPriceBreakdown() bool {
-	if o != nil && o.PriceBreakdown.IsSet() {
-		return true
-	}
-
-	return false
-}
-
-// SetPriceBreakdown gets a reference to the given NullablePriceBreakdown and assigns it to the PriceBreakdown field.
-func (o *PassengerPricing) SetPriceBreakdown(v PriceBreakdown) {
-	o.PriceBreakdown.Set(&v)
-}
-// SetPriceBreakdownNil sets the value for PriceBreakdown to be an explicit nil
-func (o *PassengerPricing) SetPriceBreakdownNil() {
-	o.PriceBreakdown.Set(nil)
-}
-
-// UnsetPriceBreakdown ensures that no value is present for PriceBreakdown, not even an explicit nil
-func (o *PassengerPricing) UnsetPriceBreakdown() {
-	o.PriceBreakdown.Unset()
+	o.PricePerPassenger.Set(&v)
 }
 
 // GetFareBasisCode returns the FareBasisCode field value if set, zero value otherwise (both if not set or set to explicit null).
@@ -262,10 +222,7 @@ func (o PassengerPricing) ToMap() (map[string]interface{}, error) {
 	toSerialize := map[string]interface{}{}
 	toSerialize["passengerType"] = o.PassengerType
 	toSerialize["count"] = o.Count
-	toSerialize["pricePerPassenger"] = o.PricePerPassenger
-	if o.PriceBreakdown.IsSet() {
-		toSerialize["priceBreakdown"] = o.PriceBreakdown.Get()
-	}
+	toSerialize["pricePerPassenger"] = o.PricePerPassenger.Get()
 	if o.FareBasisCode.IsSet() {
 		toSerialize["fareBasisCode"] = o.FareBasisCode.Get()
 	}
@@ -302,7 +259,6 @@ func (o *PassengerPricing) UnmarshalJSON(data []byte) (err error) {
 	varPassengerPricing := _PassengerPricing{}
 
 	decoder := json.NewDecoder(bytes.NewReader(data))
-	decoder.DisallowUnknownFields()
 	err = decoder.Decode(&varPassengerPricing)
 
 	if err != nil {

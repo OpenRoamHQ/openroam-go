@@ -13,6 +13,8 @@ package openroam
 
 import (
 	"encoding/json"
+	"bytes"
+	"fmt"
 )
 
 // checks if the WalletSummary type satisfies the MappedNullable interface at compile time
@@ -21,23 +23,30 @@ var _ MappedNullable = &WalletSummary{}
 // WalletSummary A partner wallet.
 type WalletSummary struct {
 	// Wallet id.
-	Id *string `json:"id,omitempty"`
+	Id string `json:"id"`
 	// Display name.
-	Label *string `json:"label,omitempty"`
+	Label string `json:"label"`
 	// Available balance, in the wallet's currency.
-	Balance *float32 `json:"balance,omitempty"`
+	Balance float32 `json:"balance"`
 	// Whether this is the selected wallet that pays for orders.
-	IsSelected *bool `json:"isSelected,omitempty"`
+	IsSelected bool `json:"isSelected"`
 	// The wallet's currency.
-	Currency *Currency `json:"currency,omitempty"`
+	Currency Currency `json:"currency"`
 }
+
+type _WalletSummary WalletSummary
 
 // NewWalletSummary instantiates a new WalletSummary object
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewWalletSummary() *WalletSummary {
+func NewWalletSummary(id string, label string, balance float32, isSelected bool, currency Currency) *WalletSummary {
 	this := WalletSummary{}
+	this.Id = id
+	this.Label = label
+	this.Balance = balance
+	this.IsSelected = isSelected
+	this.Currency = currency
 	return &this
 }
 
@@ -49,164 +58,124 @@ func NewWalletSummaryWithDefaults() *WalletSummary {
 	return &this
 }
 
-// GetId returns the Id field value if set, zero value otherwise.
+// GetId returns the Id field value
 func (o *WalletSummary) GetId() string {
-	if o == nil || IsNil(o.Id) {
+	if o == nil {
 		var ret string
 		return ret
 	}
-	return *o.Id
+
+	return o.Id
 }
 
-// GetIdOk returns a tuple with the Id field value if set, nil otherwise
+// GetIdOk returns a tuple with the Id field value
 // and a boolean to check if the value has been set.
 func (o *WalletSummary) GetIdOk() (*string, bool) {
-	if o == nil || IsNil(o.Id) {
+	if o == nil {
 		return nil, false
 	}
-	return o.Id, true
+	return &o.Id, true
 }
 
-// HasId returns a boolean if a field has been set.
-func (o *WalletSummary) HasId() bool {
-	if o != nil && !IsNil(o.Id) {
-		return true
-	}
-
-	return false
-}
-
-// SetId gets a reference to the given string and assigns it to the Id field.
+// SetId sets field value
 func (o *WalletSummary) SetId(v string) {
-	o.Id = &v
+	o.Id = v
 }
 
-// GetLabel returns the Label field value if set, zero value otherwise.
+// GetLabel returns the Label field value
 func (o *WalletSummary) GetLabel() string {
-	if o == nil || IsNil(o.Label) {
+	if o == nil {
 		var ret string
 		return ret
 	}
-	return *o.Label
+
+	return o.Label
 }
 
-// GetLabelOk returns a tuple with the Label field value if set, nil otherwise
+// GetLabelOk returns a tuple with the Label field value
 // and a boolean to check if the value has been set.
 func (o *WalletSummary) GetLabelOk() (*string, bool) {
-	if o == nil || IsNil(o.Label) {
+	if o == nil {
 		return nil, false
 	}
-	return o.Label, true
+	return &o.Label, true
 }
 
-// HasLabel returns a boolean if a field has been set.
-func (o *WalletSummary) HasLabel() bool {
-	if o != nil && !IsNil(o.Label) {
-		return true
-	}
-
-	return false
-}
-
-// SetLabel gets a reference to the given string and assigns it to the Label field.
+// SetLabel sets field value
 func (o *WalletSummary) SetLabel(v string) {
-	o.Label = &v
+	o.Label = v
 }
 
-// GetBalance returns the Balance field value if set, zero value otherwise.
+// GetBalance returns the Balance field value
 func (o *WalletSummary) GetBalance() float32 {
-	if o == nil || IsNil(o.Balance) {
+	if o == nil {
 		var ret float32
 		return ret
 	}
-	return *o.Balance
+
+	return o.Balance
 }
 
-// GetBalanceOk returns a tuple with the Balance field value if set, nil otherwise
+// GetBalanceOk returns a tuple with the Balance field value
 // and a boolean to check if the value has been set.
 func (o *WalletSummary) GetBalanceOk() (*float32, bool) {
-	if o == nil || IsNil(o.Balance) {
+	if o == nil {
 		return nil, false
 	}
-	return o.Balance, true
+	return &o.Balance, true
 }
 
-// HasBalance returns a boolean if a field has been set.
-func (o *WalletSummary) HasBalance() bool {
-	if o != nil && !IsNil(o.Balance) {
-		return true
-	}
-
-	return false
-}
-
-// SetBalance gets a reference to the given float32 and assigns it to the Balance field.
+// SetBalance sets field value
 func (o *WalletSummary) SetBalance(v float32) {
-	o.Balance = &v
+	o.Balance = v
 }
 
-// GetIsSelected returns the IsSelected field value if set, zero value otherwise.
+// GetIsSelected returns the IsSelected field value
 func (o *WalletSummary) GetIsSelected() bool {
-	if o == nil || IsNil(o.IsSelected) {
+	if o == nil {
 		var ret bool
 		return ret
 	}
-	return *o.IsSelected
+
+	return o.IsSelected
 }
 
-// GetIsSelectedOk returns a tuple with the IsSelected field value if set, nil otherwise
+// GetIsSelectedOk returns a tuple with the IsSelected field value
 // and a boolean to check if the value has been set.
 func (o *WalletSummary) GetIsSelectedOk() (*bool, bool) {
-	if o == nil || IsNil(o.IsSelected) {
+	if o == nil {
 		return nil, false
 	}
-	return o.IsSelected, true
+	return &o.IsSelected, true
 }
 
-// HasIsSelected returns a boolean if a field has been set.
-func (o *WalletSummary) HasIsSelected() bool {
-	if o != nil && !IsNil(o.IsSelected) {
-		return true
-	}
-
-	return false
-}
-
-// SetIsSelected gets a reference to the given bool and assigns it to the IsSelected field.
+// SetIsSelected sets field value
 func (o *WalletSummary) SetIsSelected(v bool) {
-	o.IsSelected = &v
+	o.IsSelected = v
 }
 
-// GetCurrency returns the Currency field value if set, zero value otherwise.
+// GetCurrency returns the Currency field value
 func (o *WalletSummary) GetCurrency() Currency {
-	if o == nil || IsNil(o.Currency) {
+	if o == nil {
 		var ret Currency
 		return ret
 	}
-	return *o.Currency
+
+	return o.Currency
 }
 
-// GetCurrencyOk returns a tuple with the Currency field value if set, nil otherwise
+// GetCurrencyOk returns a tuple with the Currency field value
 // and a boolean to check if the value has been set.
 func (o *WalletSummary) GetCurrencyOk() (*Currency, bool) {
-	if o == nil || IsNil(o.Currency) {
+	if o == nil {
 		return nil, false
 	}
-	return o.Currency, true
+	return &o.Currency, true
 }
 
-// HasCurrency returns a boolean if a field has been set.
-func (o *WalletSummary) HasCurrency() bool {
-	if o != nil && !IsNil(o.Currency) {
-		return true
-	}
-
-	return false
-}
-
-// SetCurrency gets a reference to the given Currency and assigns it to the Currency field.
+// SetCurrency sets field value
 func (o *WalletSummary) SetCurrency(v Currency) {
-	o.Currency = &v
+	o.Currency = v
 }
 
 func (o WalletSummary) MarshalJSON() ([]byte, error) {
@@ -219,22 +188,52 @@ func (o WalletSummary) MarshalJSON() ([]byte, error) {
 
 func (o WalletSummary) ToMap() (map[string]interface{}, error) {
 	toSerialize := map[string]interface{}{}
-	if !IsNil(o.Id) {
-		toSerialize["id"] = o.Id
-	}
-	if !IsNil(o.Label) {
-		toSerialize["label"] = o.Label
-	}
-	if !IsNil(o.Balance) {
-		toSerialize["balance"] = o.Balance
-	}
-	if !IsNil(o.IsSelected) {
-		toSerialize["isSelected"] = o.IsSelected
-	}
-	if !IsNil(o.Currency) {
-		toSerialize["currency"] = o.Currency
-	}
+	toSerialize["id"] = o.Id
+	toSerialize["label"] = o.Label
+	toSerialize["balance"] = o.Balance
+	toSerialize["isSelected"] = o.IsSelected
+	toSerialize["currency"] = o.Currency
 	return toSerialize, nil
+}
+
+func (o *WalletSummary) UnmarshalJSON(data []byte) (err error) {
+	// This validates that all required properties are included in the JSON object
+	// by unmarshalling the object into a generic map with string keys and checking
+	// that every required field exists as a key in the generic map.
+	requiredProperties := []string{
+		"id",
+		"label",
+		"balance",
+		"isSelected",
+		"currency",
+	}
+
+	allProperties := make(map[string]interface{})
+
+	err = json.Unmarshal(data, &allProperties)
+
+	if err != nil {
+		return err;
+	}
+
+	for _, requiredProperty := range(requiredProperties) {
+		if _, exists := allProperties[requiredProperty]; !exists {
+			return fmt.Errorf("no value given for required property %v", requiredProperty)
+		}
+	}
+
+	varWalletSummary := _WalletSummary{}
+
+	decoder := json.NewDecoder(bytes.NewReader(data))
+	err = decoder.Decode(&varWalletSummary)
+
+	if err != nil {
+		return err
+	}
+
+	*o = WalletSummary(varWalletSummary)
+
+	return err
 }
 
 type NullableWalletSummary struct {

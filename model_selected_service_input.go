@@ -20,7 +20,7 @@ var _ MappedNullable = &SelectedServiceInput{}
 
 // SelectedServiceInput struct for SelectedServiceInput
 type SelectedServiceInput struct {
-	// The service's `id` from the quote item's `details.availableServices`, valid until the offer expires; null when the service is chosen by `type`.
+	// The service's `id` from the quote item's `availableServices`, valid until the offer expires; null when the service is chosen by `type`.
 	Id NullableString `json:"id,omitempty"`
 	// The service type, for example `baggage` or `meal`; it chooses the service when no `id` is sent.
 	Type NullableString `json:"type,omitempty"`

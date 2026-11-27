@@ -13,6 +13,8 @@ package openroam
 
 import (
 	"encoding/json"
+	"bytes"
+	"fmt"
 )
 
 // checks if the NumberLookup type satisfies the MappedNullable interface at compile time
@@ -20,24 +22,33 @@ var _ MappedNullable = &NumberLookup{}
 
 // NumberLookup What a phone number's own digits say about it, from numbering-plan data, plus carrier data from a carrier lookup. `phoneNumber` is the number in E.164. `isValid` is false when the digits do not form a number its country assigns; the other fields then hold whatever could still be read, and `lineType` is unknown. `countryCode` is ISO 3166-1 alpha-2, null when the number belongs to no single country. `dialCode` is the calling code with its leading plus. The formats are for display only. `carrier` comes from a carrier lookup made only for a valid number; it is null for an invalid one.
 type NumberLookup struct {
-	PhoneNumber *string `json:"phoneNumber,omitempty"`
-	IsValid *bool `json:"isValid,omitempty"`
+	PhoneNumber string `json:"phoneNumber"`
+	IsValid bool `json:"isValid"`
 	CountryCode NullableString `json:"countryCode,omitempty"`
-	DialCode *string `json:"dialCode,omitempty"`
-	NationalNumber *string `json:"nationalNumber,omitempty"`
-	InternationalFormat *string `json:"internationalFormat,omitempty"`
-	NationalFormat *string `json:"nationalFormat,omitempty"`
-	LineType *string `json:"lineType,omitempty"`
+	DialCode string `json:"dialCode"`
+	NationalNumber string `json:"nationalNumber"`
+	InternationalFormat string `json:"internationalFormat"`
+	NationalFormat string `json:"nationalFormat"`
+	LineType string `json:"lineType"`
 	// Carrier information from the number lookup. `name` may identify the original number-block owner when portability data is unavailable; it does not guarantee the current carrier after porting. `normalizedName` is the reported parent network when known. `lineType` is the carrier's view of the line. `isPorted` is null when the lookup does not say, which is common outside the US. For display only: the operator OpenRoam sells for a number comes from search.
 	Carrier NullableNumberCarrier `json:"carrier,omitempty"`
 }
+
+type _NumberLookup NumberLookup
 
 // NewNumberLookup instantiates a new NumberLookup object
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewNumberLookup() *NumberLookup {
+func NewNumberLookup(phoneNumber string, isValid bool, dialCode string, nationalNumber string, internationalFormat string, nationalFormat string, lineType string) *NumberLookup {
 	this := NumberLookup{}
+	this.PhoneNumber = phoneNumber
+	this.IsValid = isValid
+	this.DialCode = dialCode
+	this.NationalNumber = nationalNumber
+	this.InternationalFormat = internationalFormat
+	this.NationalFormat = nationalFormat
+	this.LineType = lineType
 	return &this
 }
 
@@ -49,68 +60,52 @@ func NewNumberLookupWithDefaults() *NumberLookup {
 	return &this
 }
 
-// GetPhoneNumber returns the PhoneNumber field value if set, zero value otherwise.
+// GetPhoneNumber returns the PhoneNumber field value
 func (o *NumberLookup) GetPhoneNumber() string {
-	if o == nil || IsNil(o.PhoneNumber) {
+	if o == nil {
 		var ret string
 		return ret
 	}
-	return *o.PhoneNumber
+
+	return o.PhoneNumber
 }
 
-// GetPhoneNumberOk returns a tuple with the PhoneNumber field value if set, nil otherwise
+// GetPhoneNumberOk returns a tuple with the PhoneNumber field value
 // and a boolean to check if the value has been set.
 func (o *NumberLookup) GetPhoneNumberOk() (*string, bool) {
-	if o == nil || IsNil(o.PhoneNumber) {
+	if o == nil {
 		return nil, false
 	}
-	return o.PhoneNumber, true
+	return &o.PhoneNumber, true
 }
 
-// HasPhoneNumber returns a boolean if a field has been set.
-func (o *NumberLookup) HasPhoneNumber() bool {
-	if o != nil && !IsNil(o.PhoneNumber) {
-		return true
-	}
-
-	return false
-}
-
-// SetPhoneNumber gets a reference to the given string and assigns it to the PhoneNumber field.
+// SetPhoneNumber sets field value
 func (o *NumberLookup) SetPhoneNumber(v string) {
-	o.PhoneNumber = &v
+	o.PhoneNumber = v
 }
 
-// GetIsValid returns the IsValid field value if set, zero value otherwise.
+// GetIsValid returns the IsValid field value
 func (o *NumberLookup) GetIsValid() bool {
-	if o == nil || IsNil(o.IsValid) {
+	if o == nil {
 		var ret bool
 		return ret
 	}
-	return *o.IsValid
+
+	return o.IsValid
 }
 
-// GetIsValidOk returns a tuple with the IsValid field value if set, nil otherwise
+// GetIsValidOk returns a tuple with the IsValid field value
 // and a boolean to check if the value has been set.
 func (o *NumberLookup) GetIsValidOk() (*bool, bool) {
-	if o == nil || IsNil(o.IsValid) {
+	if o == nil {
 		return nil, false
 	}
-	return o.IsValid, true
+	return &o.IsValid, true
 }
 
-// HasIsValid returns a boolean if a field has been set.
-func (o *NumberLookup) HasIsValid() bool {
-	if o != nil && !IsNil(o.IsValid) {
-		return true
-	}
-
-	return false
-}
-
-// SetIsValid gets a reference to the given bool and assigns it to the IsValid field.
+// SetIsValid sets field value
 func (o *NumberLookup) SetIsValid(v bool) {
-	o.IsValid = &v
+	o.IsValid = v
 }
 
 // GetCountryCode returns the CountryCode field value if set, zero value otherwise (both if not set or set to explicit null).
@@ -155,164 +150,124 @@ func (o *NumberLookup) UnsetCountryCode() {
 	o.CountryCode.Unset()
 }
 
-// GetDialCode returns the DialCode field value if set, zero value otherwise.
+// GetDialCode returns the DialCode field value
 func (o *NumberLookup) GetDialCode() string {
-	if o == nil || IsNil(o.DialCode) {
+	if o == nil {
 		var ret string
 		return ret
 	}
-	return *o.DialCode
+
+	return o.DialCode
 }
 
-// GetDialCodeOk returns a tuple with the DialCode field value if set, nil otherwise
+// GetDialCodeOk returns a tuple with the DialCode field value
 // and a boolean to check if the value has been set.
 func (o *NumberLookup) GetDialCodeOk() (*string, bool) {
-	if o == nil || IsNil(o.DialCode) {
+	if o == nil {
 		return nil, false
 	}
-	return o.DialCode, true
+	return &o.DialCode, true
 }
 
-// HasDialCode returns a boolean if a field has been set.
-func (o *NumberLookup) HasDialCode() bool {
-	if o != nil && !IsNil(o.DialCode) {
-		return true
-	}
-
-	return false
-}
-
-// SetDialCode gets a reference to the given string and assigns it to the DialCode field.
+// SetDialCode sets field value
 func (o *NumberLookup) SetDialCode(v string) {
-	o.DialCode = &v
+	o.DialCode = v
 }
 
-// GetNationalNumber returns the NationalNumber field value if set, zero value otherwise.
+// GetNationalNumber returns the NationalNumber field value
 func (o *NumberLookup) GetNationalNumber() string {
-	if o == nil || IsNil(o.NationalNumber) {
+	if o == nil {
 		var ret string
 		return ret
 	}
-	return *o.NationalNumber
+
+	return o.NationalNumber
 }
 
-// GetNationalNumberOk returns a tuple with the NationalNumber field value if set, nil otherwise
+// GetNationalNumberOk returns a tuple with the NationalNumber field value
 // and a boolean to check if the value has been set.
 func (o *NumberLookup) GetNationalNumberOk() (*string, bool) {
-	if o == nil || IsNil(o.NationalNumber) {
+	if o == nil {
 		return nil, false
 	}
-	return o.NationalNumber, true
+	return &o.NationalNumber, true
 }
 
-// HasNationalNumber returns a boolean if a field has been set.
-func (o *NumberLookup) HasNationalNumber() bool {
-	if o != nil && !IsNil(o.NationalNumber) {
-		return true
-	}
-
-	return false
-}
-
-// SetNationalNumber gets a reference to the given string and assigns it to the NationalNumber field.
+// SetNationalNumber sets field value
 func (o *NumberLookup) SetNationalNumber(v string) {
-	o.NationalNumber = &v
+	o.NationalNumber = v
 }
 
-// GetInternationalFormat returns the InternationalFormat field value if set, zero value otherwise.
+// GetInternationalFormat returns the InternationalFormat field value
 func (o *NumberLookup) GetInternationalFormat() string {
-	if o == nil || IsNil(o.InternationalFormat) {
+	if o == nil {
 		var ret string
 		return ret
 	}
-	return *o.InternationalFormat
+
+	return o.InternationalFormat
 }
 
-// GetInternationalFormatOk returns a tuple with the InternationalFormat field value if set, nil otherwise
+// GetInternationalFormatOk returns a tuple with the InternationalFormat field value
 // and a boolean to check if the value has been set.
 func (o *NumberLookup) GetInternationalFormatOk() (*string, bool) {
-	if o == nil || IsNil(o.InternationalFormat) {
+	if o == nil {
 		return nil, false
 	}
-	return o.InternationalFormat, true
+	return &o.InternationalFormat, true
 }
 
-// HasInternationalFormat returns a boolean if a field has been set.
-func (o *NumberLookup) HasInternationalFormat() bool {
-	if o != nil && !IsNil(o.InternationalFormat) {
-		return true
-	}
-
-	return false
-}
-
-// SetInternationalFormat gets a reference to the given string and assigns it to the InternationalFormat field.
+// SetInternationalFormat sets field value
 func (o *NumberLookup) SetInternationalFormat(v string) {
-	o.InternationalFormat = &v
+	o.InternationalFormat = v
 }
 
-// GetNationalFormat returns the NationalFormat field value if set, zero value otherwise.
+// GetNationalFormat returns the NationalFormat field value
 func (o *NumberLookup) GetNationalFormat() string {
-	if o == nil || IsNil(o.NationalFormat) {
+	if o == nil {
 		var ret string
 		return ret
 	}
-	return *o.NationalFormat
+
+	return o.NationalFormat
 }
 
-// GetNationalFormatOk returns a tuple with the NationalFormat field value if set, nil otherwise
+// GetNationalFormatOk returns a tuple with the NationalFormat field value
 // and a boolean to check if the value has been set.
 func (o *NumberLookup) GetNationalFormatOk() (*string, bool) {
-	if o == nil || IsNil(o.NationalFormat) {
+	if o == nil {
 		return nil, false
 	}
-	return o.NationalFormat, true
+	return &o.NationalFormat, true
 }
 
-// HasNationalFormat returns a boolean if a field has been set.
-func (o *NumberLookup) HasNationalFormat() bool {
-	if o != nil && !IsNil(o.NationalFormat) {
-		return true
-	}
-
-	return false
-}
-
-// SetNationalFormat gets a reference to the given string and assigns it to the NationalFormat field.
+// SetNationalFormat sets field value
 func (o *NumberLookup) SetNationalFormat(v string) {
-	o.NationalFormat = &v
+	o.NationalFormat = v
 }
 
-// GetLineType returns the LineType field value if set, zero value otherwise.
+// GetLineType returns the LineType field value
 func (o *NumberLookup) GetLineType() string {
-	if o == nil || IsNil(o.LineType) {
+	if o == nil {
 		var ret string
 		return ret
 	}
-	return *o.LineType
+
+	return o.LineType
 }
 
-// GetLineTypeOk returns a tuple with the LineType field value if set, nil otherwise
+// GetLineTypeOk returns a tuple with the LineType field value
 // and a boolean to check if the value has been set.
 func (o *NumberLookup) GetLineTypeOk() (*string, bool) {
-	if o == nil || IsNil(o.LineType) {
+	if o == nil {
 		return nil, false
 	}
-	return o.LineType, true
+	return &o.LineType, true
 }
 
-// HasLineType returns a boolean if a field has been set.
-func (o *NumberLookup) HasLineType() bool {
-	if o != nil && !IsNil(o.LineType) {
-		return true
-	}
-
-	return false
-}
-
-// SetLineType gets a reference to the given string and assigns it to the LineType field.
+// SetLineType sets field value
 func (o *NumberLookup) SetLineType(v string) {
-	o.LineType = &v
+	o.LineType = v
 }
 
 // GetCarrier returns the Carrier field value if set, zero value otherwise (both if not set or set to explicit null).
@@ -367,34 +322,62 @@ func (o NumberLookup) MarshalJSON() ([]byte, error) {
 
 func (o NumberLookup) ToMap() (map[string]interface{}, error) {
 	toSerialize := map[string]interface{}{}
-	if !IsNil(o.PhoneNumber) {
-		toSerialize["phoneNumber"] = o.PhoneNumber
-	}
-	if !IsNil(o.IsValid) {
-		toSerialize["isValid"] = o.IsValid
-	}
+	toSerialize["phoneNumber"] = o.PhoneNumber
+	toSerialize["isValid"] = o.IsValid
 	if o.CountryCode.IsSet() {
 		toSerialize["countryCode"] = o.CountryCode.Get()
 	}
-	if !IsNil(o.DialCode) {
-		toSerialize["dialCode"] = o.DialCode
-	}
-	if !IsNil(o.NationalNumber) {
-		toSerialize["nationalNumber"] = o.NationalNumber
-	}
-	if !IsNil(o.InternationalFormat) {
-		toSerialize["internationalFormat"] = o.InternationalFormat
-	}
-	if !IsNil(o.NationalFormat) {
-		toSerialize["nationalFormat"] = o.NationalFormat
-	}
-	if !IsNil(o.LineType) {
-		toSerialize["lineType"] = o.LineType
-	}
+	toSerialize["dialCode"] = o.DialCode
+	toSerialize["nationalNumber"] = o.NationalNumber
+	toSerialize["internationalFormat"] = o.InternationalFormat
+	toSerialize["nationalFormat"] = o.NationalFormat
+	toSerialize["lineType"] = o.LineType
 	if o.Carrier.IsSet() {
 		toSerialize["carrier"] = o.Carrier.Get()
 	}
 	return toSerialize, nil
+}
+
+func (o *NumberLookup) UnmarshalJSON(data []byte) (err error) {
+	// This validates that all required properties are included in the JSON object
+	// by unmarshalling the object into a generic map with string keys and checking
+	// that every required field exists as a key in the generic map.
+	requiredProperties := []string{
+		"phoneNumber",
+		"isValid",
+		"dialCode",
+		"nationalNumber",
+		"internationalFormat",
+		"nationalFormat",
+		"lineType",
+	}
+
+	allProperties := make(map[string]interface{})
+
+	err = json.Unmarshal(data, &allProperties)
+
+	if err != nil {
+		return err;
+	}
+
+	for _, requiredProperty := range(requiredProperties) {
+		if _, exists := allProperties[requiredProperty]; !exists {
+			return fmt.Errorf("no value given for required property %v", requiredProperty)
+		}
+	}
+
+	varNumberLookup := _NumberLookup{}
+
+	decoder := json.NewDecoder(bytes.NewReader(data))
+	err = decoder.Decode(&varNumberLookup)
+
+	if err != nil {
+		return err
+	}
+
+	*o = NumberLookup(varNumberLookup)
+
+	return err
 }
 
 type NullableNumberLookup struct {

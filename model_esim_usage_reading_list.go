@@ -13,6 +13,8 @@ package openroam
 
 import (
 	"encoding/json"
+	"bytes"
+	"fmt"
 )
 
 // checks if the EsimUsageReadingList type satisfies the MappedNullable interface at compile time
@@ -20,17 +22,21 @@ var _ MappedNullable = &EsimUsageReadingList{}
 
 // EsimUsageReadingList A page of an eSIM's usage readings, newest first.
 type EsimUsageReadingList struct {
-	Items []EsimUsageReading `json:"items,omitempty"`
+	Items []EsimUsageReading `json:"items"`
 	// Paging of a list response.
-	Pagination *Pagination `json:"pagination,omitempty"`
+	Pagination Pagination `json:"pagination"`
 }
+
+type _EsimUsageReadingList EsimUsageReadingList
 
 // NewEsimUsageReadingList instantiates a new EsimUsageReadingList object
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewEsimUsageReadingList() *EsimUsageReadingList {
+func NewEsimUsageReadingList(items []EsimUsageReading, pagination Pagination) *EsimUsageReadingList {
 	this := EsimUsageReadingList{}
+	this.Items = items
+	this.Pagination = pagination
 	return &this
 }
 
@@ -42,68 +48,52 @@ func NewEsimUsageReadingListWithDefaults() *EsimUsageReadingList {
 	return &this
 }
 
-// GetItems returns the Items field value if set, zero value otherwise.
+// GetItems returns the Items field value
 func (o *EsimUsageReadingList) GetItems() []EsimUsageReading {
-	if o == nil || IsNil(o.Items) {
+	if o == nil {
 		var ret []EsimUsageReading
 		return ret
 	}
+
 	return o.Items
 }
 
-// GetItemsOk returns a tuple with the Items field value if set, nil otherwise
+// GetItemsOk returns a tuple with the Items field value
 // and a boolean to check if the value has been set.
 func (o *EsimUsageReadingList) GetItemsOk() ([]EsimUsageReading, bool) {
-	if o == nil || IsNil(o.Items) {
+	if o == nil {
 		return nil, false
 	}
 	return o.Items, true
 }
 
-// HasItems returns a boolean if a field has been set.
-func (o *EsimUsageReadingList) HasItems() bool {
-	if o != nil && !IsNil(o.Items) {
-		return true
-	}
-
-	return false
-}
-
-// SetItems gets a reference to the given []EsimUsageReading and assigns it to the Items field.
+// SetItems sets field value
 func (o *EsimUsageReadingList) SetItems(v []EsimUsageReading) {
 	o.Items = v
 }
 
-// GetPagination returns the Pagination field value if set, zero value otherwise.
+// GetPagination returns the Pagination field value
 func (o *EsimUsageReadingList) GetPagination() Pagination {
-	if o == nil || IsNil(o.Pagination) {
+	if o == nil {
 		var ret Pagination
 		return ret
 	}
-	return *o.Pagination
+
+	return o.Pagination
 }
 
-// GetPaginationOk returns a tuple with the Pagination field value if set, nil otherwise
+// GetPaginationOk returns a tuple with the Pagination field value
 // and a boolean to check if the value has been set.
 func (o *EsimUsageReadingList) GetPaginationOk() (*Pagination, bool) {
-	if o == nil || IsNil(o.Pagination) {
+	if o == nil {
 		return nil, false
 	}
-	return o.Pagination, true
+	return &o.Pagination, true
 }
 
-// HasPagination returns a boolean if a field has been set.
-func (o *EsimUsageReadingList) HasPagination() bool {
-	if o != nil && !IsNil(o.Pagination) {
-		return true
-	}
-
-	return false
-}
-
-// SetPagination gets a reference to the given Pagination and assigns it to the Pagination field.
+// SetPagination sets field value
 func (o *EsimUsageReadingList) SetPagination(v Pagination) {
-	o.Pagination = &v
+	o.Pagination = v
 }
 
 func (o EsimUsageReadingList) MarshalJSON() ([]byte, error) {
@@ -116,13 +106,46 @@ func (o EsimUsageReadingList) MarshalJSON() ([]byte, error) {
 
 func (o EsimUsageReadingList) ToMap() (map[string]interface{}, error) {
 	toSerialize := map[string]interface{}{}
-	if !IsNil(o.Items) {
-		toSerialize["items"] = o.Items
-	}
-	if !IsNil(o.Pagination) {
-		toSerialize["pagination"] = o.Pagination
-	}
+	toSerialize["items"] = o.Items
+	toSerialize["pagination"] = o.Pagination
 	return toSerialize, nil
+}
+
+func (o *EsimUsageReadingList) UnmarshalJSON(data []byte) (err error) {
+	// This validates that all required properties are included in the JSON object
+	// by unmarshalling the object into a generic map with string keys and checking
+	// that every required field exists as a key in the generic map.
+	requiredProperties := []string{
+		"items",
+		"pagination",
+	}
+
+	allProperties := make(map[string]interface{})
+
+	err = json.Unmarshal(data, &allProperties)
+
+	if err != nil {
+		return err;
+	}
+
+	for _, requiredProperty := range(requiredProperties) {
+		if _, exists := allProperties[requiredProperty]; !exists {
+			return fmt.Errorf("no value given for required property %v", requiredProperty)
+		}
+	}
+
+	varEsimUsageReadingList := _EsimUsageReadingList{}
+
+	decoder := json.NewDecoder(bytes.NewReader(data))
+	err = decoder.Decode(&varEsimUsageReadingList)
+
+	if err != nil {
+		return err
+	}
+
+	*o = EsimUsageReadingList(varEsimUsageReadingList)
+
+	return err
 }
 
 type NullableEsimUsageReadingList struct {

@@ -288,7 +288,6 @@ func (o *AirtimeInputs) UnmarshalJSON(data []byte) (err error) {
 	varAirtimeInputs := _AirtimeInputs{}
 
 	decoder := json.NewDecoder(bytes.NewReader(data))
-	decoder.DisallowUnknownFields()
 	err = decoder.Decode(&varAirtimeInputs)
 
 	if err != nil {

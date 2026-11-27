@@ -13,28 +13,40 @@ package openroam
 
 import (
 	"encoding/json"
+	"bytes"
+	"fmt"
 )
 
 // checks if the EsimOffer type satisfies the MappedNullable interface at compile time
 var _ MappedNullable = &EsimOffer{}
 
-// EsimOffer One orderable eSIM plan of a destination. `publicId` is the identifier quote and order take. An eSIM has no monetary value, so the offer has no `value`; `price` is one indicative amount in the requested price currency.
+// EsimOffer One orderable eSIM plan of a destination. `publicId` is the identifier quote and order take. An eSIM has no monetary value, so the offer has no `value`; `price` is one indicative amount in the requested price currency. `taxes` is `notStated`: no tax is stated for eSIM prices yet.
 type EsimOffer struct {
-	PublicId *string `json:"publicId,omitempty"`
-	Name *string `json:"name,omitempty"`
+	PublicId string `json:"publicId"`
+	Name string `json:"name"`
 	Description NullableString `json:"description,omitempty"`
-	Price *OfferPrice `json:"price,omitempty"`
-	RequiredInputs []InputField `json:"requiredInputs,omitempty"`
+	Price OfferPrice `json:"price"`
+	// The taxes inside one unit of the `price` beside it, in one shape for every service. The server sets every field; a client never derives a treatment, never adds up `lines` and never computes an amount.
+	Taxes TaxSummary `json:"taxes"`
+	RequiredInputs []InputField `json:"requiredInputs"`
 	// eSIM plan facts outside the offer keys every partner service shares.
-	Details *EsimOfferDetails `json:"details,omitempty"`
+	Details EsimOfferDetails `json:"details"`
 }
+
+type _EsimOffer EsimOffer
 
 // NewEsimOffer instantiates a new EsimOffer object
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewEsimOffer() *EsimOffer {
+func NewEsimOffer(publicId string, name string, price OfferPrice, taxes TaxSummary, requiredInputs []InputField, details EsimOfferDetails) *EsimOffer {
 	this := EsimOffer{}
+	this.PublicId = publicId
+	this.Name = name
+	this.Price = price
+	this.Taxes = taxes
+	this.RequiredInputs = requiredInputs
+	this.Details = details
 	return &this
 }
 
@@ -46,68 +58,52 @@ func NewEsimOfferWithDefaults() *EsimOffer {
 	return &this
 }
 
-// GetPublicId returns the PublicId field value if set, zero value otherwise.
+// GetPublicId returns the PublicId field value
 func (o *EsimOffer) GetPublicId() string {
-	if o == nil || IsNil(o.PublicId) {
+	if o == nil {
 		var ret string
 		return ret
 	}
-	return *o.PublicId
+
+	return o.PublicId
 }
 
-// GetPublicIdOk returns a tuple with the PublicId field value if set, nil otherwise
+// GetPublicIdOk returns a tuple with the PublicId field value
 // and a boolean to check if the value has been set.
 func (o *EsimOffer) GetPublicIdOk() (*string, bool) {
-	if o == nil || IsNil(o.PublicId) {
+	if o == nil {
 		return nil, false
 	}
-	return o.PublicId, true
+	return &o.PublicId, true
 }
 
-// HasPublicId returns a boolean if a field has been set.
-func (o *EsimOffer) HasPublicId() bool {
-	if o != nil && !IsNil(o.PublicId) {
-		return true
-	}
-
-	return false
-}
-
-// SetPublicId gets a reference to the given string and assigns it to the PublicId field.
+// SetPublicId sets field value
 func (o *EsimOffer) SetPublicId(v string) {
-	o.PublicId = &v
+	o.PublicId = v
 }
 
-// GetName returns the Name field value if set, zero value otherwise.
+// GetName returns the Name field value
 func (o *EsimOffer) GetName() string {
-	if o == nil || IsNil(o.Name) {
+	if o == nil {
 		var ret string
 		return ret
 	}
-	return *o.Name
+
+	return o.Name
 }
 
-// GetNameOk returns a tuple with the Name field value if set, nil otherwise
+// GetNameOk returns a tuple with the Name field value
 // and a boolean to check if the value has been set.
 func (o *EsimOffer) GetNameOk() (*string, bool) {
-	if o == nil || IsNil(o.Name) {
+	if o == nil {
 		return nil, false
 	}
-	return o.Name, true
+	return &o.Name, true
 }
 
-// HasName returns a boolean if a field has been set.
-func (o *EsimOffer) HasName() bool {
-	if o != nil && !IsNil(o.Name) {
-		return true
-	}
-
-	return false
-}
-
-// SetName gets a reference to the given string and assigns it to the Name field.
+// SetName sets field value
 func (o *EsimOffer) SetName(v string) {
-	o.Name = &v
+	o.Name = v
 }
 
 // GetDescription returns the Description field value if set, zero value otherwise (both if not set or set to explicit null).
@@ -152,100 +148,100 @@ func (o *EsimOffer) UnsetDescription() {
 	o.Description.Unset()
 }
 
-// GetPrice returns the Price field value if set, zero value otherwise.
+// GetPrice returns the Price field value
 func (o *EsimOffer) GetPrice() OfferPrice {
-	if o == nil || IsNil(o.Price) {
+	if o == nil {
 		var ret OfferPrice
 		return ret
 	}
-	return *o.Price
+
+	return o.Price
 }
 
-// GetPriceOk returns a tuple with the Price field value if set, nil otherwise
+// GetPriceOk returns a tuple with the Price field value
 // and a boolean to check if the value has been set.
 func (o *EsimOffer) GetPriceOk() (*OfferPrice, bool) {
-	if o == nil || IsNil(o.Price) {
+	if o == nil {
 		return nil, false
 	}
-	return o.Price, true
+	return &o.Price, true
 }
 
-// HasPrice returns a boolean if a field has been set.
-func (o *EsimOffer) HasPrice() bool {
-	if o != nil && !IsNil(o.Price) {
-		return true
+// SetPrice sets field value
+func (o *EsimOffer) SetPrice(v OfferPrice) {
+	o.Price = v
+}
+
+// GetTaxes returns the Taxes field value
+func (o *EsimOffer) GetTaxes() TaxSummary {
+	if o == nil {
+		var ret TaxSummary
+		return ret
 	}
 
-	return false
+	return o.Taxes
 }
 
-// SetPrice gets a reference to the given OfferPrice and assigns it to the Price field.
-func (o *EsimOffer) SetPrice(v OfferPrice) {
-	o.Price = &v
+// GetTaxesOk returns a tuple with the Taxes field value
+// and a boolean to check if the value has been set.
+func (o *EsimOffer) GetTaxesOk() (*TaxSummary, bool) {
+	if o == nil {
+		return nil, false
+	}
+	return &o.Taxes, true
 }
 
-// GetRequiredInputs returns the RequiredInputs field value if set, zero value otherwise.
+// SetTaxes sets field value
+func (o *EsimOffer) SetTaxes(v TaxSummary) {
+	o.Taxes = v
+}
+
+// GetRequiredInputs returns the RequiredInputs field value
 func (o *EsimOffer) GetRequiredInputs() []InputField {
-	if o == nil || IsNil(o.RequiredInputs) {
+	if o == nil {
 		var ret []InputField
 		return ret
 	}
+
 	return o.RequiredInputs
 }
 
-// GetRequiredInputsOk returns a tuple with the RequiredInputs field value if set, nil otherwise
+// GetRequiredInputsOk returns a tuple with the RequiredInputs field value
 // and a boolean to check if the value has been set.
 func (o *EsimOffer) GetRequiredInputsOk() ([]InputField, bool) {
-	if o == nil || IsNil(o.RequiredInputs) {
+	if o == nil {
 		return nil, false
 	}
 	return o.RequiredInputs, true
 }
 
-// HasRequiredInputs returns a boolean if a field has been set.
-func (o *EsimOffer) HasRequiredInputs() bool {
-	if o != nil && !IsNil(o.RequiredInputs) {
-		return true
-	}
-
-	return false
-}
-
-// SetRequiredInputs gets a reference to the given []InputField and assigns it to the RequiredInputs field.
+// SetRequiredInputs sets field value
 func (o *EsimOffer) SetRequiredInputs(v []InputField) {
 	o.RequiredInputs = v
 }
 
-// GetDetails returns the Details field value if set, zero value otherwise.
+// GetDetails returns the Details field value
 func (o *EsimOffer) GetDetails() EsimOfferDetails {
-	if o == nil || IsNil(o.Details) {
+	if o == nil {
 		var ret EsimOfferDetails
 		return ret
 	}
-	return *o.Details
+
+	return o.Details
 }
 
-// GetDetailsOk returns a tuple with the Details field value if set, nil otherwise
+// GetDetailsOk returns a tuple with the Details field value
 // and a boolean to check if the value has been set.
 func (o *EsimOffer) GetDetailsOk() (*EsimOfferDetails, bool) {
-	if o == nil || IsNil(o.Details) {
+	if o == nil {
 		return nil, false
 	}
-	return o.Details, true
+	return &o.Details, true
 }
 
-// HasDetails returns a boolean if a field has been set.
-func (o *EsimOffer) HasDetails() bool {
-	if o != nil && !IsNil(o.Details) {
-		return true
-	}
-
-	return false
-}
-
-// SetDetails gets a reference to the given EsimOfferDetails and assigns it to the Details field.
+// SetDetails sets field value
 func (o *EsimOffer) SetDetails(v EsimOfferDetails) {
-	o.Details = &v
+	o.Details = v
 }
 
 func (o EsimOffer) MarshalJSON() ([]byte, error) {
@@ -258,25 +254,57 @@ func (o EsimOffer) MarshalJSON() ([]byte, error) {
 
 func (o EsimOffer) ToMap() (map[string]interface{}, error) {
 	toSerialize := map[string]interface{}{}
-	if !IsNil(o.PublicId) {
-		toSerialize["publicId"] = o.PublicId
-	}
-	if !IsNil(o.Name) {
-		toSerialize["name"] = o.Name
-	}
+	toSerialize["publicId"] = o.PublicId
+	toSerialize["name"] = o.Name
 	if o.Description.IsSet() {
 		toSerialize["description"] = o.Description.Get()
 	}
-	if !IsNil(o.Price) {
-		toSerialize["price"] = o.Price
-	}
-	if !IsNil(o.RequiredInputs) {
-		toSerialize["requiredInputs"] = o.RequiredInputs
-	}
-	if !IsNil(o.Details) {
-		toSerialize["details"] = o.Details
-	}
+	toSerialize["price"] = o.Price
+	toSerialize["taxes"] = o.Taxes
+	toSerialize["requiredInputs"] = o.RequiredInputs
+	toSerialize["details"] = o.Details
 	return toSerialize, nil
+}
+
+func (o *EsimOffer) UnmarshalJSON(data []byte) (err error) {
+	// This validates that all required properties are included in the JSON object
+	// by unmarshalling the object into a generic map with string keys and checking
+	// that every required field exists as a key in the generic map.
+	requiredProperties := []string{
+		"publicId",
+		"name",
+		"price",
+		"taxes",
+		"requiredInputs",
+		"details",
+	}
+
+	allProperties := make(map[string]interface{})
+
+	err = json.Unmarshal(data, &allProperties)
+
+	if err != nil {
+		return err;
+	}
+
+	for _, requiredProperty := range(requiredProperties) {
+		if _, exists := allProperties[requiredProperty]; !exists {
+			return fmt.Errorf("no value given for required property %v", requiredProperty)
+		}
+	}
+
+	varEsimOffer := _EsimOffer{}
+
+	decoder := json.NewDecoder(bytes.NewReader(data))
+	err = decoder.Decode(&varEsimOffer)
+
+	if err != nil {
+		return err
+	}
+
+	*o = EsimOffer(varEsimOffer)
+
+	return err
 }
 
 type NullableEsimOffer struct {

@@ -13,27 +13,39 @@ package openroam
 
 import (
 	"encoding/json"
+	"bytes"
+	"fmt"
 )
 
 // checks if the EsimRestrictions type satisfies the MappedNullable interface at compile time
 var _ MappedNullable = &EsimRestrictions{}
 
-// EsimRestrictions struct for EsimRestrictions
+// EsimRestrictions A plan's throttling and expiry. Every throttle field is null when the plan does not throttle.
 type EsimRestrictions struct {
-	Throttle *bool `json:"throttle,omitempty"`
-	ThrottleSpeed *float64 `json:"throttleSpeed,omitempty"`
-	ThrottleUnit *string `json:"throttleUnit,omitempty"`
-	ThrottleThreshold *float64 `json:"throttleThreshold,omitempty"`
-	ThrottleThresholdUnit *string `json:"throttleThresholdUnit,omitempty"`
-	ExpireInDays *int32 `json:"expireInDays,omitempty"`
+	// Whether the speed drops once some of the data is used.
+	Throttle bool `json:"throttle"`
+	// The speed after throttling, in kbps; 0 when the connection stops; null without throttling.
+	ThrottleSpeed NullableFloat64 `json:"throttleSpeed,omitempty"`
+	// Always `kbps` when the plan throttles; null without throttling.
+	ThrottleUnit NullableString `json:"throttleUnit,omitempty"`
+	// The data in MB used at full speed before throttling starts; null when throttling starts only once the data allowance is used up, and null without throttling.
+	ThrottleThreshold NullableFloat64 `json:"throttleThreshold,omitempty"`
+	// Always `MB` when `throttleThreshold` is set; otherwise null.
+	ThrottleThresholdUnit NullableString `json:"throttleThresholdUnit,omitempty"`
+	// How many days the eSIM stays valid after activation.
+	ExpireInDays int32 `json:"expireInDays"`
 }
+
+type _EsimRestrictions EsimRestrictions
 
 // NewEsimRestrictions instantiates a new EsimRestrictions object
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewEsimRestrictions() *EsimRestrictions {
+func NewEsimRestrictions(throttle bool, expireInDays int32) *EsimRestrictions {
 	this := EsimRestrictions{}
+	this.Throttle = throttle
+	this.ExpireInDays = expireInDays
 	return &this
 }
 
@@ -45,196 +57,220 @@ func NewEsimRestrictionsWithDefaults() *EsimRestrictions {
 	return &this
 }
 
-// GetThrottle returns the Throttle field value if set, zero value otherwise.
+// GetThrottle returns the Throttle field value
 func (o *EsimRestrictions) GetThrottle() bool {
-	if o == nil || IsNil(o.Throttle) {
+	if o == nil {
 		var ret bool
 		return ret
 	}
-	return *o.Throttle
+
+	return o.Throttle
 }
 
-// GetThrottleOk returns a tuple with the Throttle field value if set, nil otherwise
+// GetThrottleOk returns a tuple with the Throttle field value
 // and a boolean to check if the value has been set.
 func (o *EsimRestrictions) GetThrottleOk() (*bool, bool) {
-	if o == nil || IsNil(o.Throttle) {
+	if o == nil {
 		return nil, false
 	}
-	return o.Throttle, true
+	return &o.Throttle, true
 }
 
-// HasThrottle returns a boolean if a field has been set.
-func (o *EsimRestrictions) HasThrottle() bool {
-	if o != nil && !IsNil(o.Throttle) {
-		return true
-	}
-
-	return false
-}
-
-// SetThrottle gets a reference to the given bool and assigns it to the Throttle field.
+// SetThrottle sets field value
 func (o *EsimRestrictions) SetThrottle(v bool) {
-	o.Throttle = &v
+	o.Throttle = v
 }
 
-// GetThrottleSpeed returns the ThrottleSpeed field value if set, zero value otherwise.
+// GetThrottleSpeed returns the ThrottleSpeed field value if set, zero value otherwise (both if not set or set to explicit null).
 func (o *EsimRestrictions) GetThrottleSpeed() float64 {
-	if o == nil || IsNil(o.ThrottleSpeed) {
+	if o == nil || IsNil(o.ThrottleSpeed.Get()) {
 		var ret float64
 		return ret
 	}
-	return *o.ThrottleSpeed
+	return *o.ThrottleSpeed.Get()
 }
 
 // GetThrottleSpeedOk returns a tuple with the ThrottleSpeed field value if set, nil otherwise
 // and a boolean to check if the value has been set.
+// NOTE: If the value is an explicit nil, `nil, true` will be returned
 func (o *EsimRestrictions) GetThrottleSpeedOk() (*float64, bool) {
-	if o == nil || IsNil(o.ThrottleSpeed) {
+	if o == nil {
 		return nil, false
 	}
-	return o.ThrottleSpeed, true
+	return o.ThrottleSpeed.Get(), o.ThrottleSpeed.IsSet()
 }
 
 // HasThrottleSpeed returns a boolean if a field has been set.
 func (o *EsimRestrictions) HasThrottleSpeed() bool {
-	if o != nil && !IsNil(o.ThrottleSpeed) {
+	if o != nil && o.ThrottleSpeed.IsSet() {
 		return true
 	}
 
 	return false
 }
 
-// SetThrottleSpeed gets a reference to the given float64 and assigns it to the ThrottleSpeed field.
+// SetThrottleSpeed gets a reference to the given NullableFloat64 and assigns it to the ThrottleSpeed field.
 func (o *EsimRestrictions) SetThrottleSpeed(v float64) {
-	o.ThrottleSpeed = &v
+	o.ThrottleSpeed.Set(&v)
+}
+// SetThrottleSpeedNil sets the value for ThrottleSpeed to be an explicit nil
+func (o *EsimRestrictions) SetThrottleSpeedNil() {
+	o.ThrottleSpeed.Set(nil)
 }
 
-// GetThrottleUnit returns the ThrottleUnit field value if set, zero value otherwise.
+// UnsetThrottleSpeed ensures that no value is present for ThrottleSpeed, not even an explicit nil
+func (o *EsimRestrictions) UnsetThrottleSpeed() {
+	o.ThrottleSpeed.Unset()
+}
+
+// GetThrottleUnit returns the ThrottleUnit field value if set, zero value otherwise (both if not set or set to explicit null).
 func (o *EsimRestrictions) GetThrottleUnit() string {
-	if o == nil || IsNil(o.ThrottleUnit) {
+	if o == nil || IsNil(o.ThrottleUnit.Get()) {
 		var ret string
 		return ret
 	}
-	return *o.ThrottleUnit
+	return *o.ThrottleUnit.Get()
 }
 
 // GetThrottleUnitOk returns a tuple with the ThrottleUnit field value if set, nil otherwise
 // and a boolean to check if the value has been set.
+// NOTE: If the value is an explicit nil, `nil, true` will be returned
 func (o *EsimRestrictions) GetThrottleUnitOk() (*string, bool) {
-	if o == nil || IsNil(o.ThrottleUnit) {
+	if o == nil {
 		return nil, false
 	}
-	return o.ThrottleUnit, true
+	return o.ThrottleUnit.Get(), o.ThrottleUnit.IsSet()
 }
 
 // HasThrottleUnit returns a boolean if a field has been set.
 func (o *EsimRestrictions) HasThrottleUnit() bool {
-	if o != nil && !IsNil(o.ThrottleUnit) {
+	if o != nil && o.ThrottleUnit.IsSet() {
 		return true
 	}
 
 	return false
 }
 
-// SetThrottleUnit gets a reference to the given string and assigns it to the ThrottleUnit field.
+// SetThrottleUnit gets a reference to the given NullableString and assigns it to the ThrottleUnit field.
 func (o *EsimRestrictions) SetThrottleUnit(v string) {
-	o.ThrottleUnit = &v
+	o.ThrottleUnit.Set(&v)
+}
+// SetThrottleUnitNil sets the value for ThrottleUnit to be an explicit nil
+func (o *EsimRestrictions) SetThrottleUnitNil() {
+	o.ThrottleUnit.Set(nil)
 }
 
-// GetThrottleThreshold returns the ThrottleThreshold field value if set, zero value otherwise.
+// UnsetThrottleUnit ensures that no value is present for ThrottleUnit, not even an explicit nil
+func (o *EsimRestrictions) UnsetThrottleUnit() {
+	o.ThrottleUnit.Unset()
+}
+
+// GetThrottleThreshold returns the ThrottleThreshold field value if set, zero value otherwise (both if not set or set to explicit null).
 func (o *EsimRestrictions) GetThrottleThreshold() float64 {
-	if o == nil || IsNil(o.ThrottleThreshold) {
+	if o == nil || IsNil(o.ThrottleThreshold.Get()) {
 		var ret float64
 		return ret
 	}
-	return *o.ThrottleThreshold
+	return *o.ThrottleThreshold.Get()
 }
 
 // GetThrottleThresholdOk returns a tuple with the ThrottleThreshold field value if set, nil otherwise
 // and a boolean to check if the value has been set.
+// NOTE: If the value is an explicit nil, `nil, true` will be returned
 func (o *EsimRestrictions) GetThrottleThresholdOk() (*float64, bool) {
-	if o == nil || IsNil(o.ThrottleThreshold) {
+	if o == nil {
 		return nil, false
 	}
-	return o.ThrottleThreshold, true
+	return o.ThrottleThreshold.Get(), o.ThrottleThreshold.IsSet()
 }
 
 // HasThrottleThreshold returns a boolean if a field has been set.
 func (o *EsimRestrictions) HasThrottleThreshold() bool {
-	if o != nil && !IsNil(o.ThrottleThreshold) {
+	if o != nil && o.ThrottleThreshold.IsSet() {
 		return true
 	}
 
 	return false
 }
 
-// SetThrottleThreshold gets a reference to the given float64 and assigns it to the ThrottleThreshold field.
+// SetThrottleThreshold gets a reference to the given NullableFloat64 and assigns it to the ThrottleThreshold field.
 func (o *EsimRestrictions) SetThrottleThreshold(v float64) {
-	o.ThrottleThreshold = &v
+	o.ThrottleThreshold.Set(&v)
+}
+// SetThrottleThresholdNil sets the value for ThrottleThreshold to be an explicit nil
+func (o *EsimRestrictions) SetThrottleThresholdNil() {
+	o.ThrottleThreshold.Set(nil)
 }
 
-// GetThrottleThresholdUnit returns the ThrottleThresholdUnit field value if set, zero value otherwise.
+// UnsetThrottleThreshold ensures that no value is present for ThrottleThreshold, not even an explicit nil
+func (o *EsimRestrictions) UnsetThrottleThreshold() {
+	o.ThrottleThreshold.Unset()
+}
+
+// GetThrottleThresholdUnit returns the ThrottleThresholdUnit field value if set, zero value otherwise (both if not set or set to explicit null).
 func (o *EsimRestrictions) GetThrottleThresholdUnit() string {
-	if o == nil || IsNil(o.ThrottleThresholdUnit) {
+	if o == nil || IsNil(o.ThrottleThresholdUnit.Get()) {
 		var ret string
 		return ret
 	}
-	return *o.ThrottleThresholdUnit
+	return *o.ThrottleThresholdUnit.Get()
 }
 
 // GetThrottleThresholdUnitOk returns a tuple with the ThrottleThresholdUnit field value if set, nil otherwise
 // and a boolean to check if the value has been set.
+// NOTE: If the value is an explicit nil, `nil, true` will be returned
 func (o *EsimRestrictions) GetThrottleThresholdUnitOk() (*string, bool) {
-	if o == nil || IsNil(o.ThrottleThresholdUnit) {
+	if o == nil {
 		return nil, false
 	}
-	return o.ThrottleThresholdUnit, true
+	return o.ThrottleThresholdUnit.Get(), o.ThrottleThresholdUnit.IsSet()
 }
 
 // HasThrottleThresholdUnit returns a boolean if a field has been set.
 func (o *EsimRestrictions) HasThrottleThresholdUnit() bool {
-	if o != nil && !IsNil(o.ThrottleThresholdUnit) {
+	if o != nil && o.ThrottleThresholdUnit.IsSet() {
 		return true
 	}
 
 	return false
 }
 
-// SetThrottleThresholdUnit gets a reference to the given string and assigns it to the ThrottleThresholdUnit field.
+// SetThrottleThresholdUnit gets a reference to the given NullableString and assigns it to the ThrottleThresholdUnit field.
 func (o *EsimRestrictions) SetThrottleThresholdUnit(v string) {
-	o.ThrottleThresholdUnit = &v
+	o.ThrottleThresholdUnit.Set(&v)
+}
+// SetThrottleThresholdUnitNil sets the value for ThrottleThresholdUnit to be an explicit nil
+func (o *EsimRestrictions) SetThrottleThresholdUnitNil() {
+	o.ThrottleThresholdUnit.Set(nil)
 }
 
-// GetExpireInDays returns the ExpireInDays field value if set, zero value otherwise.
+// UnsetThrottleThresholdUnit ensures that no value is present for ThrottleThresholdUnit, not even an explicit nil
+func (o *EsimRestrictions) UnsetThrottleThresholdUnit() {
+	o.ThrottleThresholdUnit.Unset()
+}
+
+// GetExpireInDays returns the ExpireInDays field value
 func (o *EsimRestrictions) GetExpireInDays() int32 {
-	if o == nil || IsNil(o.ExpireInDays) {
+	if o == nil {
 		var ret int32
 		return ret
 	}
-	return *o.ExpireInDays
+
+	return o.ExpireInDays
 }
 
-// GetExpireInDaysOk returns a tuple with the ExpireInDays field value if set, nil otherwise
+// GetExpireInDaysOk returns a tuple with the ExpireInDays field value
 // and a boolean to check if the value has been set.
 func (o *EsimRestrictions) GetExpireInDaysOk() (*int32, bool) {
-	if o == nil || IsNil(o.ExpireInDays) {
+	if o == nil {
 		return nil, false
 	}
-	return o.ExpireInDays, true
+	return &o.ExpireInDays, true
 }
 
-// HasExpireInDays returns a boolean if a field has been set.
-func (o *EsimRestrictions) HasExpireInDays() bool {
-	if o != nil && !IsNil(o.ExpireInDays) {
-		return true
-	}
-
-	return false
-}
-
-// SetExpireInDays gets a reference to the given int32 and assigns it to the ExpireInDays field.
+// SetExpireInDays sets field value
 func (o *EsimRestrictions) SetExpireInDays(v int32) {
-	o.ExpireInDays = &v
+	o.ExpireInDays = v
 }
 
 func (o EsimRestrictions) MarshalJSON() ([]byte, error) {
@@ -247,25 +283,58 @@ func (o EsimRestrictions) MarshalJSON() ([]byte, error) {
 
 func (o EsimRestrictions) ToMap() (map[string]interface{}, error) {
 	toSerialize := map[string]interface{}{}
-	if !IsNil(o.Throttle) {
-		toSerialize["throttle"] = o.Throttle
+	toSerialize["throttle"] = o.Throttle
+	if o.ThrottleSpeed.IsSet() {
+		toSerialize["throttleSpeed"] = o.ThrottleSpeed.Get()
 	}
-	if !IsNil(o.ThrottleSpeed) {
-		toSerialize["throttleSpeed"] = o.ThrottleSpeed
+	if o.ThrottleUnit.IsSet() {
+		toSerialize["throttleUnit"] = o.ThrottleUnit.Get()
 	}
-	if !IsNil(o.ThrottleUnit) {
-		toSerialize["throttleUnit"] = o.ThrottleUnit
+	if o.ThrottleThreshold.IsSet() {
+		toSerialize["throttleThreshold"] = o.ThrottleThreshold.Get()
 	}
-	if !IsNil(o.ThrottleThreshold) {
-		toSerialize["throttleThreshold"] = o.ThrottleThreshold
+	if o.ThrottleThresholdUnit.IsSet() {
+		toSerialize["throttleThresholdUnit"] = o.ThrottleThresholdUnit.Get()
 	}
-	if !IsNil(o.ThrottleThresholdUnit) {
-		toSerialize["throttleThresholdUnit"] = o.ThrottleThresholdUnit
-	}
-	if !IsNil(o.ExpireInDays) {
-		toSerialize["expireInDays"] = o.ExpireInDays
-	}
+	toSerialize["expireInDays"] = o.ExpireInDays
 	return toSerialize, nil
+}
+
+func (o *EsimRestrictions) UnmarshalJSON(data []byte) (err error) {
+	// This validates that all required properties are included in the JSON object
+	// by unmarshalling the object into a generic map with string keys and checking
+	// that every required field exists as a key in the generic map.
+	requiredProperties := []string{
+		"throttle",
+		"expireInDays",
+	}
+
+	allProperties := make(map[string]interface{})
+
+	err = json.Unmarshal(data, &allProperties)
+
+	if err != nil {
+		return err;
+	}
+
+	for _, requiredProperty := range(requiredProperties) {
+		if _, exists := allProperties[requiredProperty]; !exists {
+			return fmt.Errorf("no value given for required property %v", requiredProperty)
+		}
+	}
+
+	varEsimRestrictions := _EsimRestrictions{}
+
+	decoder := json.NewDecoder(bytes.NewReader(data))
+	err = decoder.Decode(&varEsimRestrictions)
+
+	if err != nil {
+		return err
+	}
+
+	*o = EsimRestrictions(varEsimRestrictions)
+
+	return err
 }
 
 type NullableEsimRestrictions struct {

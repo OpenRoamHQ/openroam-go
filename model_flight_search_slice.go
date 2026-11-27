@@ -26,7 +26,7 @@ type FlightSearchSlice struct {
 	Origin string `json:"origin"`
 	// Three-letter IATA airport or city code to arrive at.
 	Destination string `json:"destination"`
-	// Local departure date (`yyyy-MM-dd`); today or later.
+	// Local departure date (`yyyy-MM-dd`): today or later at the departure airport. Only a date that             has ended everywhere is refused; availability decides the rest.
 	DepartureDate string `json:"departureDate"`
 }
 
@@ -167,7 +167,6 @@ func (o *FlightSearchSlice) UnmarshalJSON(data []byte) (err error) {
 	varFlightSearchSlice := _FlightSearchSlice{}
 
 	decoder := json.NewDecoder(bytes.NewReader(data))
-	decoder.DisallowUnknownFields()
 	err = decoder.Decode(&varFlightSearchSlice)
 
 	if err != nil {

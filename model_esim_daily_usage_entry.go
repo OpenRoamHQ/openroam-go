@@ -13,27 +13,40 @@ package openroam
 
 import (
 	"encoding/json"
+	"time"
+	"bytes"
+	"fmt"
 )
 
 // checks if the EsimDailyUsageEntry type satisfies the MappedNullable interface at compile time
 var _ MappedNullable = &EsimDailyUsageEntry{}
 
-// EsimDailyUsageEntry A single per-day usage entry inside `usages`.
+// EsimDailyUsageEntry The data an eSIM used on one day.
 type EsimDailyUsageEntry struct {
-	// Date of usage in `yyyy-MM-dd` format (UTC).
-	Date *string `json:"date,omitempty"`
-	// Data consumed on this day, in megabytes (MB).
-	Usage *float32 `json:"usage,omitempty"`
-	// Country name where the data was consumed, or `N/A` if unavailable.
-	Location *string `json:"location,omitempty"`
+	// The day the usage was counted for, in `yyyy-MM-dd` format. It is a calendar day in the time             zone the usage is counted in, which is not always UTC; `start` and `end` give its exact bounds.
+	Date string `json:"date"`
+	// When the day began, as a UTC instant (inclusive).
+	Start time.Time `json:"start"`
+	// When the day ended, as a UTC instant (exclusive).
+	End time.Time `json:"end"`
+	// The data used that day, in MB.
+	Usage float32 `json:"usage"`
+	// The country where the data was used; null when it is not reported.
+	Location NullableString `json:"location,omitempty"`
 }
+
+type _EsimDailyUsageEntry EsimDailyUsageEntry
 
 // NewEsimDailyUsageEntry instantiates a new EsimDailyUsageEntry object
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewEsimDailyUsageEntry() *EsimDailyUsageEntry {
+func NewEsimDailyUsageEntry(date string, start time.Time, end time.Time, usage float32) *EsimDailyUsageEntry {
 	this := EsimDailyUsageEntry{}
+	this.Date = date
+	this.Start = start
+	this.End = end
+	this.Usage = usage
 	return &this
 }
 
@@ -45,100 +58,142 @@ func NewEsimDailyUsageEntryWithDefaults() *EsimDailyUsageEntry {
 	return &this
 }
 
-// GetDate returns the Date field value if set, zero value otherwise.
+// GetDate returns the Date field value
 func (o *EsimDailyUsageEntry) GetDate() string {
-	if o == nil || IsNil(o.Date) {
+	if o == nil {
 		var ret string
 		return ret
 	}
-	return *o.Date
+
+	return o.Date
 }
 
-// GetDateOk returns a tuple with the Date field value if set, nil otherwise
+// GetDateOk returns a tuple with the Date field value
 // and a boolean to check if the value has been set.
 func (o *EsimDailyUsageEntry) GetDateOk() (*string, bool) {
-	if o == nil || IsNil(o.Date) {
+	if o == nil {
 		return nil, false
 	}
-	return o.Date, true
+	return &o.Date, true
 }
 
-// HasDate returns a boolean if a field has been set.
-func (o *EsimDailyUsageEntry) HasDate() bool {
-	if o != nil && !IsNil(o.Date) {
-		return true
+// SetDate sets field value
+func (o *EsimDailyUsageEntry) SetDate(v string) {
+	o.Date = v
+}
+
+// GetStart returns the Start field value
+func (o *EsimDailyUsageEntry) GetStart() time.Time {
+	if o == nil {
+		var ret time.Time
+		return ret
 	}
 
-	return false
+	return o.Start
 }
 
-// SetDate gets a reference to the given string and assigns it to the Date field.
-func (o *EsimDailyUsageEntry) SetDate(v string) {
-	o.Date = &v
+// GetStartOk returns a tuple with the Start field value
+// and a boolean to check if the value has been set.
+func (o *EsimDailyUsageEntry) GetStartOk() (*time.Time, bool) {
+	if o == nil {
+		return nil, false
+	}
+	return &o.Start, true
 }
 
-// GetUsage returns the Usage field value if set, zero value otherwise.
+// SetStart sets field value
+func (o *EsimDailyUsageEntry) SetStart(v time.Time) {
+	o.Start = v
+}
+
+// GetEnd returns the End field value
+func (o *EsimDailyUsageEntry) GetEnd() time.Time {
+	if o == nil {
+		var ret time.Time
+		return ret
+	}
+
+	return o.End
+}
+
+// GetEndOk returns a tuple with the End field value
+// and a boolean to check if the value has been set.
+func (o *EsimDailyUsageEntry) GetEndOk() (*time.Time, bool) {
+	if o == nil {
+		return nil, false
+	}
+	return &o.End, true
+}
+
+// SetEnd sets field value
+func (o *EsimDailyUsageEntry) SetEnd(v time.Time) {
+	o.End = v
+}
+
+// GetUsage returns the Usage field value
 func (o *EsimDailyUsageEntry) GetUsage() float32 {
-	if o == nil || IsNil(o.Usage) {
+	if o == nil {
 		var ret float32
 		return ret
 	}
-	return *o.Usage
+
+	return o.Usage
 }
 
-// GetUsageOk returns a tuple with the Usage field value if set, nil otherwise
+// GetUsageOk returns a tuple with the Usage field value
 // and a boolean to check if the value has been set.
 func (o *EsimDailyUsageEntry) GetUsageOk() (*float32, bool) {
-	if o == nil || IsNil(o.Usage) {
+	if o == nil {
 		return nil, false
 	}
-	return o.Usage, true
+	return &o.Usage, true
 }
 
-// HasUsage returns a boolean if a field has been set.
-func (o *EsimDailyUsageEntry) HasUsage() bool {
-	if o != nil && !IsNil(o.Usage) {
-		return true
-	}
-
-	return false
-}
-
-// SetUsage gets a reference to the given float32 and assigns it to the Usage field.
+// SetUsage sets field value
 func (o *EsimDailyUsageEntry) SetUsage(v float32) {
-	o.Usage = &v
+	o.Usage = v
 }
 
-// GetLocation returns the Location field value if set, zero value otherwise.
+// GetLocation returns the Location field value if set, zero value otherwise (both if not set or set to explicit null).
 func (o *EsimDailyUsageEntry) GetLocation() string {
-	if o == nil || IsNil(o.Location) {
+	if o == nil || IsNil(o.Location.Get()) {
 		var ret string
 		return ret
 	}
-	return *o.Location
+	return *o.Location.Get()
 }
 
 // GetLocationOk returns a tuple with the Location field value if set, nil otherwise
 // and a boolean to check if the value has been set.
+// NOTE: If the value is an explicit nil, `nil, true` will be returned
 func (o *EsimDailyUsageEntry) GetLocationOk() (*string, bool) {
-	if o == nil || IsNil(o.Location) {
+	if o == nil {
 		return nil, false
 	}
-	return o.Location, true
+	return o.Location.Get(), o.Location.IsSet()
 }
 
 // HasLocation returns a boolean if a field has been set.
 func (o *EsimDailyUsageEntry) HasLocation() bool {
-	if o != nil && !IsNil(o.Location) {
+	if o != nil && o.Location.IsSet() {
 		return true
 	}
 
 	return false
 }
 
-// SetLocation gets a reference to the given string and assigns it to the Location field.
+// SetLocation gets a reference to the given NullableString and assigns it to the Location field.
 func (o *EsimDailyUsageEntry) SetLocation(v string) {
-	o.Location = &v
+	o.Location.Set(&v)
+}
+// SetLocationNil sets the value for Location to be an explicit nil
+func (o *EsimDailyUsageEntry) SetLocationNil() {
+	o.Location.Set(nil)
+}
+
+// UnsetLocation ensures that no value is present for Location, not even an explicit nil
+func (o *EsimDailyUsageEntry) UnsetLocation() {
+	o.Location.Unset()
 }
 
 func (o EsimDailyUsageEntry) MarshalJSON() ([]byte, error) {
@@ -151,16 +206,53 @@ func (o EsimDailyUsageEntry) MarshalJSON() ([]byte, error) {
 
 func (o EsimDailyUsageEntry) ToMap() (map[string]interface{}, error) {
 	toSerialize := map[string]interface{}{}
-	if !IsNil(o.Date) {
-		toSerialize["date"] = o.Date
-	}
-	if !IsNil(o.Usage) {
-		toSerialize["usage"] = o.Usage
-	}
-	if !IsNil(o.Location) {
-		toSerialize["location"] = o.Location
+	toSerialize["date"] = o.Date
+	toSerialize["start"] = o.Start
+	toSerialize["end"] = o.End
+	toSerialize["usage"] = o.Usage
+	if o.Location.IsSet() {
+		toSerialize["location"] = o.Location.Get()
 	}
 	return toSerialize, nil
+}
+
+func (o *EsimDailyUsageEntry) UnmarshalJSON(data []byte) (err error) {
+	// This validates that all required properties are included in the JSON object
+	// by unmarshalling the object into a generic map with string keys and checking
+	// that every required field exists as a key in the generic map.
+	requiredProperties := []string{
+		"date",
+		"start",
+		"end",
+		"usage",
+	}
+
+	allProperties := make(map[string]interface{})
+
+	err = json.Unmarshal(data, &allProperties)
+
+	if err != nil {
+		return err;
+	}
+
+	for _, requiredProperty := range(requiredProperties) {
+		if _, exists := allProperties[requiredProperty]; !exists {
+			return fmt.Errorf("no value given for required property %v", requiredProperty)
+		}
+	}
+
+	varEsimDailyUsageEntry := _EsimDailyUsageEntry{}
+
+	decoder := json.NewDecoder(bytes.NewReader(data))
+	err = decoder.Decode(&varEsimDailyUsageEntry)
+
+	if err != nil {
+		return err
+	}
+
+	*o = EsimDailyUsageEntry(varEsimDailyUsageEntry)
+
+	return err
 }
 
 type NullableEsimDailyUsageEntry struct {

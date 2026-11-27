@@ -13,6 +13,8 @@ package openroam
 
 import (
 	"encoding/json"
+	"bytes"
+	"fmt"
 )
 
 // checks if the FlightPurchasedDetails type satisfies the MappedNullable interface at compile time
@@ -21,31 +23,42 @@ var _ MappedNullable = &FlightPurchasedDetails{}
 // FlightPurchasedDetails Flight facts outside the purchased-product keys every partner service shares, as bought.
 type FlightPurchasedDetails struct {
 	// The airline that sold the fare.
-	Owner *BookedAirline `json:"owner,omitempty"`
-	// The flights bought, in order. They stay as bought; the result's `booking` has the flights booked now.
-	Slices []BookedSlice `json:"slices,omitempty"`
+	Owner BookedAirline `json:"owner"`
+	// The flights bought, in order. They stay as bought; the result's `booking` has the flights booked now. Empty for an item bought before flight times were UTC at an airport whose time zone is unknown: it has no instant to state.
+	Slices []BookedSlice `json:"slices"`
 	// The fare's cabin.
-	CabinClass *string `json:"cabinClass,omitempty"`
-	// The terms the item was bought on, as quoted: always `payNow`, what cancelling gives back and whether it can be changed, in the order currency, OpenRoam's fees included.
-	Terms *BookingTerms `json:"terms,omitempty"`
+	CabinClass string `json:"cabinClass"`
+	// The terms the item was bought on, as quoted: always `payNow`, what cancelling gives back and whether it can be changed, in the order currency, OpenRoam's fees included. Each cancellation instant is also stated on the clock of the first departure airport.
+	Terms BookingTerms `json:"terms"`
 	// Baggage included for every passenger.
-	IncludedBaggage []BookedBaggage `json:"includedBaggage,omitempty"`
+	IncludedBaggage []BookedBaggage `json:"includedBaggage"`
 	// The paid extras bought, in the order of `inputs.selectedServices`, each with a label such as `1 × 23 kg`.
-	SelectedServices []SelectedService `json:"selectedServices,omitempty"`
-	// What the item cost, line by line, in the order currency; the amounts add up to its price.
-	PriceLines []PriceLine `json:"priceLines,omitempty"`
+	SelectedServices []SelectedService `json:"selectedServices"`
+	// What the item cost, line by line, in the order currency; the amounts add up to its price. The fare line includes the fare's taxes, which the item's `taxes` state.
+	PriceLines []PriceLine `json:"priceLines"`
 	// Flying and connection time across all slices.
-	TotalDurationMinutes *int32 `json:"totalDurationMinutes,omitempty"`
+	TotalDurationMinutes int32 `json:"totalDurationMinutes"`
 	// Connections across all slices.
-	TotalStops *int32 `json:"totalStops,omitempty"`
+	TotalStops int32 `json:"totalStops"`
 }
+
+type _FlightPurchasedDetails FlightPurchasedDetails
 
 // NewFlightPurchasedDetails instantiates a new FlightPurchasedDetails object
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewFlightPurchasedDetails() *FlightPurchasedDetails {
+func NewFlightPurchasedDetails(owner BookedAirline, slices []BookedSlice, cabinClass string, terms BookingTerms, includedBaggage []BookedBaggage, selectedServices []SelectedService, priceLines []PriceLine, totalDurationMinutes int32, totalStops int32) *FlightPurchasedDetails {
 	this := FlightPurchasedDetails{}
+	this.Owner = owner
+	this.Slices = slices
+	this.CabinClass = cabinClass
+	this.Terms = terms
+	this.IncludedBaggage = includedBaggage
+	this.SelectedServices = selectedServices
+	this.PriceLines = priceLines
+	this.TotalDurationMinutes = totalDurationMinutes
+	this.TotalStops = totalStops
 	return &this
 }
 
@@ -57,292 +70,220 @@ func NewFlightPurchasedDetailsWithDefaults() *FlightPurchasedDetails {
 	return &this
 }
 
-// GetOwner returns the Owner field value if set, zero value otherwise.
+// GetOwner returns the Owner field value
 func (o *FlightPurchasedDetails) GetOwner() BookedAirline {
-	if o == nil || IsNil(o.Owner) {
+	if o == nil {
 		var ret BookedAirline
 		return ret
 	}
-	return *o.Owner
+
+	return o.Owner
 }
 
-// GetOwnerOk returns a tuple with the Owner field value if set, nil otherwise
+// GetOwnerOk returns a tuple with the Owner field value
 // and a boolean to check if the value has been set.
 func (o *FlightPurchasedDetails) GetOwnerOk() (*BookedAirline, bool) {
-	if o == nil || IsNil(o.Owner) {
+	if o == nil {
 		return nil, false
 	}
-	return o.Owner, true
+	return &o.Owner, true
 }
 
-// HasOwner returns a boolean if a field has been set.
-func (o *FlightPurchasedDetails) HasOwner() bool {
-	if o != nil && !IsNil(o.Owner) {
-		return true
-	}
-
-	return false
-}
-
-// SetOwner gets a reference to the given BookedAirline and assigns it to the Owner field.
+// SetOwner sets field value
 func (o *FlightPurchasedDetails) SetOwner(v BookedAirline) {
-	o.Owner = &v
+	o.Owner = v
 }
 
-// GetSlices returns the Slices field value if set, zero value otherwise.
+// GetSlices returns the Slices field value
 func (o *FlightPurchasedDetails) GetSlices() []BookedSlice {
-	if o == nil || IsNil(o.Slices) {
+	if o == nil {
 		var ret []BookedSlice
 		return ret
 	}
+
 	return o.Slices
 }
 
-// GetSlicesOk returns a tuple with the Slices field value if set, nil otherwise
+// GetSlicesOk returns a tuple with the Slices field value
 // and a boolean to check if the value has been set.
 func (o *FlightPurchasedDetails) GetSlicesOk() ([]BookedSlice, bool) {
-	if o == nil || IsNil(o.Slices) {
+	if o == nil {
 		return nil, false
 	}
 	return o.Slices, true
 }
 
-// HasSlices returns a boolean if a field has been set.
-func (o *FlightPurchasedDetails) HasSlices() bool {
-	if o != nil && !IsNil(o.Slices) {
-		return true
-	}
-
-	return false
-}
-
-// SetSlices gets a reference to the given []BookedSlice and assigns it to the Slices field.
+// SetSlices sets field value
 func (o *FlightPurchasedDetails) SetSlices(v []BookedSlice) {
 	o.Slices = v
 }
 
-// GetCabinClass returns the CabinClass field value if set, zero value otherwise.
+// GetCabinClass returns the CabinClass field value
 func (o *FlightPurchasedDetails) GetCabinClass() string {
-	if o == nil || IsNil(o.CabinClass) {
+	if o == nil {
 		var ret string
 		return ret
 	}
-	return *o.CabinClass
+
+	return o.CabinClass
 }
 
-// GetCabinClassOk returns a tuple with the CabinClass field value if set, nil otherwise
+// GetCabinClassOk returns a tuple with the CabinClass field value
 // and a boolean to check if the value has been set.
 func (o *FlightPurchasedDetails) GetCabinClassOk() (*string, bool) {
-	if o == nil || IsNil(o.CabinClass) {
+	if o == nil {
 		return nil, false
 	}
-	return o.CabinClass, true
+	return &o.CabinClass, true
 }
 
-// HasCabinClass returns a boolean if a field has been set.
-func (o *FlightPurchasedDetails) HasCabinClass() bool {
-	if o != nil && !IsNil(o.CabinClass) {
-		return true
-	}
-
-	return false
-}
-
-// SetCabinClass gets a reference to the given string and assigns it to the CabinClass field.
+// SetCabinClass sets field value
 func (o *FlightPurchasedDetails) SetCabinClass(v string) {
-	o.CabinClass = &v
+	o.CabinClass = v
 }
 
-// GetTerms returns the Terms field value if set, zero value otherwise.
+// GetTerms returns the Terms field value
 func (o *FlightPurchasedDetails) GetTerms() BookingTerms {
-	if o == nil || IsNil(o.Terms) {
+	if o == nil {
 		var ret BookingTerms
 		return ret
 	}
-	return *o.Terms
+
+	return o.Terms
 }
 
-// GetTermsOk returns a tuple with the Terms field value if set, nil otherwise
+// GetTermsOk returns a tuple with the Terms field value
 // and a boolean to check if the value has been set.
 func (o *FlightPurchasedDetails) GetTermsOk() (*BookingTerms, bool) {
-	if o == nil || IsNil(o.Terms) {
+	if o == nil {
 		return nil, false
 	}
-	return o.Terms, true
+	return &o.Terms, true
 }
 
-// HasTerms returns a boolean if a field has been set.
-func (o *FlightPurchasedDetails) HasTerms() bool {
-	if o != nil && !IsNil(o.Terms) {
-		return true
-	}
-
-	return false
-}
-
-// SetTerms gets a reference to the given BookingTerms and assigns it to the Terms field.
+// SetTerms sets field value
 func (o *FlightPurchasedDetails) SetTerms(v BookingTerms) {
-	o.Terms = &v
+	o.Terms = v
 }
 
-// GetIncludedBaggage returns the IncludedBaggage field value if set, zero value otherwise.
+// GetIncludedBaggage returns the IncludedBaggage field value
 func (o *FlightPurchasedDetails) GetIncludedBaggage() []BookedBaggage {
-	if o == nil || IsNil(o.IncludedBaggage) {
+	if o == nil {
 		var ret []BookedBaggage
 		return ret
 	}
+
 	return o.IncludedBaggage
 }
 
-// GetIncludedBaggageOk returns a tuple with the IncludedBaggage field value if set, nil otherwise
+// GetIncludedBaggageOk returns a tuple with the IncludedBaggage field value
 // and a boolean to check if the value has been set.
 func (o *FlightPurchasedDetails) GetIncludedBaggageOk() ([]BookedBaggage, bool) {
-	if o == nil || IsNil(o.IncludedBaggage) {
+	if o == nil {
 		return nil, false
 	}
 	return o.IncludedBaggage, true
 }
 
-// HasIncludedBaggage returns a boolean if a field has been set.
-func (o *FlightPurchasedDetails) HasIncludedBaggage() bool {
-	if o != nil && !IsNil(o.IncludedBaggage) {
-		return true
-	}
-
-	return false
-}
-
-// SetIncludedBaggage gets a reference to the given []BookedBaggage and assigns it to the IncludedBaggage field.
+// SetIncludedBaggage sets field value
 func (o *FlightPurchasedDetails) SetIncludedBaggage(v []BookedBaggage) {
 	o.IncludedBaggage = v
 }
 
-// GetSelectedServices returns the SelectedServices field value if set, zero value otherwise.
+// GetSelectedServices returns the SelectedServices field value
 func (o *FlightPurchasedDetails) GetSelectedServices() []SelectedService {
-	if o == nil || IsNil(o.SelectedServices) {
+	if o == nil {
 		var ret []SelectedService
 		return ret
 	}
+
 	return o.SelectedServices
 }
 
-// GetSelectedServicesOk returns a tuple with the SelectedServices field value if set, nil otherwise
+// GetSelectedServicesOk returns a tuple with the SelectedServices field value
 // and a boolean to check if the value has been set.
 func (o *FlightPurchasedDetails) GetSelectedServicesOk() ([]SelectedService, bool) {
-	if o == nil || IsNil(o.SelectedServices) {
+	if o == nil {
 		return nil, false
 	}
 	return o.SelectedServices, true
 }
 
-// HasSelectedServices returns a boolean if a field has been set.
-func (o *FlightPurchasedDetails) HasSelectedServices() bool {
-	if o != nil && !IsNil(o.SelectedServices) {
-		return true
-	}
-
-	return false
-}
-
-// SetSelectedServices gets a reference to the given []SelectedService and assigns it to the SelectedServices field.
+// SetSelectedServices sets field value
 func (o *FlightPurchasedDetails) SetSelectedServices(v []SelectedService) {
 	o.SelectedServices = v
 }
 
-// GetPriceLines returns the PriceLines field value if set, zero value otherwise.
+// GetPriceLines returns the PriceLines field value
 func (o *FlightPurchasedDetails) GetPriceLines() []PriceLine {
-	if o == nil || IsNil(o.PriceLines) {
+	if o == nil {
 		var ret []PriceLine
 		return ret
 	}
+
 	return o.PriceLines
 }
 
-// GetPriceLinesOk returns a tuple with the PriceLines field value if set, nil otherwise
+// GetPriceLinesOk returns a tuple with the PriceLines field value
 // and a boolean to check if the value has been set.
 func (o *FlightPurchasedDetails) GetPriceLinesOk() ([]PriceLine, bool) {
-	if o == nil || IsNil(o.PriceLines) {
+	if o == nil {
 		return nil, false
 	}
 	return o.PriceLines, true
 }
 
-// HasPriceLines returns a boolean if a field has been set.
-func (o *FlightPurchasedDetails) HasPriceLines() bool {
-	if o != nil && !IsNil(o.PriceLines) {
-		return true
-	}
-
-	return false
-}
-
-// SetPriceLines gets a reference to the given []PriceLine and assigns it to the PriceLines field.
+// SetPriceLines sets field value
 func (o *FlightPurchasedDetails) SetPriceLines(v []PriceLine) {
 	o.PriceLines = v
 }
 
-// GetTotalDurationMinutes returns the TotalDurationMinutes field value if set, zero value otherwise.
+// GetTotalDurationMinutes returns the TotalDurationMinutes field value
 func (o *FlightPurchasedDetails) GetTotalDurationMinutes() int32 {
-	if o == nil || IsNil(o.TotalDurationMinutes) {
+	if o == nil {
 		var ret int32
 		return ret
 	}
-	return *o.TotalDurationMinutes
+
+	return o.TotalDurationMinutes
 }
 
-// GetTotalDurationMinutesOk returns a tuple with the TotalDurationMinutes field value if set, nil otherwise
+// GetTotalDurationMinutesOk returns a tuple with the TotalDurationMinutes field value
 // and a boolean to check if the value has been set.
 func (o *FlightPurchasedDetails) GetTotalDurationMinutesOk() (*int32, bool) {
-	if o == nil || IsNil(o.TotalDurationMinutes) {
+	if o == nil {
 		return nil, false
 	}
-	return o.TotalDurationMinutes, true
+	return &o.TotalDurationMinutes, true
 }
 
-// HasTotalDurationMinutes returns a boolean if a field has been set.
-func (o *FlightPurchasedDetails) HasTotalDurationMinutes() bool {
-	if o != nil && !IsNil(o.TotalDurationMinutes) {
-		return true
-	}
-
-	return false
-}
-
-// SetTotalDurationMinutes gets a reference to the given int32 and assigns it to the TotalDurationMinutes field.
+// SetTotalDurationMinutes sets field value
 func (o *FlightPurchasedDetails) SetTotalDurationMinutes(v int32) {
-	o.TotalDurationMinutes = &v
+	o.TotalDurationMinutes = v
 }
 
-// GetTotalStops returns the TotalStops field value if set, zero value otherwise.
+// GetTotalStops returns the TotalStops field value
 func (o *FlightPurchasedDetails) GetTotalStops() int32 {
-	if o == nil || IsNil(o.TotalStops) {
+	if o == nil {
 		var ret int32
 		return ret
 	}
-	return *o.TotalStops
+
+	return o.TotalStops
 }
 
-// GetTotalStopsOk returns a tuple with the TotalStops field value if set, nil otherwise
+// GetTotalStopsOk returns a tuple with the TotalStops field value
 // and a boolean to check if the value has been set.
 func (o *FlightPurchasedDetails) GetTotalStopsOk() (*int32, bool) {
-	if o == nil || IsNil(o.TotalStops) {
+	if o == nil {
 		return nil, false
 	}
-	return o.TotalStops, true
+	return &o.TotalStops, true
 }
 
-// HasTotalStops returns a boolean if a field has been set.
-func (o *FlightPurchasedDetails) HasTotalStops() bool {
-	if o != nil && !IsNil(o.TotalStops) {
-		return true
-	}
-
-	return false
-}
-
-// SetTotalStops gets a reference to the given int32 and assigns it to the TotalStops field.
+// SetTotalStops sets field value
 func (o *FlightPurchasedDetails) SetTotalStops(v int32) {
-	o.TotalStops = &v
+	o.TotalStops = v
 }
 
 func (o FlightPurchasedDetails) MarshalJSON() ([]byte, error) {
@@ -355,34 +296,60 @@ func (o FlightPurchasedDetails) MarshalJSON() ([]byte, error) {
 
 func (o FlightPurchasedDetails) ToMap() (map[string]interface{}, error) {
 	toSerialize := map[string]interface{}{}
-	if !IsNil(o.Owner) {
-		toSerialize["owner"] = o.Owner
-	}
-	if !IsNil(o.Slices) {
-		toSerialize["slices"] = o.Slices
-	}
-	if !IsNil(o.CabinClass) {
-		toSerialize["cabinClass"] = o.CabinClass
-	}
-	if !IsNil(o.Terms) {
-		toSerialize["terms"] = o.Terms
-	}
-	if !IsNil(o.IncludedBaggage) {
-		toSerialize["includedBaggage"] = o.IncludedBaggage
-	}
-	if !IsNil(o.SelectedServices) {
-		toSerialize["selectedServices"] = o.SelectedServices
-	}
-	if !IsNil(o.PriceLines) {
-		toSerialize["priceLines"] = o.PriceLines
-	}
-	if !IsNil(o.TotalDurationMinutes) {
-		toSerialize["totalDurationMinutes"] = o.TotalDurationMinutes
-	}
-	if !IsNil(o.TotalStops) {
-		toSerialize["totalStops"] = o.TotalStops
-	}
+	toSerialize["owner"] = o.Owner
+	toSerialize["slices"] = o.Slices
+	toSerialize["cabinClass"] = o.CabinClass
+	toSerialize["terms"] = o.Terms
+	toSerialize["includedBaggage"] = o.IncludedBaggage
+	toSerialize["selectedServices"] = o.SelectedServices
+	toSerialize["priceLines"] = o.PriceLines
+	toSerialize["totalDurationMinutes"] = o.TotalDurationMinutes
+	toSerialize["totalStops"] = o.TotalStops
 	return toSerialize, nil
+}
+
+func (o *FlightPurchasedDetails) UnmarshalJSON(data []byte) (err error) {
+	// This validates that all required properties are included in the JSON object
+	// by unmarshalling the object into a generic map with string keys and checking
+	// that every required field exists as a key in the generic map.
+	requiredProperties := []string{
+		"owner",
+		"slices",
+		"cabinClass",
+		"terms",
+		"includedBaggage",
+		"selectedServices",
+		"priceLines",
+		"totalDurationMinutes",
+		"totalStops",
+	}
+
+	allProperties := make(map[string]interface{})
+
+	err = json.Unmarshal(data, &allProperties)
+
+	if err != nil {
+		return err;
+	}
+
+	for _, requiredProperty := range(requiredProperties) {
+		if _, exists := allProperties[requiredProperty]; !exists {
+			return fmt.Errorf("no value given for required property %v", requiredProperty)
+		}
+	}
+
+	varFlightPurchasedDetails := _FlightPurchasedDetails{}
+
+	decoder := json.NewDecoder(bytes.NewReader(data))
+	err = decoder.Decode(&varFlightPurchasedDetails)
+
+	if err != nil {
+		return err
+	}
+
+	*o = FlightPurchasedDetails(varFlightPurchasedDetails)
+
+	return err
 }
 
 type NullableFlightPurchasedDetails struct {

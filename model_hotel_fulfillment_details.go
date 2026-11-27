@@ -13,6 +13,8 @@ package openroam
 
 import (
 	"encoding/json"
+	"bytes"
+	"fmt"
 )
 
 // checks if the HotelFulfillmentDetails type satisfies the MappedNullable interface at compile time
@@ -21,21 +23,26 @@ var _ MappedNullable = &HotelFulfillmentDetails{}
 // HotelFulfillmentDetails The booking's facts. The stay bought stays in the purchased product; `booking` is the stay as booked now.
 type HotelFulfillmentDetails struct {
 	// The booking's status at the hotel.
-	BookingStatus *string `json:"bookingStatus,omitempty"`
+	BookingStatus string `json:"bookingStatus"`
 	// The hotel's own confirmation number, the one the guest gives at the desk; null until the hotel issues one, which may come after fulfillment.
 	HotelConfirmationNumber NullableString `json:"hotelConfirmationNumber,omitempty"`
 	// What an amendment may change about the booked rooms and guests. Dates and the holder are always amendable.
-	AmendmentComposition *HotelAmendmentCapabilities `json:"amendmentComposition,omitempty"`
+	AmendmentComposition HotelAmendmentCapabilities `json:"amendmentComposition"`
 	// The dates, holder and guests as booked now.
-	Booking *HotelBooking `json:"booking,omitempty"`
+	Booking HotelBooking `json:"booking"`
 }
+
+type _HotelFulfillmentDetails HotelFulfillmentDetails
 
 // NewHotelFulfillmentDetails instantiates a new HotelFulfillmentDetails object
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewHotelFulfillmentDetails() *HotelFulfillmentDetails {
+func NewHotelFulfillmentDetails(bookingStatus string, amendmentComposition HotelAmendmentCapabilities, booking HotelBooking) *HotelFulfillmentDetails {
 	this := HotelFulfillmentDetails{}
+	this.BookingStatus = bookingStatus
+	this.AmendmentComposition = amendmentComposition
+	this.Booking = booking
 	return &this
 }
 
@@ -47,36 +54,28 @@ func NewHotelFulfillmentDetailsWithDefaults() *HotelFulfillmentDetails {
 	return &this
 }
 
-// GetBookingStatus returns the BookingStatus field value if set, zero value otherwise.
+// GetBookingStatus returns the BookingStatus field value
 func (o *HotelFulfillmentDetails) GetBookingStatus() string {
-	if o == nil || IsNil(o.BookingStatus) {
+	if o == nil {
 		var ret string
 		return ret
 	}
-	return *o.BookingStatus
+
+	return o.BookingStatus
 }
 
-// GetBookingStatusOk returns a tuple with the BookingStatus field value if set, nil otherwise
+// GetBookingStatusOk returns a tuple with the BookingStatus field value
 // and a boolean to check if the value has been set.
 func (o *HotelFulfillmentDetails) GetBookingStatusOk() (*string, bool) {
-	if o == nil || IsNil(o.BookingStatus) {
+	if o == nil {
 		return nil, false
 	}
-	return o.BookingStatus, true
+	return &o.BookingStatus, true
 }
 
-// HasBookingStatus returns a boolean if a field has been set.
-func (o *HotelFulfillmentDetails) HasBookingStatus() bool {
-	if o != nil && !IsNil(o.BookingStatus) {
-		return true
-	}
-
-	return false
-}
-
-// SetBookingStatus gets a reference to the given string and assigns it to the BookingStatus field.
+// SetBookingStatus sets field value
 func (o *HotelFulfillmentDetails) SetBookingStatus(v string) {
-	o.BookingStatus = &v
+	o.BookingStatus = v
 }
 
 // GetHotelConfirmationNumber returns the HotelConfirmationNumber field value if set, zero value otherwise (both if not set or set to explicit null).
@@ -121,68 +120,52 @@ func (o *HotelFulfillmentDetails) UnsetHotelConfirmationNumber() {
 	o.HotelConfirmationNumber.Unset()
 }
 
-// GetAmendmentComposition returns the AmendmentComposition field value if set, zero value otherwise.
+// GetAmendmentComposition returns the AmendmentComposition field value
 func (o *HotelFulfillmentDetails) GetAmendmentComposition() HotelAmendmentCapabilities {
-	if o == nil || IsNil(o.AmendmentComposition) {
+	if o == nil {
 		var ret HotelAmendmentCapabilities
 		return ret
 	}
-	return *o.AmendmentComposition
+
+	return o.AmendmentComposition
 }
 
-// GetAmendmentCompositionOk returns a tuple with the AmendmentComposition field value if set, nil otherwise
+// GetAmendmentCompositionOk returns a tuple with the AmendmentComposition field value
 // and a boolean to check if the value has been set.
 func (o *HotelFulfillmentDetails) GetAmendmentCompositionOk() (*HotelAmendmentCapabilities, bool) {
-	if o == nil || IsNil(o.AmendmentComposition) {
+	if o == nil {
 		return nil, false
 	}
-	return o.AmendmentComposition, true
+	return &o.AmendmentComposition, true
 }
 
-// HasAmendmentComposition returns a boolean if a field has been set.
-func (o *HotelFulfillmentDetails) HasAmendmentComposition() bool {
-	if o != nil && !IsNil(o.AmendmentComposition) {
-		return true
-	}
-
-	return false
-}
-
-// SetAmendmentComposition gets a reference to the given HotelAmendmentCapabilities and assigns it to the AmendmentComposition field.
+// SetAmendmentComposition sets field value
 func (o *HotelFulfillmentDetails) SetAmendmentComposition(v HotelAmendmentCapabilities) {
-	o.AmendmentComposition = &v
+	o.AmendmentComposition = v
 }
 
-// GetBooking returns the Booking field value if set, zero value otherwise.
+// GetBooking returns the Booking field value
 func (o *HotelFulfillmentDetails) GetBooking() HotelBooking {
-	if o == nil || IsNil(o.Booking) {
+	if o == nil {
 		var ret HotelBooking
 		return ret
 	}
-	return *o.Booking
+
+	return o.Booking
 }
 
-// GetBookingOk returns a tuple with the Booking field value if set, nil otherwise
+// GetBookingOk returns a tuple with the Booking field value
 // and a boolean to check if the value has been set.
 func (o *HotelFulfillmentDetails) GetBookingOk() (*HotelBooking, bool) {
-	if o == nil || IsNil(o.Booking) {
+	if o == nil {
 		return nil, false
 	}
-	return o.Booking, true
+	return &o.Booking, true
 }
 
-// HasBooking returns a boolean if a field has been set.
-func (o *HotelFulfillmentDetails) HasBooking() bool {
-	if o != nil && !IsNil(o.Booking) {
-		return true
-	}
-
-	return false
-}
-
-// SetBooking gets a reference to the given HotelBooking and assigns it to the Booking field.
+// SetBooking sets field value
 func (o *HotelFulfillmentDetails) SetBooking(v HotelBooking) {
-	o.Booking = &v
+	o.Booking = v
 }
 
 func (o HotelFulfillmentDetails) MarshalJSON() ([]byte, error) {
@@ -195,19 +178,51 @@ func (o HotelFulfillmentDetails) MarshalJSON() ([]byte, error) {
 
 func (o HotelFulfillmentDetails) ToMap() (map[string]interface{}, error) {
 	toSerialize := map[string]interface{}{}
-	if !IsNil(o.BookingStatus) {
-		toSerialize["bookingStatus"] = o.BookingStatus
-	}
+	toSerialize["bookingStatus"] = o.BookingStatus
 	if o.HotelConfirmationNumber.IsSet() {
 		toSerialize["hotelConfirmationNumber"] = o.HotelConfirmationNumber.Get()
 	}
-	if !IsNil(o.AmendmentComposition) {
-		toSerialize["amendmentComposition"] = o.AmendmentComposition
-	}
-	if !IsNil(o.Booking) {
-		toSerialize["booking"] = o.Booking
-	}
+	toSerialize["amendmentComposition"] = o.AmendmentComposition
+	toSerialize["booking"] = o.Booking
 	return toSerialize, nil
+}
+
+func (o *HotelFulfillmentDetails) UnmarshalJSON(data []byte) (err error) {
+	// This validates that all required properties are included in the JSON object
+	// by unmarshalling the object into a generic map with string keys and checking
+	// that every required field exists as a key in the generic map.
+	requiredProperties := []string{
+		"bookingStatus",
+		"amendmentComposition",
+		"booking",
+	}
+
+	allProperties := make(map[string]interface{})
+
+	err = json.Unmarshal(data, &allProperties)
+
+	if err != nil {
+		return err;
+	}
+
+	for _, requiredProperty := range(requiredProperties) {
+		if _, exists := allProperties[requiredProperty]; !exists {
+			return fmt.Errorf("no value given for required property %v", requiredProperty)
+		}
+	}
+
+	varHotelFulfillmentDetails := _HotelFulfillmentDetails{}
+
+	decoder := json.NewDecoder(bytes.NewReader(data))
+	err = decoder.Decode(&varHotelFulfillmentDetails)
+
+	if err != nil {
+		return err
+	}
+
+	*o = HotelFulfillmentDetails(varHotelFulfillmentDetails)
+
+	return err
 }
 
 type NullableHotelFulfillmentDetails struct {

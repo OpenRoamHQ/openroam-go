@@ -13,6 +13,8 @@ package openroam
 
 import (
 	"encoding/json"
+	"bytes"
+	"fmt"
 )
 
 // checks if the SelectedSeat type satisfies the MappedNullable interface at compile time
@@ -21,19 +23,24 @@ var _ MappedNullable = &SelectedSeat{}
 // SelectedSeat A seat chosen for a passenger, on the segment at these 1-based positions.
 type SelectedSeat struct {
 	// The slice's position in `details.slices`.
-	SliceIndex *int32 `json:"sliceIndex,omitempty"`
+	SliceIndex int32 `json:"sliceIndex"`
 	// The segment's position within the slice.
-	SegmentIndex *int32 `json:"segmentIndex,omitempty"`
+	SegmentIndex int32 `json:"segmentIndex"`
 	// The seat, for example `32A`.
-	SeatDesignator *string `json:"seatDesignator,omitempty"`
+	SeatDesignator string `json:"seatDesignator"`
 }
+
+type _SelectedSeat SelectedSeat
 
 // NewSelectedSeat instantiates a new SelectedSeat object
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewSelectedSeat() *SelectedSeat {
+func NewSelectedSeat(sliceIndex int32, segmentIndex int32, seatDesignator string) *SelectedSeat {
 	this := SelectedSeat{}
+	this.SliceIndex = sliceIndex
+	this.SegmentIndex = segmentIndex
+	this.SeatDesignator = seatDesignator
 	return &this
 }
 
@@ -45,100 +52,76 @@ func NewSelectedSeatWithDefaults() *SelectedSeat {
 	return &this
 }
 
-// GetSliceIndex returns the SliceIndex field value if set, zero value otherwise.
+// GetSliceIndex returns the SliceIndex field value
 func (o *SelectedSeat) GetSliceIndex() int32 {
-	if o == nil || IsNil(o.SliceIndex) {
+	if o == nil {
 		var ret int32
 		return ret
 	}
-	return *o.SliceIndex
+
+	return o.SliceIndex
 }
 
-// GetSliceIndexOk returns a tuple with the SliceIndex field value if set, nil otherwise
+// GetSliceIndexOk returns a tuple with the SliceIndex field value
 // and a boolean to check if the value has been set.
 func (o *SelectedSeat) GetSliceIndexOk() (*int32, bool) {
-	if o == nil || IsNil(o.SliceIndex) {
+	if o == nil {
 		return nil, false
 	}
-	return o.SliceIndex, true
+	return &o.SliceIndex, true
 }
 
-// HasSliceIndex returns a boolean if a field has been set.
-func (o *SelectedSeat) HasSliceIndex() bool {
-	if o != nil && !IsNil(o.SliceIndex) {
-		return true
-	}
-
-	return false
-}
-
-// SetSliceIndex gets a reference to the given int32 and assigns it to the SliceIndex field.
+// SetSliceIndex sets field value
 func (o *SelectedSeat) SetSliceIndex(v int32) {
-	o.SliceIndex = &v
+	o.SliceIndex = v
 }
 
-// GetSegmentIndex returns the SegmentIndex field value if set, zero value otherwise.
+// GetSegmentIndex returns the SegmentIndex field value
 func (o *SelectedSeat) GetSegmentIndex() int32 {
-	if o == nil || IsNil(o.SegmentIndex) {
+	if o == nil {
 		var ret int32
 		return ret
 	}
-	return *o.SegmentIndex
+
+	return o.SegmentIndex
 }
 
-// GetSegmentIndexOk returns a tuple with the SegmentIndex field value if set, nil otherwise
+// GetSegmentIndexOk returns a tuple with the SegmentIndex field value
 // and a boolean to check if the value has been set.
 func (o *SelectedSeat) GetSegmentIndexOk() (*int32, bool) {
-	if o == nil || IsNil(o.SegmentIndex) {
+	if o == nil {
 		return nil, false
 	}
-	return o.SegmentIndex, true
+	return &o.SegmentIndex, true
 }
 
-// HasSegmentIndex returns a boolean if a field has been set.
-func (o *SelectedSeat) HasSegmentIndex() bool {
-	if o != nil && !IsNil(o.SegmentIndex) {
-		return true
-	}
-
-	return false
-}
-
-// SetSegmentIndex gets a reference to the given int32 and assigns it to the SegmentIndex field.
+// SetSegmentIndex sets field value
 func (o *SelectedSeat) SetSegmentIndex(v int32) {
-	o.SegmentIndex = &v
+	o.SegmentIndex = v
 }
 
-// GetSeatDesignator returns the SeatDesignator field value if set, zero value otherwise.
+// GetSeatDesignator returns the SeatDesignator field value
 func (o *SelectedSeat) GetSeatDesignator() string {
-	if o == nil || IsNil(o.SeatDesignator) {
+	if o == nil {
 		var ret string
 		return ret
 	}
-	return *o.SeatDesignator
+
+	return o.SeatDesignator
 }
 
-// GetSeatDesignatorOk returns a tuple with the SeatDesignator field value if set, nil otherwise
+// GetSeatDesignatorOk returns a tuple with the SeatDesignator field value
 // and a boolean to check if the value has been set.
 func (o *SelectedSeat) GetSeatDesignatorOk() (*string, bool) {
-	if o == nil || IsNil(o.SeatDesignator) {
+	if o == nil {
 		return nil, false
 	}
-	return o.SeatDesignator, true
+	return &o.SeatDesignator, true
 }
 
-// HasSeatDesignator returns a boolean if a field has been set.
-func (o *SelectedSeat) HasSeatDesignator() bool {
-	if o != nil && !IsNil(o.SeatDesignator) {
-		return true
-	}
-
-	return false
-}
-
-// SetSeatDesignator gets a reference to the given string and assigns it to the SeatDesignator field.
+// SetSeatDesignator sets field value
 func (o *SelectedSeat) SetSeatDesignator(v string) {
-	o.SeatDesignator = &v
+	o.SeatDesignator = v
 }
 
 func (o SelectedSeat) MarshalJSON() ([]byte, error) {
@@ -151,16 +134,48 @@ func (o SelectedSeat) MarshalJSON() ([]byte, error) {
 
 func (o SelectedSeat) ToMap() (map[string]interface{}, error) {
 	toSerialize := map[string]interface{}{}
-	if !IsNil(o.SliceIndex) {
-		toSerialize["sliceIndex"] = o.SliceIndex
-	}
-	if !IsNil(o.SegmentIndex) {
-		toSerialize["segmentIndex"] = o.SegmentIndex
-	}
-	if !IsNil(o.SeatDesignator) {
-		toSerialize["seatDesignator"] = o.SeatDesignator
-	}
+	toSerialize["sliceIndex"] = o.SliceIndex
+	toSerialize["segmentIndex"] = o.SegmentIndex
+	toSerialize["seatDesignator"] = o.SeatDesignator
 	return toSerialize, nil
+}
+
+func (o *SelectedSeat) UnmarshalJSON(data []byte) (err error) {
+	// This validates that all required properties are included in the JSON object
+	// by unmarshalling the object into a generic map with string keys and checking
+	// that every required field exists as a key in the generic map.
+	requiredProperties := []string{
+		"sliceIndex",
+		"segmentIndex",
+		"seatDesignator",
+	}
+
+	allProperties := make(map[string]interface{})
+
+	err = json.Unmarshal(data, &allProperties)
+
+	if err != nil {
+		return err;
+	}
+
+	for _, requiredProperty := range(requiredProperties) {
+		if _, exists := allProperties[requiredProperty]; !exists {
+			return fmt.Errorf("no value given for required property %v", requiredProperty)
+		}
+	}
+
+	varSelectedSeat := _SelectedSeat{}
+
+	decoder := json.NewDecoder(bytes.NewReader(data))
+	err = decoder.Decode(&varSelectedSeat)
+
+	if err != nil {
+		return err
+	}
+
+	*o = SelectedSeat(varSelectedSeat)
+
+	return err
 }
 
 type NullableSelectedSeat struct {

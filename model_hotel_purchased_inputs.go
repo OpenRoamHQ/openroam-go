@@ -13,6 +13,8 @@ package openroam
 
 import (
 	"encoding/json"
+	"bytes"
+	"fmt"
 )
 
 // checks if the HotelPurchasedInputs type satisfies the MappedNullable interface at compile time
@@ -21,21 +23,25 @@ var _ MappedNullable = &HotelPurchasedInputs{}
 // HotelPurchasedInputs The item's `inputs` under the request's keys. The price guard `maxPrice` is not echoed.
 type HotelPurchasedInputs struct {
 	// The lead guest, with email and phone masked.
-	Holder *LeadGuest `json:"holder,omitempty"`
+	Holder LeadGuest `json:"holder"`
 	// One entry per room, in room order, with the guests as sent.
-	RoomGuests []RoomGuests `json:"roomGuests,omitempty"`
+	RoomGuests []RoomGuests `json:"roomGuests"`
 	// The requests sent to the hotel; null when none were sent.
 	SpecialRequests NullableString `json:"specialRequests,omitempty"`
 	// Selected opaque request codes applied to every room, when supplied.
 	SpecialRequestCodes []string `json:"specialRequestCodes,omitempty"`
 }
 
+type _HotelPurchasedInputs HotelPurchasedInputs
+
 // NewHotelPurchasedInputs instantiates a new HotelPurchasedInputs object
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewHotelPurchasedInputs() *HotelPurchasedInputs {
+func NewHotelPurchasedInputs(holder LeadGuest, roomGuests []RoomGuests) *HotelPurchasedInputs {
 	this := HotelPurchasedInputs{}
+	this.Holder = holder
+	this.RoomGuests = roomGuests
 	return &this
 }
 
@@ -47,66 +53,50 @@ func NewHotelPurchasedInputsWithDefaults() *HotelPurchasedInputs {
 	return &this
 }
 
-// GetHolder returns the Holder field value if set, zero value otherwise.
+// GetHolder returns the Holder field value
 func (o *HotelPurchasedInputs) GetHolder() LeadGuest {
-	if o == nil || IsNil(o.Holder) {
+	if o == nil {
 		var ret LeadGuest
 		return ret
 	}
-	return *o.Holder
+
+	return o.Holder
 }
 
-// GetHolderOk returns a tuple with the Holder field value if set, nil otherwise
+// GetHolderOk returns a tuple with the Holder field value
 // and a boolean to check if the value has been set.
 func (o *HotelPurchasedInputs) GetHolderOk() (*LeadGuest, bool) {
-	if o == nil || IsNil(o.Holder) {
+	if o == nil {
 		return nil, false
 	}
-	return o.Holder, true
+	return &o.Holder, true
 }
 
-// HasHolder returns a boolean if a field has been set.
-func (o *HotelPurchasedInputs) HasHolder() bool {
-	if o != nil && !IsNil(o.Holder) {
-		return true
-	}
-
-	return false
-}
-
-// SetHolder gets a reference to the given LeadGuest and assigns it to the Holder field.
+// SetHolder sets field value
 func (o *HotelPurchasedInputs) SetHolder(v LeadGuest) {
-	o.Holder = &v
+	o.Holder = v
 }
 
-// GetRoomGuests returns the RoomGuests field value if set, zero value otherwise.
+// GetRoomGuests returns the RoomGuests field value
 func (o *HotelPurchasedInputs) GetRoomGuests() []RoomGuests {
-	if o == nil || IsNil(o.RoomGuests) {
+	if o == nil {
 		var ret []RoomGuests
 		return ret
 	}
+
 	return o.RoomGuests
 }
 
-// GetRoomGuestsOk returns a tuple with the RoomGuests field value if set, nil otherwise
+// GetRoomGuestsOk returns a tuple with the RoomGuests field value
 // and a boolean to check if the value has been set.
 func (o *HotelPurchasedInputs) GetRoomGuestsOk() ([]RoomGuests, bool) {
-	if o == nil || IsNil(o.RoomGuests) {
+	if o == nil {
 		return nil, false
 	}
 	return o.RoomGuests, true
 }
 
-// HasRoomGuests returns a boolean if a field has been set.
-func (o *HotelPurchasedInputs) HasRoomGuests() bool {
-	if o != nil && !IsNil(o.RoomGuests) {
-		return true
-	}
-
-	return false
-}
-
-// SetRoomGuests gets a reference to the given []RoomGuests and assigns it to the RoomGuests field.
+// SetRoomGuests sets field value
 func (o *HotelPurchasedInputs) SetRoomGuests(v []RoomGuests) {
 	o.RoomGuests = v
 }
@@ -196,12 +186,8 @@ func (o HotelPurchasedInputs) MarshalJSON() ([]byte, error) {
 
 func (o HotelPurchasedInputs) ToMap() (map[string]interface{}, error) {
 	toSerialize := map[string]interface{}{}
-	if !IsNil(o.Holder) {
-		toSerialize["holder"] = o.Holder
-	}
-	if !IsNil(o.RoomGuests) {
-		toSerialize["roomGuests"] = o.RoomGuests
-	}
+	toSerialize["holder"] = o.Holder
+	toSerialize["roomGuests"] = o.RoomGuests
 	if o.SpecialRequests.IsSet() {
 		toSerialize["specialRequests"] = o.SpecialRequests.Get()
 	}
@@ -209,6 +195,43 @@ func (o HotelPurchasedInputs) ToMap() (map[string]interface{}, error) {
 		toSerialize["specialRequestCodes"] = o.SpecialRequestCodes
 	}
 	return toSerialize, nil
+}
+
+func (o *HotelPurchasedInputs) UnmarshalJSON(data []byte) (err error) {
+	// This validates that all required properties are included in the JSON object
+	// by unmarshalling the object into a generic map with string keys and checking
+	// that every required field exists as a key in the generic map.
+	requiredProperties := []string{
+		"holder",
+		"roomGuests",
+	}
+
+	allProperties := make(map[string]interface{})
+
+	err = json.Unmarshal(data, &allProperties)
+
+	if err != nil {
+		return err;
+	}
+
+	for _, requiredProperty := range(requiredProperties) {
+		if _, exists := allProperties[requiredProperty]; !exists {
+			return fmt.Errorf("no value given for required property %v", requiredProperty)
+		}
+	}
+
+	varHotelPurchasedInputs := _HotelPurchasedInputs{}
+
+	decoder := json.NewDecoder(bytes.NewReader(data))
+	err = decoder.Decode(&varHotelPurchasedInputs)
+
+	if err != nil {
+		return err
+	}
+
+	*o = HotelPurchasedInputs(varHotelPurchasedInputs)
+
+	return err
 }
 
 type NullableHotelPurchasedInputs struct {

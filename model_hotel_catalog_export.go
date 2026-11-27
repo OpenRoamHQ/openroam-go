@@ -14,6 +14,8 @@ package openroam
 import (
 	"encoding/json"
 	"time"
+	"bytes"
+	"fmt"
 )
 
 // checks if the HotelCatalogExport type satisfies the MappedNullable interface at compile time
@@ -24,19 +26,25 @@ type HotelCatalogExport struct {
 	// When the current files were built (UTC); null before the first build, and after a release that changes the line format until the first build in the new format.
 	GeneratedAt NullableTime `json:"generatedAt,omitempty"`
 	// Hotels in each file; 0 when there are no files.
-	HotelCount *int32 `json:"hotelCount,omitempty"`
+	HotelCount int32 `json:"hotelCount"`
 	// The current catalog zips, one per variant; empty whenever `generatedAt` is null.
-	Files []HotelCatalogFile `json:"files,omitempty"`
+	Files []HotelCatalogFile `json:"files"`
 	// The complete confirmed ID replacement map for this build; null before its first build.
 	Replacements NullableHotelCatalogReplacementFile `json:"replacements,omitempty"`
+	// Until when the file and replacement links are sure to work (UTC), about an hour after this answer; null when there are no files. A download must start before then. A link may keep working after this time but can stop at any moment, so it is not stored: to resume or retry later, call this route again and continue with a `Range` request on the new link.
+	LinksExpireAt NullableTime `json:"linksExpireAt,omitempty"`
 }
+
+type _HotelCatalogExport HotelCatalogExport
 
 // NewHotelCatalogExport instantiates a new HotelCatalogExport object
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewHotelCatalogExport() *HotelCatalogExport {
+func NewHotelCatalogExport(hotelCount int32, files []HotelCatalogFile) *HotelCatalogExport {
 	this := HotelCatalogExport{}
+	this.HotelCount = hotelCount
+	this.Files = files
 	return &this
 }
 
@@ -90,66 +98,50 @@ func (o *HotelCatalogExport) UnsetGeneratedAt() {
 	o.GeneratedAt.Unset()
 }
 
-// GetHotelCount returns the HotelCount field value if set, zero value otherwise.
+// GetHotelCount returns the HotelCount field value
 func (o *HotelCatalogExport) GetHotelCount() int32 {
-	if o == nil || IsNil(o.HotelCount) {
+	if o == nil {
 		var ret int32
 		return ret
 	}
-	return *o.HotelCount
+
+	return o.HotelCount
 }
 
-// GetHotelCountOk returns a tuple with the HotelCount field value if set, nil otherwise
+// GetHotelCountOk returns a tuple with the HotelCount field value
 // and a boolean to check if the value has been set.
 func (o *HotelCatalogExport) GetHotelCountOk() (*int32, bool) {
-	if o == nil || IsNil(o.HotelCount) {
+	if o == nil {
 		return nil, false
 	}
-	return o.HotelCount, true
+	return &o.HotelCount, true
 }
 
-// HasHotelCount returns a boolean if a field has been set.
-func (o *HotelCatalogExport) HasHotelCount() bool {
-	if o != nil && !IsNil(o.HotelCount) {
-		return true
-	}
-
-	return false
-}
-
-// SetHotelCount gets a reference to the given int32 and assigns it to the HotelCount field.
+// SetHotelCount sets field value
 func (o *HotelCatalogExport) SetHotelCount(v int32) {
-	o.HotelCount = &v
+	o.HotelCount = v
 }
 
-// GetFiles returns the Files field value if set, zero value otherwise.
+// GetFiles returns the Files field value
 func (o *HotelCatalogExport) GetFiles() []HotelCatalogFile {
-	if o == nil || IsNil(o.Files) {
+	if o == nil {
 		var ret []HotelCatalogFile
 		return ret
 	}
+
 	return o.Files
 }
 
-// GetFilesOk returns a tuple with the Files field value if set, nil otherwise
+// GetFilesOk returns a tuple with the Files field value
 // and a boolean to check if the value has been set.
 func (o *HotelCatalogExport) GetFilesOk() ([]HotelCatalogFile, bool) {
-	if o == nil || IsNil(o.Files) {
+	if o == nil {
 		return nil, false
 	}
 	return o.Files, true
 }
 
-// HasFiles returns a boolean if a field has been set.
-func (o *HotelCatalogExport) HasFiles() bool {
-	if o != nil && !IsNil(o.Files) {
-		return true
-	}
-
-	return false
-}
-
-// SetFiles gets a reference to the given []HotelCatalogFile and assigns it to the Files field.
+// SetFiles sets field value
 func (o *HotelCatalogExport) SetFiles(v []HotelCatalogFile) {
 	o.Files = v
 }
@@ -196,6 +188,48 @@ func (o *HotelCatalogExport) UnsetReplacements() {
 	o.Replacements.Unset()
 }
 
+// GetLinksExpireAt returns the LinksExpireAt field value if set, zero value otherwise (both if not set or set to explicit null).
+func (o *HotelCatalogExport) GetLinksExpireAt() time.Time {
+	if o == nil || IsNil(o.LinksExpireAt.Get()) {
+		var ret time.Time
+		return ret
+	}
+	return *o.LinksExpireAt.Get()
+}
+
+// GetLinksExpireAtOk returns a tuple with the LinksExpireAt field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+// NOTE: If the value is an explicit nil, `nil, true` will be returned
+func (o *HotelCatalogExport) GetLinksExpireAtOk() (*time.Time, bool) {
+	if o == nil {
+		return nil, false
+	}
+	return o.LinksExpireAt.Get(), o.LinksExpireAt.IsSet()
+}
+
+// HasLinksExpireAt returns a boolean if a field has been set.
+func (o *HotelCatalogExport) HasLinksExpireAt() bool {
+	if o != nil && o.LinksExpireAt.IsSet() {
+		return true
+	}
+
+	return false
+}
+
+// SetLinksExpireAt gets a reference to the given NullableTime and assigns it to the LinksExpireAt field.
+func (o *HotelCatalogExport) SetLinksExpireAt(v time.Time) {
+	o.LinksExpireAt.Set(&v)
+}
+// SetLinksExpireAtNil sets the value for LinksExpireAt to be an explicit nil
+func (o *HotelCatalogExport) SetLinksExpireAtNil() {
+	o.LinksExpireAt.Set(nil)
+}
+
+// UnsetLinksExpireAt ensures that no value is present for LinksExpireAt, not even an explicit nil
+func (o *HotelCatalogExport) UnsetLinksExpireAt() {
+	o.LinksExpireAt.Unset()
+}
+
 func (o HotelCatalogExport) MarshalJSON() ([]byte, error) {
 	toSerialize,err := o.ToMap()
 	if err != nil {
@@ -209,16 +243,52 @@ func (o HotelCatalogExport) ToMap() (map[string]interface{}, error) {
 	if o.GeneratedAt.IsSet() {
 		toSerialize["generatedAt"] = o.GeneratedAt.Get()
 	}
-	if !IsNil(o.HotelCount) {
-		toSerialize["hotelCount"] = o.HotelCount
-	}
-	if !IsNil(o.Files) {
-		toSerialize["files"] = o.Files
-	}
+	toSerialize["hotelCount"] = o.HotelCount
+	toSerialize["files"] = o.Files
 	if o.Replacements.IsSet() {
 		toSerialize["replacements"] = o.Replacements.Get()
 	}
+	if o.LinksExpireAt.IsSet() {
+		toSerialize["linksExpireAt"] = o.LinksExpireAt.Get()
+	}
 	return toSerialize, nil
+}
+
+func (o *HotelCatalogExport) UnmarshalJSON(data []byte) (err error) {
+	// This validates that all required properties are included in the JSON object
+	// by unmarshalling the object into a generic map with string keys and checking
+	// that every required field exists as a key in the generic map.
+	requiredProperties := []string{
+		"hotelCount",
+		"files",
+	}
+
+	allProperties := make(map[string]interface{})
+
+	err = json.Unmarshal(data, &allProperties)
+
+	if err != nil {
+		return err;
+	}
+
+	for _, requiredProperty := range(requiredProperties) {
+		if _, exists := allProperties[requiredProperty]; !exists {
+			return fmt.Errorf("no value given for required property %v", requiredProperty)
+		}
+	}
+
+	varHotelCatalogExport := _HotelCatalogExport{}
+
+	decoder := json.NewDecoder(bytes.NewReader(data))
+	err = decoder.Decode(&varHotelCatalogExport)
+
+	if err != nil {
+		return err
+	}
+
+	*o = HotelCatalogExport(varHotelCatalogExport)
+
+	return err
 }
 
 type NullableHotelCatalogExport struct {

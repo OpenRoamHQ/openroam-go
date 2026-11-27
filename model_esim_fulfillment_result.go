@@ -13,6 +13,8 @@ package openroam
 
 import (
 	"encoding/json"
+	"bytes"
+	"fmt"
 )
 
 // checks if the EsimFulfillmentResult type satisfies the MappedNullable interface at compile time
@@ -21,15 +23,18 @@ var _ MappedNullable = &EsimFulfillmentResult{}
 // EsimFulfillmentResult What a fulfilled eSIM order item delivered. An eSIM has no monetary value, so there is no `deliveredValue`; everything sits under `details`. Order reads and the `order.fulfillment.updated` webhook carry the same result.
 type EsimFulfillmentResult struct {
 	// The eSIM an order item delivered: its ICCID and states, how to install it, and its plan. A top-up item reads the eSIM it topped up, with `mode` `topUp`.
-	Details *EsimFulfillmentDetails `json:"details,omitempty"`
+	Details EsimFulfillmentDetails `json:"details"`
 }
+
+type _EsimFulfillmentResult EsimFulfillmentResult
 
 // NewEsimFulfillmentResult instantiates a new EsimFulfillmentResult object
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewEsimFulfillmentResult() *EsimFulfillmentResult {
+func NewEsimFulfillmentResult(details EsimFulfillmentDetails) *EsimFulfillmentResult {
 	this := EsimFulfillmentResult{}
+	this.Details = details
 	return &this
 }
 
@@ -41,36 +46,28 @@ func NewEsimFulfillmentResultWithDefaults() *EsimFulfillmentResult {
 	return &this
 }
 
-// GetDetails returns the Details field value if set, zero value otherwise.
+// GetDetails returns the Details field value
 func (o *EsimFulfillmentResult) GetDetails() EsimFulfillmentDetails {
-	if o == nil || IsNil(o.Details) {
+	if o == nil {
 		var ret EsimFulfillmentDetails
 		return ret
 	}
-	return *o.Details
+
+	return o.Details
 }
 
-// GetDetailsOk returns a tuple with the Details field value if set, nil otherwise
+// GetDetailsOk returns a tuple with the Details field value
 // and a boolean to check if the value has been set.
 func (o *EsimFulfillmentResult) GetDetailsOk() (*EsimFulfillmentDetails, bool) {
-	if o == nil || IsNil(o.Details) {
+	if o == nil {
 		return nil, false
 	}
-	return o.Details, true
+	return &o.Details, true
 }
 
-// HasDetails returns a boolean if a field has been set.
-func (o *EsimFulfillmentResult) HasDetails() bool {
-	if o != nil && !IsNil(o.Details) {
-		return true
-	}
-
-	return false
-}
-
-// SetDetails gets a reference to the given EsimFulfillmentDetails and assigns it to the Details field.
+// SetDetails sets field value
 func (o *EsimFulfillmentResult) SetDetails(v EsimFulfillmentDetails) {
-	o.Details = &v
+	o.Details = v
 }
 
 func (o EsimFulfillmentResult) MarshalJSON() ([]byte, error) {
@@ -83,10 +80,44 @@ func (o EsimFulfillmentResult) MarshalJSON() ([]byte, error) {
 
 func (o EsimFulfillmentResult) ToMap() (map[string]interface{}, error) {
 	toSerialize := map[string]interface{}{}
-	if !IsNil(o.Details) {
-		toSerialize["details"] = o.Details
-	}
+	toSerialize["details"] = o.Details
 	return toSerialize, nil
+}
+
+func (o *EsimFulfillmentResult) UnmarshalJSON(data []byte) (err error) {
+	// This validates that all required properties are included in the JSON object
+	// by unmarshalling the object into a generic map with string keys and checking
+	// that every required field exists as a key in the generic map.
+	requiredProperties := []string{
+		"details",
+	}
+
+	allProperties := make(map[string]interface{})
+
+	err = json.Unmarshal(data, &allProperties)
+
+	if err != nil {
+		return err;
+	}
+
+	for _, requiredProperty := range(requiredProperties) {
+		if _, exists := allProperties[requiredProperty]; !exists {
+			return fmt.Errorf("no value given for required property %v", requiredProperty)
+		}
+	}
+
+	varEsimFulfillmentResult := _EsimFulfillmentResult{}
+
+	decoder := json.NewDecoder(bytes.NewReader(data))
+	err = decoder.Decode(&varEsimFulfillmentResult)
+
+	if err != nil {
+		return err
+	}
+
+	*o = EsimFulfillmentResult(varEsimFulfillmentResult)
+
+	return err
 }
 
 type NullableEsimFulfillmentResult struct {

@@ -24,7 +24,7 @@ var _ MappedNullable = &MixedOrderRequest{}
 type MixedOrderRequest struct {
 	// Required. One to five items; the sum of their `quantity` is at most five.
 	Items []MixedOrderRequestItem `json:"items"`
-	// Three-letter currency code the order is priced and charged in, for example `USD`. When omitted or empty, the API key's default currency is used.
+	// Three-letter currency code the order is priced and charged in, for example `USD`. When omitted or empty, the API key's default currency is used. An unsupported code gives 400 / 10001 at `currency`, reason `NOT_SUPPORTED`, before any item is checked.
 	Currency NullableString `json:"currency,omitempty"`
 	// Optional reference of your own, up to 128 characters, without leading or trailing whitespace. It must be unique among your orders (a reused value returns `409`) and can be used to find the order with the `referenceId` filter of the order list.
 	ReferenceId NullableString `json:"referenceId,omitempty"`
@@ -250,7 +250,6 @@ func (o *MixedOrderRequest) UnmarshalJSON(data []byte) (err error) {
 	varMixedOrderRequest := _MixedOrderRequest{}
 
 	decoder := json.NewDecoder(bytes.NewReader(data))
-	decoder.DisallowUnknownFields()
 	err = decoder.Decode(&varMixedOrderRequest)
 
 	if err != nil {

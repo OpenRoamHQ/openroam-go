@@ -13,6 +13,8 @@ package openroam
 
 import (
 	"encoding/json"
+	"bytes"
+	"fmt"
 )
 
 // checks if the EsimFeatures type satisfies the MappedNullable interface at compile time
@@ -20,24 +22,36 @@ var _ MappedNullable = &EsimFeatures{}
 
 // EsimFeatures struct for EsimFeatures
 type EsimFeatures struct {
-	WithKyc *bool `json:"withKyc,omitempty"`
-	WithTopUp *bool `json:"withTopUp,omitempty"`
-	WithHotspot *bool `json:"withHotspot,omitempty"`
-	WithDataRoaming *bool `json:"withDataRoaming,omitempty"`
-	WithSubscription *bool `json:"withSubscription,omitempty"`
-	WithDestinationInstall *bool `json:"withDestinationInstall,omitempty"`
-	WithUsageCheck *bool `json:"withUsageCheck,omitempty"`
-	Technology *string `json:"technology,omitempty"`
-	Activation *string `json:"activation,omitempty"`
-	Charge *string `json:"charge,omitempty"`
+	WithKyc bool `json:"withKyc"`
+	WithTopUp bool `json:"withTopUp"`
+	WithHotspot bool `json:"withHotspot"`
+	WithDataRoaming bool `json:"withDataRoaming"`
+	WithSubscription bool `json:"withSubscription"`
+	WithDestinationInstall bool `json:"withDestinationInstall"`
+	WithUsageCheck bool `json:"withUsageCheck"`
+	Technology string `json:"technology"`
+	Activation string `json:"activation"`
+	Charge string `json:"charge"`
 }
+
+type _EsimFeatures EsimFeatures
 
 // NewEsimFeatures instantiates a new EsimFeatures object
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewEsimFeatures() *EsimFeatures {
+func NewEsimFeatures(withKyc bool, withTopUp bool, withHotspot bool, withDataRoaming bool, withSubscription bool, withDestinationInstall bool, withUsageCheck bool, technology string, activation string, charge string) *EsimFeatures {
 	this := EsimFeatures{}
+	this.WithKyc = withKyc
+	this.WithTopUp = withTopUp
+	this.WithHotspot = withHotspot
+	this.WithDataRoaming = withDataRoaming
+	this.WithSubscription = withSubscription
+	this.WithDestinationInstall = withDestinationInstall
+	this.WithUsageCheck = withUsageCheck
+	this.Technology = technology
+	this.Activation = activation
+	this.Charge = charge
 	return &this
 }
 
@@ -49,324 +63,244 @@ func NewEsimFeaturesWithDefaults() *EsimFeatures {
 	return &this
 }
 
-// GetWithKyc returns the WithKyc field value if set, zero value otherwise.
+// GetWithKyc returns the WithKyc field value
 func (o *EsimFeatures) GetWithKyc() bool {
-	if o == nil || IsNil(o.WithKyc) {
+	if o == nil {
 		var ret bool
 		return ret
 	}
-	return *o.WithKyc
+
+	return o.WithKyc
 }
 
-// GetWithKycOk returns a tuple with the WithKyc field value if set, nil otherwise
+// GetWithKycOk returns a tuple with the WithKyc field value
 // and a boolean to check if the value has been set.
 func (o *EsimFeatures) GetWithKycOk() (*bool, bool) {
-	if o == nil || IsNil(o.WithKyc) {
+	if o == nil {
 		return nil, false
 	}
-	return o.WithKyc, true
+	return &o.WithKyc, true
 }
 
-// HasWithKyc returns a boolean if a field has been set.
-func (o *EsimFeatures) HasWithKyc() bool {
-	if o != nil && !IsNil(o.WithKyc) {
-		return true
-	}
-
-	return false
-}
-
-// SetWithKyc gets a reference to the given bool and assigns it to the WithKyc field.
+// SetWithKyc sets field value
 func (o *EsimFeatures) SetWithKyc(v bool) {
-	o.WithKyc = &v
+	o.WithKyc = v
 }
 
-// GetWithTopUp returns the WithTopUp field value if set, zero value otherwise.
+// GetWithTopUp returns the WithTopUp field value
 func (o *EsimFeatures) GetWithTopUp() bool {
-	if o == nil || IsNil(o.WithTopUp) {
+	if o == nil {
 		var ret bool
 		return ret
 	}
-	return *o.WithTopUp
+
+	return o.WithTopUp
 }
 
-// GetWithTopUpOk returns a tuple with the WithTopUp field value if set, nil otherwise
+// GetWithTopUpOk returns a tuple with the WithTopUp field value
 // and a boolean to check if the value has been set.
 func (o *EsimFeatures) GetWithTopUpOk() (*bool, bool) {
-	if o == nil || IsNil(o.WithTopUp) {
+	if o == nil {
 		return nil, false
 	}
-	return o.WithTopUp, true
+	return &o.WithTopUp, true
 }
 
-// HasWithTopUp returns a boolean if a field has been set.
-func (o *EsimFeatures) HasWithTopUp() bool {
-	if o != nil && !IsNil(o.WithTopUp) {
-		return true
-	}
-
-	return false
-}
-
-// SetWithTopUp gets a reference to the given bool and assigns it to the WithTopUp field.
+// SetWithTopUp sets field value
 func (o *EsimFeatures) SetWithTopUp(v bool) {
-	o.WithTopUp = &v
+	o.WithTopUp = v
 }
 
-// GetWithHotspot returns the WithHotspot field value if set, zero value otherwise.
+// GetWithHotspot returns the WithHotspot field value
 func (o *EsimFeatures) GetWithHotspot() bool {
-	if o == nil || IsNil(o.WithHotspot) {
+	if o == nil {
 		var ret bool
 		return ret
 	}
-	return *o.WithHotspot
+
+	return o.WithHotspot
 }
 
-// GetWithHotspotOk returns a tuple with the WithHotspot field value if set, nil otherwise
+// GetWithHotspotOk returns a tuple with the WithHotspot field value
 // and a boolean to check if the value has been set.
 func (o *EsimFeatures) GetWithHotspotOk() (*bool, bool) {
-	if o == nil || IsNil(o.WithHotspot) {
+	if o == nil {
 		return nil, false
 	}
-	return o.WithHotspot, true
+	return &o.WithHotspot, true
 }
 
-// HasWithHotspot returns a boolean if a field has been set.
-func (o *EsimFeatures) HasWithHotspot() bool {
-	if o != nil && !IsNil(o.WithHotspot) {
-		return true
-	}
-
-	return false
-}
-
-// SetWithHotspot gets a reference to the given bool and assigns it to the WithHotspot field.
+// SetWithHotspot sets field value
 func (o *EsimFeatures) SetWithHotspot(v bool) {
-	o.WithHotspot = &v
+	o.WithHotspot = v
 }
 
-// GetWithDataRoaming returns the WithDataRoaming field value if set, zero value otherwise.
+// GetWithDataRoaming returns the WithDataRoaming field value
 func (o *EsimFeatures) GetWithDataRoaming() bool {
-	if o == nil || IsNil(o.WithDataRoaming) {
+	if o == nil {
 		var ret bool
 		return ret
 	}
-	return *o.WithDataRoaming
+
+	return o.WithDataRoaming
 }
 
-// GetWithDataRoamingOk returns a tuple with the WithDataRoaming field value if set, nil otherwise
+// GetWithDataRoamingOk returns a tuple with the WithDataRoaming field value
 // and a boolean to check if the value has been set.
 func (o *EsimFeatures) GetWithDataRoamingOk() (*bool, bool) {
-	if o == nil || IsNil(o.WithDataRoaming) {
+	if o == nil {
 		return nil, false
 	}
-	return o.WithDataRoaming, true
+	return &o.WithDataRoaming, true
 }
 
-// HasWithDataRoaming returns a boolean if a field has been set.
-func (o *EsimFeatures) HasWithDataRoaming() bool {
-	if o != nil && !IsNil(o.WithDataRoaming) {
-		return true
-	}
-
-	return false
-}
-
-// SetWithDataRoaming gets a reference to the given bool and assigns it to the WithDataRoaming field.
+// SetWithDataRoaming sets field value
 func (o *EsimFeatures) SetWithDataRoaming(v bool) {
-	o.WithDataRoaming = &v
+	o.WithDataRoaming = v
 }
 
-// GetWithSubscription returns the WithSubscription field value if set, zero value otherwise.
+// GetWithSubscription returns the WithSubscription field value
 func (o *EsimFeatures) GetWithSubscription() bool {
-	if o == nil || IsNil(o.WithSubscription) {
+	if o == nil {
 		var ret bool
 		return ret
 	}
-	return *o.WithSubscription
+
+	return o.WithSubscription
 }
 
-// GetWithSubscriptionOk returns a tuple with the WithSubscription field value if set, nil otherwise
+// GetWithSubscriptionOk returns a tuple with the WithSubscription field value
 // and a boolean to check if the value has been set.
 func (o *EsimFeatures) GetWithSubscriptionOk() (*bool, bool) {
-	if o == nil || IsNil(o.WithSubscription) {
+	if o == nil {
 		return nil, false
 	}
-	return o.WithSubscription, true
+	return &o.WithSubscription, true
 }
 
-// HasWithSubscription returns a boolean if a field has been set.
-func (o *EsimFeatures) HasWithSubscription() bool {
-	if o != nil && !IsNil(o.WithSubscription) {
-		return true
-	}
-
-	return false
-}
-
-// SetWithSubscription gets a reference to the given bool and assigns it to the WithSubscription field.
+// SetWithSubscription sets field value
 func (o *EsimFeatures) SetWithSubscription(v bool) {
-	o.WithSubscription = &v
+	o.WithSubscription = v
 }
 
-// GetWithDestinationInstall returns the WithDestinationInstall field value if set, zero value otherwise.
+// GetWithDestinationInstall returns the WithDestinationInstall field value
 func (o *EsimFeatures) GetWithDestinationInstall() bool {
-	if o == nil || IsNil(o.WithDestinationInstall) {
+	if o == nil {
 		var ret bool
 		return ret
 	}
-	return *o.WithDestinationInstall
+
+	return o.WithDestinationInstall
 }
 
-// GetWithDestinationInstallOk returns a tuple with the WithDestinationInstall field value if set, nil otherwise
+// GetWithDestinationInstallOk returns a tuple with the WithDestinationInstall field value
 // and a boolean to check if the value has been set.
 func (o *EsimFeatures) GetWithDestinationInstallOk() (*bool, bool) {
-	if o == nil || IsNil(o.WithDestinationInstall) {
+	if o == nil {
 		return nil, false
 	}
-	return o.WithDestinationInstall, true
+	return &o.WithDestinationInstall, true
 }
 
-// HasWithDestinationInstall returns a boolean if a field has been set.
-func (o *EsimFeatures) HasWithDestinationInstall() bool {
-	if o != nil && !IsNil(o.WithDestinationInstall) {
-		return true
-	}
-
-	return false
-}
-
-// SetWithDestinationInstall gets a reference to the given bool and assigns it to the WithDestinationInstall field.
+// SetWithDestinationInstall sets field value
 func (o *EsimFeatures) SetWithDestinationInstall(v bool) {
-	o.WithDestinationInstall = &v
+	o.WithDestinationInstall = v
 }
 
-// GetWithUsageCheck returns the WithUsageCheck field value if set, zero value otherwise.
+// GetWithUsageCheck returns the WithUsageCheck field value
 func (o *EsimFeatures) GetWithUsageCheck() bool {
-	if o == nil || IsNil(o.WithUsageCheck) {
+	if o == nil {
 		var ret bool
 		return ret
 	}
-	return *o.WithUsageCheck
+
+	return o.WithUsageCheck
 }
 
-// GetWithUsageCheckOk returns a tuple with the WithUsageCheck field value if set, nil otherwise
+// GetWithUsageCheckOk returns a tuple with the WithUsageCheck field value
 // and a boolean to check if the value has been set.
 func (o *EsimFeatures) GetWithUsageCheckOk() (*bool, bool) {
-	if o == nil || IsNil(o.WithUsageCheck) {
+	if o == nil {
 		return nil, false
 	}
-	return o.WithUsageCheck, true
+	return &o.WithUsageCheck, true
 }
 
-// HasWithUsageCheck returns a boolean if a field has been set.
-func (o *EsimFeatures) HasWithUsageCheck() bool {
-	if o != nil && !IsNil(o.WithUsageCheck) {
-		return true
-	}
-
-	return false
-}
-
-// SetWithUsageCheck gets a reference to the given bool and assigns it to the WithUsageCheck field.
+// SetWithUsageCheck sets field value
 func (o *EsimFeatures) SetWithUsageCheck(v bool) {
-	o.WithUsageCheck = &v
+	o.WithUsageCheck = v
 }
 
-// GetTechnology returns the Technology field value if set, zero value otherwise.
+// GetTechnology returns the Technology field value
 func (o *EsimFeatures) GetTechnology() string {
-	if o == nil || IsNil(o.Technology) {
+	if o == nil {
 		var ret string
 		return ret
 	}
-	return *o.Technology
+
+	return o.Technology
 }
 
-// GetTechnologyOk returns a tuple with the Technology field value if set, nil otherwise
+// GetTechnologyOk returns a tuple with the Technology field value
 // and a boolean to check if the value has been set.
 func (o *EsimFeatures) GetTechnologyOk() (*string, bool) {
-	if o == nil || IsNil(o.Technology) {
+	if o == nil {
 		return nil, false
 	}
-	return o.Technology, true
+	return &o.Technology, true
 }
 
-// HasTechnology returns a boolean if a field has been set.
-func (o *EsimFeatures) HasTechnology() bool {
-	if o != nil && !IsNil(o.Technology) {
-		return true
-	}
-
-	return false
-}
-
-// SetTechnology gets a reference to the given string and assigns it to the Technology field.
+// SetTechnology sets field value
 func (o *EsimFeatures) SetTechnology(v string) {
-	o.Technology = &v
+	o.Technology = v
 }
 
-// GetActivation returns the Activation field value if set, zero value otherwise.
+// GetActivation returns the Activation field value
 func (o *EsimFeatures) GetActivation() string {
-	if o == nil || IsNil(o.Activation) {
+	if o == nil {
 		var ret string
 		return ret
 	}
-	return *o.Activation
+
+	return o.Activation
 }
 
-// GetActivationOk returns a tuple with the Activation field value if set, nil otherwise
+// GetActivationOk returns a tuple with the Activation field value
 // and a boolean to check if the value has been set.
 func (o *EsimFeatures) GetActivationOk() (*string, bool) {
-	if o == nil || IsNil(o.Activation) {
+	if o == nil {
 		return nil, false
 	}
-	return o.Activation, true
+	return &o.Activation, true
 }
 
-// HasActivation returns a boolean if a field has been set.
-func (o *EsimFeatures) HasActivation() bool {
-	if o != nil && !IsNil(o.Activation) {
-		return true
-	}
-
-	return false
-}
-
-// SetActivation gets a reference to the given string and assigns it to the Activation field.
+// SetActivation sets field value
 func (o *EsimFeatures) SetActivation(v string) {
-	o.Activation = &v
+	o.Activation = v
 }
 
-// GetCharge returns the Charge field value if set, zero value otherwise.
+// GetCharge returns the Charge field value
 func (o *EsimFeatures) GetCharge() string {
-	if o == nil || IsNil(o.Charge) {
+	if o == nil {
 		var ret string
 		return ret
 	}
-	return *o.Charge
+
+	return o.Charge
 }
 
-// GetChargeOk returns a tuple with the Charge field value if set, nil otherwise
+// GetChargeOk returns a tuple with the Charge field value
 // and a boolean to check if the value has been set.
 func (o *EsimFeatures) GetChargeOk() (*string, bool) {
-	if o == nil || IsNil(o.Charge) {
+	if o == nil {
 		return nil, false
 	}
-	return o.Charge, true
+	return &o.Charge, true
 }
 
-// HasCharge returns a boolean if a field has been set.
-func (o *EsimFeatures) HasCharge() bool {
-	if o != nil && !IsNil(o.Charge) {
-		return true
-	}
-
-	return false
-}
-
-// SetCharge gets a reference to the given string and assigns it to the Charge field.
+// SetCharge sets field value
 func (o *EsimFeatures) SetCharge(v string) {
-	o.Charge = &v
+	o.Charge = v
 }
 
 func (o EsimFeatures) MarshalJSON() ([]byte, error) {
@@ -379,37 +313,62 @@ func (o EsimFeatures) MarshalJSON() ([]byte, error) {
 
 func (o EsimFeatures) ToMap() (map[string]interface{}, error) {
 	toSerialize := map[string]interface{}{}
-	if !IsNil(o.WithKyc) {
-		toSerialize["withKyc"] = o.WithKyc
-	}
-	if !IsNil(o.WithTopUp) {
-		toSerialize["withTopUp"] = o.WithTopUp
-	}
-	if !IsNil(o.WithHotspot) {
-		toSerialize["withHotspot"] = o.WithHotspot
-	}
-	if !IsNil(o.WithDataRoaming) {
-		toSerialize["withDataRoaming"] = o.WithDataRoaming
-	}
-	if !IsNil(o.WithSubscription) {
-		toSerialize["withSubscription"] = o.WithSubscription
-	}
-	if !IsNil(o.WithDestinationInstall) {
-		toSerialize["withDestinationInstall"] = o.WithDestinationInstall
-	}
-	if !IsNil(o.WithUsageCheck) {
-		toSerialize["withUsageCheck"] = o.WithUsageCheck
-	}
-	if !IsNil(o.Technology) {
-		toSerialize["technology"] = o.Technology
-	}
-	if !IsNil(o.Activation) {
-		toSerialize["activation"] = o.Activation
-	}
-	if !IsNil(o.Charge) {
-		toSerialize["charge"] = o.Charge
-	}
+	toSerialize["withKyc"] = o.WithKyc
+	toSerialize["withTopUp"] = o.WithTopUp
+	toSerialize["withHotspot"] = o.WithHotspot
+	toSerialize["withDataRoaming"] = o.WithDataRoaming
+	toSerialize["withSubscription"] = o.WithSubscription
+	toSerialize["withDestinationInstall"] = o.WithDestinationInstall
+	toSerialize["withUsageCheck"] = o.WithUsageCheck
+	toSerialize["technology"] = o.Technology
+	toSerialize["activation"] = o.Activation
+	toSerialize["charge"] = o.Charge
 	return toSerialize, nil
+}
+
+func (o *EsimFeatures) UnmarshalJSON(data []byte) (err error) {
+	// This validates that all required properties are included in the JSON object
+	// by unmarshalling the object into a generic map with string keys and checking
+	// that every required field exists as a key in the generic map.
+	requiredProperties := []string{
+		"withKyc",
+		"withTopUp",
+		"withHotspot",
+		"withDataRoaming",
+		"withSubscription",
+		"withDestinationInstall",
+		"withUsageCheck",
+		"technology",
+		"activation",
+		"charge",
+	}
+
+	allProperties := make(map[string]interface{})
+
+	err = json.Unmarshal(data, &allProperties)
+
+	if err != nil {
+		return err;
+	}
+
+	for _, requiredProperty := range(requiredProperties) {
+		if _, exists := allProperties[requiredProperty]; !exists {
+			return fmt.Errorf("no value given for required property %v", requiredProperty)
+		}
+	}
+
+	varEsimFeatures := _EsimFeatures{}
+
+	decoder := json.NewDecoder(bytes.NewReader(data))
+	err = decoder.Decode(&varEsimFeatures)
+
+	if err != nil {
+		return err
+	}
+
+	*o = EsimFeatures(varEsimFeatures)
+
+	return err
 }
 
 type NullableEsimFeatures struct {

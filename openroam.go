@@ -12,34 +12,40 @@ import (
 //	client, err := openroam.New("your-key")
 //	found, err := client.Esims.Search(ctx, &openroam.EsimsSearchQuery{CountryCode: openroam.PtrString("JP")})
 type OpenRoam struct {
-	Esims          *EsimsResource
-	Airtime        *AirtimeResource
-	Utilities      *UtilitiesResource
-	GiftCards      *GiftCardsResource
-	Hotels         *HotelsResource
-	Flights        *FlightsResource
-	Orders         *OrdersResource
-	OrderItems     *OrderItemsResource
-	Wallets        *WalletsResource
-	Currencies     *CurrenciesResource
-	Countries      *CountriesResource
-	MobileNetworks *MobileNetworksResource
+	Esims           *EsimsResource
+	Airtime         *AirtimeResource
+	Utilities       *UtilitiesResource
+	GiftCards       *GiftCardsResource
+	Hotels          *HotelsResource
+	Flights         *FlightsResource
+	Orders          *OrdersResource
+	OrderItems      *OrderItemsResource
+	Wallets         *WalletsResource
+	Account         *AccountResource
+	Currencies      *CurrenciesResource
+	Countries       *CountriesResource
+	MobileNetworks  *MobileNetworksResource
+	BrowserSessions *BrowserSessionsResource
+	Checkouts       *CheckoutsResource
 }
 
 func newOpenRoam(c *clientCore) *OpenRoam {
 	return &OpenRoam{
-		Esims:          &EsimsResource{c: c},
-		Airtime:        &AirtimeResource{c: c},
-		Utilities:      &UtilitiesResource{c: c},
-		GiftCards:      &GiftCardsResource{c: c},
-		Hotels:         &HotelsResource{c: c},
-		Flights:        &FlightsResource{c: c},
-		Orders:         &OrdersResource{c: c},
-		OrderItems:     &OrderItemsResource{c: c, ManualAmendments: &OrderItemsManualAmendmentsResource{c: c}},
-		Wallets:        &WalletsResource{c: c},
-		Currencies:     &CurrenciesResource{c: c},
-		Countries:      &CountriesResource{c: c},
-		MobileNetworks: &MobileNetworksResource{c: c},
+		Esims:           &EsimsResource{c: c},
+		Airtime:         &AirtimeResource{c: c},
+		Utilities:       &UtilitiesResource{c: c},
+		GiftCards:       &GiftCardsResource{c: c},
+		Hotels:          &HotelsResource{c: c},
+		Flights:         &FlightsResource{c: c},
+		Orders:          &OrdersResource{c: c},
+		OrderItems:      &OrderItemsResource{c: c},
+		Wallets:         &WalletsResource{c: c},
+		Account:         &AccountResource{c: c},
+		Currencies:      &CurrenciesResource{c: c},
+		Countries:       &CountriesResource{c: c},
+		MobileNetworks:  &MobileNetworksResource{c: c},
+		BrowserSessions: &BrowserSessionsResource{c: c},
+		Checkouts:       &CheckoutsResource{c: c},
 	}
 }
 
@@ -57,7 +63,7 @@ type EsimsSearchQuery struct {
 	IsUnlimited *bool
 	// Top-up search: the ICCID (18 to 22 digits) of your eSIM to list the plans that can top it up. No other filter than `currency` is allowed with it.
 	Iccid *string
-	// Price currency, three letters in either case; the API key's currency when omitted. An unsupported code gives 404 / 10004.
+	// Price currency, three letters in either case; the API key's currency when omitted. An unsupported code gives 400 / 10001 at `currency`, reason `NOT_SUPPORTED`.
 	Currency *string
 	// Page number, from 1; default 1.
 	Page *int32
@@ -71,9 +77,9 @@ type EsimsListUsageHistoryQuery struct {
 	Page *int32
 	// Page size, 1 to 100; default 10.
 	Limit *int32
-	// Only readings captured at or after this UTC time.
+	// Only readings captured at or after this UTC time. ISO 8601 date-time. A value with Z or an offset is converted to UTC; a value without a zone is read as UTC, and a date alone means 00:00 UTC on that day.
 	From *time.Time
-	// Only readings captured at or before this UTC time.
+	// Only readings captured at or before this UTC time. ISO 8601 date-time. A value with Z or an offset is converted to UTC; a value without a zone is read as UTC, and a date alone means 00:00 UTC on that day.
 	To *time.Time
 }
 
@@ -83,9 +89,9 @@ type EsimsListStatusHistoryQuery struct {
 	Page *int32
 	// Page size, 1 to 100; default 10.
 	Limit *int32
-	// Only events that occurred at or after this UTC time.
+	// Only events that occurred at or after this UTC time. ISO 8601 date-time. A value with Z or an offset is converted to UTC; a value without a zone is read as UTC, and a date alone means 00:00 UTC on that day.
 	From *time.Time
-	// Only events that occurred at or before this UTC time.
+	// Only events that occurred at or before this UTC time. ISO 8601 date-time. A value with Z or an offset is converted to UTC; a value without a zone is read as UTC, and a date alone means 00:00 UTC on that day.
 	To *time.Time
 }
 
@@ -95,9 +101,9 @@ type EsimsListLocationHistoryQuery struct {
 	Page *int32
 	// Page size, 1 to 100; default 10.
 	Limit *int32
-	// Only events that occurred at or after this UTC time.
+	// Only events that occurred at or after this UTC time. ISO 8601 date-time. A value with Z or an offset is converted to UTC; a value without a zone is read as UTC, and a date alone means 00:00 UTC on that day.
 	From *time.Time
-	// Only events that occurred at or before this UTC time.
+	// Only events that occurred at or before this UTC time. ISO 8601 date-time. A value with Z or an offset is converted to UTC; a value without a zone is read as UTC, and a date alone means 00:00 UTC on that day.
 	To *time.Time
 }
 
@@ -111,7 +117,7 @@ type EsimsListDestinationsQuery struct {
 
 // EsimsGetDestinationQuery holds the query parameters of Esims.GetDestination. A nil field is not sent.
 type EsimsGetDestinationQuery struct {
-	// Price currency, three letters in either case; the API key's currency when omitted. An unsupported code gives 404 / 10004.
+	// Price currency, three letters in either case; the API key's currency when omitted. An unsupported code gives 400 / 10001 at `currency`, reason `NOT_SUPPORTED`.
 	Currency *string
 }
 
@@ -127,7 +133,7 @@ type EsimsListCatalogQuery struct {
 	ValidityDays *int32
 	// Keep the unlimited (`true`) or the limited (`false`) plans.
 	IsUnlimited *bool
-	// Price currency, three letters in either case; the API key's currency when omitted. An unsupported code gives 404 / 10004.
+	// Price currency, three letters in either case; the API key's currency when omitted. An unsupported code gives 400 / 10001 at `currency`, reason `NOT_SUPPORTED`.
 	Currency *string
 	// The `nextCursor` of the previous page; omit it for the first page. Reuse it only with the same filters and currency.
 	Cursor *string
@@ -151,7 +157,7 @@ type AirtimeSearchQuery struct {
 	MinPrice *float32
 	// Keep the offers whose indicative price starts at or below this amount, in the price currency. A filter, not the `inputs.maxPrice` limit of a purchase.
 	MaxPrice *float32
-	// Price currency, three letters in either case; the API key's currency when omitted. An unsupported code gives 404 / 10004.
+	// Price currency, three letters in either case; the API key's currency when omitted. An unsupported code gives 400 / 10001 at `currency`, reason `NOT_SUPPORTED`.
 	Currency *string
 	// Must be 1: search returns at most one operator.
 	Page *int32
@@ -167,7 +173,7 @@ type AirtimeLookupNumberQuery struct {
 
 // AirtimeListOperatorsQuery holds the query parameters of Airtime.ListOperators. A nil field is not sent.
 type AirtimeListOperatorsQuery struct {
-	// Required ISO 3166-1 alpha-2 country code, in either case, for example the `details.phoneLookup.countryCode` of a search.
+	// Required ISO 3166-1 alpha-2 country code, in either case, for example the `phoneLookup.countryCode` of a search.
 	CountryCode string
 }
 
@@ -187,7 +193,7 @@ type AirtimeGetOperatorQuery struct {
 	MinPrice *float32
 	// Keep the offers whose indicative price starts at or below this amount, in the price currency. A filter, not the `inputs.maxPrice` limit of a purchase.
 	MaxPrice *float32
-	// Price currency, three letters in either case; the API key's currency when omitted. An unsupported code gives 404 / 10004.
+	// Price currency, three letters in either case; the API key's currency when omitted. An unsupported code gives 400 / 10001 at `currency`, reason `NOT_SUPPORTED`.
 	Currency *string
 }
 
@@ -211,7 +217,7 @@ type UtilitiesSearchQuery struct {
 	ServiceType *string
 	// Text in the biller name, case-insensitive; at most 100 characters, without control characters.
 	Q *string
-	// Price currency, three letters in either case; the API key's currency when omitted. An unsupported code gives 404 / 10004.
+	// Price currency, three letters in either case; the API key's currency when omitted. An unsupported code gives 400 / 10001 at `currency`, reason `NOT_SUPPORTED`.
 	Currency *string
 	// Page number, from 1; default 1.
 	Page *int32
@@ -221,7 +227,7 @@ type UtilitiesSearchQuery struct {
 
 // UtilitiesGetBillerQuery holds the query parameters of Utilities.GetBiller. A nil field is not sent.
 type UtilitiesGetBillerQuery struct {
-	// Price currency, three letters in either case; the API key's currency when omitted. An unsupported code gives 404 / 10004.
+	// Price currency, three letters in either case; the API key's currency when omitted. An unsupported code gives 400 / 10001 at `currency`, reason `NOT_SUPPORTED`.
 	Currency *string
 }
 
@@ -233,7 +239,7 @@ type UtilitiesListCatalogQuery struct {
 	Category *string
 	// Keep `prepaid` or `postpaid` billers.
 	ServiceType *string
-	// Price currency, three letters in either case; the API key's currency when omitted. An unsupported code gives 404 / 10004.
+	// Price currency, three letters in either case; the API key's currency when omitted. An unsupported code gives 400 / 10001 at `currency`, reason `NOT_SUPPORTED`.
 	Currency *string
 	// The `nextCursor` of the previous page; omit it for the first page. Reuse it only with the same filters and currency.
 	Cursor *string
@@ -253,7 +259,7 @@ type GiftCardsSearchQuery struct {
 	Q *string
 	// `true` keeps only cards that can be redeemed in any country.
 	IsRedeemableGlobally *bool
-	// Price currency, three letters in either case; the API key's currency when omitted. An unsupported code gives 404 / 10004.
+	// Price currency, three letters in either case; the API key's currency when omitted. An unsupported code gives 400 / 10001 at `currency`, reason `NOT_SUPPORTED`.
 	Currency *string
 	// Page number, from 1; default 1.
 	Page *int32
@@ -263,7 +269,7 @@ type GiftCardsSearchQuery struct {
 
 // GiftCardsGetGiftCardQuery holds the query parameters of GiftCards.GetGiftCard. A nil field is not sent.
 type GiftCardsGetGiftCardQuery struct {
-	// Price currency, three letters in either case; the API key's currency when omitted. An unsupported code gives 404 / 10004.
+	// Price currency, three letters in either case; the API key's currency when omitted. An unsupported code gives 400 / 10001 at `currency`, reason `NOT_SUPPORTED`.
 	Currency *string
 }
 
@@ -277,7 +283,7 @@ type GiftCardsListCatalogQuery struct {
 	ValueType *string
 	// `true` keeps only cards that can be redeemed in any country.
 	IsRedeemableGlobally *bool
-	// Price currency, three letters in either case; the API key's currency when omitted. An unsupported code gives 404 / 10004.
+	// Price currency, three letters in either case; the API key's currency when omitted. An unsupported code gives 400 / 10001 at `currency`, reason `NOT_SUPPORTED`.
 	Currency *string
 	// The `nextCursor` of the previous page; omit it for the first page. Reuse it only with the same filters and currency.
 	Cursor *string
@@ -295,15 +301,25 @@ type HotelsListDestinationsQuery struct {
 	Limit *int32
 }
 
+// FlightsListPlacesQuery holds the query parameters of Flights.ListPlaces. A nil field is not sent.
+type FlightsListPlacesQuery struct {
+	// Required. Free text over city and airport names and codes, for example `lond` or `LHR`; at most 100 characters, without control characters.
+	Q string
+	// Optional: `city` or `airport` keeps only places of that kind.
+	Category *string
+	// The most places to return, 1 to 100; default 10.
+	Limit *int32
+}
+
 // OrdersListQuery holds the query parameters of Orders.List. A nil field is not sent.
 type OrdersListQuery struct {
 	// One-based page number. Default 1.
 	Page *int32
 	// Page size, 1 to 100. Default 10.
 	Limit *int32
-	// Only orders created at or after this time (UTC).
+	// Only orders created at or after this time (UTC). ISO 8601 date-time. A value with Z or an offset is converted to UTC; a value without a zone is read as UTC, and a date alone means 00:00 UTC on that day.
 	StartDate *time.Time
-	// Only orders created at or before this time (UTC).
+	// Only orders created at or before this time (UTC). ISO 8601 date-time. A value with Z or an offset is converted to UTC; a value without a zone is read as UTC, and a date alone means 00:00 UTC on that day.
 	EndDate *time.Time
 	// Only orders whose `total.amount`, in the order's currency, is at least this value.
 	MinAmount *float32
@@ -313,30 +329,28 @@ type OrdersListQuery struct {
 	Search *string
 	// Only the order with exactly this `referenceId`.
 	ReferenceId *string
-	// Only orders created through this channel: the dashboard or the API.
-	SalesChannel *string
+	// Only orders created through this channel, the same values as `origin.channel`: `api`,             `dashboard` or `site`.
+	Channel *string
 	// Only orders containing at least one item of one of these product types. Repeat the parameter for several types, for example `productTypes=esim&productTypes=giftCard`.
 	ProductTypes []string
-	// Only orders currently in one of these statuses. Repeat the parameter for several statuses.
+	// Only orders currently in one of these statuses, the same values as `status`. Repeat the parameter for several statuses.
 	OrderStatuses []string
 }
 
-// OrderItemsListPartnerAmendmentsQuery holds the query parameters of OrderItems.ListPartnerAmendments. A nil field is not sent.
-type OrderItemsListPartnerAmendmentsQuery struct {
-	// One-based page number. Default 1.
-	Page *int32
-	// Page size, 1 to 100. Default 10.
+// OrderItemsListChangesQuery holds the query parameters of OrderItems.ListChanges. A nil field is not sent.
+type OrderItemsListChangesQuery struct {
+	// ISO 8601 date-time. A value with Z or an offset is converted to UTC; a value without a zone is read as UTC, and a date alone means 00:00 UTC on that day.
+	UpdatedSince *time.Time
+	Cursor *string
 	Limit *int32
-	// Repeat to match any of the requested statuses.
-	Statuses []string
-	ProductType *string
-	AmendmentMode *string
-	OrderId *string
-	OrderItemId *string
-	// Inclusive creation timestamp with UTC offset.
-	From *time.Time
-	// Inclusive creation timestamp with UTC offset. Send the end of a UTC day to include that whole day.
-	To *time.Time
+}
+
+// OrderItemsListPartnerChangesQuery holds the query parameters of OrderItems.ListPartnerChanges. A nil field is not sent.
+type OrderItemsListPartnerChangesQuery struct {
+	// ISO 8601 date-time. A value with Z or an offset is converted to UTC; a value without a zone is read as UTC, and a date alone means 00:00 UTC on that day.
+	UpdatedSince *time.Time
+	Cursor *string
+	Limit *int32
 }
 
 // WalletsListTransactionsQuery holds the query parameters of Wallets.ListTransactions. A nil field is not sent.
@@ -345,11 +359,11 @@ type WalletsListTransactionsQuery struct {
 	Page *int32
 	// Page size, 1 to 100. Default 10.
 	Limit *int32
-	// Only transactions made at or after this time (UTC).
+	// Only transactions made at or after this time (UTC). ISO 8601 date-time. A value with Z or an offset is converted to UTC; a value without a zone is read as UTC, and a date alone means 00:00 UTC on that day.
 	StartDate *time.Time
-	// Only transactions made at or before this time (UTC).
+	// Only transactions made at or before this time (UTC). ISO 8601 date-time. A value with Z or an offset is converted to UTC; a value without a zone is read as UTC, and a date alone means 00:00 UTC on that day.
 	EndDate *time.Time
-	// Only this direction: `debit` adds funds to the wallet, `credit` takes funds from it.
+	// Only this direction: `debit` takes funds from the wallet, `credit` adds funds to it.
 	Type *string
 	// Only transactions with this cause, such as `order` or `exchange`.
 	Source *string
@@ -368,7 +382,7 @@ type EsimsResource struct {
 	c *clientCore
 }
 
-// Search: Search eSIM plans. GET /api/v1/b2b/esims/search
+// Search: Search eSIM plans. GET /v1/esims/search
 func (r *EsimsResource) Search(ctx context.Context, query *EsimsSearchQuery, opts ...CallOption) (*EsimSearchResult, error) {
 	ctx, _, err := r.c.begin(ctx, opts)
 	if err != nil {
@@ -407,7 +421,7 @@ func (r *EsimsResource) Search(ctx context.Context, query *EsimsSearchQuery, opt
 	return finish(req.Execute())
 }
 
-// Quote: Quote eSIMs. POST /api/v1/b2b/esims/quote
+// Quote: Quote eSIMs. POST /v1/esims/quote
 func (r *EsimsResource) Quote(ctx context.Context, body *EsimOrderRequest, opts ...CallOption) (*EsimQuote, error) {
 	ctx, _, err := r.c.begin(ctx, opts)
 	if err != nil {
@@ -420,7 +434,7 @@ func (r *EsimsResource) Quote(ctx context.Context, body *EsimOrderRequest, opts 
 	return finish(req.Execute())
 }
 
-// Order: Order eSIMs. POST /api/v1/b2b/esims/order
+// Order: Order eSIMs. POST /v1/esims/order
 func (r *EsimsResource) Order(ctx context.Context, body *EsimOrderRequest, opts ...CallOption) (*EsimOrder, error) {
 	ctx, call, err := r.c.begin(ctx, opts)
 	if err != nil {
@@ -434,7 +448,7 @@ func (r *EsimsResource) Order(ctx context.Context, body *EsimOrderRequest, opts 
 	return finish(req.Execute())
 }
 
-// GetProfile: Get an eSIM. GET /api/v1/b2b/esims/{iccid}/profile
+// GetProfile: Get an eSIM. GET /v1/esims/{iccid}/profile
 func (r *EsimsResource) GetProfile(ctx context.Context, iccid string, opts ...CallOption) (*EsimProfile, error) {
 	ctx, _, err := r.c.begin(ctx, opts)
 	if err != nil {
@@ -444,7 +458,7 @@ func (r *EsimsResource) GetProfile(ctx context.Context, iccid string, opts ...Ca
 	return finish(req.Execute())
 }
 
-// GetUsage: Get eSIM usage. GET /api/v1/b2b/esims/{iccid}/usage
+// GetUsage: Get eSIM usage. GET /v1/esims/{iccid}/usage
 func (r *EsimsResource) GetUsage(ctx context.Context, iccid string, opts ...CallOption) (*EsimCurrentUsage, error) {
 	ctx, _, err := r.c.begin(ctx, opts)
 	if err != nil {
@@ -454,7 +468,7 @@ func (r *EsimsResource) GetUsage(ctx context.Context, iccid string, opts ...Call
 	return finish(req.Execute())
 }
 
-// ListDailyUsage: Get eSIM usage by day. GET /api/v1/b2b/esims/{iccid}/usage/details
+// ListDailyUsage: Get eSIM usage by day. GET /v1/esims/{iccid}/usage/details
 func (r *EsimsResource) ListDailyUsage(ctx context.Context, iccid string, opts ...CallOption) (*EsimDailyUsage, error) {
 	ctx, _, err := r.c.begin(ctx, opts)
 	if err != nil {
@@ -464,7 +478,7 @@ func (r *EsimsResource) ListDailyUsage(ctx context.Context, iccid string, opts .
 	return finish(req.Execute())
 }
 
-// ListUsageHistory: List eSIM usage history. GET /api/v1/b2b/esims/{iccid}/usage/history
+// ListUsageHistory: List eSIM usage history. GET /v1/esims/{iccid}/usage/history
 func (r *EsimsResource) ListUsageHistory(ctx context.Context, iccid string, query *EsimsListUsageHistoryQuery, opts ...CallOption) (*EsimUsageReadingList, error) {
 	ctx, _, err := r.c.begin(ctx, opts)
 	if err != nil {
@@ -488,7 +502,7 @@ func (r *EsimsResource) ListUsageHistory(ctx context.Context, iccid string, quer
 	return finish(req.Execute())
 }
 
-// ListStatusHistory: List eSIM status events. GET /api/v1/b2b/esims/{iccid}/status-events
+// ListStatusHistory: List eSIM status events. GET /v1/esims/{iccid}/status-events
 func (r *EsimsResource) ListStatusHistory(ctx context.Context, iccid string, query *EsimsListStatusHistoryQuery, opts ...CallOption) (*EsimStatusEventList, error) {
 	ctx, _, err := r.c.begin(ctx, opts)
 	if err != nil {
@@ -512,7 +526,7 @@ func (r *EsimsResource) ListStatusHistory(ctx context.Context, iccid string, que
 	return finish(req.Execute())
 }
 
-// ListLocationHistory: List eSIM location events. GET /api/v1/b2b/esims/{iccid}/location-events
+// ListLocationHistory: List eSIM location events. GET /v1/esims/{iccid}/location-events
 func (r *EsimsResource) ListLocationHistory(ctx context.Context, iccid string, query *EsimsListLocationHistoryQuery, opts ...CallOption) (*EsimLocationEventList, error) {
 	ctx, _, err := r.c.begin(ctx, opts)
 	if err != nil {
@@ -536,7 +550,7 @@ func (r *EsimsResource) ListLocationHistory(ctx context.Context, iccid string, q
 	return finish(req.Execute())
 }
 
-// Provision: Provision a deferred eSIM. POST /api/v1/b2b/esims/{id}/provisioning
+// Provision: Provision a deferred eSIM. POST /v1/esims/{id}/provisioning
 func (r *EsimsResource) Provision(ctx context.Context, id string, body *EsimProvisioningRequest, opts ...CallOption) (*EsimProfile, error) {
 	ctx, call, err := r.c.begin(ctx, opts)
 	if err != nil {
@@ -550,7 +564,7 @@ func (r *EsimsResource) Provision(ctx context.Context, id string, body *EsimProv
 	return finish(req.Execute())
 }
 
-// SendSms: Send an SMS to an eSIM. POST /api/v1/b2b/esims/{iccid}/sms
+// SendSms: Send an SMS to an eSIM. POST /v1/esims/{iccid}/sms
 func (r *EsimsResource) SendSms(ctx context.Context, iccid string, body *EsimSmsRequest, opts ...CallOption) (*EsimSmsResult, error) {
 	ctx, _, err := r.c.begin(ctx, opts)
 	if err != nil {
@@ -563,7 +577,7 @@ func (r *EsimsResource) SendSms(ctx context.Context, iccid string, body *EsimSms
 	return finish(req.Execute())
 }
 
-// ListDestinations: List eSIM destinations. GET /api/v1/b2b/esims/destinations
+// ListDestinations: List eSIM destinations. GET /v1/esims/destinations
 func (r *EsimsResource) ListDestinations(ctx context.Context, query *EsimsListDestinationsQuery, opts ...CallOption) (*EsimDestinationList, error) {
 	ctx, _, err := r.c.begin(ctx, opts)
 	if err != nil {
@@ -581,7 +595,7 @@ func (r *EsimsResource) ListDestinations(ctx context.Context, query *EsimsListDe
 	return finish(req.Execute())
 }
 
-// GetDestination: Get an eSIM destination. GET /api/v1/b2b/esims/destinations/{id}
+// GetDestination: Get an eSIM destination. GET /v1/esims/destinations/{id}
 func (r *EsimsResource) GetDestination(ctx context.Context, id string, query *EsimsGetDestinationQuery, opts ...CallOption) (*EsimDestination, error) {
 	ctx, _, err := r.c.begin(ctx, opts)
 	if err != nil {
@@ -596,7 +610,7 @@ func (r *EsimsResource) GetDestination(ctx context.Context, id string, query *Es
 	return finish(req.Execute())
 }
 
-// ListCatalog: eSIM catalog. GET /api/v1/b2b/esims/catalog
+// ListCatalog: eSIM catalog. GET /v1/esims/catalog
 func (r *EsimsResource) ListCatalog(ctx context.Context, query *EsimsListCatalogQuery, opts ...CallOption) (*EsimCatalogPage, error) {
 	ctx, _, err := r.c.begin(ctx, opts)
 	if err != nil {
@@ -632,7 +646,7 @@ func (r *EsimsResource) ListCatalog(ctx context.Context, query *EsimsListCatalog
 	return finish(req.Execute())
 }
 
-// ListCompatibleDevices: List compatible devices. GET /api/v1/b2b/esims/compatible-devices
+// ListCompatibleDevices: List compatible devices. GET /v1/esims/compatible-devices
 func (r *EsimsResource) ListCompatibleDevices(ctx context.Context, opts ...CallOption) ([]EsimCompatibleDevice, error) {
 	ctx, _, err := r.c.begin(ctx, opts)
 	if err != nil {
@@ -647,7 +661,7 @@ type AirtimeResource struct {
 	c *clientCore
 }
 
-// Search: Search airtime by phone number. GET /api/v1/b2b/airtime/search
+// Search: Search airtime by phone number. GET /v1/airtime/search
 func (r *AirtimeResource) Search(ctx context.Context, query *AirtimeSearchQuery, opts ...CallOption) (*AirtimeSearchResult, error) {
 	ctx, _, err := r.c.begin(ctx, opts)
 	if err != nil {
@@ -687,7 +701,7 @@ func (r *AirtimeResource) Search(ctx context.Context, query *AirtimeSearchQuery,
 	return finish(req.Execute())
 }
 
-// Quote: Quote airtime. POST /api/v1/b2b/airtime/quote
+// Quote: Quote airtime. POST /v1/airtime/quote
 func (r *AirtimeResource) Quote(ctx context.Context, body *AirtimeOrderRequest, opts ...CallOption) (*AirtimeQuote, error) {
 	ctx, _, err := r.c.begin(ctx, opts)
 	if err != nil {
@@ -700,7 +714,7 @@ func (r *AirtimeResource) Quote(ctx context.Context, body *AirtimeOrderRequest, 
 	return finish(req.Execute())
 }
 
-// Order: Order airtime. POST /api/v1/b2b/airtime/order
+// Order: Order airtime. POST /v1/airtime/order
 func (r *AirtimeResource) Order(ctx context.Context, body *AirtimeOrderRequest, opts ...CallOption) (*AirtimeOrder, error) {
 	ctx, call, err := r.c.begin(ctx, opts)
 	if err != nil {
@@ -714,7 +728,7 @@ func (r *AirtimeResource) Order(ctx context.Context, body *AirtimeOrderRequest, 
 	return finish(req.Execute())
 }
 
-// LookupNumber: Look up a phone number. GET /api/v1/b2b/airtime/number-lookup
+// LookupNumber: Look up a phone number. GET /v1/airtime/number-lookup
 func (r *AirtimeResource) LookupNumber(ctx context.Context, query *AirtimeLookupNumberQuery, opts ...CallOption) (*NumberLookup, error) {
 	ctx, _, err := r.c.begin(ctx, opts)
 	if err != nil {
@@ -727,7 +741,7 @@ func (r *AirtimeResource) LookupNumber(ctx context.Context, query *AirtimeLookup
 	return finish(req.Execute())
 }
 
-// ListOperators: List airtime operators. GET /api/v1/b2b/airtime/operators
+// ListOperators: List airtime operators. GET /v1/airtime/operators
 func (r *AirtimeResource) ListOperators(ctx context.Context, query *AirtimeListOperatorsQuery, opts ...CallOption) (*AirtimeOperatorList, error) {
 	ctx, _, err := r.c.begin(ctx, opts)
 	if err != nil {
@@ -740,7 +754,7 @@ func (r *AirtimeResource) ListOperators(ctx context.Context, query *AirtimeListO
 	return finish(req.Execute())
 }
 
-// GetOperator: Get an airtime operator. GET /api/v1/b2b/airtime/operators/{id}
+// GetOperator: Get an airtime operator. GET /v1/airtime/operators/{id}
 func (r *AirtimeResource) GetOperator(ctx context.Context, id string, query *AirtimeGetOperatorQuery, opts ...CallOption) (*AirtimeOperator, error) {
 	ctx, _, err := r.c.begin(ctx, opts)
 	if err != nil {
@@ -774,7 +788,7 @@ func (r *AirtimeResource) GetOperator(ctx context.Context, id string, query *Air
 	return finish(req.Execute())
 }
 
-// ListCatalog: Airtime catalog. GET /api/v1/b2b/airtime/catalog
+// ListCatalog: Airtime catalog. GET /v1/airtime/catalog
 func (r *AirtimeResource) ListCatalog(ctx context.Context, query *AirtimeListCatalogQuery, opts ...CallOption) (*AirtimeCatalogPage, error) {
 	ctx, _, err := r.c.begin(ctx, opts)
 	if err != nil {
@@ -800,7 +814,7 @@ type UtilitiesResource struct {
 	c *clientCore
 }
 
-// Search: Search billers. GET /api/v1/b2b/utility/search
+// Search: Search billers. GET /v1/utility/search
 func (r *UtilitiesResource) Search(ctx context.Context, query *UtilitiesSearchQuery, opts ...CallOption) (*UtilitySearchResult, error) {
 	ctx, _, err := r.c.begin(ctx, opts)
 	if err != nil {
@@ -831,7 +845,7 @@ func (r *UtilitiesResource) Search(ctx context.Context, query *UtilitiesSearchQu
 	return finish(req.Execute())
 }
 
-// Quote: Quote utility payments. POST /api/v1/b2b/utility/quote
+// Quote: Quote utility payments. POST /v1/utility/quote
 func (r *UtilitiesResource) Quote(ctx context.Context, body *UtilityOrderRequest, opts ...CallOption) (*UtilityQuote, error) {
 	ctx, _, err := r.c.begin(ctx, opts)
 	if err != nil {
@@ -844,7 +858,7 @@ func (r *UtilitiesResource) Quote(ctx context.Context, body *UtilityOrderRequest
 	return finish(req.Execute())
 }
 
-// Order: Pay utility bills. POST /api/v1/b2b/utility/order
+// Order: Pay utility bills. POST /v1/utility/order
 func (r *UtilitiesResource) Order(ctx context.Context, body *UtilityOrderRequest, opts ...CallOption) (*UtilityOrder, error) {
 	ctx, call, err := r.c.begin(ctx, opts)
 	if err != nil {
@@ -858,7 +872,7 @@ func (r *UtilitiesResource) Order(ctx context.Context, body *UtilityOrderRequest
 	return finish(req.Execute())
 }
 
-// GetBiller: Get a biller. GET /api/v1/b2b/utility/billers/{id}
+// GetBiller: Get a biller. GET /v1/utility/billers/{id}
 func (r *UtilitiesResource) GetBiller(ctx context.Context, id string, query *UtilitiesGetBillerQuery, opts ...CallOption) (*Biller, error) {
 	ctx, _, err := r.c.begin(ctx, opts)
 	if err != nil {
@@ -873,7 +887,7 @@ func (r *UtilitiesResource) GetBiller(ctx context.Context, id string, query *Uti
 	return finish(req.Execute())
 }
 
-// ListCatalog: Utility catalog. GET /api/v1/b2b/utility/catalog
+// ListCatalog: Utility catalog. GET /v1/utility/catalog
 func (r *UtilitiesResource) ListCatalog(ctx context.Context, query *UtilitiesListCatalogQuery, opts ...CallOption) (*UtilityCatalogPage, error) {
 	ctx, _, err := r.c.begin(ctx, opts)
 	if err != nil {
@@ -908,7 +922,7 @@ type GiftCardsResource struct {
 	c *clientCore
 }
 
-// Search: Search gift cards. GET /api/v1/b2b/giftcards/search
+// Search: Search gift cards. GET /v1/giftcards/search
 func (r *GiftCardsResource) Search(ctx context.Context, query *GiftCardsSearchQuery, opts ...CallOption) (*GiftCardSearchResult, error) {
 	ctx, _, err := r.c.begin(ctx, opts)
 	if err != nil {
@@ -944,7 +958,7 @@ func (r *GiftCardsResource) Search(ctx context.Context, query *GiftCardsSearchQu
 	return finish(req.Execute())
 }
 
-// Quote: Quote gift cards. POST /api/v1/b2b/giftcards/quote
+// Quote: Quote gift cards. POST /v1/giftcards/quote
 func (r *GiftCardsResource) Quote(ctx context.Context, body *GiftCardOrderRequest, opts ...CallOption) (*GiftCardQuote, error) {
 	ctx, _, err := r.c.begin(ctx, opts)
 	if err != nil {
@@ -957,7 +971,7 @@ func (r *GiftCardsResource) Quote(ctx context.Context, body *GiftCardOrderReques
 	return finish(req.Execute())
 }
 
-// Order: Order gift cards. POST /api/v1/b2b/giftcards/order
+// Order: Order gift cards. POST /v1/giftcards/order
 func (r *GiftCardsResource) Order(ctx context.Context, body *GiftCardOrderRequest, opts ...CallOption) (*GiftCardOrder, error) {
 	ctx, call, err := r.c.begin(ctx, opts)
 	if err != nil {
@@ -971,7 +985,7 @@ func (r *GiftCardsResource) Order(ctx context.Context, body *GiftCardOrderReques
 	return finish(req.Execute())
 }
 
-// GetGiftCard: Get a gift card. GET /api/v1/b2b/giftcards/cards/{id}
+// GetGiftCard: Get a gift card. GET /v1/giftcards/cards/{id}
 func (r *GiftCardsResource) GetGiftCard(ctx context.Context, id string, query *GiftCardsGetGiftCardQuery, opts ...CallOption) (*GiftCard, error) {
 	ctx, _, err := r.c.begin(ctx, opts)
 	if err != nil {
@@ -986,7 +1000,7 @@ func (r *GiftCardsResource) GetGiftCard(ctx context.Context, id string, query *G
 	return finish(req.Execute())
 }
 
-// ListCategories: List gift card categories. GET /api/v1/b2b/giftcards/categories
+// ListCategories: List gift card categories. GET /v1/giftcards/categories
 func (r *GiftCardsResource) ListCategories(ctx context.Context, opts ...CallOption) (*GiftCardCategoryList, error) {
 	ctx, _, err := r.c.begin(ctx, opts)
 	if err != nil {
@@ -996,7 +1010,7 @@ func (r *GiftCardsResource) ListCategories(ctx context.Context, opts ...CallOpti
 	return finish(req.Execute())
 }
 
-// ListCatalog: Gift card catalog. GET /api/v1/b2b/giftcards/catalog
+// ListCatalog: Gift card catalog. GET /v1/giftcards/catalog
 func (r *GiftCardsResource) ListCatalog(ctx context.Context, query *GiftCardsListCatalogQuery, opts ...CallOption) (*GiftCardCatalogPage, error) {
 	ctx, _, err := r.c.begin(ctx, opts)
 	if err != nil {
@@ -1034,7 +1048,7 @@ type HotelsResource struct {
 	c *clientCore
 }
 
-// Search: Search hotels. POST /api/v1/b2b/hotels/search
+// Search: Search hotels. POST /v1/hotels/search
 func (r *HotelsResource) Search(ctx context.Context, body *HotelSearchRequest, opts ...CallOption) (*HotelSearchResult, error) {
 	ctx, _, err := r.c.begin(ctx, opts)
 	if err != nil {
@@ -1047,7 +1061,7 @@ func (r *HotelsResource) Search(ctx context.Context, body *HotelSearchRequest, o
 	return finish(req.Execute())
 }
 
-// Quote: Quote hotel rates. POST /api/v1/b2b/hotels/quote
+// Quote: Quote hotel rates. POST /v1/hotels/quote
 func (r *HotelsResource) Quote(ctx context.Context, body *HotelOrderRequest, opts ...CallOption) (*HotelQuote, error) {
 	ctx, _, err := r.c.begin(ctx, opts)
 	if err != nil {
@@ -1060,7 +1074,7 @@ func (r *HotelsResource) Quote(ctx context.Context, body *HotelOrderRequest, opt
 	return finish(req.Execute())
 }
 
-// Order: Book hotels. POST /api/v1/b2b/hotels/order
+// Order: Book hotels. POST /v1/hotels/order
 func (r *HotelsResource) Order(ctx context.Context, body *HotelOrderRequest, opts ...CallOption) (*HotelOrder, error) {
 	ctx, call, err := r.c.begin(ctx, opts)
 	if err != nil {
@@ -1074,7 +1088,7 @@ func (r *HotelsResource) Order(ctx context.Context, body *HotelOrderRequest, opt
 	return finish(req.Execute())
 }
 
-// GetHotel: Get a hotel. GET /api/v1/b2b/hotels/properties/{id}
+// GetHotel: Get a hotel. GET /v1/hotels/properties/{id}
 func (r *HotelsResource) GetHotel(ctx context.Context, id string, opts ...CallOption) (*CatalogHotel, error) {
 	ctx, _, err := r.c.begin(ctx, opts)
 	if err != nil {
@@ -1084,7 +1098,7 @@ func (r *HotelsResource) GetHotel(ctx context.Context, id string, opts ...CallOp
 	return finish(req.Execute())
 }
 
-// ListDestinations: Search hotel destinations. GET /api/v1/b2b/hotels/destinations
+// ListDestinations: Search hotel destinations. GET /v1/hotels/destinations
 func (r *HotelsResource) ListDestinations(ctx context.Context, query *HotelsListDestinationsQuery, opts ...CallOption) (*HotelDestinationList, error) {
 	ctx, _, err := r.c.begin(ctx, opts)
 	if err != nil {
@@ -1103,7 +1117,7 @@ func (r *HotelsResource) ListDestinations(ctx context.Context, query *HotelsList
 	return finish(req.Execute())
 }
 
-// ListAmenities: List hotel amenities. GET /api/v1/b2b/hotels/amenities/catalog
+// ListAmenities: List hotel amenities. GET /v1/hotels/amenities/catalog
 func (r *HotelsResource) ListAmenities(ctx context.Context, opts ...CallOption) (*AmenityCatalog, error) {
 	ctx, _, err := r.c.begin(ctx, opts)
 	if err != nil {
@@ -1113,7 +1127,7 @@ func (r *HotelsResource) ListAmenities(ctx context.Context, opts ...CallOption) 
 	return finish(req.Execute())
 }
 
-// ExportCatalog: Get hotel catalog files. GET /api/v1/b2b/hotels/catalog/files
+// ExportCatalog: Get hotel catalog files. GET /v1/hotels/catalog/files
 func (r *HotelsResource) ExportCatalog(ctx context.Context, opts ...CallOption) (*HotelCatalogExport, error) {
 	ctx, _, err := r.c.begin(ctx, opts)
 	if err != nil {
@@ -1123,65 +1137,12 @@ func (r *HotelsResource) ExportCatalog(ctx context.Context, opts ...CallOption) 
 	return finish(req.Execute())
 }
 
-// OrderItemsManualAmendmentsResource holds the manualAmendments methods: 4 methods.
-type OrderItemsManualAmendmentsResource struct {
-	c *clientCore
-}
-
-// Create: Request a manual amendment. POST /api/v1/b2b/order-items/{id}/manual-amendments
-func (r *OrderItemsManualAmendmentsResource) Create(ctx context.Context, id string, body *ManualAmendmentCreateRequest, opts ...CallOption) (*ManualAmendmentResult, error) {
-	ctx, call, err := r.c.begin(ctx, opts)
-	if err != nil {
-		return nil, err
-	}
-	req := r.c.api.HotelManualAmendmentsAPI.HotelManualAmendmentsCreateManualAmendment(ctx, id)
-	req = req.IdempotencyKey(call.idempotencyKey())
-	if body != nil {
-		req = req.ManualAmendmentCreateRequest(*body)
-	}
-	return finish(req.Execute())
-}
-
-// Cancel: Cancel a manual amendment. POST /api/v1/b2b/order-items/{id}/manual-amendments/{amendmentId}/cancel
-func (r *OrderItemsManualAmendmentsResource) Cancel(ctx context.Context, id string, amendmentId string, opts ...CallOption) (*ManualAmendmentResult, error) {
-	ctx, _, err := r.c.begin(ctx, opts)
-	if err != nil {
-		return nil, err
-	}
-	req := r.c.api.HotelManualAmendmentsAPI.HotelManualAmendmentsCancelManualAmendment(ctx, id, amendmentId)
-	return finish(req.Execute())
-}
-
-// Approve: Approve a manual amendment. POST /api/v1/b2b/order-items/{id}/manual-amendments/{amendmentId}/approve
-func (r *OrderItemsManualAmendmentsResource) Approve(ctx context.Context, id string, amendmentId string, body *ManualAmendmentApproveRequest, opts ...CallOption) (*ManualAmendmentResult, error) {
-	ctx, call, err := r.c.begin(ctx, opts)
-	if err != nil {
-		return nil, err
-	}
-	req := r.c.api.HotelManualAmendmentsAPI.HotelManualAmendmentsApproveManualAmendment(ctx, id, amendmentId)
-	req = req.IdempotencyKey(call.idempotencyKey())
-	if body != nil {
-		req = req.ManualAmendmentApproveRequest(*body)
-	}
-	return finish(req.Execute())
-}
-
-// Decline: Decline a manual amendment. POST /api/v1/b2b/order-items/{id}/manual-amendments/{amendmentId}/decline
-func (r *OrderItemsManualAmendmentsResource) Decline(ctx context.Context, id string, amendmentId string, opts ...CallOption) (*ManualAmendmentResult, error) {
-	ctx, _, err := r.c.begin(ctx, opts)
-	if err != nil {
-		return nil, err
-	}
-	req := r.c.api.HotelManualAmendmentsAPI.HotelManualAmendmentsDeclineManualAmendment(ctx, id, amendmentId)
-	return finish(req.Execute())
-}
-
-// FlightsResource holds the flights methods: 4 methods.
+// FlightsResource holds the flights methods: 5 methods.
 type FlightsResource struct {
 	c *clientCore
 }
 
-// Search: Search flights. POST /api/v1/b2b/flights/search
+// Search: Search flights. POST /v1/flights/search
 func (r *FlightsResource) Search(ctx context.Context, body *FlightSearchRequest, opts ...CallOption) (*FlightSearchResult, error) {
 	ctx, _, err := r.c.begin(ctx, opts)
 	if err != nil {
@@ -1194,7 +1155,7 @@ func (r *FlightsResource) Search(ctx context.Context, body *FlightSearchRequest,
 	return finish(req.Execute())
 }
 
-// Quote: Quote flights. POST /api/v1/b2b/flights/quote
+// Quote: Quote flights. POST /v1/flights/quote
 func (r *FlightsResource) Quote(ctx context.Context, body *FlightOrderRequest, opts ...CallOption) (*FlightQuote, error) {
 	ctx, _, err := r.c.begin(ctx, opts)
 	if err != nil {
@@ -1207,7 +1168,7 @@ func (r *FlightsResource) Quote(ctx context.Context, body *FlightOrderRequest, o
 	return finish(req.Execute())
 }
 
-// Order: Order flights. POST /api/v1/b2b/flights/order
+// Order: Order flights. POST /v1/flights/order
 func (r *FlightsResource) Order(ctx context.Context, body *FlightOrderRequest, opts ...CallOption) (*FlightOrder, error) {
 	ctx, call, err := r.c.begin(ctx, opts)
 	if err != nil {
@@ -1221,7 +1182,7 @@ func (r *FlightsResource) Order(ctx context.Context, body *FlightOrderRequest, o
 	return finish(req.Execute())
 }
 
-// GetSeatMap: Get a flight seat map. GET /api/v1/b2b/flights/offers/{publicId}/seat-map
+// GetSeatMap: Get a flight seat map. GET /v1/flights/offers/{publicId}/seat-map
 func (r *FlightsResource) GetSeatMap(ctx context.Context, publicId string, opts ...CallOption) (*SeatMap, error) {
 	ctx, _, err := r.c.begin(ctx, opts)
 	if err != nil {
@@ -1231,12 +1192,31 @@ func (r *FlightsResource) GetSeatMap(ctx context.Context, publicId string, opts 
 	return finish(req.Execute())
 }
 
-// OrdersResource holds the orders methods: 8 methods.
+// ListPlaces: Find flight places. GET /v1/flights/places
+func (r *FlightsResource) ListPlaces(ctx context.Context, query *FlightsListPlacesQuery, opts ...CallOption) (*FlightPlaceList, error) {
+	ctx, _, err := r.c.begin(ctx, opts)
+	if err != nil {
+		return nil, err
+	}
+	req := r.c.api.FlightsAPI.FlightsGetPlaces(ctx)
+	if query != nil {
+		req = req.Q(query.Q)
+		if query.Category != nil {
+			req = req.Category(*query.Category)
+		}
+		if query.Limit != nil {
+			req = req.Limit(*query.Limit)
+		}
+	}
+	return finish(req.Execute())
+}
+
+// OrdersResource holds the orders methods: 6 methods.
 type OrdersResource struct {
 	c *clientCore
 }
 
-// List: List orders. GET /api/v1/b2b/orders
+// List: List orders. GET /v1/orders
 func (r *OrdersResource) List(ctx context.Context, query *OrdersListQuery, opts ...CallOption) (*OrderList, error) {
 	ctx, _, err := r.c.begin(ctx, opts)
 	if err != nil {
@@ -1268,8 +1248,8 @@ func (r *OrdersResource) List(ctx context.Context, query *OrdersListQuery, opts 
 		if query.ReferenceId != nil {
 			req = req.ReferenceId(*query.ReferenceId)
 		}
-		if query.SalesChannel != nil {
-			req = req.SalesChannel(*query.SalesChannel)
+		if query.Channel != nil {
+			req = req.Channel(*query.Channel)
 		}
 		if query.ProductTypes != nil {
 			req = req.ProductTypes(query.ProductTypes)
@@ -1281,7 +1261,7 @@ func (r *OrdersResource) List(ctx context.Context, query *OrdersListQuery, opts 
 	return finish(req.Execute())
 }
 
-// Get: Get an order. GET /api/v1/b2b/orders/{id}
+// Get: Get an order. GET /v1/orders/{id}
 func (r *OrdersResource) Get(ctx context.Context, id string, opts ...CallOption) (*Order, error) {
 	ctx, _, err := r.c.begin(ctx, opts)
 	if err != nil {
@@ -1291,7 +1271,7 @@ func (r *OrdersResource) Get(ctx context.Context, id string, opts ...CallOption)
 	return finish(req.Execute())
 }
 
-// Quote: Quote an order. POST /api/v1/b2b/orders/quote
+// Quote: Quote an order. POST /v1/orders/quote
 func (r *OrdersResource) Quote(ctx context.Context, body *MixedOrderRequest, opts ...CallOption) (*MixedQuote, error) {
 	ctx, _, err := r.c.begin(ctx, opts)
 	if err != nil {
@@ -1304,7 +1284,7 @@ func (r *OrdersResource) Quote(ctx context.Context, body *MixedOrderRequest, opt
 	return finish(req.Execute())
 }
 
-// Order: Create an order. POST /api/v1/b2b/orders
+// Order: Create an order. POST /v1/orders
 func (r *OrdersResource) Order(ctx context.Context, body *MixedOrderRequest, opts ...CallOption) (*Order, error) {
 	ctx, call, err := r.c.begin(ctx, opts)
 	if err != nil {
@@ -1318,29 +1298,7 @@ func (r *OrdersResource) Order(ctx context.Context, body *MixedOrderRequest, opt
 	return finish(req.Execute())
 }
 
-// RetryPayment: Retry an order's payment. POST /api/v1/b2b/orders/{orderId}/payment/retry
-func (r *OrdersResource) RetryPayment(ctx context.Context, orderId string, opts ...CallOption) (*OrderPaymentRetryResult, error) {
-	ctx, call, err := r.c.begin(ctx, opts)
-	if err != nil {
-		return nil, err
-	}
-	req := r.c.api.OrdersAPI.OrdersRetryPayment(ctx, orderId)
-	req = req.IdempotencyKey(call.idempotencyKey())
-	return finish(req.Execute())
-}
-
-// RetryFulfillment: Retry an order's fulfillment. POST /api/v1/b2b/orders/{orderId}/fulfillment/retry
-func (r *OrdersResource) RetryFulfillment(ctx context.Context, orderId string, opts ...CallOption) (*OrderFulfillmentRetryResult, error) {
-	ctx, call, err := r.c.begin(ctx, opts)
-	if err != nil {
-		return nil, err
-	}
-	req := r.c.api.OrdersAPI.OrdersRetryFulfillment(ctx, orderId)
-	req = req.IdempotencyKey(call.idempotencyKey())
-	return finish(req.Execute())
-}
-
-// GetFulfillmentStatus: Get fulfillment status. GET /api/v1/b2b/orders/{orderId}/fulfillment/status
+// GetFulfillmentStatus: Get fulfillment status. GET /v1/orders/{orderId}/fulfillment/status
 func (r *OrdersResource) GetFulfillmentStatus(ctx context.Context, orderId string, opts ...CallOption) (*OrderFulfillmentStatus, error) {
 	ctx, _, err := r.c.begin(ctx, opts)
 	if err != nil {
@@ -1350,24 +1308,26 @@ func (r *OrdersResource) GetFulfillmentStatus(ctx context.Context, orderId strin
 	return finish(req.Execute())
 }
 
-// GetCancellationPreview: Preview an order cancellation. GET /api/v1/b2b/orders/{id}/cancellation-preview
-func (r *OrdersResource) GetCancellationPreview(ctx context.Context, id string, opts ...CallOption) (*OrderCancellationPreview, error) {
-	ctx, _, err := r.c.begin(ctx, opts)
+// ResendEmail: Resend a traveller email. POST /v1/orders/{id}/emails/resend
+func (r *OrdersResource) ResendEmail(ctx context.Context, id string, body *OrderEmailResendRequest, opts ...CallOption) (*OrderEmailResendResult, error) {
+	ctx, call, err := r.c.begin(ctx, opts)
 	if err != nil {
 		return nil, err
 	}
-	req := r.c.api.OrdersAPI.OrdersGetCancellationPreview(ctx, id)
+	req := r.c.api.OrdersAPI.OrdersResendEmail(ctx, id)
+	req = req.IdempotencyKey(call.idempotencyKey())
+	if body != nil {
+		req = req.OrderEmailResendRequest(*body)
+	}
 	return finish(req.Execute())
 }
 
-// OrderItemsResource holds the orderItems methods: 9 methods.
+// OrderItemsResource holds the orderItems methods: 6 methods.
 type OrderItemsResource struct {
 	c *clientCore
-	// ManualAmendments holds the manualAmendments methods.
-	ManualAmendments *OrderItemsManualAmendmentsResource
 }
 
-// Get: Get an order item. GET /api/v1/b2b/order-items/{id}
+// Get: Get an order item. GET /v1/order-items/{id}
 func (r *OrderItemsResource) Get(ctx context.Context, id string, opts ...CallOption) (*OrderItem, error) {
 	ctx, _, err := r.c.begin(ctx, opts)
 	if err != nil {
@@ -1377,128 +1337,83 @@ func (r *OrderItemsResource) Get(ctx context.Context, id string, opts ...CallOpt
 	return finish(req.Execute())
 }
 
-// GetCancellationPreview: Preview an item cancellation. GET /api/v1/b2b/order-items/{id}/cancellation-preview
-func (r *OrderItemsResource) GetCancellationPreview(ctx context.Context, id string, opts ...CallOption) (*OrderItemCancellationPreview, error) {
+// Cancel: Quote or confirm an item cancellation. POST /v1/order-items/{id}/cancellation
+func (r *OrderItemsResource) Cancel(ctx context.Context, id string, body *OrderItemCancellationRequest, opts ...CallOption) (*OrderItemCancellation, error) {
+	ctx, call, err := r.c.begin(ctx, opts)
+	if err != nil {
+		return nil, err
+	}
+	req := r.c.api.OrderItemsAPI.OrderItemsCancellation(ctx, id)
+	req = req.IdempotencyKey(call.idempotencyKey())
+	if body != nil {
+		req = req.OrderItemCancellationRequest(*body)
+	}
+	return finish(req.Execute())
+}
+
+// Change: Change an order item. POST /v1/order-items/{id}/changes
+func (r *OrderItemsResource) Change(ctx context.Context, id string, body *OrderItemChangeRequest, opts ...CallOption) (*OrderItemChange, error) {
+	ctx, call, err := r.c.begin(ctx, opts)
+	if err != nil {
+		return nil, err
+	}
+	req := r.c.api.OrderItemsAPI.OrderItemsChange(ctx, id)
+	req = req.IdempotencyKey(call.idempotencyKey())
+	if body != nil {
+		req = req.OrderItemChangeRequest(*body)
+	}
+	return finish(req.Execute())
+}
+
+// ListChanges: List changes to an order item. GET /v1/order-items/{id}/changes
+func (r *OrderItemsResource) ListChanges(ctx context.Context, id string, query *OrderItemsListChangesQuery, opts ...CallOption) (*OrderItemChangeList, error) {
 	ctx, _, err := r.c.begin(ctx, opts)
 	if err != nil {
 		return nil, err
 	}
-	req := r.c.api.OrderItemsAPI.OrderItemsGetCancellationPreview(ctx, id)
-	return finish(req.Execute())
-}
-
-// Cancel: Cancel an item. POST /api/v1/b2b/order-items/{id}/cancel
-func (r *OrderItemsResource) Cancel(ctx context.Context, id string, body *OrderItemCancelRequest, opts ...CallOption) (*OrderItemCancelResult, error) {
-	ctx, call, err := r.c.begin(ctx, opts)
-	if err != nil {
-		return nil, err
-	}
-	req := r.c.api.OrderItemsAPI.OrderItemsCancel(ctx, id)
-	req = req.IdempotencyKey(call.idempotencyKey())
-	if body != nil {
-		req = req.OrderItemCancelRequest(*body)
-	}
-	return finish(req.Execute())
-}
-
-// QuoteAmendment: Quote an amendment. POST /api/v1/b2b/order-items/{id}/amendments/quote
-func (r *OrderItemsResource) QuoteAmendment(ctx context.Context, id string, body *AmendmentQuoteRequest, opts ...CallOption) (*AmendmentQuote, error) {
-	ctx, call, err := r.c.begin(ctx, opts)
-	if err != nil {
-		return nil, err
-	}
-	req := r.c.api.OrderItemsAPI.OrderItemsQuoteAmendment(ctx, id)
-	req = req.IdempotencyKey(call.idempotencyKey())
-	if body != nil {
-		req = req.AmendmentQuoteRequest(*body)
-	}
-	return finish(req.Execute())
-}
-
-// ConfirmAmendment: Confirm an amendment. POST /api/v1/b2b/order-items/{id}/amendments/confirm
-func (r *OrderItemsResource) ConfirmAmendment(ctx context.Context, id string, body *AmendmentConfirmRequest, opts ...CallOption) (*AmendmentConfirmResult, error) {
-	ctx, call, err := r.c.begin(ctx, opts)
-	if err != nil {
-		return nil, err
-	}
-	req := r.c.api.OrderItemsAPI.OrderItemsConfirmAmendment(ctx, id)
-	req = req.IdempotencyKey(call.idempotencyKey())
-	if body != nil {
-		req = req.AmendmentConfirmRequest(*body)
-	}
-	return finish(req.Execute())
-}
-
-// Update: Update an item. POST /api/v1/b2b/order-items/{id}/update
-func (r *OrderItemsResource) Update(ctx context.Context, id string, body *OrderItemUpdateRequest, opts ...CallOption) (*OrderItem, error) {
-	ctx, call, err := r.c.begin(ctx, opts)
-	if err != nil {
-		return nil, err
-	}
-	req := r.c.api.OrderItemsAPI.OrderItemsUpdate(ctx, id)
-	req = req.IdempotencyKey(call.idempotencyKey())
-	if body != nil {
-		req = req.OrderItemUpdateRequest(*body)
-	}
-	return finish(req.Execute())
-}
-
-// ListAmendments: List item amendments. GET /api/v1/b2b/order-items/{id}/amendments
-func (r *OrderItemsResource) ListAmendments(ctx context.Context, id string, opts ...CallOption) ([]OrderItemAmendment, error) {
-	ctx, _, err := r.c.begin(ctx, opts)
-	if err != nil {
-		return nil, err
-	}
-	req := r.c.api.OrderItemsAPI.OrderItemsGetAmendments(ctx, id)
-	return finish(req.Execute())
-}
-
-// ListPartnerAmendments: List partner amendments. GET /api/v1/b2b/amendments
-func (r *OrderItemsResource) ListPartnerAmendments(ctx context.Context, query *OrderItemsListPartnerAmendmentsQuery, opts ...CallOption) (*AmendmentList, error) {
-	ctx, _, err := r.c.begin(ctx, opts)
-	if err != nil {
-		return nil, err
-	}
-	req := r.c.api.OrderItemsAPI.OrderItemsListPartnerAmendments(ctx)
+	req := r.c.api.OrderItemsAPI.OrderItemsListItemChanges(ctx, id)
 	if query != nil {
-		if query.Page != nil {
-			req = req.Page(*query.Page)
+		if query.UpdatedSince != nil {
+			req = req.UpdatedSince(*query.UpdatedSince)
+		}
+		if query.Cursor != nil {
+			req = req.Cursor(*query.Cursor)
 		}
 		if query.Limit != nil {
 			req = req.Limit(*query.Limit)
 		}
-		if query.Statuses != nil {
-			req = req.Statuses(query.Statuses)
+	}
+	return finish(req.Execute())
+}
+
+// ListPartnerChanges: List changes across the partner's orders. GET /v1/changes
+func (r *OrderItemsResource) ListPartnerChanges(ctx context.Context, query *OrderItemsListPartnerChangesQuery, opts ...CallOption) (*OrderItemChangeList, error) {
+	ctx, _, err := r.c.begin(ctx, opts)
+	if err != nil {
+		return nil, err
+	}
+	req := r.c.api.OrderItemsAPI.OrderItemsListPartnerChanges(ctx)
+	if query != nil {
+		if query.UpdatedSince != nil {
+			req = req.UpdatedSince(*query.UpdatedSince)
 		}
-		if query.ProductType != nil {
-			req = req.ProductType(*query.ProductType)
+		if query.Cursor != nil {
+			req = req.Cursor(*query.Cursor)
 		}
-		if query.AmendmentMode != nil {
-			req = req.AmendmentMode(*query.AmendmentMode)
-		}
-		if query.OrderId != nil {
-			req = req.OrderId(*query.OrderId)
-		}
-		if query.OrderItemId != nil {
-			req = req.OrderItemId(*query.OrderItemId)
-		}
-		if query.From != nil {
-			req = req.From(*query.From)
-		}
-		if query.To != nil {
-			req = req.To(*query.To)
+		if query.Limit != nil {
+			req = req.Limit(*query.Limit)
 		}
 	}
 	return finish(req.Execute())
 }
 
-// GetAmendment: Get an amendment. GET /api/v1/b2b/order-items/{id}/amendments/{amendmentId}
-func (r *OrderItemsResource) GetAmendment(ctx context.Context, id string, amendmentId string, opts ...CallOption) (*OrderItemAmendment, error) {
+// GetChange: Get an order item change. GET /v1/order-items/{id}/changes/{changeId}
+func (r *OrderItemsResource) GetChange(ctx context.Context, id string, changeId string, opts ...CallOption) (*OrderItemChange, error) {
 	ctx, _, err := r.c.begin(ctx, opts)
 	if err != nil {
 		return nil, err
 	}
-	req := r.c.api.OrderItemsAPI.OrderItemsGetAmendmentById(ctx, id, amendmentId)
+	req := r.c.api.OrderItemsAPI.OrderItemsGetChange(ctx, id, changeId)
 	return finish(req.Execute())
 }
 
@@ -1507,7 +1422,7 @@ type WalletsResource struct {
 	c *clientCore
 }
 
-// List: List wallets. GET /api/v1/b2b/wallets
+// List: List wallets. GET /v1/wallets
 func (r *WalletsResource) List(ctx context.Context, opts ...CallOption) ([]WalletSummary, error) {
 	ctx, _, err := r.c.begin(ctx, opts)
 	if err != nil {
@@ -1517,7 +1432,7 @@ func (r *WalletsResource) List(ctx context.Context, opts ...CallOption) ([]Walle
 	return finish(req.Execute())
 }
 
-// Get: Get a wallet. GET /api/v1/b2b/wallets/{id}
+// Get: Get a wallet. GET /v1/wallets/{id}
 func (r *WalletsResource) Get(ctx context.Context, id string, opts ...CallOption) (*Wallet, error) {
 	ctx, _, err := r.c.begin(ctx, opts)
 	if err != nil {
@@ -1527,7 +1442,7 @@ func (r *WalletsResource) Get(ctx context.Context, id string, opts ...CallOption
 	return finish(req.Execute())
 }
 
-// Create: Create a wallet. POST /api/v1/b2b/wallets
+// Create: Create a wallet. POST /v1/wallets
 func (r *WalletsResource) Create(ctx context.Context, body *WalletCreateRequest, opts ...CallOption) error {
 	ctx, _, err := r.c.begin(ctx, opts)
 	if err != nil {
@@ -1540,7 +1455,7 @@ func (r *WalletsResource) Create(ctx context.Context, body *WalletCreateRequest,
 	return finishWithoutValue(req.Execute())
 }
 
-// Update: Update a wallet. PATCH /api/v1/b2b/wallets/{id}
+// Update: Update a wallet. PATCH /v1/wallets/{id}
 func (r *WalletsResource) Update(ctx context.Context, id string, body *WalletUpdateRequest, opts ...CallOption) error {
 	ctx, _, err := r.c.begin(ctx, opts)
 	if err != nil {
@@ -1553,7 +1468,7 @@ func (r *WalletsResource) Update(ctx context.Context, id string, body *WalletUpd
 	return finishWithoutValue(req.Execute())
 }
 
-// SetDefault: Select a wallet. PATCH /api/v1/b2b/wallets/select/{id}
+// SetDefault: Select a wallet. PATCH /v1/wallets/select/{id}
 func (r *WalletsResource) SetDefault(ctx context.Context, id string, opts ...CallOption) error {
 	ctx, _, err := r.c.begin(ctx, opts)
 	if err != nil {
@@ -1563,7 +1478,7 @@ func (r *WalletsResource) SetDefault(ctx context.Context, id string, opts ...Cal
 	return finishWithoutValue(req.Execute())
 }
 
-// Transfer: Transfer between wallets. POST /api/v1/b2b/wallets/transfer
+// Transfer: Transfer between wallets. POST /v1/wallets/transfer
 func (r *WalletsResource) Transfer(ctx context.Context, body *WalletTransferRequest, opts ...CallOption) (*WalletTransfer, error) {
 	ctx, call, err := r.c.begin(ctx, opts)
 	if err != nil {
@@ -1577,7 +1492,7 @@ func (r *WalletsResource) Transfer(ctx context.Context, body *WalletTransferRequ
 	return finish(req.Execute())
 }
 
-// ListTransactions: List wallet transactions. GET /api/v1/b2b/wallets/{walletId}/transactions
+// ListTransactions: List wallet transactions. GET /v1/wallets/{walletId}/transactions
 func (r *WalletsResource) ListTransactions(ctx context.Context, walletId string, query *WalletsListTransactionsQuery, opts ...CallOption) (*WalletTransactionList, error) {
 	ctx, _, err := r.c.begin(ctx, opts)
 	if err != nil {
@@ -1607,12 +1522,27 @@ func (r *WalletsResource) ListTransactions(ctx context.Context, walletId string,
 	return finish(req.Execute())
 }
 
+// AccountResource holds the account methods: 1 method.
+type AccountResource struct {
+	c *clientCore
+}
+
+// ListServices: List account services. GET /v1/account/services
+func (r *AccountResource) ListServices(ctx context.Context, opts ...CallOption) (*AccountServiceList, error) {
+	ctx, _, err := r.c.begin(ctx, opts)
+	if err != nil {
+		return nil, err
+	}
+	req := r.c.api.AccountAPI.AccountGetServices(ctx)
+	return finish(req.Execute())
+}
+
 // CurrenciesResource holds the currencies methods: 1 method.
 type CurrenciesResource struct {
 	c *clientCore
 }
 
-// List: List currencies. GET /api/v1/b2b/currencies
+// List: List currencies. GET /v1/currencies
 func (r *CurrenciesResource) List(ctx context.Context, opts ...CallOption) (*CurrencyList, error) {
 	ctx, _, err := r.c.begin(ctx, opts)
 	if err != nil {
@@ -1627,7 +1557,7 @@ type CountriesResource struct {
 	c *clientCore
 }
 
-// List: List countries. GET /api/v1/b2b/common/countries
+// List: List countries. GET /v1/common/countries
 func (r *CountriesResource) List(ctx context.Context, opts ...CallOption) (*CountryList, error) {
 	ctx, _, err := r.c.begin(ctx, opts)
 	if err != nil {
@@ -1642,7 +1572,7 @@ type MobileNetworksResource struct {
 	c *clientCore
 }
 
-// List: List mobile networks. GET /api/v1/b2b/common/mccmnc
+// List: List mobile networks. GET /v1/common/mccmnc
 func (r *MobileNetworksResource) List(ctx context.Context, query *MobileNetworksListQuery, opts ...CallOption) (*MobileNetworkList, error) {
 	ctx, _, err := r.c.begin(ctx, opts)
 	if err != nil {
@@ -1657,5 +1587,77 @@ func (r *MobileNetworksResource) List(ctx context.Context, query *MobileNetworks
 			req = req.Mcc(*query.Mcc)
 		}
 	}
+	return finish(req.Execute())
+}
+
+// BrowserSessionsResource holds the browserSessions methods: 2 methods.
+type BrowserSessionsResource struct {
+	c *clientCore
+}
+
+// Create: Create a browser session. POST /v1/browser-sessions
+func (r *BrowserSessionsResource) Create(ctx context.Context, body *BrowserSessionCreateRequest, opts ...CallOption) (*BrowserSession, error) {
+	ctx, _, err := r.c.begin(ctx, opts)
+	if err != nil {
+		return nil, err
+	}
+	req := r.c.api.BrowserSessionsAPI.BrowserSessionsCreate(ctx)
+	if body != nil {
+		req = req.BrowserSessionCreateRequest(*body)
+	}
+	return finish(req.Execute())
+}
+
+// Revoke: Revoke a site's browser sessions. POST /v1/browser-sessions/revoke
+func (r *BrowserSessionsResource) Revoke(ctx context.Context, body *BrowserSessionRevokeRequest, opts ...CallOption) error {
+	ctx, _, err := r.c.begin(ctx, opts)
+	if err != nil {
+		return err
+	}
+	req := r.c.api.BrowserSessionsAPI.BrowserSessionsRevoke(ctx)
+	if body != nil {
+		req = req.BrowserSessionRevokeRequest(*body)
+	}
+	return finishWithoutValue(req.Execute())
+}
+
+// CheckoutsResource holds the checkouts methods: 3 methods.
+type CheckoutsResource struct {
+	c *clientCore
+}
+
+// Get: Get a checkout. GET /v1/checkouts/{id}
+func (r *CheckoutsResource) Get(ctx context.Context, id string, opts ...CallOption) (*Checkout, error) {
+	ctx, _, err := r.c.begin(ctx, opts)
+	if err != nil {
+		return nil, err
+	}
+	req := r.c.api.CheckoutsAPI.CheckoutsGetById(ctx, id)
+	return finish(req.Execute())
+}
+
+// Confirm: Confirm a checkout payment. POST /v1/checkouts/{id}/confirm
+func (r *CheckoutsResource) Confirm(ctx context.Context, id string, body *CheckoutConfirmRequest, opts ...CallOption) (*Checkout, error) {
+	ctx, call, err := r.c.begin(ctx, opts)
+	if err != nil {
+		return nil, err
+	}
+	req := r.c.api.CheckoutsAPI.CheckoutsConfirm(ctx, id)
+	req = req.IdempotencyKey(call.idempotencyKey())
+	if body != nil {
+		req = req.CheckoutConfirmRequest(*body)
+	}
+	return finish(req.Execute())
+}
+
+// Fail: Report a failed checkout payment. POST /v1/checkouts/{id}/fail
+func (r *CheckoutsResource) Fail(ctx context.Context, id string, opts ...CallOption) (*Checkout, error) {
+	ctx, call, err := r.c.begin(ctx, opts)
+	if err != nil {
+		return nil, err
+	}
+	req := r.c.api.CheckoutsAPI.CheckoutsFail(ctx, id)
+	req = req.IdempotencyKey(call.idempotencyKey())
+	req = req.Body(map[string]interface{}{})
 	return finish(req.Execute())
 }

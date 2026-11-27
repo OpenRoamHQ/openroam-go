@@ -66,7 +66,7 @@ func (a *CurrenciesAPIService) CurrenciesGetAllExecute(r ApiCurrenciesGetAllRequ
 		return localVarReturnValue, nil, &GenericOpenAPIError{error: err.Error()}
 	}
 
-	localVarPath := localBasePath + "/api/v1/b2b/currencies"
+	localVarPath := localBasePath + "/v1/currencies"
 
 	localVarHeaderParams := make(map[string]string)
 	localVarQueryParams := url.Values{}

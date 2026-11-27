@@ -53,7 +53,8 @@ Places and pays for hotel bookings of up to 5 searched or quoted rates.
 
 Requires an `Idempotency-Key` header (a new UUID per purchase) and an API key with order-manage
 permission. Repeating the same request with the same key returns the original order; while the first
-request is still running the response is 202. The order is paid from your wallet balance and each booking
+request is still running the response is 409 / 12002 with `Retry-After`, after which you send the
+same request again. The order is paid from your wallet balance and each booking
 completes asynchronously: track it with `GET /orders/{id}` or the `order.fulfillment.updated`
 webhook.
             
@@ -74,7 +75,9 @@ the rate is charged as priced, so a `maxPrice` above the shown price accepts a r
 that cannot be booked now returns 409 / 11003, an offer priced in another currency than the order
 400 / 11005, and an unknown, expired or another partner's `publicId` 400 / 11004, each at
 `items[i]`. Offer and hotel-system failures return their hotel codes (21003, 21007–21010) without a
-path. Nothing is created or charged when the order is refused.
+path. A wallet charge that fails gives 402 / 16000, with `details[0]` naming `wallet` and
+`INSUFFICIENT_BALANCE` or `WALLET_BLOCKED`; send the same request with the same key after a
+top-up. Nothing is created or charged when the order is refused.
 
  @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
  @return ApiHotelsCreateOrderRequest
@@ -101,7 +104,7 @@ func (a *HotelsAPIService) HotelsCreateOrderExecute(r ApiHotelsCreateOrderReques
 		return localVarReturnValue, nil, &GenericOpenAPIError{error: err.Error()}
 	}
 
-	localVarPath := localBasePath + "/api/v1/b2b/hotels/order"
+	localVarPath := localBasePath + "/v1/hotels/order"
 
 	localVarHeaderParams := make(map[string]string)
 	localVarQueryParams := url.Values{}
@@ -167,6 +170,17 @@ func (a *HotelsAPIService) HotelsCreateOrderExecute(r ApiHotelsCreateOrderReques
 			error: localVarHTTPResponse.Status,
 		}
 		if localVarHTTPResponse.StatusCode == 400 {
+			var v ErrorResponse
+			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = err.Error()
+				return localVarReturnValue, localVarHTTPResponse, newErr
+			}
+					newErr.error = formatErrorMessage(localVarHTTPResponse.Status, &v)
+					newErr.model = v
+			return localVarReturnValue, localVarHTTPResponse, newErr
+		}
+		if localVarHTTPResponse.StatusCode == 402 {
 			var v ErrorResponse
 			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 			if err != nil {
@@ -268,7 +282,7 @@ func (a *HotelsAPIService) HotelsGetAmenityCatalogExecute(r ApiHotelsGetAmenityC
 		return localVarReturnValue, nil, &GenericOpenAPIError{error: err.Error()}
 	}
 
-	localVarPath := localBasePath + "/api/v1/b2b/hotels/amenities/catalog"
+	localVarPath := localBasePath + "/v1/hotels/amenities/catalog"
 
 	localVarHeaderParams := make(map[string]string)
 	localVarQueryParams := url.Values{}
@@ -377,13 +391,16 @@ HotelsGetCatalogFiles Get hotel catalog files
 
 Returns download links for the current hotel catalog files.
 
-Returns `{ generatedAt, hotelCount, files: [{ variant, url, sizeBytes }] }`, one zip per variant. Each
-zip holds `hotels.jsonl`: one hotel per line, in the item shape that search and
+Returns `{ generatedAt, hotelCount, files: [{ variant, url, sizeBytes }], replacements, linksExpireAt }`,
+one zip per variant. Each zip holds `hotels.jsonl`: one hotel per line, in the item shape that search and
 `properties/{id}` return, with `offers` empty. `withoutImages` carries each hotel's main
-image as `logoUrl` and an empty `details.imageUrls`; `withImages` also lists every gallery
+image as `logoUrl` and an empty `imageUrls`; `withImages` also lists every gallery
 image there. `generatedAt` is null and `files` empty before the first catalog is built, and after
 a release that changes the line format until the first build in the new format: the route never links a
-file whose lines have another format. The route takes no query parameters.
+file whose lines have another format. Each `url` is sure to work until `linksExpireAt`, about an
+hour, and may stop at any moment after it: start the download before then, do not store the link, and to
+resume or retry later call the route again and continue with a `Range` request on the new link. The
+route takes no query parameters.
 
  @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
  @return ApiHotelsGetCatalogFilesRequest
@@ -410,7 +427,7 @@ func (a *HotelsAPIService) HotelsGetCatalogFilesExecute(r ApiHotelsGetCatalogFil
 		return localVarReturnValue, nil, &GenericOpenAPIError{error: err.Error()}
 	}
 
-	localVarPath := localBasePath + "/api/v1/b2b/hotels/catalog/files"
+	localVarPath := localBasePath + "/v1/hotels/catalog/files"
 
 	localVarHeaderParams := make(map[string]string)
 	localVarQueryParams := url.Values{}
@@ -576,7 +593,7 @@ func (a *HotelsAPIService) HotelsGetDestinationsExecute(r ApiHotelsGetDestinatio
 		return localVarReturnValue, nil, &GenericOpenAPIError{error: err.Error()}
 	}
 
-	localVarPath := localBasePath + "/api/v1/b2b/hotels/destinations"
+	localVarPath := localBasePath + "/v1/hotels/destinations"
 
 	localVarHeaderParams := make(map[string]string)
 	localVarQueryParams := url.Values{}
@@ -741,7 +758,7 @@ func (a *HotelsAPIService) HotelsGetPropertyExecute(r ApiHotelsGetPropertyReques
 		return localVarReturnValue, nil, &GenericOpenAPIError{error: err.Error()}
 	}
 
-	localVarPath := localBasePath + "/api/v1/b2b/hotels/properties/{id}"
+	localVarPath := localBasePath + "/v1/hotels/properties/{id}"
 	localVarPath = strings.Replace(localVarPath, "{"+"id"+"}", url.PathEscape(parameterValueToString(r.id, "id")), -1)
 
 	localVarHeaderParams := make(map[string]string)
@@ -873,13 +890,13 @@ body first, so a body error gives 400 / 10001 also when it is in a later item, t
 (its inputs, its `publicId`, then a fresh price from the hotel system) before the next, in request order.
 `inputs` may be left out; when sent, they are checked as the order checks them. The body and every
 object in it reject an unknown member (400 / 10001). Stay dates and rooms come from the offer and are
-returned in each item's `details`. Nothing is charged or reserved.
+returned on each item. Nothing is charged or reserved.
             
 Each item returns a new `publicId` for its rate at the current `price` (the whole stay, all rooms
-and nights): order with it before `details.expiresAt`, which is at most 30 minutes away and never past
+and nights): order with it before `expiresAt`, which is at most 30 minutes away and never past
 an expiry the hotel system states. A price that rose since the search is returned with 200; only
 `inputs.maxPrice` stops a quote, with 409 / 11002 at `items[i].inputs.maxPrice`.
-`details.availability` is `onRequest` for a rate that is held only on request, which an
+`availability` is `onRequest` for a rate that is held only on request, which an
 order refuses with 409 / 11003.
             
 Errors name the failing item: a rate that is no longer sold is 409 / 11003, and an unknown, expired or
@@ -887,7 +904,8 @@ another partner's `publicId`, another product's offer, a hotel's own `id` or an 
 session (search again) is 400 / 11004, each at `items[i]`; input errors (400 / 10001) are at
 `items[i].inputs…`. Offer and hotel-system failures return their hotel codes without a path:
 503 / 21003 when offers are temporarily unavailable, 21007–21009, and 400 / 21010 when the hotel's room
-layout no longer matches the searched occupancy (search again).
+layout no longer matches the searched occupancy (search again). A browser session may not send
+`inputs.maxPrice` (400 / 10001, `NOT_ALLOWED`).
 
  @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
  @return ApiHotelsQuoteRequest
@@ -914,7 +932,7 @@ func (a *HotelsAPIService) HotelsQuoteExecute(r ApiHotelsQuoteRequest) (*HotelQu
 		return localVarReturnValue, nil, &GenericOpenAPIError{error: err.Error()}
 	}
 
-	localVarPath := localBasePath + "/api/v1/b2b/hotels/quote"
+	localVarPath := localBasePath + "/v1/hotels/quote"
 
 	localVarHeaderParams := make(map[string]string)
 	localVarQueryParams := url.Values{}
@@ -1060,28 +1078,30 @@ are required: rates are priced for the occupancy, child ages and guest market se
 unknown member at every level, `filters`, `searchCriteria.location` and `rooms[]` included,
 and the route takes no query parameters: either gives 400 / 10001.
             
-Returns `{ items, pagination, nextCursor, details }`. Each item is a hotel: `id`, `name`,
-`countryCode`, `category` (always null), `logoUrl` (the main image), `description`, its
-`offers`, and `details` with the star rating, address, coordinates, images, amenity groups and
-contact. Each offer is one rate: an opaque `publicId`, a `name` such as "Deluxe King, Breakfast,
-Free cancellation", a `price` for the whole stay (all rooms and nights), and the rate terms in
-`details`, including `expiresAt`. Pass an offer's
+Returns `{ items, pagination, nextCursor, availableFilters }`. Each item is a hotel: `id`,
+`name`, `countryCode`, `category` (always null), `logoUrl` (the main image),
+`description`, its `offers`, and the hotel's `starRating`, `address`,
+`coordinates`, `imageUrls`, `amenityGroups` and `contact`. Each offer is one rate: an
+opaque `publicId`, a `name` such as "Deluxe King, Breakfast, Free cancellation", a `price`
+for the whole stay (all rooms and nights), and the rate terms in `details`, including
+`expiresAt`. Pass an offer's
 `publicId` to quote or order before it expires. The hotel's `id` is not an offer; send it in
 `searchCriteria.hotelIds` to search that hotel again. A hotel without an orderable offer is not
-listed. `details.availableFilters` holds the amenity filter values of a `cityCode` search.
+listed. `availableFilters` holds the amenity filter values of a `cityCode` search.
             
 Location searches are paged: `limit` is 1–50 (default 20) and the next page is requested by sending
 the response's `nextCursor` back as `cursor` with the same body; a null `nextCursor` is the
 last page. A page can hold fewer hotels than `limit`, even none, while `nextCursor` is not null:
-keep paging until it is null. `pagination.totalCount` counts the area's candidate hotels, an upper
-bound of what the pages list. To keep pages small, each hotel on a page has one offer, its cheapest rate,
+keep paging until it is null. `pagination` is `{ currentCount, limit, hasMore }`: the walk states
+no page number and no total. To keep pages small, each hotel on a page has one offer, its cheapest rate,
 with empty `nightlyPrices` and `surcharges`, and no description and one image. A
 `hotelIds` search returns every rate of those hotels with the full detail, as one complete page; an
 empty `items` there means none of those hotels has an orderable offer.
             
 Errors: an ID that is not a hotel ID returns 400 / 21000; an unknown or expired hotel ID 400 / 11004;
 503 / 21003 when offers are temporarily unavailable (retry the search); 502, 504 or 503 with
-21007–21009 when the hotel system fails, times out or is unavailable.
+21007–21009 when the hotel system fails, times out or is unavailable. A browser session may not send
+`filters.minPrice` or `filters.maxPrice` (400 / 10001, `NOT_ALLOWED`).
 
  @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
  @return ApiHotelsSearchRequest
@@ -1108,7 +1128,7 @@ func (a *HotelsAPIService) HotelsSearchExecute(r ApiHotelsSearchRequest) (*Hotel
 		return localVarReturnValue, nil, &GenericOpenAPIError{error: err.Error()}
 	}
 
-	localVarPath := localBasePath + "/api/v1/b2b/hotels/search"
+	localVarPath := localBasePath + "/v1/hotels/search"
 
 	localVarHeaderParams := make(map[string]string)
 	localVarQueryParams := url.Values{}

@@ -14,6 +14,8 @@ package openroam
 import (
 	"encoding/json"
 	"time"
+	"bytes"
+	"fmt"
 )
 
 // checks if the Segment type satisfies the MappedNullable interface at compile time
@@ -22,19 +24,23 @@ var _ MappedNullable = &Segment{}
 // Segment One leg of a slice: a single flight number from takeoff to landing.
 type Segment struct {
 	// Where the leg departs.
-	Origin *Airport `json:"origin,omitempty"`
+	Origin Airport `json:"origin"`
 	// Where the leg lands.
-	Destination *Airport `json:"destination,omitempty"`
-	// Local departure time.
-	DepartureAt *time.Time `json:"departureAt,omitempty"`
-	// Local arrival time.
-	ArrivalAt *time.Time `json:"arrivalAt,omitempty"`
+	Destination Airport `json:"destination"`
+	// When the leg departs, a UTC instant; `origin.timezone` gives the airport's clock.
+	DepartureAt time.Time `json:"departureAt"`
+	// The clock at the departure airport (`origin.timezone`) at `departureAt`. Written yyyy-MM-ddTHH:mm:ss with no zone, for display only: compute and compare with `departureAt`. Null when the place's time zone is unknown.
+	DepartureLocalTime NullableString `json:"departureLocalTime,omitempty"`
+	// When the leg lands, a UTC instant; `destination.timezone` gives the airport's clock.
+	ArrivalAt time.Time `json:"arrivalAt"`
+	// The clock at the arrival airport (`destination.timezone`) at `arrivalAt`. Written yyyy-MM-ddTHH:mm:ss with no zone, for display only: compute and compare with `arrivalAt`. Null when the place's time zone is unknown.
+	ArrivalLocalTime NullableString `json:"arrivalLocalTime,omitempty"`
 	// Flying time of the leg.
-	DurationMinutes *int32 `json:"durationMinutes,omitempty"`
+	DurationMinutes int32 `json:"durationMinutes"`
 	// The airline that sells the leg under its flight number.
-	MarketingCarrier *Airline `json:"marketingCarrier,omitempty"`
+	MarketingCarrier Airline `json:"marketingCarrier"`
 	// The marketing carrier's flight number.
-	MarketingFlightNumber *string `json:"marketingFlightNumber,omitempty"`
+	MarketingFlightNumber string `json:"marketingFlightNumber"`
 	// The airline that flies the leg.
 	OperatingCarrier NullableAirline `json:"operatingCarrier,omitempty"`
 	// The operating carrier's flight number.
@@ -42,17 +48,28 @@ type Segment struct {
 	// The aircraft type, when the airline gives it.
 	Aircraft NullableAircraft `json:"aircraft,omitempty"`
 	// Technical stops without a change of aircraft.
-	Stops []Stop `json:"stops,omitempty"`
+	Stops []Stop `json:"stops"`
 	// Whether another airline than the marketing carrier flies the leg.
-	IsCodeshare *bool `json:"isCodeshare,omitempty"`
+	IsCodeshare bool `json:"isCodeshare"`
 }
+
+type _Segment Segment
 
 // NewSegment instantiates a new Segment object
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewSegment() *Segment {
+func NewSegment(origin Airport, destination Airport, departureAt time.Time, arrivalAt time.Time, durationMinutes int32, marketingCarrier Airline, marketingFlightNumber string, stops []Stop, isCodeshare bool) *Segment {
 	this := Segment{}
+	this.Origin = origin
+	this.Destination = destination
+	this.DepartureAt = departureAt
+	this.ArrivalAt = arrivalAt
+	this.DurationMinutes = durationMinutes
+	this.MarketingCarrier = marketingCarrier
+	this.MarketingFlightNumber = marketingFlightNumber
+	this.Stops = stops
+	this.IsCodeshare = isCodeshare
 	return &this
 }
 
@@ -64,228 +81,256 @@ func NewSegmentWithDefaults() *Segment {
 	return &this
 }
 
-// GetOrigin returns the Origin field value if set, zero value otherwise.
+// GetOrigin returns the Origin field value
 func (o *Segment) GetOrigin() Airport {
-	if o == nil || IsNil(o.Origin) {
+	if o == nil {
 		var ret Airport
 		return ret
 	}
-	return *o.Origin
+
+	return o.Origin
 }
 
-// GetOriginOk returns a tuple with the Origin field value if set, nil otherwise
+// GetOriginOk returns a tuple with the Origin field value
 // and a boolean to check if the value has been set.
 func (o *Segment) GetOriginOk() (*Airport, bool) {
-	if o == nil || IsNil(o.Origin) {
+	if o == nil {
 		return nil, false
 	}
-	return o.Origin, true
+	return &o.Origin, true
 }
 
-// HasOrigin returns a boolean if a field has been set.
-func (o *Segment) HasOrigin() bool {
-	if o != nil && !IsNil(o.Origin) {
-		return true
-	}
-
-	return false
-}
-
-// SetOrigin gets a reference to the given Airport and assigns it to the Origin field.
+// SetOrigin sets field value
 func (o *Segment) SetOrigin(v Airport) {
-	o.Origin = &v
+	o.Origin = v
 }
 
-// GetDestination returns the Destination field value if set, zero value otherwise.
+// GetDestination returns the Destination field value
 func (o *Segment) GetDestination() Airport {
-	if o == nil || IsNil(o.Destination) {
+	if o == nil {
 		var ret Airport
 		return ret
 	}
-	return *o.Destination
+
+	return o.Destination
 }
 
-// GetDestinationOk returns a tuple with the Destination field value if set, nil otherwise
+// GetDestinationOk returns a tuple with the Destination field value
 // and a boolean to check if the value has been set.
 func (o *Segment) GetDestinationOk() (*Airport, bool) {
-	if o == nil || IsNil(o.Destination) {
+	if o == nil {
 		return nil, false
 	}
-	return o.Destination, true
+	return &o.Destination, true
 }
 
-// HasDestination returns a boolean if a field has been set.
-func (o *Segment) HasDestination() bool {
-	if o != nil && !IsNil(o.Destination) {
-		return true
-	}
-
-	return false
-}
-
-// SetDestination gets a reference to the given Airport and assigns it to the Destination field.
+// SetDestination sets field value
 func (o *Segment) SetDestination(v Airport) {
-	o.Destination = &v
+	o.Destination = v
 }
 
-// GetDepartureAt returns the DepartureAt field value if set, zero value otherwise.
+// GetDepartureAt returns the DepartureAt field value
 func (o *Segment) GetDepartureAt() time.Time {
-	if o == nil || IsNil(o.DepartureAt) {
+	if o == nil {
 		var ret time.Time
 		return ret
 	}
-	return *o.DepartureAt
+
+	return o.DepartureAt
 }
 
-// GetDepartureAtOk returns a tuple with the DepartureAt field value if set, nil otherwise
+// GetDepartureAtOk returns a tuple with the DepartureAt field value
 // and a boolean to check if the value has been set.
 func (o *Segment) GetDepartureAtOk() (*time.Time, bool) {
-	if o == nil || IsNil(o.DepartureAt) {
+	if o == nil {
 		return nil, false
 	}
-	return o.DepartureAt, true
+	return &o.DepartureAt, true
 }
 
-// HasDepartureAt returns a boolean if a field has been set.
-func (o *Segment) HasDepartureAt() bool {
-	if o != nil && !IsNil(o.DepartureAt) {
-		return true
-	}
-
-	return false
-}
-
-// SetDepartureAt gets a reference to the given time.Time and assigns it to the DepartureAt field.
+// SetDepartureAt sets field value
 func (o *Segment) SetDepartureAt(v time.Time) {
-	o.DepartureAt = &v
+	o.DepartureAt = v
 }
 
-// GetArrivalAt returns the ArrivalAt field value if set, zero value otherwise.
-func (o *Segment) GetArrivalAt() time.Time {
-	if o == nil || IsNil(o.ArrivalAt) {
-		var ret time.Time
-		return ret
-	}
-	return *o.ArrivalAt
-}
-
-// GetArrivalAtOk returns a tuple with the ArrivalAt field value if set, nil otherwise
-// and a boolean to check if the value has been set.
-func (o *Segment) GetArrivalAtOk() (*time.Time, bool) {
-	if o == nil || IsNil(o.ArrivalAt) {
-		return nil, false
-	}
-	return o.ArrivalAt, true
-}
-
-// HasArrivalAt returns a boolean if a field has been set.
-func (o *Segment) HasArrivalAt() bool {
-	if o != nil && !IsNil(o.ArrivalAt) {
-		return true
-	}
-
-	return false
-}
-
-// SetArrivalAt gets a reference to the given time.Time and assigns it to the ArrivalAt field.
-func (o *Segment) SetArrivalAt(v time.Time) {
-	o.ArrivalAt = &v
-}
-
-// GetDurationMinutes returns the DurationMinutes field value if set, zero value otherwise.
-func (o *Segment) GetDurationMinutes() int32 {
-	if o == nil || IsNil(o.DurationMinutes) {
-		var ret int32
-		return ret
-	}
-	return *o.DurationMinutes
-}
-
-// GetDurationMinutesOk returns a tuple with the DurationMinutes field value if set, nil otherwise
-// and a boolean to check if the value has been set.
-func (o *Segment) GetDurationMinutesOk() (*int32, bool) {
-	if o == nil || IsNil(o.DurationMinutes) {
-		return nil, false
-	}
-	return o.DurationMinutes, true
-}
-
-// HasDurationMinutes returns a boolean if a field has been set.
-func (o *Segment) HasDurationMinutes() bool {
-	if o != nil && !IsNil(o.DurationMinutes) {
-		return true
-	}
-
-	return false
-}
-
-// SetDurationMinutes gets a reference to the given int32 and assigns it to the DurationMinutes field.
-func (o *Segment) SetDurationMinutes(v int32) {
-	o.DurationMinutes = &v
-}
-
-// GetMarketingCarrier returns the MarketingCarrier field value if set, zero value otherwise.
-func (o *Segment) GetMarketingCarrier() Airline {
-	if o == nil || IsNil(o.MarketingCarrier) {
-		var ret Airline
-		return ret
-	}
-	return *o.MarketingCarrier
-}
-
-// GetMarketingCarrierOk returns a tuple with the MarketingCarrier field value if set, nil otherwise
-// and a boolean to check if the value has been set.
-func (o *Segment) GetMarketingCarrierOk() (*Airline, bool) {
-	if o == nil || IsNil(o.MarketingCarrier) {
-		return nil, false
-	}
-	return o.MarketingCarrier, true
-}
-
-// HasMarketingCarrier returns a boolean if a field has been set.
-func (o *Segment) HasMarketingCarrier() bool {
-	if o != nil && !IsNil(o.MarketingCarrier) {
-		return true
-	}
-
-	return false
-}
-
-// SetMarketingCarrier gets a reference to the given Airline and assigns it to the MarketingCarrier field.
-func (o *Segment) SetMarketingCarrier(v Airline) {
-	o.MarketingCarrier = &v
-}
-
-// GetMarketingFlightNumber returns the MarketingFlightNumber field value if set, zero value otherwise.
-func (o *Segment) GetMarketingFlightNumber() string {
-	if o == nil || IsNil(o.MarketingFlightNumber) {
+// GetDepartureLocalTime returns the DepartureLocalTime field value if set, zero value otherwise (both if not set or set to explicit null).
+func (o *Segment) GetDepartureLocalTime() string {
+	if o == nil || IsNil(o.DepartureLocalTime.Get()) {
 		var ret string
 		return ret
 	}
-	return *o.MarketingFlightNumber
+	return *o.DepartureLocalTime.Get()
 }
 
-// GetMarketingFlightNumberOk returns a tuple with the MarketingFlightNumber field value if set, nil otherwise
+// GetDepartureLocalTimeOk returns a tuple with the DepartureLocalTime field value if set, nil otherwise
 // and a boolean to check if the value has been set.
-func (o *Segment) GetMarketingFlightNumberOk() (*string, bool) {
-	if o == nil || IsNil(o.MarketingFlightNumber) {
+// NOTE: If the value is an explicit nil, `nil, true` will be returned
+func (o *Segment) GetDepartureLocalTimeOk() (*string, bool) {
+	if o == nil {
 		return nil, false
 	}
-	return o.MarketingFlightNumber, true
+	return o.DepartureLocalTime.Get(), o.DepartureLocalTime.IsSet()
 }
 
-// HasMarketingFlightNumber returns a boolean if a field has been set.
-func (o *Segment) HasMarketingFlightNumber() bool {
-	if o != nil && !IsNil(o.MarketingFlightNumber) {
+// HasDepartureLocalTime returns a boolean if a field has been set.
+func (o *Segment) HasDepartureLocalTime() bool {
+	if o != nil && o.DepartureLocalTime.IsSet() {
 		return true
 	}
 
 	return false
 }
 
-// SetMarketingFlightNumber gets a reference to the given string and assigns it to the MarketingFlightNumber field.
+// SetDepartureLocalTime gets a reference to the given NullableString and assigns it to the DepartureLocalTime field.
+func (o *Segment) SetDepartureLocalTime(v string) {
+	o.DepartureLocalTime.Set(&v)
+}
+// SetDepartureLocalTimeNil sets the value for DepartureLocalTime to be an explicit nil
+func (o *Segment) SetDepartureLocalTimeNil() {
+	o.DepartureLocalTime.Set(nil)
+}
+
+// UnsetDepartureLocalTime ensures that no value is present for DepartureLocalTime, not even an explicit nil
+func (o *Segment) UnsetDepartureLocalTime() {
+	o.DepartureLocalTime.Unset()
+}
+
+// GetArrivalAt returns the ArrivalAt field value
+func (o *Segment) GetArrivalAt() time.Time {
+	if o == nil {
+		var ret time.Time
+		return ret
+	}
+
+	return o.ArrivalAt
+}
+
+// GetArrivalAtOk returns a tuple with the ArrivalAt field value
+// and a boolean to check if the value has been set.
+func (o *Segment) GetArrivalAtOk() (*time.Time, bool) {
+	if o == nil {
+		return nil, false
+	}
+	return &o.ArrivalAt, true
+}
+
+// SetArrivalAt sets field value
+func (o *Segment) SetArrivalAt(v time.Time) {
+	o.ArrivalAt = v
+}
+
+// GetArrivalLocalTime returns the ArrivalLocalTime field value if set, zero value otherwise (both if not set or set to explicit null).
+func (o *Segment) GetArrivalLocalTime() string {
+	if o == nil || IsNil(o.ArrivalLocalTime.Get()) {
+		var ret string
+		return ret
+	}
+	return *o.ArrivalLocalTime.Get()
+}
+
+// GetArrivalLocalTimeOk returns a tuple with the ArrivalLocalTime field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+// NOTE: If the value is an explicit nil, `nil, true` will be returned
+func (o *Segment) GetArrivalLocalTimeOk() (*string, bool) {
+	if o == nil {
+		return nil, false
+	}
+	return o.ArrivalLocalTime.Get(), o.ArrivalLocalTime.IsSet()
+}
+
+// HasArrivalLocalTime returns a boolean if a field has been set.
+func (o *Segment) HasArrivalLocalTime() bool {
+	if o != nil && o.ArrivalLocalTime.IsSet() {
+		return true
+	}
+
+	return false
+}
+
+// SetArrivalLocalTime gets a reference to the given NullableString and assigns it to the ArrivalLocalTime field.
+func (o *Segment) SetArrivalLocalTime(v string) {
+	o.ArrivalLocalTime.Set(&v)
+}
+// SetArrivalLocalTimeNil sets the value for ArrivalLocalTime to be an explicit nil
+func (o *Segment) SetArrivalLocalTimeNil() {
+	o.ArrivalLocalTime.Set(nil)
+}
+
+// UnsetArrivalLocalTime ensures that no value is present for ArrivalLocalTime, not even an explicit nil
+func (o *Segment) UnsetArrivalLocalTime() {
+	o.ArrivalLocalTime.Unset()
+}
+
+// GetDurationMinutes returns the DurationMinutes field value
+func (o *Segment) GetDurationMinutes() int32 {
+	if o == nil {
+		var ret int32
+		return ret
+	}
+
+	return o.DurationMinutes
+}
+
+// GetDurationMinutesOk returns a tuple with the DurationMinutes field value
+// and a boolean to check if the value has been set.
+func (o *Segment) GetDurationMinutesOk() (*int32, bool) {
+	if o == nil {
+		return nil, false
+	}
+	return &o.DurationMinutes, true
+}
+
+// SetDurationMinutes sets field value
+func (o *Segment) SetDurationMinutes(v int32) {
+	o.DurationMinutes = v
+}
+
+// GetMarketingCarrier returns the MarketingCarrier field value
+func (o *Segment) GetMarketingCarrier() Airline {
+	if o == nil {
+		var ret Airline
+		return ret
+	}
+
+	return o.MarketingCarrier
+}
+
+// GetMarketingCarrierOk returns a tuple with the MarketingCarrier field value
+// and a boolean to check if the value has been set.
+func (o *Segment) GetMarketingCarrierOk() (*Airline, bool) {
+	if o == nil {
+		return nil, false
+	}
+	return &o.MarketingCarrier, true
+}
+
+// SetMarketingCarrier sets field value
+func (o *Segment) SetMarketingCarrier(v Airline) {
+	o.MarketingCarrier = v
+}
+
+// GetMarketingFlightNumber returns the MarketingFlightNumber field value
+func (o *Segment) GetMarketingFlightNumber() string {
+	if o == nil {
+		var ret string
+		return ret
+	}
+
+	return o.MarketingFlightNumber
+}
+
+// GetMarketingFlightNumberOk returns a tuple with the MarketingFlightNumber field value
+// and a boolean to check if the value has been set.
+func (o *Segment) GetMarketingFlightNumberOk() (*string, bool) {
+	if o == nil {
+		return nil, false
+	}
+	return &o.MarketingFlightNumber, true
+}
+
+// SetMarketingFlightNumber sets field value
 func (o *Segment) SetMarketingFlightNumber(v string) {
-	o.MarketingFlightNumber = &v
+	o.MarketingFlightNumber = v
 }
 
 // GetOperatingCarrier returns the OperatingCarrier field value if set, zero value otherwise (both if not set or set to explicit null).
@@ -414,68 +459,52 @@ func (o *Segment) UnsetAircraft() {
 	o.Aircraft.Unset()
 }
 
-// GetStops returns the Stops field value if set, zero value otherwise.
+// GetStops returns the Stops field value
 func (o *Segment) GetStops() []Stop {
-	if o == nil || IsNil(o.Stops) {
+	if o == nil {
 		var ret []Stop
 		return ret
 	}
+
 	return o.Stops
 }
 
-// GetStopsOk returns a tuple with the Stops field value if set, nil otherwise
+// GetStopsOk returns a tuple with the Stops field value
 // and a boolean to check if the value has been set.
 func (o *Segment) GetStopsOk() ([]Stop, bool) {
-	if o == nil || IsNil(o.Stops) {
+	if o == nil {
 		return nil, false
 	}
 	return o.Stops, true
 }
 
-// HasStops returns a boolean if a field has been set.
-func (o *Segment) HasStops() bool {
-	if o != nil && !IsNil(o.Stops) {
-		return true
-	}
-
-	return false
-}
-
-// SetStops gets a reference to the given []Stop and assigns it to the Stops field.
+// SetStops sets field value
 func (o *Segment) SetStops(v []Stop) {
 	o.Stops = v
 }
 
-// GetIsCodeshare returns the IsCodeshare field value if set, zero value otherwise.
+// GetIsCodeshare returns the IsCodeshare field value
 func (o *Segment) GetIsCodeshare() bool {
-	if o == nil || IsNil(o.IsCodeshare) {
+	if o == nil {
 		var ret bool
 		return ret
 	}
-	return *o.IsCodeshare
+
+	return o.IsCodeshare
 }
 
-// GetIsCodeshareOk returns a tuple with the IsCodeshare field value if set, nil otherwise
+// GetIsCodeshareOk returns a tuple with the IsCodeshare field value
 // and a boolean to check if the value has been set.
 func (o *Segment) GetIsCodeshareOk() (*bool, bool) {
-	if o == nil || IsNil(o.IsCodeshare) {
+	if o == nil {
 		return nil, false
 	}
-	return o.IsCodeshare, true
+	return &o.IsCodeshare, true
 }
 
-// HasIsCodeshare returns a boolean if a field has been set.
-func (o *Segment) HasIsCodeshare() bool {
-	if o != nil && !IsNil(o.IsCodeshare) {
-		return true
-	}
-
-	return false
-}
-
-// SetIsCodeshare gets a reference to the given bool and assigns it to the IsCodeshare field.
+// SetIsCodeshare sets field value
 func (o *Segment) SetIsCodeshare(v bool) {
-	o.IsCodeshare = &v
+	o.IsCodeshare = v
 }
 
 func (o Segment) MarshalJSON() ([]byte, error) {
@@ -488,27 +517,19 @@ func (o Segment) MarshalJSON() ([]byte, error) {
 
 func (o Segment) ToMap() (map[string]interface{}, error) {
 	toSerialize := map[string]interface{}{}
-	if !IsNil(o.Origin) {
-		toSerialize["origin"] = o.Origin
+	toSerialize["origin"] = o.Origin
+	toSerialize["destination"] = o.Destination
+	toSerialize["departureAt"] = o.DepartureAt
+	if o.DepartureLocalTime.IsSet() {
+		toSerialize["departureLocalTime"] = o.DepartureLocalTime.Get()
 	}
-	if !IsNil(o.Destination) {
-		toSerialize["destination"] = o.Destination
+	toSerialize["arrivalAt"] = o.ArrivalAt
+	if o.ArrivalLocalTime.IsSet() {
+		toSerialize["arrivalLocalTime"] = o.ArrivalLocalTime.Get()
 	}
-	if !IsNil(o.DepartureAt) {
-		toSerialize["departureAt"] = o.DepartureAt
-	}
-	if !IsNil(o.ArrivalAt) {
-		toSerialize["arrivalAt"] = o.ArrivalAt
-	}
-	if !IsNil(o.DurationMinutes) {
-		toSerialize["durationMinutes"] = o.DurationMinutes
-	}
-	if !IsNil(o.MarketingCarrier) {
-		toSerialize["marketingCarrier"] = o.MarketingCarrier
-	}
-	if !IsNil(o.MarketingFlightNumber) {
-		toSerialize["marketingFlightNumber"] = o.MarketingFlightNumber
-	}
+	toSerialize["durationMinutes"] = o.DurationMinutes
+	toSerialize["marketingCarrier"] = o.MarketingCarrier
+	toSerialize["marketingFlightNumber"] = o.MarketingFlightNumber
 	if o.OperatingCarrier.IsSet() {
 		toSerialize["operatingCarrier"] = o.OperatingCarrier.Get()
 	}
@@ -518,13 +539,53 @@ func (o Segment) ToMap() (map[string]interface{}, error) {
 	if o.Aircraft.IsSet() {
 		toSerialize["aircraft"] = o.Aircraft.Get()
 	}
-	if !IsNil(o.Stops) {
-		toSerialize["stops"] = o.Stops
-	}
-	if !IsNil(o.IsCodeshare) {
-		toSerialize["isCodeshare"] = o.IsCodeshare
-	}
+	toSerialize["stops"] = o.Stops
+	toSerialize["isCodeshare"] = o.IsCodeshare
 	return toSerialize, nil
+}
+
+func (o *Segment) UnmarshalJSON(data []byte) (err error) {
+	// This validates that all required properties are included in the JSON object
+	// by unmarshalling the object into a generic map with string keys and checking
+	// that every required field exists as a key in the generic map.
+	requiredProperties := []string{
+		"origin",
+		"destination",
+		"departureAt",
+		"arrivalAt",
+		"durationMinutes",
+		"marketingCarrier",
+		"marketingFlightNumber",
+		"stops",
+		"isCodeshare",
+	}
+
+	allProperties := make(map[string]interface{})
+
+	err = json.Unmarshal(data, &allProperties)
+
+	if err != nil {
+		return err;
+	}
+
+	for _, requiredProperty := range(requiredProperties) {
+		if _, exists := allProperties[requiredProperty]; !exists {
+			return fmt.Errorf("no value given for required property %v", requiredProperty)
+		}
+	}
+
+	varSegment := _Segment{}
+
+	decoder := json.NewDecoder(bytes.NewReader(data))
+	err = decoder.Decode(&varSegment)
+
+	if err != nil {
+		return err
+	}
+
+	*o = Segment(varSegment)
+
+	return err
 }
 
 type NullableSegment struct {

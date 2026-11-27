@@ -21,12 +21,20 @@ import (
 // checks if the Stop type satisfies the MappedNullable interface at compile time
 var _ MappedNullable = &Stop{}
 
-// Stop struct for Stop
+// Stop A technical stop within a leg, where the aircraft lands and leaves again.
 type Stop struct {
+	// The airport of the stop.
 	Airport Airport `json:"airport"`
+	// When the aircraft lands at the stop, a UTC instant; `airport.timezone` gives the airport's clock.
 	ArrivingAt time.Time `json:"arrivingAt"`
+	// The clock at the stop's airport (`airport.timezone`) at `arrivingAt`. Written yyyy-MM-ddTHH:mm:ss with no zone, for display only: compute and compare with `arrivingAt`. Null when the place's time zone is unknown.
+	ArrivingLocalTime NullableString `json:"arrivingLocalTime,omitempty"`
+	// When the aircraft leaves the stop, a UTC instant; `airport.timezone` gives the airport's clock.
 	DepartingAt time.Time `json:"departingAt"`
-	DurationMinutes *int32 `json:"durationMinutes,omitempty"`
+	// The clock at the stop's airport (`airport.timezone`) at `departingAt`. Written yyyy-MM-ddTHH:mm:ss with no zone, for display only: compute and compare with `departingAt`. Null when the place's time zone is unknown.
+	DepartingLocalTime NullableString `json:"departingLocalTime,omitempty"`
+	// How long the aircraft stays at the stop.
+	DurationMinutes int32 `json:"durationMinutes"`
 }
 
 type _Stop Stop
@@ -35,11 +43,12 @@ type _Stop Stop
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewStop(airport Airport, arrivingAt time.Time, departingAt time.Time) *Stop {
+func NewStop(airport Airport, arrivingAt time.Time, departingAt time.Time, durationMinutes int32) *Stop {
 	this := Stop{}
 	this.Airport = airport
 	this.ArrivingAt = arrivingAt
 	this.DepartingAt = departingAt
+	this.DurationMinutes = durationMinutes
 	return &this
 }
 
@@ -99,6 +108,48 @@ func (o *Stop) SetArrivingAt(v time.Time) {
 	o.ArrivingAt = v
 }
 
+// GetArrivingLocalTime returns the ArrivingLocalTime field value if set, zero value otherwise (both if not set or set to explicit null).
+func (o *Stop) GetArrivingLocalTime() string {
+	if o == nil || IsNil(o.ArrivingLocalTime.Get()) {
+		var ret string
+		return ret
+	}
+	return *o.ArrivingLocalTime.Get()
+}
+
+// GetArrivingLocalTimeOk returns a tuple with the ArrivingLocalTime field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+// NOTE: If the value is an explicit nil, `nil, true` will be returned
+func (o *Stop) GetArrivingLocalTimeOk() (*string, bool) {
+	if o == nil {
+		return nil, false
+	}
+	return o.ArrivingLocalTime.Get(), o.ArrivingLocalTime.IsSet()
+}
+
+// HasArrivingLocalTime returns a boolean if a field has been set.
+func (o *Stop) HasArrivingLocalTime() bool {
+	if o != nil && o.ArrivingLocalTime.IsSet() {
+		return true
+	}
+
+	return false
+}
+
+// SetArrivingLocalTime gets a reference to the given NullableString and assigns it to the ArrivingLocalTime field.
+func (o *Stop) SetArrivingLocalTime(v string) {
+	o.ArrivingLocalTime.Set(&v)
+}
+// SetArrivingLocalTimeNil sets the value for ArrivingLocalTime to be an explicit nil
+func (o *Stop) SetArrivingLocalTimeNil() {
+	o.ArrivingLocalTime.Set(nil)
+}
+
+// UnsetArrivingLocalTime ensures that no value is present for ArrivingLocalTime, not even an explicit nil
+func (o *Stop) UnsetArrivingLocalTime() {
+	o.ArrivingLocalTime.Unset()
+}
+
 // GetDepartingAt returns the DepartingAt field value
 func (o *Stop) GetDepartingAt() time.Time {
 	if o == nil {
@@ -123,36 +174,70 @@ func (o *Stop) SetDepartingAt(v time.Time) {
 	o.DepartingAt = v
 }
 
-// GetDurationMinutes returns the DurationMinutes field value if set, zero value otherwise.
-func (o *Stop) GetDurationMinutes() int32 {
-	if o == nil || IsNil(o.DurationMinutes) {
-		var ret int32
+// GetDepartingLocalTime returns the DepartingLocalTime field value if set, zero value otherwise (both if not set or set to explicit null).
+func (o *Stop) GetDepartingLocalTime() string {
+	if o == nil || IsNil(o.DepartingLocalTime.Get()) {
+		var ret string
 		return ret
 	}
-	return *o.DurationMinutes
+	return *o.DepartingLocalTime.Get()
 }
 
-// GetDurationMinutesOk returns a tuple with the DurationMinutes field value if set, nil otherwise
+// GetDepartingLocalTimeOk returns a tuple with the DepartingLocalTime field value if set, nil otherwise
 // and a boolean to check if the value has been set.
-func (o *Stop) GetDurationMinutesOk() (*int32, bool) {
-	if o == nil || IsNil(o.DurationMinutes) {
+// NOTE: If the value is an explicit nil, `nil, true` will be returned
+func (o *Stop) GetDepartingLocalTimeOk() (*string, bool) {
+	if o == nil {
 		return nil, false
 	}
-	return o.DurationMinutes, true
+	return o.DepartingLocalTime.Get(), o.DepartingLocalTime.IsSet()
 }
 
-// HasDurationMinutes returns a boolean if a field has been set.
-func (o *Stop) HasDurationMinutes() bool {
-	if o != nil && !IsNil(o.DurationMinutes) {
+// HasDepartingLocalTime returns a boolean if a field has been set.
+func (o *Stop) HasDepartingLocalTime() bool {
+	if o != nil && o.DepartingLocalTime.IsSet() {
 		return true
 	}
 
 	return false
 }
 
-// SetDurationMinutes gets a reference to the given int32 and assigns it to the DurationMinutes field.
+// SetDepartingLocalTime gets a reference to the given NullableString and assigns it to the DepartingLocalTime field.
+func (o *Stop) SetDepartingLocalTime(v string) {
+	o.DepartingLocalTime.Set(&v)
+}
+// SetDepartingLocalTimeNil sets the value for DepartingLocalTime to be an explicit nil
+func (o *Stop) SetDepartingLocalTimeNil() {
+	o.DepartingLocalTime.Set(nil)
+}
+
+// UnsetDepartingLocalTime ensures that no value is present for DepartingLocalTime, not even an explicit nil
+func (o *Stop) UnsetDepartingLocalTime() {
+	o.DepartingLocalTime.Unset()
+}
+
+// GetDurationMinutes returns the DurationMinutes field value
+func (o *Stop) GetDurationMinutes() int32 {
+	if o == nil {
+		var ret int32
+		return ret
+	}
+
+	return o.DurationMinutes
+}
+
+// GetDurationMinutesOk returns a tuple with the DurationMinutes field value
+// and a boolean to check if the value has been set.
+func (o *Stop) GetDurationMinutesOk() (*int32, bool) {
+	if o == nil {
+		return nil, false
+	}
+	return &o.DurationMinutes, true
+}
+
+// SetDurationMinutes sets field value
 func (o *Stop) SetDurationMinutes(v int32) {
-	o.DurationMinutes = &v
+	o.DurationMinutes = v
 }
 
 func (o Stop) MarshalJSON() ([]byte, error) {
@@ -167,10 +252,14 @@ func (o Stop) ToMap() (map[string]interface{}, error) {
 	toSerialize := map[string]interface{}{}
 	toSerialize["airport"] = o.Airport
 	toSerialize["arrivingAt"] = o.ArrivingAt
-	toSerialize["departingAt"] = o.DepartingAt
-	if !IsNil(o.DurationMinutes) {
-		toSerialize["durationMinutes"] = o.DurationMinutes
+	if o.ArrivingLocalTime.IsSet() {
+		toSerialize["arrivingLocalTime"] = o.ArrivingLocalTime.Get()
 	}
+	toSerialize["departingAt"] = o.DepartingAt
+	if o.DepartingLocalTime.IsSet() {
+		toSerialize["departingLocalTime"] = o.DepartingLocalTime.Get()
+	}
+	toSerialize["durationMinutes"] = o.DurationMinutes
 	return toSerialize, nil
 }
 
@@ -182,6 +271,7 @@ func (o *Stop) UnmarshalJSON(data []byte) (err error) {
 		"airport",
 		"arrivingAt",
 		"departingAt",
+		"durationMinutes",
 	}
 
 	allProperties := make(map[string]interface{})
@@ -201,7 +291,6 @@ func (o *Stop) UnmarshalJSON(data []byte) (err error) {
 	varStop := _Stop{}
 
 	decoder := json.NewDecoder(bytes.NewReader(data))
-	decoder.DisallowUnknownFields()
 	err = decoder.Decode(&varStop)
 
 	if err != nil {

@@ -13,25 +13,37 @@ package openroam
 
 import (
 	"encoding/json"
+	"bytes"
+	"fmt"
 )
 
 // checks if the EsimVoiceAllowance type satisfies the MappedNullable interface at compile time
 var _ MappedNullable = &EsimVoiceAllowance{}
 
-// EsimVoiceAllowance struct for EsimVoiceAllowance
+// EsimVoiceAllowance A plan's calling allowance. Calls are always counted in minutes.
 type EsimVoiceAllowance struct {
-	CallAmount *int64 `json:"callAmount,omitempty"`
-	CallUnit NullableString `json:"callUnit,omitempty"`
-	CallLabel NullableString `json:"callLabel,omitempty"`
-	CallType NullableString `json:"callType,omitempty"`
+	// The calling time in minutes; null when it is unlimited or the plan does not state it.
+	Amount NullableInt64 `json:"amount,omitempty"`
+	// Always `minutes`.
+	Unit string `json:"unit"`
+	// Whether calling is unlimited; `amount` is then null.
+	IsUnlimited bool `json:"isUnlimited"`
+	// The allowance as the plan displays it, or null.
+	Label NullableString `json:"label,omitempty"`
+	// Which calls the allowance covers, as the plan states it, for example `all`.
+	Type NullableString `json:"type,omitempty"`
 }
+
+type _EsimVoiceAllowance EsimVoiceAllowance
 
 // NewEsimVoiceAllowance instantiates a new EsimVoiceAllowance object
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewEsimVoiceAllowance() *EsimVoiceAllowance {
+func NewEsimVoiceAllowance(unit string, isUnlimited bool) *EsimVoiceAllowance {
 	this := EsimVoiceAllowance{}
+	this.Unit = unit
+	this.IsUnlimited = isUnlimited
 	return &this
 }
 
@@ -43,162 +55,178 @@ func NewEsimVoiceAllowanceWithDefaults() *EsimVoiceAllowance {
 	return &this
 }
 
-// GetCallAmount returns the CallAmount field value if set, zero value otherwise.
-func (o *EsimVoiceAllowance) GetCallAmount() int64 {
-	if o == nil || IsNil(o.CallAmount) {
+// GetAmount returns the Amount field value if set, zero value otherwise (both if not set or set to explicit null).
+func (o *EsimVoiceAllowance) GetAmount() int64 {
+	if o == nil || IsNil(o.Amount.Get()) {
 		var ret int64
 		return ret
 	}
-	return *o.CallAmount
+	return *o.Amount.Get()
 }
 
-// GetCallAmountOk returns a tuple with the CallAmount field value if set, nil otherwise
-// and a boolean to check if the value has been set.
-func (o *EsimVoiceAllowance) GetCallAmountOk() (*int64, bool) {
-	if o == nil || IsNil(o.CallAmount) {
-		return nil, false
-	}
-	return o.CallAmount, true
-}
-
-// HasCallAmount returns a boolean if a field has been set.
-func (o *EsimVoiceAllowance) HasCallAmount() bool {
-	if o != nil && !IsNil(o.CallAmount) {
-		return true
-	}
-
-	return false
-}
-
-// SetCallAmount gets a reference to the given int64 and assigns it to the CallAmount field.
-func (o *EsimVoiceAllowance) SetCallAmount(v int64) {
-	o.CallAmount = &v
-}
-
-// GetCallUnit returns the CallUnit field value if set, zero value otherwise (both if not set or set to explicit null).
-func (o *EsimVoiceAllowance) GetCallUnit() string {
-	if o == nil || IsNil(o.CallUnit.Get()) {
-		var ret string
-		return ret
-	}
-	return *o.CallUnit.Get()
-}
-
-// GetCallUnitOk returns a tuple with the CallUnit field value if set, nil otherwise
+// GetAmountOk returns a tuple with the Amount field value if set, nil otherwise
 // and a boolean to check if the value has been set.
 // NOTE: If the value is an explicit nil, `nil, true` will be returned
-func (o *EsimVoiceAllowance) GetCallUnitOk() (*string, bool) {
+func (o *EsimVoiceAllowance) GetAmountOk() (*int64, bool) {
 	if o == nil {
 		return nil, false
 	}
-	return o.CallUnit.Get(), o.CallUnit.IsSet()
+	return o.Amount.Get(), o.Amount.IsSet()
 }
 
-// HasCallUnit returns a boolean if a field has been set.
-func (o *EsimVoiceAllowance) HasCallUnit() bool {
-	if o != nil && o.CallUnit.IsSet() {
+// HasAmount returns a boolean if a field has been set.
+func (o *EsimVoiceAllowance) HasAmount() bool {
+	if o != nil && o.Amount.IsSet() {
 		return true
 	}
 
 	return false
 }
 
-// SetCallUnit gets a reference to the given NullableString and assigns it to the CallUnit field.
-func (o *EsimVoiceAllowance) SetCallUnit(v string) {
-	o.CallUnit.Set(&v)
+// SetAmount gets a reference to the given NullableInt64 and assigns it to the Amount field.
+func (o *EsimVoiceAllowance) SetAmount(v int64) {
+	o.Amount.Set(&v)
 }
-// SetCallUnitNil sets the value for CallUnit to be an explicit nil
-func (o *EsimVoiceAllowance) SetCallUnitNil() {
-	o.CallUnit.Set(nil)
-}
-
-// UnsetCallUnit ensures that no value is present for CallUnit, not even an explicit nil
-func (o *EsimVoiceAllowance) UnsetCallUnit() {
-	o.CallUnit.Unset()
+// SetAmountNil sets the value for Amount to be an explicit nil
+func (o *EsimVoiceAllowance) SetAmountNil() {
+	o.Amount.Set(nil)
 }
 
-// GetCallLabel returns the CallLabel field value if set, zero value otherwise (both if not set or set to explicit null).
-func (o *EsimVoiceAllowance) GetCallLabel() string {
-	if o == nil || IsNil(o.CallLabel.Get()) {
+// UnsetAmount ensures that no value is present for Amount, not even an explicit nil
+func (o *EsimVoiceAllowance) UnsetAmount() {
+	o.Amount.Unset()
+}
+
+// GetUnit returns the Unit field value
+func (o *EsimVoiceAllowance) GetUnit() string {
+	if o == nil {
 		var ret string
 		return ret
 	}
-	return *o.CallLabel.Get()
+
+	return o.Unit
 }
 
-// GetCallLabelOk returns a tuple with the CallLabel field value if set, nil otherwise
+// GetUnitOk returns a tuple with the Unit field value
 // and a boolean to check if the value has been set.
-// NOTE: If the value is an explicit nil, `nil, true` will be returned
-func (o *EsimVoiceAllowance) GetCallLabelOk() (*string, bool) {
+func (o *EsimVoiceAllowance) GetUnitOk() (*string, bool) {
 	if o == nil {
 		return nil, false
 	}
-	return o.CallLabel.Get(), o.CallLabel.IsSet()
+	return &o.Unit, true
 }
 
-// HasCallLabel returns a boolean if a field has been set.
-func (o *EsimVoiceAllowance) HasCallLabel() bool {
-	if o != nil && o.CallLabel.IsSet() {
-		return true
+// SetUnit sets field value
+func (o *EsimVoiceAllowance) SetUnit(v string) {
+	o.Unit = v
+}
+
+// GetIsUnlimited returns the IsUnlimited field value
+func (o *EsimVoiceAllowance) GetIsUnlimited() bool {
+	if o == nil {
+		var ret bool
+		return ret
 	}
 
-	return false
+	return o.IsUnlimited
 }
 
-// SetCallLabel gets a reference to the given NullableString and assigns it to the CallLabel field.
-func (o *EsimVoiceAllowance) SetCallLabel(v string) {
-	o.CallLabel.Set(&v)
-}
-// SetCallLabelNil sets the value for CallLabel to be an explicit nil
-func (o *EsimVoiceAllowance) SetCallLabelNil() {
-	o.CallLabel.Set(nil)
-}
-
-// UnsetCallLabel ensures that no value is present for CallLabel, not even an explicit nil
-func (o *EsimVoiceAllowance) UnsetCallLabel() {
-	o.CallLabel.Unset()
+// GetIsUnlimitedOk returns a tuple with the IsUnlimited field value
+// and a boolean to check if the value has been set.
+func (o *EsimVoiceAllowance) GetIsUnlimitedOk() (*bool, bool) {
+	if o == nil {
+		return nil, false
+	}
+	return &o.IsUnlimited, true
 }
 
-// GetCallType returns the CallType field value if set, zero value otherwise (both if not set or set to explicit null).
-func (o *EsimVoiceAllowance) GetCallType() string {
-	if o == nil || IsNil(o.CallType.Get()) {
+// SetIsUnlimited sets field value
+func (o *EsimVoiceAllowance) SetIsUnlimited(v bool) {
+	o.IsUnlimited = v
+}
+
+// GetLabel returns the Label field value if set, zero value otherwise (both if not set or set to explicit null).
+func (o *EsimVoiceAllowance) GetLabel() string {
+	if o == nil || IsNil(o.Label.Get()) {
 		var ret string
 		return ret
 	}
-	return *o.CallType.Get()
+	return *o.Label.Get()
 }
 
-// GetCallTypeOk returns a tuple with the CallType field value if set, nil otherwise
+// GetLabelOk returns a tuple with the Label field value if set, nil otherwise
 // and a boolean to check if the value has been set.
 // NOTE: If the value is an explicit nil, `nil, true` will be returned
-func (o *EsimVoiceAllowance) GetCallTypeOk() (*string, bool) {
+func (o *EsimVoiceAllowance) GetLabelOk() (*string, bool) {
 	if o == nil {
 		return nil, false
 	}
-	return o.CallType.Get(), o.CallType.IsSet()
+	return o.Label.Get(), o.Label.IsSet()
 }
 
-// HasCallType returns a boolean if a field has been set.
-func (o *EsimVoiceAllowance) HasCallType() bool {
-	if o != nil && o.CallType.IsSet() {
+// HasLabel returns a boolean if a field has been set.
+func (o *EsimVoiceAllowance) HasLabel() bool {
+	if o != nil && o.Label.IsSet() {
 		return true
 	}
 
 	return false
 }
 
-// SetCallType gets a reference to the given NullableString and assigns it to the CallType field.
-func (o *EsimVoiceAllowance) SetCallType(v string) {
-	o.CallType.Set(&v)
+// SetLabel gets a reference to the given NullableString and assigns it to the Label field.
+func (o *EsimVoiceAllowance) SetLabel(v string) {
+	o.Label.Set(&v)
 }
-// SetCallTypeNil sets the value for CallType to be an explicit nil
-func (o *EsimVoiceAllowance) SetCallTypeNil() {
-	o.CallType.Set(nil)
+// SetLabelNil sets the value for Label to be an explicit nil
+func (o *EsimVoiceAllowance) SetLabelNil() {
+	o.Label.Set(nil)
 }
 
-// UnsetCallType ensures that no value is present for CallType, not even an explicit nil
-func (o *EsimVoiceAllowance) UnsetCallType() {
-	o.CallType.Unset()
+// UnsetLabel ensures that no value is present for Label, not even an explicit nil
+func (o *EsimVoiceAllowance) UnsetLabel() {
+	o.Label.Unset()
+}
+
+// GetType returns the Type field value if set, zero value otherwise (both if not set or set to explicit null).
+func (o *EsimVoiceAllowance) GetType() string {
+	if o == nil || IsNil(o.Type.Get()) {
+		var ret string
+		return ret
+	}
+	return *o.Type.Get()
+}
+
+// GetTypeOk returns a tuple with the Type field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+// NOTE: If the value is an explicit nil, `nil, true` will be returned
+func (o *EsimVoiceAllowance) GetTypeOk() (*string, bool) {
+	if o == nil {
+		return nil, false
+	}
+	return o.Type.Get(), o.Type.IsSet()
+}
+
+// HasType returns a boolean if a field has been set.
+func (o *EsimVoiceAllowance) HasType() bool {
+	if o != nil && o.Type.IsSet() {
+		return true
+	}
+
+	return false
+}
+
+// SetType gets a reference to the given NullableString and assigns it to the Type field.
+func (o *EsimVoiceAllowance) SetType(v string) {
+	o.Type.Set(&v)
+}
+// SetTypeNil sets the value for Type to be an explicit nil
+func (o *EsimVoiceAllowance) SetTypeNil() {
+	o.Type.Set(nil)
+}
+
+// UnsetType ensures that no value is present for Type, not even an explicit nil
+func (o *EsimVoiceAllowance) UnsetType() {
+	o.Type.Unset()
 }
 
 func (o EsimVoiceAllowance) MarshalJSON() ([]byte, error) {
@@ -211,19 +239,55 @@ func (o EsimVoiceAllowance) MarshalJSON() ([]byte, error) {
 
 func (o EsimVoiceAllowance) ToMap() (map[string]interface{}, error) {
 	toSerialize := map[string]interface{}{}
-	if !IsNil(o.CallAmount) {
-		toSerialize["callAmount"] = o.CallAmount
+	if o.Amount.IsSet() {
+		toSerialize["amount"] = o.Amount.Get()
 	}
-	if o.CallUnit.IsSet() {
-		toSerialize["callUnit"] = o.CallUnit.Get()
+	toSerialize["unit"] = o.Unit
+	toSerialize["isUnlimited"] = o.IsUnlimited
+	if o.Label.IsSet() {
+		toSerialize["label"] = o.Label.Get()
 	}
-	if o.CallLabel.IsSet() {
-		toSerialize["callLabel"] = o.CallLabel.Get()
-	}
-	if o.CallType.IsSet() {
-		toSerialize["callType"] = o.CallType.Get()
+	if o.Type.IsSet() {
+		toSerialize["type"] = o.Type.Get()
 	}
 	return toSerialize, nil
+}
+
+func (o *EsimVoiceAllowance) UnmarshalJSON(data []byte) (err error) {
+	// This validates that all required properties are included in the JSON object
+	// by unmarshalling the object into a generic map with string keys and checking
+	// that every required field exists as a key in the generic map.
+	requiredProperties := []string{
+		"unit",
+		"isUnlimited",
+	}
+
+	allProperties := make(map[string]interface{})
+
+	err = json.Unmarshal(data, &allProperties)
+
+	if err != nil {
+		return err;
+	}
+
+	for _, requiredProperty := range(requiredProperties) {
+		if _, exists := allProperties[requiredProperty]; !exists {
+			return fmt.Errorf("no value given for required property %v", requiredProperty)
+		}
+	}
+
+	varEsimVoiceAllowance := _EsimVoiceAllowance{}
+
+	decoder := json.NewDecoder(bytes.NewReader(data))
+	err = decoder.Decode(&varEsimVoiceAllowance)
+
+	if err != nil {
+		return err
+	}
+
+	*o = EsimVoiceAllowance(varEsimVoiceAllowance)
+
+	return err
 }
 
 type NullableEsimVoiceAllowance struct {

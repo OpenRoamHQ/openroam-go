@@ -13,27 +13,39 @@ package openroam
 
 import (
 	"encoding/json"
+	"bytes"
+	"fmt"
 )
 
 // checks if the UtilityOffer type satisfies the MappedNullable interface at compile time
 var _ MappedNullable = &UtilityOffer{}
 
-// UtilityOffer One orderable offer of a biller: a fixed amount or a range of amounts. `publicId` is the identifier quote and order take. `price` is indicative and in the requested price currency.
+// UtilityOffer One orderable offer of a biller: a fixed amount or a range of amounts. `publicId` is the identifier quote and order take. `price` is indicative and in the requested price currency. `taxes` is `notStated`: no tax is stated for bill payment prices yet.
 type UtilityOffer struct {
-	PublicId *string `json:"publicId,omitempty"`
-	Name *string `json:"name,omitempty"`
+	PublicId string `json:"publicId"`
+	Name string `json:"name"`
 	Description NullableString `json:"description,omitempty"`
-	Value *OfferValue `json:"value,omitempty"`
-	Price *OfferPrice `json:"price,omitempty"`
-	RequiredInputs []InputField `json:"requiredInputs,omitempty"`
+	Value OfferValue `json:"value"`
+	Price OfferPrice `json:"price"`
+	// The taxes inside one unit of the `price` beside it, in one shape for every service. The server sets every field; a client never derives a treatment, never adds up `lines` and never computes an amount.
+	Taxes TaxSummary `json:"taxes"`
+	RequiredInputs []InputField `json:"requiredInputs"`
 }
+
+type _UtilityOffer UtilityOffer
 
 // NewUtilityOffer instantiates a new UtilityOffer object
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewUtilityOffer() *UtilityOffer {
+func NewUtilityOffer(publicId string, name string, value OfferValue, price OfferPrice, taxes TaxSummary, requiredInputs []InputField) *UtilityOffer {
 	this := UtilityOffer{}
+	this.PublicId = publicId
+	this.Name = name
+	this.Value = value
+	this.Price = price
+	this.Taxes = taxes
+	this.RequiredInputs = requiredInputs
 	return &this
 }
 
@@ -45,68 +57,52 @@ func NewUtilityOfferWithDefaults() *UtilityOffer {
 	return &this
 }
 
-// GetPublicId returns the PublicId field value if set, zero value otherwise.
+// GetPublicId returns the PublicId field value
 func (o *UtilityOffer) GetPublicId() string {
-	if o == nil || IsNil(o.PublicId) {
+	if o == nil {
 		var ret string
 		return ret
 	}
-	return *o.PublicId
+
+	return o.PublicId
 }
 
-// GetPublicIdOk returns a tuple with the PublicId field value if set, nil otherwise
+// GetPublicIdOk returns a tuple with the PublicId field value
 // and a boolean to check if the value has been set.
 func (o *UtilityOffer) GetPublicIdOk() (*string, bool) {
-	if o == nil || IsNil(o.PublicId) {
+	if o == nil {
 		return nil, false
 	}
-	return o.PublicId, true
+	return &o.PublicId, true
 }
 
-// HasPublicId returns a boolean if a field has been set.
-func (o *UtilityOffer) HasPublicId() bool {
-	if o != nil && !IsNil(o.PublicId) {
-		return true
-	}
-
-	return false
-}
-
-// SetPublicId gets a reference to the given string and assigns it to the PublicId field.
+// SetPublicId sets field value
 func (o *UtilityOffer) SetPublicId(v string) {
-	o.PublicId = &v
+	o.PublicId = v
 }
 
-// GetName returns the Name field value if set, zero value otherwise.
+// GetName returns the Name field value
 func (o *UtilityOffer) GetName() string {
-	if o == nil || IsNil(o.Name) {
+	if o == nil {
 		var ret string
 		return ret
 	}
-	return *o.Name
+
+	return o.Name
 }
 
-// GetNameOk returns a tuple with the Name field value if set, nil otherwise
+// GetNameOk returns a tuple with the Name field value
 // and a boolean to check if the value has been set.
 func (o *UtilityOffer) GetNameOk() (*string, bool) {
-	if o == nil || IsNil(o.Name) {
+	if o == nil {
 		return nil, false
 	}
-	return o.Name, true
+	return &o.Name, true
 }
 
-// HasName returns a boolean if a field has been set.
-func (o *UtilityOffer) HasName() bool {
-	if o != nil && !IsNil(o.Name) {
-		return true
-	}
-
-	return false
-}
-
-// SetName gets a reference to the given string and assigns it to the Name field.
+// SetName sets field value
 func (o *UtilityOffer) SetName(v string) {
-	o.Name = &v
+	o.Name = v
 }
 
 // GetDescription returns the Description field value if set, zero value otherwise (both if not set or set to explicit null).
@@ -151,98 +147,98 @@ func (o *UtilityOffer) UnsetDescription() {
 	o.Description.Unset()
 }
 
-// GetValue returns the Value field value if set, zero value otherwise.
+// GetValue returns the Value field value
 func (o *UtilityOffer) GetValue() OfferValue {
-	if o == nil || IsNil(o.Value) {
+	if o == nil {
 		var ret OfferValue
 		return ret
 	}
-	return *o.Value
+
+	return o.Value
 }
 
-// GetValueOk returns a tuple with the Value field value if set, nil otherwise
+// GetValueOk returns a tuple with the Value field value
 // and a boolean to check if the value has been set.
 func (o *UtilityOffer) GetValueOk() (*OfferValue, bool) {
-	if o == nil || IsNil(o.Value) {
+	if o == nil {
 		return nil, false
 	}
-	return o.Value, true
+	return &o.Value, true
 }
 
-// HasValue returns a boolean if a field has been set.
-func (o *UtilityOffer) HasValue() bool {
-	if o != nil && !IsNil(o.Value) {
-		return true
-	}
-
-	return false
-}
-
-// SetValue gets a reference to the given OfferValue and assigns it to the Value field.
+// SetValue sets field value
 func (o *UtilityOffer) SetValue(v OfferValue) {
-	o.Value = &v
+	o.Value = v
 }
 
-// GetPrice returns the Price field value if set, zero value otherwise.
+// GetPrice returns the Price field value
 func (o *UtilityOffer) GetPrice() OfferPrice {
-	if o == nil || IsNil(o.Price) {
+	if o == nil {
 		var ret OfferPrice
 		return ret
 	}
-	return *o.Price
+
+	return o.Price
 }
 
-// GetPriceOk returns a tuple with the Price field value if set, nil otherwise
+// GetPriceOk returns a tuple with the Price field value
 // and a boolean to check if the value has been set.
 func (o *UtilityOffer) GetPriceOk() (*OfferPrice, bool) {
-	if o == nil || IsNil(o.Price) {
+	if o == nil {
 		return nil, false
 	}
-	return o.Price, true
+	return &o.Price, true
 }
 
-// HasPrice returns a boolean if a field has been set.
-func (o *UtilityOffer) HasPrice() bool {
-	if o != nil && !IsNil(o.Price) {
-		return true
+// SetPrice sets field value
+func (o *UtilityOffer) SetPrice(v OfferPrice) {
+	o.Price = v
+}
+
+// GetTaxes returns the Taxes field value
+func (o *UtilityOffer) GetTaxes() TaxSummary {
+	if o == nil {
+		var ret TaxSummary
+		return ret
 	}
 
-	return false
+	return o.Taxes
 }
 
-// SetPrice gets a reference to the given OfferPrice and assigns it to the Price field.
-func (o *UtilityOffer) SetPrice(v OfferPrice) {
-	o.Price = &v
+// GetTaxesOk returns a tuple with the Taxes field value
+// and a boolean to check if the value has been set.
+func (o *UtilityOffer) GetTaxesOk() (*TaxSummary, bool) {
+	if o == nil {
+		return nil, false
+	}
+	return &o.Taxes, true
 }
 
-// GetRequiredInputs returns the RequiredInputs field value if set, zero value otherwise.
+// SetTaxes sets field value
+func (o *UtilityOffer) SetTaxes(v TaxSummary) {
+	o.Taxes = v
+}
+
+// GetRequiredInputs returns the RequiredInputs field value
 func (o *UtilityOffer) GetRequiredInputs() []InputField {
-	if o == nil || IsNil(o.RequiredInputs) {
+	if o == nil {
 		var ret []InputField
 		return ret
 	}
+
 	return o.RequiredInputs
 }
 
-// GetRequiredInputsOk returns a tuple with the RequiredInputs field value if set, nil otherwise
+// GetRequiredInputsOk returns a tuple with the RequiredInputs field value
 // and a boolean to check if the value has been set.
 func (o *UtilityOffer) GetRequiredInputsOk() ([]InputField, bool) {
-	if o == nil || IsNil(o.RequiredInputs) {
+	if o == nil {
 		return nil, false
 	}
 	return o.RequiredInputs, true
 }
 
-// HasRequiredInputs returns a boolean if a field has been set.
-func (o *UtilityOffer) HasRequiredInputs() bool {
-	if o != nil && !IsNil(o.RequiredInputs) {
-		return true
-	}
-
-	return false
-}
-
-// SetRequiredInputs gets a reference to the given []InputField and assigns it to the RequiredInputs field.
+// SetRequiredInputs sets field value
 func (o *UtilityOffer) SetRequiredInputs(v []InputField) {
 	o.RequiredInputs = v
 }
@@ -257,25 +253,57 @@ func (o UtilityOffer) MarshalJSON() ([]byte, error) {
 
 func (o UtilityOffer) ToMap() (map[string]interface{}, error) {
 	toSerialize := map[string]interface{}{}
-	if !IsNil(o.PublicId) {
-		toSerialize["publicId"] = o.PublicId
-	}
-	if !IsNil(o.Name) {
-		toSerialize["name"] = o.Name
-	}
+	toSerialize["publicId"] = o.PublicId
+	toSerialize["name"] = o.Name
 	if o.Description.IsSet() {
 		toSerialize["description"] = o.Description.Get()
 	}
-	if !IsNil(o.Value) {
-		toSerialize["value"] = o.Value
-	}
-	if !IsNil(o.Price) {
-		toSerialize["price"] = o.Price
-	}
-	if !IsNil(o.RequiredInputs) {
-		toSerialize["requiredInputs"] = o.RequiredInputs
-	}
+	toSerialize["value"] = o.Value
+	toSerialize["price"] = o.Price
+	toSerialize["taxes"] = o.Taxes
+	toSerialize["requiredInputs"] = o.RequiredInputs
 	return toSerialize, nil
+}
+
+func (o *UtilityOffer) UnmarshalJSON(data []byte) (err error) {
+	// This validates that all required properties are included in the JSON object
+	// by unmarshalling the object into a generic map with string keys and checking
+	// that every required field exists as a key in the generic map.
+	requiredProperties := []string{
+		"publicId",
+		"name",
+		"value",
+		"price",
+		"taxes",
+		"requiredInputs",
+	}
+
+	allProperties := make(map[string]interface{})
+
+	err = json.Unmarshal(data, &allProperties)
+
+	if err != nil {
+		return err;
+	}
+
+	for _, requiredProperty := range(requiredProperties) {
+		if _, exists := allProperties[requiredProperty]; !exists {
+			return fmt.Errorf("no value given for required property %v", requiredProperty)
+		}
+	}
+
+	varUtilityOffer := _UtilityOffer{}
+
+	decoder := json.NewDecoder(bytes.NewReader(data))
+	err = decoder.Decode(&varUtilityOffer)
+
+	if err != nil {
+		return err
+	}
+
+	*o = UtilityOffer(varUtilityOffer)
+
+	return err
 }
 
 type NullableUtilityOffer struct {

@@ -13,6 +13,8 @@ package openroam
 
 import (
 	"encoding/json"
+	"bytes"
+	"fmt"
 )
 
 // checks if the FulfillmentFailure type satisfies the MappedNullable interface at compile time
@@ -20,17 +22,22 @@ var _ MappedNullable = &FulfillmentFailure{}
 
 // FulfillmentFailure struct for FulfillmentFailure
 type FulfillmentFailure struct {
-	Code *int32 `json:"code,omitempty"`
-	Name *string `json:"name,omitempty"`
-	Message *string `json:"message,omitempty"`
+	Code int32 `json:"code"`
+	Name string `json:"name"`
+	Message string `json:"message"`
 }
+
+type _FulfillmentFailure FulfillmentFailure
 
 // NewFulfillmentFailure instantiates a new FulfillmentFailure object
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewFulfillmentFailure() *FulfillmentFailure {
+func NewFulfillmentFailure(code int32, name string, message string) *FulfillmentFailure {
 	this := FulfillmentFailure{}
+	this.Code = code
+	this.Name = name
+	this.Message = message
 	return &this
 }
 
@@ -42,100 +49,76 @@ func NewFulfillmentFailureWithDefaults() *FulfillmentFailure {
 	return &this
 }
 
-// GetCode returns the Code field value if set, zero value otherwise.
+// GetCode returns the Code field value
 func (o *FulfillmentFailure) GetCode() int32 {
-	if o == nil || IsNil(o.Code) {
+	if o == nil {
 		var ret int32
 		return ret
 	}
-	return *o.Code
+
+	return o.Code
 }
 
-// GetCodeOk returns a tuple with the Code field value if set, nil otherwise
+// GetCodeOk returns a tuple with the Code field value
 // and a boolean to check if the value has been set.
 func (o *FulfillmentFailure) GetCodeOk() (*int32, bool) {
-	if o == nil || IsNil(o.Code) {
+	if o == nil {
 		return nil, false
 	}
-	return o.Code, true
+	return &o.Code, true
 }
 
-// HasCode returns a boolean if a field has been set.
-func (o *FulfillmentFailure) HasCode() bool {
-	if o != nil && !IsNil(o.Code) {
-		return true
-	}
-
-	return false
-}
-
-// SetCode gets a reference to the given int32 and assigns it to the Code field.
+// SetCode sets field value
 func (o *FulfillmentFailure) SetCode(v int32) {
-	o.Code = &v
+	o.Code = v
 }
 
-// GetName returns the Name field value if set, zero value otherwise.
+// GetName returns the Name field value
 func (o *FulfillmentFailure) GetName() string {
-	if o == nil || IsNil(o.Name) {
+	if o == nil {
 		var ret string
 		return ret
 	}
-	return *o.Name
+
+	return o.Name
 }
 
-// GetNameOk returns a tuple with the Name field value if set, nil otherwise
+// GetNameOk returns a tuple with the Name field value
 // and a boolean to check if the value has been set.
 func (o *FulfillmentFailure) GetNameOk() (*string, bool) {
-	if o == nil || IsNil(o.Name) {
+	if o == nil {
 		return nil, false
 	}
-	return o.Name, true
+	return &o.Name, true
 }
 
-// HasName returns a boolean if a field has been set.
-func (o *FulfillmentFailure) HasName() bool {
-	if o != nil && !IsNil(o.Name) {
-		return true
-	}
-
-	return false
-}
-
-// SetName gets a reference to the given string and assigns it to the Name field.
+// SetName sets field value
 func (o *FulfillmentFailure) SetName(v string) {
-	o.Name = &v
+	o.Name = v
 }
 
-// GetMessage returns the Message field value if set, zero value otherwise.
+// GetMessage returns the Message field value
 func (o *FulfillmentFailure) GetMessage() string {
-	if o == nil || IsNil(o.Message) {
+	if o == nil {
 		var ret string
 		return ret
 	}
-	return *o.Message
+
+	return o.Message
 }
 
-// GetMessageOk returns a tuple with the Message field value if set, nil otherwise
+// GetMessageOk returns a tuple with the Message field value
 // and a boolean to check if the value has been set.
 func (o *FulfillmentFailure) GetMessageOk() (*string, bool) {
-	if o == nil || IsNil(o.Message) {
+	if o == nil {
 		return nil, false
 	}
-	return o.Message, true
+	return &o.Message, true
 }
 
-// HasMessage returns a boolean if a field has been set.
-func (o *FulfillmentFailure) HasMessage() bool {
-	if o != nil && !IsNil(o.Message) {
-		return true
-	}
-
-	return false
-}
-
-// SetMessage gets a reference to the given string and assigns it to the Message field.
+// SetMessage sets field value
 func (o *FulfillmentFailure) SetMessage(v string) {
-	o.Message = &v
+	o.Message = v
 }
 
 func (o FulfillmentFailure) MarshalJSON() ([]byte, error) {
@@ -148,16 +131,48 @@ func (o FulfillmentFailure) MarshalJSON() ([]byte, error) {
 
 func (o FulfillmentFailure) ToMap() (map[string]interface{}, error) {
 	toSerialize := map[string]interface{}{}
-	if !IsNil(o.Code) {
-		toSerialize["code"] = o.Code
-	}
-	if !IsNil(o.Name) {
-		toSerialize["name"] = o.Name
-	}
-	if !IsNil(o.Message) {
-		toSerialize["message"] = o.Message
-	}
+	toSerialize["code"] = o.Code
+	toSerialize["name"] = o.Name
+	toSerialize["message"] = o.Message
 	return toSerialize, nil
+}
+
+func (o *FulfillmentFailure) UnmarshalJSON(data []byte) (err error) {
+	// This validates that all required properties are included in the JSON object
+	// by unmarshalling the object into a generic map with string keys and checking
+	// that every required field exists as a key in the generic map.
+	requiredProperties := []string{
+		"code",
+		"name",
+		"message",
+	}
+
+	allProperties := make(map[string]interface{})
+
+	err = json.Unmarshal(data, &allProperties)
+
+	if err != nil {
+		return err;
+	}
+
+	for _, requiredProperty := range(requiredProperties) {
+		if _, exists := allProperties[requiredProperty]; !exists {
+			return fmt.Errorf("no value given for required property %v", requiredProperty)
+		}
+	}
+
+	varFulfillmentFailure := _FulfillmentFailure{}
+
+	decoder := json.NewDecoder(bytes.NewReader(data))
+	err = decoder.Decode(&varFulfillmentFailure)
+
+	if err != nil {
+		return err
+	}
+
+	*o = FulfillmentFailure(varFulfillmentFailure)
+
+	return err
 }
 
 type NullableFulfillmentFailure struct {

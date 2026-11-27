@@ -13,25 +13,37 @@ package openroam
 
 import (
 	"encoding/json"
+	"bytes"
+	"fmt"
 )
 
 // checks if the HotelAmendmentCapabilities type satisfies the MappedNullable interface at compile time
 var _ MappedNullable = &HotelAmendmentCapabilities{}
 
-// HotelAmendmentCapabilities Which parts of the booked room and guest <b>composition</b> an amendment can change for this booking. Dates and the holder are not covered here.
+// HotelAmendmentCapabilities Which parts of the booked stay an amendment can change for this booking: its room and guest <b>composition</b>, its dates and its holder.
 type HotelAmendmentCapabilities struct {
 	// What may change about the guests inside a room.
-	Guests *GuestAmendmentCapabilities `json:"guests,omitempty"`
-	// What may change about the rooms themselves. Adding or removing rooms is not offered today, so both are false.
-	Rooms *RoomAmendmentCapabilities `json:"rooms,omitempty"`
+	Guests GuestAmendmentCapabilities `json:"guests"`
+	// What may change about the rooms themselves. Adding a room is offered nowhere; removing one only where a single room of a multi-room stay can be cancelled on its own (`roomRemovalOnly`).
+	Rooms RoomAmendmentCapabilities `json:"rooms"`
+	// Whether the check-in and check-out dates may move.
+	Dates DateAmendmentCapabilities `json:"dates"`
+	// Whether the booking holder may change.
+	Holder HolderAmendmentCapabilities `json:"holder"`
 }
+
+type _HotelAmendmentCapabilities HotelAmendmentCapabilities
 
 // NewHotelAmendmentCapabilities instantiates a new HotelAmendmentCapabilities object
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewHotelAmendmentCapabilities() *HotelAmendmentCapabilities {
+func NewHotelAmendmentCapabilities(guests GuestAmendmentCapabilities, rooms RoomAmendmentCapabilities, dates DateAmendmentCapabilities, holder HolderAmendmentCapabilities) *HotelAmendmentCapabilities {
 	this := HotelAmendmentCapabilities{}
+	this.Guests = guests
+	this.Rooms = rooms
+	this.Dates = dates
+	this.Holder = holder
 	return &this
 }
 
@@ -43,68 +55,100 @@ func NewHotelAmendmentCapabilitiesWithDefaults() *HotelAmendmentCapabilities {
 	return &this
 }
 
-// GetGuests returns the Guests field value if set, zero value otherwise.
+// GetGuests returns the Guests field value
 func (o *HotelAmendmentCapabilities) GetGuests() GuestAmendmentCapabilities {
-	if o == nil || IsNil(o.Guests) {
+	if o == nil {
 		var ret GuestAmendmentCapabilities
 		return ret
 	}
-	return *o.Guests
+
+	return o.Guests
 }
 
-// GetGuestsOk returns a tuple with the Guests field value if set, nil otherwise
+// GetGuestsOk returns a tuple with the Guests field value
 // and a boolean to check if the value has been set.
 func (o *HotelAmendmentCapabilities) GetGuestsOk() (*GuestAmendmentCapabilities, bool) {
-	if o == nil || IsNil(o.Guests) {
+	if o == nil {
 		return nil, false
 	}
-	return o.Guests, true
+	return &o.Guests, true
 }
 
-// HasGuests returns a boolean if a field has been set.
-func (o *HotelAmendmentCapabilities) HasGuests() bool {
-	if o != nil && !IsNil(o.Guests) {
-		return true
-	}
-
-	return false
-}
-
-// SetGuests gets a reference to the given GuestAmendmentCapabilities and assigns it to the Guests field.
+// SetGuests sets field value
 func (o *HotelAmendmentCapabilities) SetGuests(v GuestAmendmentCapabilities) {
-	o.Guests = &v
+	o.Guests = v
 }
 
-// GetRooms returns the Rooms field value if set, zero value otherwise.
+// GetRooms returns the Rooms field value
 func (o *HotelAmendmentCapabilities) GetRooms() RoomAmendmentCapabilities {
-	if o == nil || IsNil(o.Rooms) {
+	if o == nil {
 		var ret RoomAmendmentCapabilities
 		return ret
 	}
-	return *o.Rooms
+
+	return o.Rooms
 }
 
-// GetRoomsOk returns a tuple with the Rooms field value if set, nil otherwise
+// GetRoomsOk returns a tuple with the Rooms field value
 // and a boolean to check if the value has been set.
 func (o *HotelAmendmentCapabilities) GetRoomsOk() (*RoomAmendmentCapabilities, bool) {
-	if o == nil || IsNil(o.Rooms) {
+	if o == nil {
 		return nil, false
 	}
-	return o.Rooms, true
+	return &o.Rooms, true
 }
 
-// HasRooms returns a boolean if a field has been set.
-func (o *HotelAmendmentCapabilities) HasRooms() bool {
-	if o != nil && !IsNil(o.Rooms) {
-		return true
+// SetRooms sets field value
+func (o *HotelAmendmentCapabilities) SetRooms(v RoomAmendmentCapabilities) {
+	o.Rooms = v
+}
+
+// GetDates returns the Dates field value
+func (o *HotelAmendmentCapabilities) GetDates() DateAmendmentCapabilities {
+	if o == nil {
+		var ret DateAmendmentCapabilities
+		return ret
 	}
 
-	return false
+	return o.Dates
 }
 
-// SetRooms gets a reference to the given RoomAmendmentCapabilities and assigns it to the Rooms field.
-func (o *HotelAmendmentCapabilities) SetRooms(v RoomAmendmentCapabilities) {
-	o.Rooms = &v
+// GetDatesOk returns a tuple with the Dates field value
+// and a boolean to check if the value has been set.
+func (o *HotelAmendmentCapabilities) GetDatesOk() (*DateAmendmentCapabilities, bool) {
+	if o == nil {
+		return nil, false
+	}
+	return &o.Dates, true
+}
+
+// SetDates sets field value
+func (o *HotelAmendmentCapabilities) SetDates(v DateAmendmentCapabilities) {
+	o.Dates = v
+}
+
+// GetHolder returns the Holder field value
+func (o *HotelAmendmentCapabilities) GetHolder() HolderAmendmentCapabilities {
+	if o == nil {
+		var ret HolderAmendmentCapabilities
+		return ret
+	}
+
+	return o.Holder
+}
+
+// GetHolderOk returns a tuple with the Holder field value
+// and a boolean to check if the value has been set.
+func (o *HotelAmendmentCapabilities) GetHolderOk() (*HolderAmendmentCapabilities, bool) {
+	if o == nil {
+		return nil, false
+	}
+	return &o.Holder, true
+}
+
+// SetHolder sets field value
+func (o *HotelAmendmentCapabilities) SetHolder(v HolderAmendmentCapabilities) {
+	o.Holder = v
 }
 
 func (o HotelAmendmentCapabilities) MarshalJSON() ([]byte, error) {
@@ -117,13 +161,50 @@ func (o HotelAmendmentCapabilities) MarshalJSON() ([]byte, error) {
 
 func (o HotelAmendmentCapabilities) ToMap() (map[string]interface{}, error) {
 	toSerialize := map[string]interface{}{}
-	if !IsNil(o.Guests) {
-		toSerialize["guests"] = o.Guests
-	}
-	if !IsNil(o.Rooms) {
-		toSerialize["rooms"] = o.Rooms
-	}
+	toSerialize["guests"] = o.Guests
+	toSerialize["rooms"] = o.Rooms
+	toSerialize["dates"] = o.Dates
+	toSerialize["holder"] = o.Holder
 	return toSerialize, nil
+}
+
+func (o *HotelAmendmentCapabilities) UnmarshalJSON(data []byte) (err error) {
+	// This validates that all required properties are included in the JSON object
+	// by unmarshalling the object into a generic map with string keys and checking
+	// that every required field exists as a key in the generic map.
+	requiredProperties := []string{
+		"guests",
+		"rooms",
+		"dates",
+		"holder",
+	}
+
+	allProperties := make(map[string]interface{})
+
+	err = json.Unmarshal(data, &allProperties)
+
+	if err != nil {
+		return err;
+	}
+
+	for _, requiredProperty := range(requiredProperties) {
+		if _, exists := allProperties[requiredProperty]; !exists {
+			return fmt.Errorf("no value given for required property %v", requiredProperty)
+		}
+	}
+
+	varHotelAmendmentCapabilities := _HotelAmendmentCapabilities{}
+
+	decoder := json.NewDecoder(bytes.NewReader(data))
+	err = decoder.Decode(&varHotelAmendmentCapabilities)
+
+	if err != nil {
+		return err
+	}
+
+	*o = HotelAmendmentCapabilities(varHotelAmendmentCapabilities)
+
+	return err
 }
 
 type NullableHotelAmendmentCapabilities struct {

@@ -13,6 +13,8 @@ package openroam
 
 import (
 	"encoding/json"
+	"bytes"
+	"fmt"
 )
 
 // checks if the GiftCardFulfillmentResult type satisfies the MappedNullable interface at compile time
@@ -22,15 +24,18 @@ var _ MappedNullable = &GiftCardFulfillmentResult{}
 type GiftCardFulfillmentResult struct {
 	DeliveredValue NullableMoney `json:"deliveredValue,omitempty"`
 	// The issued codes and, for a gift, the email delivery. `codes` is empty while the order item does not release them, for example after a refund. `delivery` is null for a card that is not a gift.
-	Details *GiftCardFulfillmentDetails `json:"details,omitempty"`
+	Details GiftCardFulfillmentDetails `json:"details"`
 }
+
+type _GiftCardFulfillmentResult GiftCardFulfillmentResult
 
 // NewGiftCardFulfillmentResult instantiates a new GiftCardFulfillmentResult object
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewGiftCardFulfillmentResult() *GiftCardFulfillmentResult {
+func NewGiftCardFulfillmentResult(details GiftCardFulfillmentDetails) *GiftCardFulfillmentResult {
 	this := GiftCardFulfillmentResult{}
+	this.Details = details
 	return &this
 }
 
@@ -84,36 +89,28 @@ func (o *GiftCardFulfillmentResult) UnsetDeliveredValue() {
 	o.DeliveredValue.Unset()
 }
 
-// GetDetails returns the Details field value if set, zero value otherwise.
+// GetDetails returns the Details field value
 func (o *GiftCardFulfillmentResult) GetDetails() GiftCardFulfillmentDetails {
-	if o == nil || IsNil(o.Details) {
+	if o == nil {
 		var ret GiftCardFulfillmentDetails
 		return ret
 	}
-	return *o.Details
+
+	return o.Details
 }
 
-// GetDetailsOk returns a tuple with the Details field value if set, nil otherwise
+// GetDetailsOk returns a tuple with the Details field value
 // and a boolean to check if the value has been set.
 func (o *GiftCardFulfillmentResult) GetDetailsOk() (*GiftCardFulfillmentDetails, bool) {
-	if o == nil || IsNil(o.Details) {
+	if o == nil {
 		return nil, false
 	}
-	return o.Details, true
+	return &o.Details, true
 }
 
-// HasDetails returns a boolean if a field has been set.
-func (o *GiftCardFulfillmentResult) HasDetails() bool {
-	if o != nil && !IsNil(o.Details) {
-		return true
-	}
-
-	return false
-}
-
-// SetDetails gets a reference to the given GiftCardFulfillmentDetails and assigns it to the Details field.
+// SetDetails sets field value
 func (o *GiftCardFulfillmentResult) SetDetails(v GiftCardFulfillmentDetails) {
-	o.Details = &v
+	o.Details = v
 }
 
 func (o GiftCardFulfillmentResult) MarshalJSON() ([]byte, error) {
@@ -129,10 +126,44 @@ func (o GiftCardFulfillmentResult) ToMap() (map[string]interface{}, error) {
 	if o.DeliveredValue.IsSet() {
 		toSerialize["deliveredValue"] = o.DeliveredValue.Get()
 	}
-	if !IsNil(o.Details) {
-		toSerialize["details"] = o.Details
-	}
+	toSerialize["details"] = o.Details
 	return toSerialize, nil
+}
+
+func (o *GiftCardFulfillmentResult) UnmarshalJSON(data []byte) (err error) {
+	// This validates that all required properties are included in the JSON object
+	// by unmarshalling the object into a generic map with string keys and checking
+	// that every required field exists as a key in the generic map.
+	requiredProperties := []string{
+		"details",
+	}
+
+	allProperties := make(map[string]interface{})
+
+	err = json.Unmarshal(data, &allProperties)
+
+	if err != nil {
+		return err;
+	}
+
+	for _, requiredProperty := range(requiredProperties) {
+		if _, exists := allProperties[requiredProperty]; !exists {
+			return fmt.Errorf("no value given for required property %v", requiredProperty)
+		}
+	}
+
+	varGiftCardFulfillmentResult := _GiftCardFulfillmentResult{}
+
+	decoder := json.NewDecoder(bytes.NewReader(data))
+	err = decoder.Decode(&varGiftCardFulfillmentResult)
+
+	if err != nil {
+		return err
+	}
+
+	*o = GiftCardFulfillmentResult(varGiftCardFulfillmentResult)
+
+	return err
 }
 
 type NullableGiftCardFulfillmentResult struct {

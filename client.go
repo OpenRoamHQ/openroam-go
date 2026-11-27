@@ -50,7 +50,13 @@ type APIClient struct {
 
 	// API Services
 
+	AccountAPI *AccountAPIService
+
 	AirtimeAPI *AirtimeAPIService
+
+	BrowserSessionsAPI *BrowserSessionsAPIService
+
+	CheckoutsAPI *CheckoutsAPIService
 
 	CommonAPI *CommonAPIService
 
@@ -61,8 +67,6 @@ type APIClient struct {
 	FlightsAPI *FlightsAPIService
 
 	GiftCardsAPI *GiftCardsAPIService
-
-	HotelManualAmendmentsAPI *HotelManualAmendmentsAPIService
 
 	HotelsAPI *HotelsAPIService
 
@@ -91,13 +95,15 @@ func NewAPIClient(cfg *Configuration) *APIClient {
 	c.common.client = c
 
 	// API Services
+	c.AccountAPI = (*AccountAPIService)(&c.common)
 	c.AirtimeAPI = (*AirtimeAPIService)(&c.common)
+	c.BrowserSessionsAPI = (*BrowserSessionsAPIService)(&c.common)
+	c.CheckoutsAPI = (*CheckoutsAPIService)(&c.common)
 	c.CommonAPI = (*CommonAPIService)(&c.common)
 	c.CurrenciesAPI = (*CurrenciesAPIService)(&c.common)
 	c.EsimsAPI = (*EsimsAPIService)(&c.common)
 	c.FlightsAPI = (*FlightsAPIService)(&c.common)
 	c.GiftCardsAPI = (*GiftCardsAPIService)(&c.common)
-	c.HotelManualAmendmentsAPI = (*HotelManualAmendmentsAPIService)(&c.common)
 	c.HotelsAPI = (*HotelsAPIService)(&c.common)
 	c.OrderItemsAPI = (*OrderItemsAPIService)(&c.common)
 	c.OrdersAPI = (*OrdersAPIService)(&c.common)
@@ -490,6 +496,11 @@ func (c *APIClient) prepareRequest(
 		localVarRequest = localVarRequest.WithContext(ctx)
 
 		// Walk through any authentication.
+
+		// AccessToken Authentication
+		if auth, ok := ctx.Value(ContextAccessToken).(string); ok {
+			localVarRequest.Header.Add("Authorization", "Bearer "+auth)
+		}
 
 	}
 

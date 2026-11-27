@@ -13,6 +13,8 @@ package openroam
 
 import (
 	"encoding/json"
+	"bytes"
+	"fmt"
 )
 
 // checks if the OrderPaymentWallet type satisfies the MappedNullable interface at compile time
@@ -21,17 +23,24 @@ var _ MappedNullable = &OrderPaymentWallet{}
 // OrderPaymentWallet The wallet a balance payment was taken from.
 type OrderPaymentWallet struct {
 	// The wallet's label.
-	Label *string `json:"label,omitempty"`
+	Label string `json:"label"`
 	// The amount taken, in the wallet's currency.
-	Debited *Money `json:"debited,omitempty"`
+	Debited Money `json:"debited"`
+	// The wallet's id on the wallet endpoints.
+	WalletId string `json:"walletId"`
 }
+
+type _OrderPaymentWallet OrderPaymentWallet
 
 // NewOrderPaymentWallet instantiates a new OrderPaymentWallet object
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewOrderPaymentWallet() *OrderPaymentWallet {
+func NewOrderPaymentWallet(label string, debited Money, walletId string) *OrderPaymentWallet {
 	this := OrderPaymentWallet{}
+	this.Label = label
+	this.Debited = debited
+	this.WalletId = walletId
 	return &this
 }
 
@@ -43,68 +52,76 @@ func NewOrderPaymentWalletWithDefaults() *OrderPaymentWallet {
 	return &this
 }
 
-// GetLabel returns the Label field value if set, zero value otherwise.
+// GetLabel returns the Label field value
 func (o *OrderPaymentWallet) GetLabel() string {
-	if o == nil || IsNil(o.Label) {
+	if o == nil {
 		var ret string
 		return ret
 	}
-	return *o.Label
+
+	return o.Label
 }
 
-// GetLabelOk returns a tuple with the Label field value if set, nil otherwise
+// GetLabelOk returns a tuple with the Label field value
 // and a boolean to check if the value has been set.
 func (o *OrderPaymentWallet) GetLabelOk() (*string, bool) {
-	if o == nil || IsNil(o.Label) {
+	if o == nil {
 		return nil, false
 	}
-	return o.Label, true
+	return &o.Label, true
 }
 
-// HasLabel returns a boolean if a field has been set.
-func (o *OrderPaymentWallet) HasLabel() bool {
-	if o != nil && !IsNil(o.Label) {
-		return true
-	}
-
-	return false
-}
-
-// SetLabel gets a reference to the given string and assigns it to the Label field.
+// SetLabel sets field value
 func (o *OrderPaymentWallet) SetLabel(v string) {
-	o.Label = &v
+	o.Label = v
 }
 
-// GetDebited returns the Debited field value if set, zero value otherwise.
+// GetDebited returns the Debited field value
 func (o *OrderPaymentWallet) GetDebited() Money {
-	if o == nil || IsNil(o.Debited) {
+	if o == nil {
 		var ret Money
 		return ret
 	}
-	return *o.Debited
+
+	return o.Debited
 }
 
-// GetDebitedOk returns a tuple with the Debited field value if set, nil otherwise
+// GetDebitedOk returns a tuple with the Debited field value
 // and a boolean to check if the value has been set.
 func (o *OrderPaymentWallet) GetDebitedOk() (*Money, bool) {
-	if o == nil || IsNil(o.Debited) {
+	if o == nil {
 		return nil, false
 	}
-	return o.Debited, true
+	return &o.Debited, true
 }
 
-// HasDebited returns a boolean if a field has been set.
-func (o *OrderPaymentWallet) HasDebited() bool {
-	if o != nil && !IsNil(o.Debited) {
-		return true
+// SetDebited sets field value
+func (o *OrderPaymentWallet) SetDebited(v Money) {
+	o.Debited = v
+}
+
+// GetWalletId returns the WalletId field value
+func (o *OrderPaymentWallet) GetWalletId() string {
+	if o == nil {
+		var ret string
+		return ret
 	}
 
-	return false
+	return o.WalletId
 }
 
-// SetDebited gets a reference to the given Money and assigns it to the Debited field.
-func (o *OrderPaymentWallet) SetDebited(v Money) {
-	o.Debited = &v
+// GetWalletIdOk returns a tuple with the WalletId field value
+// and a boolean to check if the value has been set.
+func (o *OrderPaymentWallet) GetWalletIdOk() (*string, bool) {
+	if o == nil {
+		return nil, false
+	}
+	return &o.WalletId, true
+}
+
+// SetWalletId sets field value
+func (o *OrderPaymentWallet) SetWalletId(v string) {
+	o.WalletId = v
 }
 
 func (o OrderPaymentWallet) MarshalJSON() ([]byte, error) {
@@ -117,13 +134,48 @@ func (o OrderPaymentWallet) MarshalJSON() ([]byte, error) {
 
 func (o OrderPaymentWallet) ToMap() (map[string]interface{}, error) {
 	toSerialize := map[string]interface{}{}
-	if !IsNil(o.Label) {
-		toSerialize["label"] = o.Label
-	}
-	if !IsNil(o.Debited) {
-		toSerialize["debited"] = o.Debited
-	}
+	toSerialize["label"] = o.Label
+	toSerialize["debited"] = o.Debited
+	toSerialize["walletId"] = o.WalletId
 	return toSerialize, nil
+}
+
+func (o *OrderPaymentWallet) UnmarshalJSON(data []byte) (err error) {
+	// This validates that all required properties are included in the JSON object
+	// by unmarshalling the object into a generic map with string keys and checking
+	// that every required field exists as a key in the generic map.
+	requiredProperties := []string{
+		"label",
+		"debited",
+		"walletId",
+	}
+
+	allProperties := make(map[string]interface{})
+
+	err = json.Unmarshal(data, &allProperties)
+
+	if err != nil {
+		return err;
+	}
+
+	for _, requiredProperty := range(requiredProperties) {
+		if _, exists := allProperties[requiredProperty]; !exists {
+			return fmt.Errorf("no value given for required property %v", requiredProperty)
+		}
+	}
+
+	varOrderPaymentWallet := _OrderPaymentWallet{}
+
+	decoder := json.NewDecoder(bytes.NewReader(data))
+	err = decoder.Decode(&varOrderPaymentWallet)
+
+	if err != nil {
+		return err
+	}
+
+	*o = OrderPaymentWallet(varOrderPaymentWallet)
+
+	return err
 }
 
 type NullableOrderPaymentWallet struct {

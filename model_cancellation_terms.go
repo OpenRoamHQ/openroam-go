@@ -14,6 +14,8 @@ package openroam
 import (
 	"encoding/json"
 	"time"
+	"bytes"
+	"fmt"
 )
 
 // checks if the CancellationTerms type satisfies the MappedNullable interface at compile time
@@ -22,21 +24,29 @@ var _ MappedNullable = &CancellationTerms{}
 // CancellationTerms struct for CancellationTerms
 type CancellationTerms struct {
 	// `fullyRefundable` (a full refund until FreeUntil), `partiallyRefundable` or `nonRefundable` (nothing comes back).
-	Type *string `json:"type,omitempty"`
+	Type string `json:"type"`
 	// Cancel at or before this instant (UTC) for a full refund; null unless the type is             `fullyRefundable`.
 	FreeUntil NullableTime `json:"freeUntil,omitempty"`
+	// The clock of `timezone` at `freeUntil`. Written yyyy-MM-ddTHH:mm:ss with no zone, for display only: compute and compare with `freeUntil`. Null when the place's time zone is unknown.
+	FreeUntilLocalTime NullableString `json:"freeUntilLocalTime,omitempty"`
+	// The IANA time zone of the place the booking is bound to, such as `Europe/Paris`: the hotel's for a stay, the first departure airport's for a flight. Each `*LocalTime` member is the clock in it. Null when the place does not tell it.
+	Timezone NullableString `json:"timezone,omitempty"`
 	// Ordered steps: each is what cancelling from its `from` gives back and keeps. Before the first step, cancelling keeps only Fee (nothing when it is null). Empty for a product that is not refundable.
-	Schedule []CancellationStep `json:"schedule,omitempty"`
+	Schedule []CancellationStep `json:"schedule"`
 	// OpenRoam's own cancellation fee, already included in every step; null when there is none.
 	Fee NullableMoney `json:"fee,omitempty"`
 }
+
+type _CancellationTerms CancellationTerms
 
 // NewCancellationTerms instantiates a new CancellationTerms object
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewCancellationTerms() *CancellationTerms {
+func NewCancellationTerms(type_ string, schedule []CancellationStep) *CancellationTerms {
 	this := CancellationTerms{}
+	this.Type = type_
+	this.Schedule = schedule
 	return &this
 }
 
@@ -48,36 +58,28 @@ func NewCancellationTermsWithDefaults() *CancellationTerms {
 	return &this
 }
 
-// GetType returns the Type field value if set, zero value otherwise.
+// GetType returns the Type field value
 func (o *CancellationTerms) GetType() string {
-	if o == nil || IsNil(o.Type) {
+	if o == nil {
 		var ret string
 		return ret
 	}
-	return *o.Type
+
+	return o.Type
 }
 
-// GetTypeOk returns a tuple with the Type field value if set, nil otherwise
+// GetTypeOk returns a tuple with the Type field value
 // and a boolean to check if the value has been set.
 func (o *CancellationTerms) GetTypeOk() (*string, bool) {
-	if o == nil || IsNil(o.Type) {
+	if o == nil {
 		return nil, false
 	}
-	return o.Type, true
+	return &o.Type, true
 }
 
-// HasType returns a boolean if a field has been set.
-func (o *CancellationTerms) HasType() bool {
-	if o != nil && !IsNil(o.Type) {
-		return true
-	}
-
-	return false
-}
-
-// SetType gets a reference to the given string and assigns it to the Type field.
+// SetType sets field value
 func (o *CancellationTerms) SetType(v string) {
-	o.Type = &v
+	o.Type = v
 }
 
 // GetFreeUntil returns the FreeUntil field value if set, zero value otherwise (both if not set or set to explicit null).
@@ -122,34 +124,110 @@ func (o *CancellationTerms) UnsetFreeUntil() {
 	o.FreeUntil.Unset()
 }
 
-// GetSchedule returns the Schedule field value if set, zero value otherwise.
-func (o *CancellationTerms) GetSchedule() []CancellationStep {
-	if o == nil || IsNil(o.Schedule) {
-		var ret []CancellationStep
+// GetFreeUntilLocalTime returns the FreeUntilLocalTime field value if set, zero value otherwise (both if not set or set to explicit null).
+func (o *CancellationTerms) GetFreeUntilLocalTime() string {
+	if o == nil || IsNil(o.FreeUntilLocalTime.Get()) {
+		var ret string
 		return ret
 	}
-	return o.Schedule
+	return *o.FreeUntilLocalTime.Get()
 }
 
-// GetScheduleOk returns a tuple with the Schedule field value if set, nil otherwise
+// GetFreeUntilLocalTimeOk returns a tuple with the FreeUntilLocalTime field value if set, nil otherwise
 // and a boolean to check if the value has been set.
-func (o *CancellationTerms) GetScheduleOk() ([]CancellationStep, bool) {
-	if o == nil || IsNil(o.Schedule) {
+// NOTE: If the value is an explicit nil, `nil, true` will be returned
+func (o *CancellationTerms) GetFreeUntilLocalTimeOk() (*string, bool) {
+	if o == nil {
 		return nil, false
 	}
-	return o.Schedule, true
+	return o.FreeUntilLocalTime.Get(), o.FreeUntilLocalTime.IsSet()
 }
 
-// HasSchedule returns a boolean if a field has been set.
-func (o *CancellationTerms) HasSchedule() bool {
-	if o != nil && !IsNil(o.Schedule) {
+// HasFreeUntilLocalTime returns a boolean if a field has been set.
+func (o *CancellationTerms) HasFreeUntilLocalTime() bool {
+	if o != nil && o.FreeUntilLocalTime.IsSet() {
 		return true
 	}
 
 	return false
 }
 
-// SetSchedule gets a reference to the given []CancellationStep and assigns it to the Schedule field.
+// SetFreeUntilLocalTime gets a reference to the given NullableString and assigns it to the FreeUntilLocalTime field.
+func (o *CancellationTerms) SetFreeUntilLocalTime(v string) {
+	o.FreeUntilLocalTime.Set(&v)
+}
+// SetFreeUntilLocalTimeNil sets the value for FreeUntilLocalTime to be an explicit nil
+func (o *CancellationTerms) SetFreeUntilLocalTimeNil() {
+	o.FreeUntilLocalTime.Set(nil)
+}
+
+// UnsetFreeUntilLocalTime ensures that no value is present for FreeUntilLocalTime, not even an explicit nil
+func (o *CancellationTerms) UnsetFreeUntilLocalTime() {
+	o.FreeUntilLocalTime.Unset()
+}
+
+// GetTimezone returns the Timezone field value if set, zero value otherwise (both if not set or set to explicit null).
+func (o *CancellationTerms) GetTimezone() string {
+	if o == nil || IsNil(o.Timezone.Get()) {
+		var ret string
+		return ret
+	}
+	return *o.Timezone.Get()
+}
+
+// GetTimezoneOk returns a tuple with the Timezone field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+// NOTE: If the value is an explicit nil, `nil, true` will be returned
+func (o *CancellationTerms) GetTimezoneOk() (*string, bool) {
+	if o == nil {
+		return nil, false
+	}
+	return o.Timezone.Get(), o.Timezone.IsSet()
+}
+
+// HasTimezone returns a boolean if a field has been set.
+func (o *CancellationTerms) HasTimezone() bool {
+	if o != nil && o.Timezone.IsSet() {
+		return true
+	}
+
+	return false
+}
+
+// SetTimezone gets a reference to the given NullableString and assigns it to the Timezone field.
+func (o *CancellationTerms) SetTimezone(v string) {
+	o.Timezone.Set(&v)
+}
+// SetTimezoneNil sets the value for Timezone to be an explicit nil
+func (o *CancellationTerms) SetTimezoneNil() {
+	o.Timezone.Set(nil)
+}
+
+// UnsetTimezone ensures that no value is present for Timezone, not even an explicit nil
+func (o *CancellationTerms) UnsetTimezone() {
+	o.Timezone.Unset()
+}
+
+// GetSchedule returns the Schedule field value
+func (o *CancellationTerms) GetSchedule() []CancellationStep {
+	if o == nil {
+		var ret []CancellationStep
+		return ret
+	}
+
+	return o.Schedule
+}
+
+// GetScheduleOk returns a tuple with the Schedule field value
+// and a boolean to check if the value has been set.
+func (o *CancellationTerms) GetScheduleOk() ([]CancellationStep, bool) {
+	if o == nil {
+		return nil, false
+	}
+	return o.Schedule, true
+}
+
+// SetSchedule sets field value
 func (o *CancellationTerms) SetSchedule(v []CancellationStep) {
 	o.Schedule = v
 }
@@ -206,19 +284,58 @@ func (o CancellationTerms) MarshalJSON() ([]byte, error) {
 
 func (o CancellationTerms) ToMap() (map[string]interface{}, error) {
 	toSerialize := map[string]interface{}{}
-	if !IsNil(o.Type) {
-		toSerialize["type"] = o.Type
-	}
+	toSerialize["type"] = o.Type
 	if o.FreeUntil.IsSet() {
 		toSerialize["freeUntil"] = o.FreeUntil.Get()
 	}
-	if !IsNil(o.Schedule) {
-		toSerialize["schedule"] = o.Schedule
+	if o.FreeUntilLocalTime.IsSet() {
+		toSerialize["freeUntilLocalTime"] = o.FreeUntilLocalTime.Get()
 	}
+	if o.Timezone.IsSet() {
+		toSerialize["timezone"] = o.Timezone.Get()
+	}
+	toSerialize["schedule"] = o.Schedule
 	if o.Fee.IsSet() {
 		toSerialize["fee"] = o.Fee.Get()
 	}
 	return toSerialize, nil
+}
+
+func (o *CancellationTerms) UnmarshalJSON(data []byte) (err error) {
+	// This validates that all required properties are included in the JSON object
+	// by unmarshalling the object into a generic map with string keys and checking
+	// that every required field exists as a key in the generic map.
+	requiredProperties := []string{
+		"type",
+		"schedule",
+	}
+
+	allProperties := make(map[string]interface{})
+
+	err = json.Unmarshal(data, &allProperties)
+
+	if err != nil {
+		return err;
+	}
+
+	for _, requiredProperty := range(requiredProperties) {
+		if _, exists := allProperties[requiredProperty]; !exists {
+			return fmt.Errorf("no value given for required property %v", requiredProperty)
+		}
+	}
+
+	varCancellationTerms := _CancellationTerms{}
+
+	decoder := json.NewDecoder(bytes.NewReader(data))
+	err = decoder.Decode(&varCancellationTerms)
+
+	if err != nil {
+		return err
+	}
+
+	*o = CancellationTerms(varCancellationTerms)
+
+	return err
 }
 
 type NullableCancellationTerms struct {

@@ -22,9 +22,9 @@ var _ MappedNullable = &EsimFulfillmentUpdate{}
 
 // EsimFulfillmentUpdate struct for EsimFulfillmentUpdate
 type EsimFulfillmentUpdate struct {
-	Id *string `json:"id,omitempty"`
+	Id string `json:"id"`
 	ProductType string `json:"productType"`
-	Fulfillment *EsimFulfillment `json:"fulfillment,omitempty"`
+	Fulfillment EsimFulfillment `json:"fulfillment"`
 }
 
 type _EsimFulfillmentUpdate EsimFulfillmentUpdate
@@ -33,9 +33,11 @@ type _EsimFulfillmentUpdate EsimFulfillmentUpdate
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewEsimFulfillmentUpdate(productType string) *EsimFulfillmentUpdate {
+func NewEsimFulfillmentUpdate(id string, productType string, fulfillment EsimFulfillment) *EsimFulfillmentUpdate {
 	this := EsimFulfillmentUpdate{}
+	this.Id = id
 	this.ProductType = productType
+	this.Fulfillment = fulfillment
 	return &this
 }
 
@@ -47,36 +49,28 @@ func NewEsimFulfillmentUpdateWithDefaults() *EsimFulfillmentUpdate {
 	return &this
 }
 
-// GetId returns the Id field value if set, zero value otherwise.
+// GetId returns the Id field value
 func (o *EsimFulfillmentUpdate) GetId() string {
-	if o == nil || IsNil(o.Id) {
+	if o == nil {
 		var ret string
 		return ret
 	}
-	return *o.Id
+
+	return o.Id
 }
 
-// GetIdOk returns a tuple with the Id field value if set, nil otherwise
+// GetIdOk returns a tuple with the Id field value
 // and a boolean to check if the value has been set.
 func (o *EsimFulfillmentUpdate) GetIdOk() (*string, bool) {
-	if o == nil || IsNil(o.Id) {
+	if o == nil {
 		return nil, false
 	}
-	return o.Id, true
+	return &o.Id, true
 }
 
-// HasId returns a boolean if a field has been set.
-func (o *EsimFulfillmentUpdate) HasId() bool {
-	if o != nil && !IsNil(o.Id) {
-		return true
-	}
-
-	return false
-}
-
-// SetId gets a reference to the given string and assigns it to the Id field.
+// SetId sets field value
 func (o *EsimFulfillmentUpdate) SetId(v string) {
-	o.Id = &v
+	o.Id = v
 }
 
 // GetProductType returns the ProductType field value
@@ -103,36 +97,28 @@ func (o *EsimFulfillmentUpdate) SetProductType(v string) {
 	o.ProductType = v
 }
 
-// GetFulfillment returns the Fulfillment field value if set, zero value otherwise.
+// GetFulfillment returns the Fulfillment field value
 func (o *EsimFulfillmentUpdate) GetFulfillment() EsimFulfillment {
-	if o == nil || IsNil(o.Fulfillment) {
+	if o == nil {
 		var ret EsimFulfillment
 		return ret
 	}
-	return *o.Fulfillment
+
+	return o.Fulfillment
 }
 
-// GetFulfillmentOk returns a tuple with the Fulfillment field value if set, nil otherwise
+// GetFulfillmentOk returns a tuple with the Fulfillment field value
 // and a boolean to check if the value has been set.
 func (o *EsimFulfillmentUpdate) GetFulfillmentOk() (*EsimFulfillment, bool) {
-	if o == nil || IsNil(o.Fulfillment) {
+	if o == nil {
 		return nil, false
 	}
-	return o.Fulfillment, true
+	return &o.Fulfillment, true
 }
 
-// HasFulfillment returns a boolean if a field has been set.
-func (o *EsimFulfillmentUpdate) HasFulfillment() bool {
-	if o != nil && !IsNil(o.Fulfillment) {
-		return true
-	}
-
-	return false
-}
-
-// SetFulfillment gets a reference to the given EsimFulfillment and assigns it to the Fulfillment field.
+// SetFulfillment sets field value
 func (o *EsimFulfillmentUpdate) SetFulfillment(v EsimFulfillment) {
-	o.Fulfillment = &v
+	o.Fulfillment = v
 }
 
 func (o EsimFulfillmentUpdate) MarshalJSON() ([]byte, error) {
@@ -145,13 +131,9 @@ func (o EsimFulfillmentUpdate) MarshalJSON() ([]byte, error) {
 
 func (o EsimFulfillmentUpdate) ToMap() (map[string]interface{}, error) {
 	toSerialize := map[string]interface{}{}
-	if !IsNil(o.Id) {
-		toSerialize["id"] = o.Id
-	}
+	toSerialize["id"] = o.Id
 	toSerialize["productType"] = o.ProductType
-	if !IsNil(o.Fulfillment) {
-		toSerialize["fulfillment"] = o.Fulfillment
-	}
+	toSerialize["fulfillment"] = o.Fulfillment
 	return toSerialize, nil
 }
 
@@ -160,7 +142,9 @@ func (o *EsimFulfillmentUpdate) UnmarshalJSON(data []byte) (err error) {
 	// by unmarshalling the object into a generic map with string keys and checking
 	// that every required field exists as a key in the generic map.
 	requiredProperties := []string{
+		"id",
 		"productType",
+		"fulfillment",
 	}
 
 	allProperties := make(map[string]interface{})
@@ -180,7 +164,6 @@ func (o *EsimFulfillmentUpdate) UnmarshalJSON(data []byte) (err error) {
 	varEsimFulfillmentUpdate := _EsimFulfillmentUpdate{}
 
 	decoder := json.NewDecoder(bytes.NewReader(data))
-	decoder.DisallowUnknownFields()
 	err = decoder.Decode(&varEsimFulfillmentUpdate)
 
 	if err != nil {

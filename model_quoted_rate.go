@@ -13,6 +13,8 @@ package openroam
 
 import (
 	"encoding/json"
+	"bytes"
+	"fmt"
 )
 
 // checks if the QuotedRate type satisfies the MappedNullable interface at compile time
@@ -20,30 +22,41 @@ var _ MappedNullable = &QuotedRate{}
 
 // QuotedRate struct for QuotedRate
 type QuotedRate struct {
-	Rooms []Room `json:"rooms,omitempty"`
+	Rooms []Room `json:"rooms"`
 	// The meal plan a rate is sold with. `boardType` is the value to branch or filter on; `code` is its short form (`RO`, `BB`, `HB`, `FB`, `AI`, or `OTHER` when the plan has no standard equivalent) and `name` the text to show.
-	Board *MealPlan `json:"board,omitempty"`
-	Taxes NullableTaxBreakdown `json:"taxes,omitempty"`
+	Board MealPlan `json:"board"`
 	PriceIsBinding NullableBool `json:"priceIsBinding,omitempty"`
-	NightlyPrices []NightlyPrice `json:"nightlyPrices,omitempty"`
-	RateTags []string `json:"rateTags,omitempty"`
-	Remarks []string `json:"remarks,omitempty"`
-	RateConditions []string `json:"rateConditions,omitempty"`
-	WithTransfers *bool `json:"withTransfers,omitempty"`
-	RateRules []string `json:"rateRules,omitempty"`
-	AmendabilityStatus *string `json:"amendabilityStatus,omitempty"`
-	Surcharges []Surcharge `json:"surcharges,omitempty"`
+	NightlyPrices []NightlyPrice `json:"nightlyPrices"`
+	RateTags []string `json:"rateTags"`
+	Remarks []string `json:"remarks"`
+	RateConditions []string `json:"rateConditions"`
+	WithTransfers bool `json:"withTransfers"`
+	RateRules []string `json:"rateRules"`
+	AmendabilityStatus string `json:"amendabilityStatus"`
+	Surcharges []Surcharge `json:"surcharges"`
 	MinimumSellingPrice NullableMoney `json:"minimumSellingPrice,omitempty"`
 	AllowsSpecialRequests NullableBool `json:"allowsSpecialRequests,omitempty"`
 	SpecialRequestOptions []SpecialRequestOption `json:"specialRequestOptions,omitempty"`
 }
 
+type _QuotedRate QuotedRate
+
 // NewQuotedRate instantiates a new QuotedRate object
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewQuotedRate() *QuotedRate {
+func NewQuotedRate(rooms []Room, board MealPlan, nightlyPrices []NightlyPrice, rateTags []string, remarks []string, rateConditions []string, withTransfers bool, rateRules []string, amendabilityStatus string, surcharges []Surcharge) *QuotedRate {
 	this := QuotedRate{}
+	this.Rooms = rooms
+	this.Board = board
+	this.NightlyPrices = nightlyPrices
+	this.RateTags = rateTags
+	this.Remarks = remarks
+	this.RateConditions = rateConditions
+	this.WithTransfers = withTransfers
+	this.RateRules = rateRules
+	this.AmendabilityStatus = amendabilityStatus
+	this.Surcharges = surcharges
 	return &this
 }
 
@@ -55,110 +68,52 @@ func NewQuotedRateWithDefaults() *QuotedRate {
 	return &this
 }
 
-// GetRooms returns the Rooms field value if set, zero value otherwise.
+// GetRooms returns the Rooms field value
 func (o *QuotedRate) GetRooms() []Room {
-	if o == nil || IsNil(o.Rooms) {
+	if o == nil {
 		var ret []Room
 		return ret
 	}
+
 	return o.Rooms
 }
 
-// GetRoomsOk returns a tuple with the Rooms field value if set, nil otherwise
+// GetRoomsOk returns a tuple with the Rooms field value
 // and a boolean to check if the value has been set.
 func (o *QuotedRate) GetRoomsOk() ([]Room, bool) {
-	if o == nil || IsNil(o.Rooms) {
+	if o == nil {
 		return nil, false
 	}
 	return o.Rooms, true
 }
 
-// HasRooms returns a boolean if a field has been set.
-func (o *QuotedRate) HasRooms() bool {
-	if o != nil && !IsNil(o.Rooms) {
-		return true
-	}
-
-	return false
-}
-
-// SetRooms gets a reference to the given []Room and assigns it to the Rooms field.
+// SetRooms sets field value
 func (o *QuotedRate) SetRooms(v []Room) {
 	o.Rooms = v
 }
 
-// GetBoard returns the Board field value if set, zero value otherwise.
+// GetBoard returns the Board field value
 func (o *QuotedRate) GetBoard() MealPlan {
-	if o == nil || IsNil(o.Board) {
+	if o == nil {
 		var ret MealPlan
 		return ret
 	}
-	return *o.Board
+
+	return o.Board
 }
 
-// GetBoardOk returns a tuple with the Board field value if set, nil otherwise
+// GetBoardOk returns a tuple with the Board field value
 // and a boolean to check if the value has been set.
 func (o *QuotedRate) GetBoardOk() (*MealPlan, bool) {
-	if o == nil || IsNil(o.Board) {
-		return nil, false
-	}
-	return o.Board, true
-}
-
-// HasBoard returns a boolean if a field has been set.
-func (o *QuotedRate) HasBoard() bool {
-	if o != nil && !IsNil(o.Board) {
-		return true
-	}
-
-	return false
-}
-
-// SetBoard gets a reference to the given MealPlan and assigns it to the Board field.
-func (o *QuotedRate) SetBoard(v MealPlan) {
-	o.Board = &v
-}
-
-// GetTaxes returns the Taxes field value if set, zero value otherwise (both if not set or set to explicit null).
-func (o *QuotedRate) GetTaxes() TaxBreakdown {
-	if o == nil || IsNil(o.Taxes.Get()) {
-		var ret TaxBreakdown
-		return ret
-	}
-	return *o.Taxes.Get()
-}
-
-// GetTaxesOk returns a tuple with the Taxes field value if set, nil otherwise
-// and a boolean to check if the value has been set.
-// NOTE: If the value is an explicit nil, `nil, true` will be returned
-func (o *QuotedRate) GetTaxesOk() (*TaxBreakdown, bool) {
 	if o == nil {
 		return nil, false
 	}
-	return o.Taxes.Get(), o.Taxes.IsSet()
+	return &o.Board, true
 }
 
-// HasTaxes returns a boolean if a field has been set.
-func (o *QuotedRate) HasTaxes() bool {
-	if o != nil && o.Taxes.IsSet() {
-		return true
-	}
-
-	return false
-}
-
-// SetTaxes gets a reference to the given NullableTaxBreakdown and assigns it to the Taxes field.
-func (o *QuotedRate) SetTaxes(v TaxBreakdown) {
-	o.Taxes.Set(&v)
-}
-// SetTaxesNil sets the value for Taxes to be an explicit nil
-func (o *QuotedRate) SetTaxesNil() {
-	o.Taxes.Set(nil)
-}
-
-// UnsetTaxes ensures that no value is present for Taxes, not even an explicit nil
-func (o *QuotedRate) UnsetTaxes() {
-	o.Taxes.Unset()
+// SetBoard sets field value
+func (o *QuotedRate) SetBoard(v MealPlan) {
+	o.Board = v
 }
 
 // GetPriceIsBinding returns the PriceIsBinding field value if set, zero value otherwise (both if not set or set to explicit null).
@@ -203,258 +158,194 @@ func (o *QuotedRate) UnsetPriceIsBinding() {
 	o.PriceIsBinding.Unset()
 }
 
-// GetNightlyPrices returns the NightlyPrices field value if set, zero value otherwise.
+// GetNightlyPrices returns the NightlyPrices field value
 func (o *QuotedRate) GetNightlyPrices() []NightlyPrice {
-	if o == nil || IsNil(o.NightlyPrices) {
+	if o == nil {
 		var ret []NightlyPrice
 		return ret
 	}
+
 	return o.NightlyPrices
 }
 
-// GetNightlyPricesOk returns a tuple with the NightlyPrices field value if set, nil otherwise
+// GetNightlyPricesOk returns a tuple with the NightlyPrices field value
 // and a boolean to check if the value has been set.
 func (o *QuotedRate) GetNightlyPricesOk() ([]NightlyPrice, bool) {
-	if o == nil || IsNil(o.NightlyPrices) {
+	if o == nil {
 		return nil, false
 	}
 	return o.NightlyPrices, true
 }
 
-// HasNightlyPrices returns a boolean if a field has been set.
-func (o *QuotedRate) HasNightlyPrices() bool {
-	if o != nil && !IsNil(o.NightlyPrices) {
-		return true
-	}
-
-	return false
-}
-
-// SetNightlyPrices gets a reference to the given []NightlyPrice and assigns it to the NightlyPrices field.
+// SetNightlyPrices sets field value
 func (o *QuotedRate) SetNightlyPrices(v []NightlyPrice) {
 	o.NightlyPrices = v
 }
 
-// GetRateTags returns the RateTags field value if set, zero value otherwise.
+// GetRateTags returns the RateTags field value
 func (o *QuotedRate) GetRateTags() []string {
-	if o == nil || IsNil(o.RateTags) {
+	if o == nil {
 		var ret []string
 		return ret
 	}
+
 	return o.RateTags
 }
 
-// GetRateTagsOk returns a tuple with the RateTags field value if set, nil otherwise
+// GetRateTagsOk returns a tuple with the RateTags field value
 // and a boolean to check if the value has been set.
 func (o *QuotedRate) GetRateTagsOk() ([]string, bool) {
-	if o == nil || IsNil(o.RateTags) {
+	if o == nil {
 		return nil, false
 	}
 	return o.RateTags, true
 }
 
-// HasRateTags returns a boolean if a field has been set.
-func (o *QuotedRate) HasRateTags() bool {
-	if o != nil && !IsNil(o.RateTags) {
-		return true
-	}
-
-	return false
-}
-
-// SetRateTags gets a reference to the given []string and assigns it to the RateTags field.
+// SetRateTags sets field value
 func (o *QuotedRate) SetRateTags(v []string) {
 	o.RateTags = v
 }
 
-// GetRemarks returns the Remarks field value if set, zero value otherwise.
+// GetRemarks returns the Remarks field value
 func (o *QuotedRate) GetRemarks() []string {
-	if o == nil || IsNil(o.Remarks) {
+	if o == nil {
 		var ret []string
 		return ret
 	}
+
 	return o.Remarks
 }
 
-// GetRemarksOk returns a tuple with the Remarks field value if set, nil otherwise
+// GetRemarksOk returns a tuple with the Remarks field value
 // and a boolean to check if the value has been set.
 func (o *QuotedRate) GetRemarksOk() ([]string, bool) {
-	if o == nil || IsNil(o.Remarks) {
+	if o == nil {
 		return nil, false
 	}
 	return o.Remarks, true
 }
 
-// HasRemarks returns a boolean if a field has been set.
-func (o *QuotedRate) HasRemarks() bool {
-	if o != nil && !IsNil(o.Remarks) {
-		return true
-	}
-
-	return false
-}
-
-// SetRemarks gets a reference to the given []string and assigns it to the Remarks field.
+// SetRemarks sets field value
 func (o *QuotedRate) SetRemarks(v []string) {
 	o.Remarks = v
 }
 
-// GetRateConditions returns the RateConditions field value if set, zero value otherwise.
+// GetRateConditions returns the RateConditions field value
 func (o *QuotedRate) GetRateConditions() []string {
-	if o == nil || IsNil(o.RateConditions) {
+	if o == nil {
 		var ret []string
 		return ret
 	}
+
 	return o.RateConditions
 }
 
-// GetRateConditionsOk returns a tuple with the RateConditions field value if set, nil otherwise
+// GetRateConditionsOk returns a tuple with the RateConditions field value
 // and a boolean to check if the value has been set.
 func (o *QuotedRate) GetRateConditionsOk() ([]string, bool) {
-	if o == nil || IsNil(o.RateConditions) {
+	if o == nil {
 		return nil, false
 	}
 	return o.RateConditions, true
 }
 
-// HasRateConditions returns a boolean if a field has been set.
-func (o *QuotedRate) HasRateConditions() bool {
-	if o != nil && !IsNil(o.RateConditions) {
-		return true
-	}
-
-	return false
-}
-
-// SetRateConditions gets a reference to the given []string and assigns it to the RateConditions field.
+// SetRateConditions sets field value
 func (o *QuotedRate) SetRateConditions(v []string) {
 	o.RateConditions = v
 }
 
-// GetWithTransfers returns the WithTransfers field value if set, zero value otherwise.
+// GetWithTransfers returns the WithTransfers field value
 func (o *QuotedRate) GetWithTransfers() bool {
-	if o == nil || IsNil(o.WithTransfers) {
+	if o == nil {
 		var ret bool
 		return ret
 	}
-	return *o.WithTransfers
+
+	return o.WithTransfers
 }
 
-// GetWithTransfersOk returns a tuple with the WithTransfers field value if set, nil otherwise
+// GetWithTransfersOk returns a tuple with the WithTransfers field value
 // and a boolean to check if the value has been set.
 func (o *QuotedRate) GetWithTransfersOk() (*bool, bool) {
-	if o == nil || IsNil(o.WithTransfers) {
+	if o == nil {
 		return nil, false
 	}
-	return o.WithTransfers, true
+	return &o.WithTransfers, true
 }
 
-// HasWithTransfers returns a boolean if a field has been set.
-func (o *QuotedRate) HasWithTransfers() bool {
-	if o != nil && !IsNil(o.WithTransfers) {
-		return true
-	}
-
-	return false
-}
-
-// SetWithTransfers gets a reference to the given bool and assigns it to the WithTransfers field.
+// SetWithTransfers sets field value
 func (o *QuotedRate) SetWithTransfers(v bool) {
-	o.WithTransfers = &v
+	o.WithTransfers = v
 }
 
-// GetRateRules returns the RateRules field value if set, zero value otherwise.
+// GetRateRules returns the RateRules field value
 func (o *QuotedRate) GetRateRules() []string {
-	if o == nil || IsNil(o.RateRules) {
+	if o == nil {
 		var ret []string
 		return ret
 	}
+
 	return o.RateRules
 }
 
-// GetRateRulesOk returns a tuple with the RateRules field value if set, nil otherwise
+// GetRateRulesOk returns a tuple with the RateRules field value
 // and a boolean to check if the value has been set.
 func (o *QuotedRate) GetRateRulesOk() ([]string, bool) {
-	if o == nil || IsNil(o.RateRules) {
+	if o == nil {
 		return nil, false
 	}
 	return o.RateRules, true
 }
 
-// HasRateRules returns a boolean if a field has been set.
-func (o *QuotedRate) HasRateRules() bool {
-	if o != nil && !IsNil(o.RateRules) {
-		return true
-	}
-
-	return false
-}
-
-// SetRateRules gets a reference to the given []string and assigns it to the RateRules field.
+// SetRateRules sets field value
 func (o *QuotedRate) SetRateRules(v []string) {
 	o.RateRules = v
 }
 
-// GetAmendabilityStatus returns the AmendabilityStatus field value if set, zero value otherwise.
+// GetAmendabilityStatus returns the AmendabilityStatus field value
 func (o *QuotedRate) GetAmendabilityStatus() string {
-	if o == nil || IsNil(o.AmendabilityStatus) {
+	if o == nil {
 		var ret string
 		return ret
 	}
-	return *o.AmendabilityStatus
+
+	return o.AmendabilityStatus
 }
 
-// GetAmendabilityStatusOk returns a tuple with the AmendabilityStatus field value if set, nil otherwise
+// GetAmendabilityStatusOk returns a tuple with the AmendabilityStatus field value
 // and a boolean to check if the value has been set.
 func (o *QuotedRate) GetAmendabilityStatusOk() (*string, bool) {
-	if o == nil || IsNil(o.AmendabilityStatus) {
+	if o == nil {
 		return nil, false
 	}
-	return o.AmendabilityStatus, true
+	return &o.AmendabilityStatus, true
 }
 
-// HasAmendabilityStatus returns a boolean if a field has been set.
-func (o *QuotedRate) HasAmendabilityStatus() bool {
-	if o != nil && !IsNil(o.AmendabilityStatus) {
-		return true
-	}
-
-	return false
-}
-
-// SetAmendabilityStatus gets a reference to the given string and assigns it to the AmendabilityStatus field.
+// SetAmendabilityStatus sets field value
 func (o *QuotedRate) SetAmendabilityStatus(v string) {
-	o.AmendabilityStatus = &v
+	o.AmendabilityStatus = v
 }
 
-// GetSurcharges returns the Surcharges field value if set, zero value otherwise.
+// GetSurcharges returns the Surcharges field value
 func (o *QuotedRate) GetSurcharges() []Surcharge {
-	if o == nil || IsNil(o.Surcharges) {
+	if o == nil {
 		var ret []Surcharge
 		return ret
 	}
+
 	return o.Surcharges
 }
 
-// GetSurchargesOk returns a tuple with the Surcharges field value if set, nil otherwise
+// GetSurchargesOk returns a tuple with the Surcharges field value
 // and a boolean to check if the value has been set.
 func (o *QuotedRate) GetSurchargesOk() ([]Surcharge, bool) {
-	if o == nil || IsNil(o.Surcharges) {
+	if o == nil {
 		return nil, false
 	}
 	return o.Surcharges, true
 }
 
-// HasSurcharges returns a boolean if a field has been set.
-func (o *QuotedRate) HasSurcharges() bool {
-	if o != nil && !IsNil(o.Surcharges) {
-		return true
-	}
-
-	return false
-}
-
-// SetSurcharges gets a reference to the given []Surcharge and assigns it to the Surcharges field.
+// SetSurcharges sets field value
 func (o *QuotedRate) SetSurcharges(v []Surcharge) {
 	o.Surcharges = v
 }
@@ -586,42 +477,19 @@ func (o QuotedRate) MarshalJSON() ([]byte, error) {
 
 func (o QuotedRate) ToMap() (map[string]interface{}, error) {
 	toSerialize := map[string]interface{}{}
-	if !IsNil(o.Rooms) {
-		toSerialize["rooms"] = o.Rooms
-	}
-	if !IsNil(o.Board) {
-		toSerialize["board"] = o.Board
-	}
-	if o.Taxes.IsSet() {
-		toSerialize["taxes"] = o.Taxes.Get()
-	}
+	toSerialize["rooms"] = o.Rooms
+	toSerialize["board"] = o.Board
 	if o.PriceIsBinding.IsSet() {
 		toSerialize["priceIsBinding"] = o.PriceIsBinding.Get()
 	}
-	if !IsNil(o.NightlyPrices) {
-		toSerialize["nightlyPrices"] = o.NightlyPrices
-	}
-	if !IsNil(o.RateTags) {
-		toSerialize["rateTags"] = o.RateTags
-	}
-	if !IsNil(o.Remarks) {
-		toSerialize["remarks"] = o.Remarks
-	}
-	if !IsNil(o.RateConditions) {
-		toSerialize["rateConditions"] = o.RateConditions
-	}
-	if !IsNil(o.WithTransfers) {
-		toSerialize["withTransfers"] = o.WithTransfers
-	}
-	if !IsNil(o.RateRules) {
-		toSerialize["rateRules"] = o.RateRules
-	}
-	if !IsNil(o.AmendabilityStatus) {
-		toSerialize["amendabilityStatus"] = o.AmendabilityStatus
-	}
-	if !IsNil(o.Surcharges) {
-		toSerialize["surcharges"] = o.Surcharges
-	}
+	toSerialize["nightlyPrices"] = o.NightlyPrices
+	toSerialize["rateTags"] = o.RateTags
+	toSerialize["remarks"] = o.Remarks
+	toSerialize["rateConditions"] = o.RateConditions
+	toSerialize["withTransfers"] = o.WithTransfers
+	toSerialize["rateRules"] = o.RateRules
+	toSerialize["amendabilityStatus"] = o.AmendabilityStatus
+	toSerialize["surcharges"] = o.Surcharges
 	if o.MinimumSellingPrice.IsSet() {
 		toSerialize["minimumSellingPrice"] = o.MinimumSellingPrice.Get()
 	}
@@ -632,6 +500,51 @@ func (o QuotedRate) ToMap() (map[string]interface{}, error) {
 		toSerialize["specialRequestOptions"] = o.SpecialRequestOptions
 	}
 	return toSerialize, nil
+}
+
+func (o *QuotedRate) UnmarshalJSON(data []byte) (err error) {
+	// This validates that all required properties are included in the JSON object
+	// by unmarshalling the object into a generic map with string keys and checking
+	// that every required field exists as a key in the generic map.
+	requiredProperties := []string{
+		"rooms",
+		"board",
+		"nightlyPrices",
+		"rateTags",
+		"remarks",
+		"rateConditions",
+		"withTransfers",
+		"rateRules",
+		"amendabilityStatus",
+		"surcharges",
+	}
+
+	allProperties := make(map[string]interface{})
+
+	err = json.Unmarshal(data, &allProperties)
+
+	if err != nil {
+		return err;
+	}
+
+	for _, requiredProperty := range(requiredProperties) {
+		if _, exists := allProperties[requiredProperty]; !exists {
+			return fmt.Errorf("no value given for required property %v", requiredProperty)
+		}
+	}
+
+	varQuotedRate := _QuotedRate{}
+
+	decoder := json.NewDecoder(bytes.NewReader(data))
+	err = decoder.Decode(&varQuotedRate)
+
+	if err != nil {
+		return err
+	}
+
+	*o = QuotedRate(varQuotedRate)
+
+	return err
 }
 
 type NullableQuotedRate struct {

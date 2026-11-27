@@ -13,6 +13,8 @@ package openroam
 
 import (
 	"encoding/json"
+	"bytes"
+	"fmt"
 )
 
 // checks if the OrderFulfillmentStatus type satisfies the MappedNullable interface at compile time
@@ -21,19 +23,24 @@ var _ MappedNullable = &OrderFulfillmentStatus{}
 // OrderFulfillmentStatus The current fulfillment state of an order's items.
 type OrderFulfillmentStatus struct {
 	// Order id.
-	Id *string `json:"id,omitempty"`
+	Id string `json:"id"`
 	// The order items with their fulfillment.
-	Items []OrderItem `json:"items,omitempty"`
+	Items []OrderItem `json:"items"`
 	// Increases with every fulfillment change; matches the             `order.fulfillment.updated` webhook.
-	FulfillmentVersion *int64 `json:"fulfillmentVersion,omitempty"`
+	FulfillmentVersion int64 `json:"fulfillmentVersion"`
 }
+
+type _OrderFulfillmentStatus OrderFulfillmentStatus
 
 // NewOrderFulfillmentStatus instantiates a new OrderFulfillmentStatus object
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewOrderFulfillmentStatus() *OrderFulfillmentStatus {
+func NewOrderFulfillmentStatus(id string, items []OrderItem, fulfillmentVersion int64) *OrderFulfillmentStatus {
 	this := OrderFulfillmentStatus{}
+	this.Id = id
+	this.Items = items
+	this.FulfillmentVersion = fulfillmentVersion
 	return &this
 }
 
@@ -45,100 +52,76 @@ func NewOrderFulfillmentStatusWithDefaults() *OrderFulfillmentStatus {
 	return &this
 }
 
-// GetId returns the Id field value if set, zero value otherwise.
+// GetId returns the Id field value
 func (o *OrderFulfillmentStatus) GetId() string {
-	if o == nil || IsNil(o.Id) {
+	if o == nil {
 		var ret string
 		return ret
 	}
-	return *o.Id
+
+	return o.Id
 }
 
-// GetIdOk returns a tuple with the Id field value if set, nil otherwise
+// GetIdOk returns a tuple with the Id field value
 // and a boolean to check if the value has been set.
 func (o *OrderFulfillmentStatus) GetIdOk() (*string, bool) {
-	if o == nil || IsNil(o.Id) {
+	if o == nil {
 		return nil, false
 	}
-	return o.Id, true
+	return &o.Id, true
 }
 
-// HasId returns a boolean if a field has been set.
-func (o *OrderFulfillmentStatus) HasId() bool {
-	if o != nil && !IsNil(o.Id) {
-		return true
-	}
-
-	return false
-}
-
-// SetId gets a reference to the given string and assigns it to the Id field.
+// SetId sets field value
 func (o *OrderFulfillmentStatus) SetId(v string) {
-	o.Id = &v
+	o.Id = v
 }
 
-// GetItems returns the Items field value if set, zero value otherwise.
+// GetItems returns the Items field value
 func (o *OrderFulfillmentStatus) GetItems() []OrderItem {
-	if o == nil || IsNil(o.Items) {
+	if o == nil {
 		var ret []OrderItem
 		return ret
 	}
+
 	return o.Items
 }
 
-// GetItemsOk returns a tuple with the Items field value if set, nil otherwise
+// GetItemsOk returns a tuple with the Items field value
 // and a boolean to check if the value has been set.
 func (o *OrderFulfillmentStatus) GetItemsOk() ([]OrderItem, bool) {
-	if o == nil || IsNil(o.Items) {
+	if o == nil {
 		return nil, false
 	}
 	return o.Items, true
 }
 
-// HasItems returns a boolean if a field has been set.
-func (o *OrderFulfillmentStatus) HasItems() bool {
-	if o != nil && !IsNil(o.Items) {
-		return true
-	}
-
-	return false
-}
-
-// SetItems gets a reference to the given []OrderItem and assigns it to the Items field.
+// SetItems sets field value
 func (o *OrderFulfillmentStatus) SetItems(v []OrderItem) {
 	o.Items = v
 }
 
-// GetFulfillmentVersion returns the FulfillmentVersion field value if set, zero value otherwise.
+// GetFulfillmentVersion returns the FulfillmentVersion field value
 func (o *OrderFulfillmentStatus) GetFulfillmentVersion() int64 {
-	if o == nil || IsNil(o.FulfillmentVersion) {
+	if o == nil {
 		var ret int64
 		return ret
 	}
-	return *o.FulfillmentVersion
+
+	return o.FulfillmentVersion
 }
 
-// GetFulfillmentVersionOk returns a tuple with the FulfillmentVersion field value if set, nil otherwise
+// GetFulfillmentVersionOk returns a tuple with the FulfillmentVersion field value
 // and a boolean to check if the value has been set.
 func (o *OrderFulfillmentStatus) GetFulfillmentVersionOk() (*int64, bool) {
-	if o == nil || IsNil(o.FulfillmentVersion) {
+	if o == nil {
 		return nil, false
 	}
-	return o.FulfillmentVersion, true
+	return &o.FulfillmentVersion, true
 }
 
-// HasFulfillmentVersion returns a boolean if a field has been set.
-func (o *OrderFulfillmentStatus) HasFulfillmentVersion() bool {
-	if o != nil && !IsNil(o.FulfillmentVersion) {
-		return true
-	}
-
-	return false
-}
-
-// SetFulfillmentVersion gets a reference to the given int64 and assigns it to the FulfillmentVersion field.
+// SetFulfillmentVersion sets field value
 func (o *OrderFulfillmentStatus) SetFulfillmentVersion(v int64) {
-	o.FulfillmentVersion = &v
+	o.FulfillmentVersion = v
 }
 
 func (o OrderFulfillmentStatus) MarshalJSON() ([]byte, error) {
@@ -151,16 +134,48 @@ func (o OrderFulfillmentStatus) MarshalJSON() ([]byte, error) {
 
 func (o OrderFulfillmentStatus) ToMap() (map[string]interface{}, error) {
 	toSerialize := map[string]interface{}{}
-	if !IsNil(o.Id) {
-		toSerialize["id"] = o.Id
-	}
-	if !IsNil(o.Items) {
-		toSerialize["items"] = o.Items
-	}
-	if !IsNil(o.FulfillmentVersion) {
-		toSerialize["fulfillmentVersion"] = o.FulfillmentVersion
-	}
+	toSerialize["id"] = o.Id
+	toSerialize["items"] = o.Items
+	toSerialize["fulfillmentVersion"] = o.FulfillmentVersion
 	return toSerialize, nil
+}
+
+func (o *OrderFulfillmentStatus) UnmarshalJSON(data []byte) (err error) {
+	// This validates that all required properties are included in the JSON object
+	// by unmarshalling the object into a generic map with string keys and checking
+	// that every required field exists as a key in the generic map.
+	requiredProperties := []string{
+		"id",
+		"items",
+		"fulfillmentVersion",
+	}
+
+	allProperties := make(map[string]interface{})
+
+	err = json.Unmarshal(data, &allProperties)
+
+	if err != nil {
+		return err;
+	}
+
+	for _, requiredProperty := range(requiredProperties) {
+		if _, exists := allProperties[requiredProperty]; !exists {
+			return fmt.Errorf("no value given for required property %v", requiredProperty)
+		}
+	}
+
+	varOrderFulfillmentStatus := _OrderFulfillmentStatus{}
+
+	decoder := json.NewDecoder(bytes.NewReader(data))
+	err = decoder.Decode(&varOrderFulfillmentStatus)
+
+	if err != nil {
+		return err
+	}
+
+	*o = OrderFulfillmentStatus(varOrderFulfillmentStatus)
+
+	return err
 }
 
 type NullableOrderFulfillmentStatus struct {

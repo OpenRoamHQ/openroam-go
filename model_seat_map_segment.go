@@ -26,8 +26,8 @@ type SeatMapSegment struct {
 	SegmentIndex int32 `json:"segmentIndex"`
 	CabinClass NullableString `json:"cabinClass,omitempty"`
 	Deck NullableInt32 `json:"deck,omitempty"`
-	Aisles []int32 `json:"aisles,omitempty"`
-	Rows []SeatMapRow `json:"rows,omitempty"`
+	Aisles []int32 `json:"aisles"`
+	Rows []SeatMapRow `json:"rows"`
 }
 
 type _SeatMapSegment SeatMapSegment
@@ -36,10 +36,12 @@ type _SeatMapSegment SeatMapSegment
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewSeatMapSegment(sliceIndex int32, segmentIndex int32) *SeatMapSegment {
+func NewSeatMapSegment(sliceIndex int32, segmentIndex int32, aisles []int32, rows []SeatMapRow) *SeatMapSegment {
 	this := SeatMapSegment{}
 	this.SliceIndex = sliceIndex
 	this.SegmentIndex = segmentIndex
+	this.Aisles = aisles
+	this.Rows = rows
 	return &this
 }
 
@@ -183,66 +185,50 @@ func (o *SeatMapSegment) UnsetDeck() {
 	o.Deck.Unset()
 }
 
-// GetAisles returns the Aisles field value if set, zero value otherwise.
+// GetAisles returns the Aisles field value
 func (o *SeatMapSegment) GetAisles() []int32 {
-	if o == nil || IsNil(o.Aisles) {
+	if o == nil {
 		var ret []int32
 		return ret
 	}
+
 	return o.Aisles
 }
 
-// GetAislesOk returns a tuple with the Aisles field value if set, nil otherwise
+// GetAislesOk returns a tuple with the Aisles field value
 // and a boolean to check if the value has been set.
 func (o *SeatMapSegment) GetAislesOk() ([]int32, bool) {
-	if o == nil || IsNil(o.Aisles) {
+	if o == nil {
 		return nil, false
 	}
 	return o.Aisles, true
 }
 
-// HasAisles returns a boolean if a field has been set.
-func (o *SeatMapSegment) HasAisles() bool {
-	if o != nil && !IsNil(o.Aisles) {
-		return true
-	}
-
-	return false
-}
-
-// SetAisles gets a reference to the given []int32 and assigns it to the Aisles field.
+// SetAisles sets field value
 func (o *SeatMapSegment) SetAisles(v []int32) {
 	o.Aisles = v
 }
 
-// GetRows returns the Rows field value if set, zero value otherwise.
+// GetRows returns the Rows field value
 func (o *SeatMapSegment) GetRows() []SeatMapRow {
-	if o == nil || IsNil(o.Rows) {
+	if o == nil {
 		var ret []SeatMapRow
 		return ret
 	}
+
 	return o.Rows
 }
 
-// GetRowsOk returns a tuple with the Rows field value if set, nil otherwise
+// GetRowsOk returns a tuple with the Rows field value
 // and a boolean to check if the value has been set.
 func (o *SeatMapSegment) GetRowsOk() ([]SeatMapRow, bool) {
-	if o == nil || IsNil(o.Rows) {
+	if o == nil {
 		return nil, false
 	}
 	return o.Rows, true
 }
 
-// HasRows returns a boolean if a field has been set.
-func (o *SeatMapSegment) HasRows() bool {
-	if o != nil && !IsNil(o.Rows) {
-		return true
-	}
-
-	return false
-}
-
-// SetRows gets a reference to the given []SeatMapRow and assigns it to the Rows field.
+// SetRows sets field value
 func (o *SeatMapSegment) SetRows(v []SeatMapRow) {
 	o.Rows = v
 }
@@ -265,12 +251,8 @@ func (o SeatMapSegment) ToMap() (map[string]interface{}, error) {
 	if o.Deck.IsSet() {
 		toSerialize["deck"] = o.Deck.Get()
 	}
-	if !IsNil(o.Aisles) {
-		toSerialize["aisles"] = o.Aisles
-	}
-	if !IsNil(o.Rows) {
-		toSerialize["rows"] = o.Rows
-	}
+	toSerialize["aisles"] = o.Aisles
+	toSerialize["rows"] = o.Rows
 	return toSerialize, nil
 }
 
@@ -281,6 +263,8 @@ func (o *SeatMapSegment) UnmarshalJSON(data []byte) (err error) {
 	requiredProperties := []string{
 		"sliceIndex",
 		"segmentIndex",
+		"aisles",
+		"rows",
 	}
 
 	allProperties := make(map[string]interface{})
@@ -300,7 +284,6 @@ func (o *SeatMapSegment) UnmarshalJSON(data []byte) (err error) {
 	varSeatMapSegment := _SeatMapSegment{}
 
 	decoder := json.NewDecoder(bytes.NewReader(data))
-	decoder.DisallowUnknownFields()
 	err = decoder.Decode(&varSeatMapSegment)
 
 	if err != nil {

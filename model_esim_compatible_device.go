@@ -13,6 +13,8 @@ package openroam
 
 import (
 	"encoding/json"
+	"bytes"
+	"fmt"
 )
 
 // checks if the EsimCompatibleDevice type satisfies the MappedNullable interface at compile time
@@ -20,20 +22,24 @@ var _ MappedNullable = &EsimCompatibleDevice{}
 
 // EsimCompatibleDevice struct for EsimCompatibleDevice
 type EsimCompatibleDevice struct {
-	Brand *string `json:"brand,omitempty"`
-	Model *string `json:"model,omitempty"`
+	Brand string `json:"brand"`
+	Model string `json:"model"`
 	Os NullableString `json:"os,omitempty"`
 	DeviceType NullableString `json:"deviceType,omitempty"`
 	Name NullableString `json:"name,omitempty"`
 	Notes NullableString `json:"notes,omitempty"`
 }
 
+type _EsimCompatibleDevice EsimCompatibleDevice
+
 // NewEsimCompatibleDevice instantiates a new EsimCompatibleDevice object
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewEsimCompatibleDevice() *EsimCompatibleDevice {
+func NewEsimCompatibleDevice(brand string, model string) *EsimCompatibleDevice {
 	this := EsimCompatibleDevice{}
+	this.Brand = brand
+	this.Model = model
 	return &this
 }
 
@@ -45,68 +51,52 @@ func NewEsimCompatibleDeviceWithDefaults() *EsimCompatibleDevice {
 	return &this
 }
 
-// GetBrand returns the Brand field value if set, zero value otherwise.
+// GetBrand returns the Brand field value
 func (o *EsimCompatibleDevice) GetBrand() string {
-	if o == nil || IsNil(o.Brand) {
+	if o == nil {
 		var ret string
 		return ret
 	}
-	return *o.Brand
+
+	return o.Brand
 }
 
-// GetBrandOk returns a tuple with the Brand field value if set, nil otherwise
+// GetBrandOk returns a tuple with the Brand field value
 // and a boolean to check if the value has been set.
 func (o *EsimCompatibleDevice) GetBrandOk() (*string, bool) {
-	if o == nil || IsNil(o.Brand) {
+	if o == nil {
 		return nil, false
 	}
-	return o.Brand, true
+	return &o.Brand, true
 }
 
-// HasBrand returns a boolean if a field has been set.
-func (o *EsimCompatibleDevice) HasBrand() bool {
-	if o != nil && !IsNil(o.Brand) {
-		return true
-	}
-
-	return false
-}
-
-// SetBrand gets a reference to the given string and assigns it to the Brand field.
+// SetBrand sets field value
 func (o *EsimCompatibleDevice) SetBrand(v string) {
-	o.Brand = &v
+	o.Brand = v
 }
 
-// GetModel returns the Model field value if set, zero value otherwise.
+// GetModel returns the Model field value
 func (o *EsimCompatibleDevice) GetModel() string {
-	if o == nil || IsNil(o.Model) {
+	if o == nil {
 		var ret string
 		return ret
 	}
-	return *o.Model
+
+	return o.Model
 }
 
-// GetModelOk returns a tuple with the Model field value if set, nil otherwise
+// GetModelOk returns a tuple with the Model field value
 // and a boolean to check if the value has been set.
 func (o *EsimCompatibleDevice) GetModelOk() (*string, bool) {
-	if o == nil || IsNil(o.Model) {
+	if o == nil {
 		return nil, false
 	}
-	return o.Model, true
+	return &o.Model, true
 }
 
-// HasModel returns a boolean if a field has been set.
-func (o *EsimCompatibleDevice) HasModel() bool {
-	if o != nil && !IsNil(o.Model) {
-		return true
-	}
-
-	return false
-}
-
-// SetModel gets a reference to the given string and assigns it to the Model field.
+// SetModel sets field value
 func (o *EsimCompatibleDevice) SetModel(v string) {
-	o.Model = &v
+	o.Model = v
 }
 
 // GetOs returns the Os field value if set, zero value otherwise (both if not set or set to explicit null).
@@ -287,12 +277,8 @@ func (o EsimCompatibleDevice) MarshalJSON() ([]byte, error) {
 
 func (o EsimCompatibleDevice) ToMap() (map[string]interface{}, error) {
 	toSerialize := map[string]interface{}{}
-	if !IsNil(o.Brand) {
-		toSerialize["brand"] = o.Brand
-	}
-	if !IsNil(o.Model) {
-		toSerialize["model"] = o.Model
-	}
+	toSerialize["brand"] = o.Brand
+	toSerialize["model"] = o.Model
 	if o.Os.IsSet() {
 		toSerialize["os"] = o.Os.Get()
 	}
@@ -306,6 +292,43 @@ func (o EsimCompatibleDevice) ToMap() (map[string]interface{}, error) {
 		toSerialize["notes"] = o.Notes.Get()
 	}
 	return toSerialize, nil
+}
+
+func (o *EsimCompatibleDevice) UnmarshalJSON(data []byte) (err error) {
+	// This validates that all required properties are included in the JSON object
+	// by unmarshalling the object into a generic map with string keys and checking
+	// that every required field exists as a key in the generic map.
+	requiredProperties := []string{
+		"brand",
+		"model",
+	}
+
+	allProperties := make(map[string]interface{})
+
+	err = json.Unmarshal(data, &allProperties)
+
+	if err != nil {
+		return err;
+	}
+
+	for _, requiredProperty := range(requiredProperties) {
+		if _, exists := allProperties[requiredProperty]; !exists {
+			return fmt.Errorf("no value given for required property %v", requiredProperty)
+		}
+	}
+
+	varEsimCompatibleDevice := _EsimCompatibleDevice{}
+
+	decoder := json.NewDecoder(bytes.NewReader(data))
+	err = decoder.Decode(&varEsimCompatibleDevice)
+
+	if err != nil {
+		return err
+	}
+
+	*o = EsimCompatibleDevice(varEsimCompatibleDevice)
+
+	return err
 }
 
 type NullableEsimCompatibleDevice struct {

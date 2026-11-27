@@ -13,6 +13,8 @@ package openroam
 
 import (
 	"encoding/json"
+	"bytes"
+	"fmt"
 )
 
 // checks if the HotelFulfillmentResult type satisfies the MappedNullable interface at compile time
@@ -21,15 +23,18 @@ var _ MappedNullable = &HotelFulfillmentResult{}
 // HotelFulfillmentResult What a fulfilled hotel order item booked. A hotel stay has no monetary value, so there is no `deliveredValue`; the booking facts sit under `details`. Order reads and the `order.fulfillment.updated` webhook carry the same result.
 type HotelFulfillmentResult struct {
 	// The booking's status, confirmation number, amendable composition and current stay.
-	Details *HotelFulfillmentDetails `json:"details,omitempty"`
+	Details HotelFulfillmentDetails `json:"details"`
 }
+
+type _HotelFulfillmentResult HotelFulfillmentResult
 
 // NewHotelFulfillmentResult instantiates a new HotelFulfillmentResult object
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewHotelFulfillmentResult() *HotelFulfillmentResult {
+func NewHotelFulfillmentResult(details HotelFulfillmentDetails) *HotelFulfillmentResult {
 	this := HotelFulfillmentResult{}
+	this.Details = details
 	return &this
 }
 
@@ -41,36 +46,28 @@ func NewHotelFulfillmentResultWithDefaults() *HotelFulfillmentResult {
 	return &this
 }
 
-// GetDetails returns the Details field value if set, zero value otherwise.
+// GetDetails returns the Details field value
 func (o *HotelFulfillmentResult) GetDetails() HotelFulfillmentDetails {
-	if o == nil || IsNil(o.Details) {
+	if o == nil {
 		var ret HotelFulfillmentDetails
 		return ret
 	}
-	return *o.Details
+
+	return o.Details
 }
 
-// GetDetailsOk returns a tuple with the Details field value if set, nil otherwise
+// GetDetailsOk returns a tuple with the Details field value
 // and a boolean to check if the value has been set.
 func (o *HotelFulfillmentResult) GetDetailsOk() (*HotelFulfillmentDetails, bool) {
-	if o == nil || IsNil(o.Details) {
+	if o == nil {
 		return nil, false
 	}
-	return o.Details, true
+	return &o.Details, true
 }
 
-// HasDetails returns a boolean if a field has been set.
-func (o *HotelFulfillmentResult) HasDetails() bool {
-	if o != nil && !IsNil(o.Details) {
-		return true
-	}
-
-	return false
-}
-
-// SetDetails gets a reference to the given HotelFulfillmentDetails and assigns it to the Details field.
+// SetDetails sets field value
 func (o *HotelFulfillmentResult) SetDetails(v HotelFulfillmentDetails) {
-	o.Details = &v
+	o.Details = v
 }
 
 func (o HotelFulfillmentResult) MarshalJSON() ([]byte, error) {
@@ -83,10 +80,44 @@ func (o HotelFulfillmentResult) MarshalJSON() ([]byte, error) {
 
 func (o HotelFulfillmentResult) ToMap() (map[string]interface{}, error) {
 	toSerialize := map[string]interface{}{}
-	if !IsNil(o.Details) {
-		toSerialize["details"] = o.Details
-	}
+	toSerialize["details"] = o.Details
 	return toSerialize, nil
+}
+
+func (o *HotelFulfillmentResult) UnmarshalJSON(data []byte) (err error) {
+	// This validates that all required properties are included in the JSON object
+	// by unmarshalling the object into a generic map with string keys and checking
+	// that every required field exists as a key in the generic map.
+	requiredProperties := []string{
+		"details",
+	}
+
+	allProperties := make(map[string]interface{})
+
+	err = json.Unmarshal(data, &allProperties)
+
+	if err != nil {
+		return err;
+	}
+
+	for _, requiredProperty := range(requiredProperties) {
+		if _, exists := allProperties[requiredProperty]; !exists {
+			return fmt.Errorf("no value given for required property %v", requiredProperty)
+		}
+	}
+
+	varHotelFulfillmentResult := _HotelFulfillmentResult{}
+
+	decoder := json.NewDecoder(bytes.NewReader(data))
+	err = decoder.Decode(&varHotelFulfillmentResult)
+
+	if err != nil {
+		return err
+	}
+
+	*o = HotelFulfillmentResult(varHotelFulfillmentResult)
+
+	return err
 }
 
 type NullableHotelFulfillmentResult struct {

@@ -13,6 +13,8 @@ package openroam
 
 import (
 	"encoding/json"
+	"bytes"
+	"fmt"
 )
 
 // checks if the AirtimeRedemption type satisfies the MappedNullable interface at compile time
@@ -20,17 +22,20 @@ var _ MappedNullable = &AirtimeRedemption{}
 
 // AirtimeRedemption `type` is `directTopUp` (automatic recharge) or `pin` (customer activation). A PIN top-up carries the issued `pin` as a string and the customer `instructions`; either is null when it was not received, and both are null for a direct top-up.
 type AirtimeRedemption struct {
-	Type *string `json:"type,omitempty"`
+	Type string `json:"type"`
 	Pin NullableString `json:"pin,omitempty"`
 	Instructions NullableString `json:"instructions,omitempty"`
 }
+
+type _AirtimeRedemption AirtimeRedemption
 
 // NewAirtimeRedemption instantiates a new AirtimeRedemption object
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewAirtimeRedemption() *AirtimeRedemption {
+func NewAirtimeRedemption(type_ string) *AirtimeRedemption {
 	this := AirtimeRedemption{}
+	this.Type = type_
 	return &this
 }
 
@@ -42,36 +47,28 @@ func NewAirtimeRedemptionWithDefaults() *AirtimeRedemption {
 	return &this
 }
 
-// GetType returns the Type field value if set, zero value otherwise.
+// GetType returns the Type field value
 func (o *AirtimeRedemption) GetType() string {
-	if o == nil || IsNil(o.Type) {
+	if o == nil {
 		var ret string
 		return ret
 	}
-	return *o.Type
+
+	return o.Type
 }
 
-// GetTypeOk returns a tuple with the Type field value if set, nil otherwise
+// GetTypeOk returns a tuple with the Type field value
 // and a boolean to check if the value has been set.
 func (o *AirtimeRedemption) GetTypeOk() (*string, bool) {
-	if o == nil || IsNil(o.Type) {
+	if o == nil {
 		return nil, false
 	}
-	return o.Type, true
+	return &o.Type, true
 }
 
-// HasType returns a boolean if a field has been set.
-func (o *AirtimeRedemption) HasType() bool {
-	if o != nil && !IsNil(o.Type) {
-		return true
-	}
-
-	return false
-}
-
-// SetType gets a reference to the given string and assigns it to the Type field.
+// SetType sets field value
 func (o *AirtimeRedemption) SetType(v string) {
-	o.Type = &v
+	o.Type = v
 }
 
 // GetPin returns the Pin field value if set, zero value otherwise (both if not set or set to explicit null).
@@ -168,9 +165,7 @@ func (o AirtimeRedemption) MarshalJSON() ([]byte, error) {
 
 func (o AirtimeRedemption) ToMap() (map[string]interface{}, error) {
 	toSerialize := map[string]interface{}{}
-	if !IsNil(o.Type) {
-		toSerialize["type"] = o.Type
-	}
+	toSerialize["type"] = o.Type
 	if o.Pin.IsSet() {
 		toSerialize["pin"] = o.Pin.Get()
 	}
@@ -178,6 +173,42 @@ func (o AirtimeRedemption) ToMap() (map[string]interface{}, error) {
 		toSerialize["instructions"] = o.Instructions.Get()
 	}
 	return toSerialize, nil
+}
+
+func (o *AirtimeRedemption) UnmarshalJSON(data []byte) (err error) {
+	// This validates that all required properties are included in the JSON object
+	// by unmarshalling the object into a generic map with string keys and checking
+	// that every required field exists as a key in the generic map.
+	requiredProperties := []string{
+		"type",
+	}
+
+	allProperties := make(map[string]interface{})
+
+	err = json.Unmarshal(data, &allProperties)
+
+	if err != nil {
+		return err;
+	}
+
+	for _, requiredProperty := range(requiredProperties) {
+		if _, exists := allProperties[requiredProperty]; !exists {
+			return fmt.Errorf("no value given for required property %v", requiredProperty)
+		}
+	}
+
+	varAirtimeRedemption := _AirtimeRedemption{}
+
+	decoder := json.NewDecoder(bytes.NewReader(data))
+	err = decoder.Decode(&varAirtimeRedemption)
+
+	if err != nil {
+		return err
+	}
+
+	*o = AirtimeRedemption(varAirtimeRedemption)
+
+	return err
 }
 
 type NullableAirtimeRedemption struct {

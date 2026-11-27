@@ -14,6 +14,8 @@ package openroam
 import (
 	"encoding/json"
 	"time"
+	"bytes"
+	"fmt"
 )
 
 // checks if the WalletTransfer type satisfies the MappedNullable interface at compile time
@@ -22,27 +24,35 @@ var _ MappedNullable = &WalletTransfer{}
 // WalletTransfer A completed transfer between two wallets.
 type WalletTransfer struct {
 	// Transfer id.
-	TransferId *string `json:"transferId,omitempty"`
+	TransferId string `json:"transferId"`
 	// The amount taken from the source wallet.
-	SentAmount *float32 `json:"sentAmount,omitempty"`
+	SentAmount float32 `json:"sentAmount"`
 	// The source wallet's currency.
-	SentCurrency *string `json:"sentCurrency,omitempty"`
+	SentCurrency string `json:"sentCurrency"`
 	// The amount added to the destination wallet.
-	ReceivedAmount *float32 `json:"receivedAmount,omitempty"`
+	ReceivedAmount float32 `json:"receivedAmount"`
 	// The destination wallet's currency.
-	ReceivedCurrency *string `json:"receivedCurrency,omitempty"`
+	ReceivedCurrency string `json:"receivedCurrency"`
 	// Destination currency units per source currency unit.
 	ConversionRate NullableFloat32 `json:"conversionRate,omitempty"`
 	// When the transfer was made (UTC).
-	TransferDate *time.Time `json:"transferDate,omitempty"`
+	TransferDate time.Time `json:"transferDate"`
 }
+
+type _WalletTransfer WalletTransfer
 
 // NewWalletTransfer instantiates a new WalletTransfer object
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewWalletTransfer() *WalletTransfer {
+func NewWalletTransfer(transferId string, sentAmount float32, sentCurrency string, receivedAmount float32, receivedCurrency string, transferDate time.Time) *WalletTransfer {
 	this := WalletTransfer{}
+	this.TransferId = transferId
+	this.SentAmount = sentAmount
+	this.SentCurrency = sentCurrency
+	this.ReceivedAmount = receivedAmount
+	this.ReceivedCurrency = receivedCurrency
+	this.TransferDate = transferDate
 	return &this
 }
 
@@ -54,164 +64,124 @@ func NewWalletTransferWithDefaults() *WalletTransfer {
 	return &this
 }
 
-// GetTransferId returns the TransferId field value if set, zero value otherwise.
+// GetTransferId returns the TransferId field value
 func (o *WalletTransfer) GetTransferId() string {
-	if o == nil || IsNil(o.TransferId) {
+	if o == nil {
 		var ret string
 		return ret
 	}
-	return *o.TransferId
+
+	return o.TransferId
 }
 
-// GetTransferIdOk returns a tuple with the TransferId field value if set, nil otherwise
+// GetTransferIdOk returns a tuple with the TransferId field value
 // and a boolean to check if the value has been set.
 func (o *WalletTransfer) GetTransferIdOk() (*string, bool) {
-	if o == nil || IsNil(o.TransferId) {
+	if o == nil {
 		return nil, false
 	}
-	return o.TransferId, true
+	return &o.TransferId, true
 }
 
-// HasTransferId returns a boolean if a field has been set.
-func (o *WalletTransfer) HasTransferId() bool {
-	if o != nil && !IsNil(o.TransferId) {
-		return true
-	}
-
-	return false
-}
-
-// SetTransferId gets a reference to the given string and assigns it to the TransferId field.
+// SetTransferId sets field value
 func (o *WalletTransfer) SetTransferId(v string) {
-	o.TransferId = &v
+	o.TransferId = v
 }
 
-// GetSentAmount returns the SentAmount field value if set, zero value otherwise.
+// GetSentAmount returns the SentAmount field value
 func (o *WalletTransfer) GetSentAmount() float32 {
-	if o == nil || IsNil(o.SentAmount) {
+	if o == nil {
 		var ret float32
 		return ret
 	}
-	return *o.SentAmount
+
+	return o.SentAmount
 }
 
-// GetSentAmountOk returns a tuple with the SentAmount field value if set, nil otherwise
+// GetSentAmountOk returns a tuple with the SentAmount field value
 // and a boolean to check if the value has been set.
 func (o *WalletTransfer) GetSentAmountOk() (*float32, bool) {
-	if o == nil || IsNil(o.SentAmount) {
+	if o == nil {
 		return nil, false
 	}
-	return o.SentAmount, true
+	return &o.SentAmount, true
 }
 
-// HasSentAmount returns a boolean if a field has been set.
-func (o *WalletTransfer) HasSentAmount() bool {
-	if o != nil && !IsNil(o.SentAmount) {
-		return true
-	}
-
-	return false
-}
-
-// SetSentAmount gets a reference to the given float32 and assigns it to the SentAmount field.
+// SetSentAmount sets field value
 func (o *WalletTransfer) SetSentAmount(v float32) {
-	o.SentAmount = &v
+	o.SentAmount = v
 }
 
-// GetSentCurrency returns the SentCurrency field value if set, zero value otherwise.
+// GetSentCurrency returns the SentCurrency field value
 func (o *WalletTransfer) GetSentCurrency() string {
-	if o == nil || IsNil(o.SentCurrency) {
+	if o == nil {
 		var ret string
 		return ret
 	}
-	return *o.SentCurrency
+
+	return o.SentCurrency
 }
 
-// GetSentCurrencyOk returns a tuple with the SentCurrency field value if set, nil otherwise
+// GetSentCurrencyOk returns a tuple with the SentCurrency field value
 // and a boolean to check if the value has been set.
 func (o *WalletTransfer) GetSentCurrencyOk() (*string, bool) {
-	if o == nil || IsNil(o.SentCurrency) {
+	if o == nil {
 		return nil, false
 	}
-	return o.SentCurrency, true
+	return &o.SentCurrency, true
 }
 
-// HasSentCurrency returns a boolean if a field has been set.
-func (o *WalletTransfer) HasSentCurrency() bool {
-	if o != nil && !IsNil(o.SentCurrency) {
-		return true
-	}
-
-	return false
-}
-
-// SetSentCurrency gets a reference to the given string and assigns it to the SentCurrency field.
+// SetSentCurrency sets field value
 func (o *WalletTransfer) SetSentCurrency(v string) {
-	o.SentCurrency = &v
+	o.SentCurrency = v
 }
 
-// GetReceivedAmount returns the ReceivedAmount field value if set, zero value otherwise.
+// GetReceivedAmount returns the ReceivedAmount field value
 func (o *WalletTransfer) GetReceivedAmount() float32 {
-	if o == nil || IsNil(o.ReceivedAmount) {
+	if o == nil {
 		var ret float32
 		return ret
 	}
-	return *o.ReceivedAmount
+
+	return o.ReceivedAmount
 }
 
-// GetReceivedAmountOk returns a tuple with the ReceivedAmount field value if set, nil otherwise
+// GetReceivedAmountOk returns a tuple with the ReceivedAmount field value
 // and a boolean to check if the value has been set.
 func (o *WalletTransfer) GetReceivedAmountOk() (*float32, bool) {
-	if o == nil || IsNil(o.ReceivedAmount) {
+	if o == nil {
 		return nil, false
 	}
-	return o.ReceivedAmount, true
+	return &o.ReceivedAmount, true
 }
 
-// HasReceivedAmount returns a boolean if a field has been set.
-func (o *WalletTransfer) HasReceivedAmount() bool {
-	if o != nil && !IsNil(o.ReceivedAmount) {
-		return true
-	}
-
-	return false
-}
-
-// SetReceivedAmount gets a reference to the given float32 and assigns it to the ReceivedAmount field.
+// SetReceivedAmount sets field value
 func (o *WalletTransfer) SetReceivedAmount(v float32) {
-	o.ReceivedAmount = &v
+	o.ReceivedAmount = v
 }
 
-// GetReceivedCurrency returns the ReceivedCurrency field value if set, zero value otherwise.
+// GetReceivedCurrency returns the ReceivedCurrency field value
 func (o *WalletTransfer) GetReceivedCurrency() string {
-	if o == nil || IsNil(o.ReceivedCurrency) {
+	if o == nil {
 		var ret string
 		return ret
 	}
-	return *o.ReceivedCurrency
+
+	return o.ReceivedCurrency
 }
 
-// GetReceivedCurrencyOk returns a tuple with the ReceivedCurrency field value if set, nil otherwise
+// GetReceivedCurrencyOk returns a tuple with the ReceivedCurrency field value
 // and a boolean to check if the value has been set.
 func (o *WalletTransfer) GetReceivedCurrencyOk() (*string, bool) {
-	if o == nil || IsNil(o.ReceivedCurrency) {
+	if o == nil {
 		return nil, false
 	}
-	return o.ReceivedCurrency, true
+	return &o.ReceivedCurrency, true
 }
 
-// HasReceivedCurrency returns a boolean if a field has been set.
-func (o *WalletTransfer) HasReceivedCurrency() bool {
-	if o != nil && !IsNil(o.ReceivedCurrency) {
-		return true
-	}
-
-	return false
-}
-
-// SetReceivedCurrency gets a reference to the given string and assigns it to the ReceivedCurrency field.
+// SetReceivedCurrency sets field value
 func (o *WalletTransfer) SetReceivedCurrency(v string) {
-	o.ReceivedCurrency = &v
+	o.ReceivedCurrency = v
 }
 
 // GetConversionRate returns the ConversionRate field value if set, zero value otherwise (both if not set or set to explicit null).
@@ -256,36 +226,28 @@ func (o *WalletTransfer) UnsetConversionRate() {
 	o.ConversionRate.Unset()
 }
 
-// GetTransferDate returns the TransferDate field value if set, zero value otherwise.
+// GetTransferDate returns the TransferDate field value
 func (o *WalletTransfer) GetTransferDate() time.Time {
-	if o == nil || IsNil(o.TransferDate) {
+	if o == nil {
 		var ret time.Time
 		return ret
 	}
-	return *o.TransferDate
+
+	return o.TransferDate
 }
 
-// GetTransferDateOk returns a tuple with the TransferDate field value if set, nil otherwise
+// GetTransferDateOk returns a tuple with the TransferDate field value
 // and a boolean to check if the value has been set.
 func (o *WalletTransfer) GetTransferDateOk() (*time.Time, bool) {
-	if o == nil || IsNil(o.TransferDate) {
+	if o == nil {
 		return nil, false
 	}
-	return o.TransferDate, true
+	return &o.TransferDate, true
 }
 
-// HasTransferDate returns a boolean if a field has been set.
-func (o *WalletTransfer) HasTransferDate() bool {
-	if o != nil && !IsNil(o.TransferDate) {
-		return true
-	}
-
-	return false
-}
-
-// SetTransferDate gets a reference to the given time.Time and assigns it to the TransferDate field.
+// SetTransferDate sets field value
 func (o *WalletTransfer) SetTransferDate(v time.Time) {
-	o.TransferDate = &v
+	o.TransferDate = v
 }
 
 func (o WalletTransfer) MarshalJSON() ([]byte, error) {
@@ -298,28 +260,57 @@ func (o WalletTransfer) MarshalJSON() ([]byte, error) {
 
 func (o WalletTransfer) ToMap() (map[string]interface{}, error) {
 	toSerialize := map[string]interface{}{}
-	if !IsNil(o.TransferId) {
-		toSerialize["transferId"] = o.TransferId
-	}
-	if !IsNil(o.SentAmount) {
-		toSerialize["sentAmount"] = o.SentAmount
-	}
-	if !IsNil(o.SentCurrency) {
-		toSerialize["sentCurrency"] = o.SentCurrency
-	}
-	if !IsNil(o.ReceivedAmount) {
-		toSerialize["receivedAmount"] = o.ReceivedAmount
-	}
-	if !IsNil(o.ReceivedCurrency) {
-		toSerialize["receivedCurrency"] = o.ReceivedCurrency
-	}
+	toSerialize["transferId"] = o.TransferId
+	toSerialize["sentAmount"] = o.SentAmount
+	toSerialize["sentCurrency"] = o.SentCurrency
+	toSerialize["receivedAmount"] = o.ReceivedAmount
+	toSerialize["receivedCurrency"] = o.ReceivedCurrency
 	if o.ConversionRate.IsSet() {
 		toSerialize["conversionRate"] = o.ConversionRate.Get()
 	}
-	if !IsNil(o.TransferDate) {
-		toSerialize["transferDate"] = o.TransferDate
-	}
+	toSerialize["transferDate"] = o.TransferDate
 	return toSerialize, nil
+}
+
+func (o *WalletTransfer) UnmarshalJSON(data []byte) (err error) {
+	// This validates that all required properties are included in the JSON object
+	// by unmarshalling the object into a generic map with string keys and checking
+	// that every required field exists as a key in the generic map.
+	requiredProperties := []string{
+		"transferId",
+		"sentAmount",
+		"sentCurrency",
+		"receivedAmount",
+		"receivedCurrency",
+		"transferDate",
+	}
+
+	allProperties := make(map[string]interface{})
+
+	err = json.Unmarshal(data, &allProperties)
+
+	if err != nil {
+		return err;
+	}
+
+	for _, requiredProperty := range(requiredProperties) {
+		if _, exists := allProperties[requiredProperty]; !exists {
+			return fmt.Errorf("no value given for required property %v", requiredProperty)
+		}
+	}
+
+	varWalletTransfer := _WalletTransfer{}
+
+	decoder := json.NewDecoder(bytes.NewReader(data))
+	err = decoder.Decode(&varWalletTransfer)
+
+	if err != nil {
+		return err
+	}
+
+	*o = WalletTransfer(varWalletTransfer)
+
+	return err
 }
 
 type NullableWalletTransfer struct {

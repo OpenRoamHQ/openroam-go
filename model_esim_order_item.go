@@ -24,22 +24,26 @@ var _ MappedNullable = &EsimOrderItem{}
 // EsimOrderItem struct for EsimOrderItem
 type EsimOrderItem struct {
 	// Order item id, used by the order-item endpoints. It is not the offer's `publicId`.
-	Id *string `json:"id,omitempty"`
+	Id string `json:"id"`
 	// The order the item belongs to.
-	OrderId *string `json:"orderId,omitempty"`
+	OrderId string `json:"orderId"`
 	ProductType string `json:"productType"`
 	// The price paid for the item at purchase, in the order's currency.
-	Price *Money `json:"price,omitempty"`
-	PurchasedProduct *EsimPurchasedProduct `json:"purchasedProduct,omitempty"`
-	Fulfillment *EsimFulfillment `json:"fulfillment,omitempty"`
+	Price Money `json:"price"`
+	// The taxes inside `price`, as stated when the item was bought.
+	Taxes TaxSummary `json:"taxes"`
+	PurchasedProduct EsimPurchasedProduct `json:"purchasedProduct"`
+	Fulfillment EsimFulfillment `json:"fulfillment"`
 	// Whether the item can be amended or cancelled now.
-	Actions *OrderItemActions `json:"actions,omitempty"`
+	Actions OrderItemActions `json:"actions"`
 	// When the item was created (UTC).
-	CreatedAt *time.Time `json:"createdAt,omitempty"`
-	// What has been paid for the item so far: `price` plus completed amendment             charges, less completed amendment credits.
-	EffectivePaidAmount *Money `json:"effectivePaidAmount,omitempty"`
+	CreatedAt time.Time `json:"createdAt"`
+	// What you have paid for the item, net of every amount returned: `price` plus             completed amendment charges, less completed amendment credits and less the completed `refund`.
+	EffectivePaidAmount Money `json:"effectivePaidAmount"`
 	// The recorded refund, or `null` when no refund has been started.
 	Refund NullableOrderItemRefund `json:"refund,omitempty"`
+	// On an order placed from a checkout of your site that takes payment on your own page, what the traveller             paid you for this unit, in the checkout's currency: the checkout item's `sellingPrice`. Refund this part to             the traveller when the item is refunded. `null` on every other order.
+	SellingPrice NullableMoney `json:"sellingPrice,omitempty"`
 }
 
 type _EsimOrderItem EsimOrderItem
@@ -48,9 +52,18 @@ type _EsimOrderItem EsimOrderItem
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewEsimOrderItem(productType string) *EsimOrderItem {
+func NewEsimOrderItem(id string, orderId string, productType string, price Money, taxes TaxSummary, purchasedProduct EsimPurchasedProduct, fulfillment EsimFulfillment, actions OrderItemActions, createdAt time.Time, effectivePaidAmount Money) *EsimOrderItem {
 	this := EsimOrderItem{}
+	this.Id = id
+	this.OrderId = orderId
 	this.ProductType = productType
+	this.Price = price
+	this.Taxes = taxes
+	this.PurchasedProduct = purchasedProduct
+	this.Fulfillment = fulfillment
+	this.Actions = actions
+	this.CreatedAt = createdAt
+	this.EffectivePaidAmount = effectivePaidAmount
 	return &this
 }
 
@@ -62,68 +75,52 @@ func NewEsimOrderItemWithDefaults() *EsimOrderItem {
 	return &this
 }
 
-// GetId returns the Id field value if set, zero value otherwise.
+// GetId returns the Id field value
 func (o *EsimOrderItem) GetId() string {
-	if o == nil || IsNil(o.Id) {
+	if o == nil {
 		var ret string
 		return ret
 	}
-	return *o.Id
+
+	return o.Id
 }
 
-// GetIdOk returns a tuple with the Id field value if set, nil otherwise
+// GetIdOk returns a tuple with the Id field value
 // and a boolean to check if the value has been set.
 func (o *EsimOrderItem) GetIdOk() (*string, bool) {
-	if o == nil || IsNil(o.Id) {
+	if o == nil {
 		return nil, false
 	}
-	return o.Id, true
+	return &o.Id, true
 }
 
-// HasId returns a boolean if a field has been set.
-func (o *EsimOrderItem) HasId() bool {
-	if o != nil && !IsNil(o.Id) {
-		return true
-	}
-
-	return false
-}
-
-// SetId gets a reference to the given string and assigns it to the Id field.
+// SetId sets field value
 func (o *EsimOrderItem) SetId(v string) {
-	o.Id = &v
+	o.Id = v
 }
 
-// GetOrderId returns the OrderId field value if set, zero value otherwise.
+// GetOrderId returns the OrderId field value
 func (o *EsimOrderItem) GetOrderId() string {
-	if o == nil || IsNil(o.OrderId) {
+	if o == nil {
 		var ret string
 		return ret
 	}
-	return *o.OrderId
+
+	return o.OrderId
 }
 
-// GetOrderIdOk returns a tuple with the OrderId field value if set, nil otherwise
+// GetOrderIdOk returns a tuple with the OrderId field value
 // and a boolean to check if the value has been set.
 func (o *EsimOrderItem) GetOrderIdOk() (*string, bool) {
-	if o == nil || IsNil(o.OrderId) {
+	if o == nil {
 		return nil, false
 	}
-	return o.OrderId, true
+	return &o.OrderId, true
 }
 
-// HasOrderId returns a boolean if a field has been set.
-func (o *EsimOrderItem) HasOrderId() bool {
-	if o != nil && !IsNil(o.OrderId) {
-		return true
-	}
-
-	return false
-}
-
-// SetOrderId gets a reference to the given string and assigns it to the OrderId field.
+// SetOrderId sets field value
 func (o *EsimOrderItem) SetOrderId(v string) {
-	o.OrderId = &v
+	o.OrderId = v
 }
 
 // GetProductType returns the ProductType field value
@@ -150,196 +147,172 @@ func (o *EsimOrderItem) SetProductType(v string) {
 	o.ProductType = v
 }
 
-// GetPrice returns the Price field value if set, zero value otherwise.
+// GetPrice returns the Price field value
 func (o *EsimOrderItem) GetPrice() Money {
-	if o == nil || IsNil(o.Price) {
+	if o == nil {
 		var ret Money
 		return ret
 	}
-	return *o.Price
+
+	return o.Price
 }
 
-// GetPriceOk returns a tuple with the Price field value if set, nil otherwise
+// GetPriceOk returns a tuple with the Price field value
 // and a boolean to check if the value has been set.
 func (o *EsimOrderItem) GetPriceOk() (*Money, bool) {
-	if o == nil || IsNil(o.Price) {
+	if o == nil {
 		return nil, false
 	}
-	return o.Price, true
+	return &o.Price, true
 }
 
-// HasPrice returns a boolean if a field has been set.
-func (o *EsimOrderItem) HasPrice() bool {
-	if o != nil && !IsNil(o.Price) {
-		return true
+// SetPrice sets field value
+func (o *EsimOrderItem) SetPrice(v Money) {
+	o.Price = v
+}
+
+// GetTaxes returns the Taxes field value
+func (o *EsimOrderItem) GetTaxes() TaxSummary {
+	if o == nil {
+		var ret TaxSummary
+		return ret
 	}
 
-	return false
+	return o.Taxes
 }
 
-// SetPrice gets a reference to the given Money and assigns it to the Price field.
-func (o *EsimOrderItem) SetPrice(v Money) {
-	o.Price = &v
+// GetTaxesOk returns a tuple with the Taxes field value
+// and a boolean to check if the value has been set.
+func (o *EsimOrderItem) GetTaxesOk() (*TaxSummary, bool) {
+	if o == nil {
+		return nil, false
+	}
+	return &o.Taxes, true
 }
 
-// GetPurchasedProduct returns the PurchasedProduct field value if set, zero value otherwise.
+// SetTaxes sets field value
+func (o *EsimOrderItem) SetTaxes(v TaxSummary) {
+	o.Taxes = v
+}
+
+// GetPurchasedProduct returns the PurchasedProduct field value
 func (o *EsimOrderItem) GetPurchasedProduct() EsimPurchasedProduct {
-	if o == nil || IsNil(o.PurchasedProduct) {
+	if o == nil {
 		var ret EsimPurchasedProduct
 		return ret
 	}
-	return *o.PurchasedProduct
+
+	return o.PurchasedProduct
 }
 
-// GetPurchasedProductOk returns a tuple with the PurchasedProduct field value if set, nil otherwise
+// GetPurchasedProductOk returns a tuple with the PurchasedProduct field value
 // and a boolean to check if the value has been set.
 func (o *EsimOrderItem) GetPurchasedProductOk() (*EsimPurchasedProduct, bool) {
-	if o == nil || IsNil(o.PurchasedProduct) {
+	if o == nil {
 		return nil, false
 	}
-	return o.PurchasedProduct, true
+	return &o.PurchasedProduct, true
 }
 
-// HasPurchasedProduct returns a boolean if a field has been set.
-func (o *EsimOrderItem) HasPurchasedProduct() bool {
-	if o != nil && !IsNil(o.PurchasedProduct) {
-		return true
-	}
-
-	return false
-}
-
-// SetPurchasedProduct gets a reference to the given EsimPurchasedProduct and assigns it to the PurchasedProduct field.
+// SetPurchasedProduct sets field value
 func (o *EsimOrderItem) SetPurchasedProduct(v EsimPurchasedProduct) {
-	o.PurchasedProduct = &v
+	o.PurchasedProduct = v
 }
 
-// GetFulfillment returns the Fulfillment field value if set, zero value otherwise.
+// GetFulfillment returns the Fulfillment field value
 func (o *EsimOrderItem) GetFulfillment() EsimFulfillment {
-	if o == nil || IsNil(o.Fulfillment) {
+	if o == nil {
 		var ret EsimFulfillment
 		return ret
 	}
-	return *o.Fulfillment
+
+	return o.Fulfillment
 }
 
-// GetFulfillmentOk returns a tuple with the Fulfillment field value if set, nil otherwise
+// GetFulfillmentOk returns a tuple with the Fulfillment field value
 // and a boolean to check if the value has been set.
 func (o *EsimOrderItem) GetFulfillmentOk() (*EsimFulfillment, bool) {
-	if o == nil || IsNil(o.Fulfillment) {
+	if o == nil {
 		return nil, false
 	}
-	return o.Fulfillment, true
+	return &o.Fulfillment, true
 }
 
-// HasFulfillment returns a boolean if a field has been set.
-func (o *EsimOrderItem) HasFulfillment() bool {
-	if o != nil && !IsNil(o.Fulfillment) {
-		return true
-	}
-
-	return false
-}
-
-// SetFulfillment gets a reference to the given EsimFulfillment and assigns it to the Fulfillment field.
+// SetFulfillment sets field value
 func (o *EsimOrderItem) SetFulfillment(v EsimFulfillment) {
-	o.Fulfillment = &v
+	o.Fulfillment = v
 }
 
-// GetActions returns the Actions field value if set, zero value otherwise.
+// GetActions returns the Actions field value
 func (o *EsimOrderItem) GetActions() OrderItemActions {
-	if o == nil || IsNil(o.Actions) {
+	if o == nil {
 		var ret OrderItemActions
 		return ret
 	}
-	return *o.Actions
+
+	return o.Actions
 }
 
-// GetActionsOk returns a tuple with the Actions field value if set, nil otherwise
+// GetActionsOk returns a tuple with the Actions field value
 // and a boolean to check if the value has been set.
 func (o *EsimOrderItem) GetActionsOk() (*OrderItemActions, bool) {
-	if o == nil || IsNil(o.Actions) {
+	if o == nil {
 		return nil, false
 	}
-	return o.Actions, true
+	return &o.Actions, true
 }
 
-// HasActions returns a boolean if a field has been set.
-func (o *EsimOrderItem) HasActions() bool {
-	if o != nil && !IsNil(o.Actions) {
-		return true
-	}
-
-	return false
-}
-
-// SetActions gets a reference to the given OrderItemActions and assigns it to the Actions field.
+// SetActions sets field value
 func (o *EsimOrderItem) SetActions(v OrderItemActions) {
-	o.Actions = &v
+	o.Actions = v
 }
 
-// GetCreatedAt returns the CreatedAt field value if set, zero value otherwise.
+// GetCreatedAt returns the CreatedAt field value
 func (o *EsimOrderItem) GetCreatedAt() time.Time {
-	if o == nil || IsNil(o.CreatedAt) {
+	if o == nil {
 		var ret time.Time
 		return ret
 	}
-	return *o.CreatedAt
+
+	return o.CreatedAt
 }
 
-// GetCreatedAtOk returns a tuple with the CreatedAt field value if set, nil otherwise
+// GetCreatedAtOk returns a tuple with the CreatedAt field value
 // and a boolean to check if the value has been set.
 func (o *EsimOrderItem) GetCreatedAtOk() (*time.Time, bool) {
-	if o == nil || IsNil(o.CreatedAt) {
+	if o == nil {
 		return nil, false
 	}
-	return o.CreatedAt, true
+	return &o.CreatedAt, true
 }
 
-// HasCreatedAt returns a boolean if a field has been set.
-func (o *EsimOrderItem) HasCreatedAt() bool {
-	if o != nil && !IsNil(o.CreatedAt) {
-		return true
-	}
-
-	return false
-}
-
-// SetCreatedAt gets a reference to the given time.Time and assigns it to the CreatedAt field.
+// SetCreatedAt sets field value
 func (o *EsimOrderItem) SetCreatedAt(v time.Time) {
-	o.CreatedAt = &v
+	o.CreatedAt = v
 }
 
-// GetEffectivePaidAmount returns the EffectivePaidAmount field value if set, zero value otherwise.
+// GetEffectivePaidAmount returns the EffectivePaidAmount field value
 func (o *EsimOrderItem) GetEffectivePaidAmount() Money {
-	if o == nil || IsNil(o.EffectivePaidAmount) {
+	if o == nil {
 		var ret Money
 		return ret
 	}
-	return *o.EffectivePaidAmount
+
+	return o.EffectivePaidAmount
 }
 
-// GetEffectivePaidAmountOk returns a tuple with the EffectivePaidAmount field value if set, nil otherwise
+// GetEffectivePaidAmountOk returns a tuple with the EffectivePaidAmount field value
 // and a boolean to check if the value has been set.
 func (o *EsimOrderItem) GetEffectivePaidAmountOk() (*Money, bool) {
-	if o == nil || IsNil(o.EffectivePaidAmount) {
+	if o == nil {
 		return nil, false
 	}
-	return o.EffectivePaidAmount, true
+	return &o.EffectivePaidAmount, true
 }
 
-// HasEffectivePaidAmount returns a boolean if a field has been set.
-func (o *EsimOrderItem) HasEffectivePaidAmount() bool {
-	if o != nil && !IsNil(o.EffectivePaidAmount) {
-		return true
-	}
-
-	return false
-}
-
-// SetEffectivePaidAmount gets a reference to the given Money and assigns it to the EffectivePaidAmount field.
+// SetEffectivePaidAmount sets field value
 func (o *EsimOrderItem) SetEffectivePaidAmount(v Money) {
-	o.EffectivePaidAmount = &v
+	o.EffectivePaidAmount = v
 }
 
 // GetRefund returns the Refund field value if set, zero value otherwise (both if not set or set to explicit null).
@@ -384,6 +357,48 @@ func (o *EsimOrderItem) UnsetRefund() {
 	o.Refund.Unset()
 }
 
+// GetSellingPrice returns the SellingPrice field value if set, zero value otherwise (both if not set or set to explicit null).
+func (o *EsimOrderItem) GetSellingPrice() Money {
+	if o == nil || IsNil(o.SellingPrice.Get()) {
+		var ret Money
+		return ret
+	}
+	return *o.SellingPrice.Get()
+}
+
+// GetSellingPriceOk returns a tuple with the SellingPrice field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+// NOTE: If the value is an explicit nil, `nil, true` will be returned
+func (o *EsimOrderItem) GetSellingPriceOk() (*Money, bool) {
+	if o == nil {
+		return nil, false
+	}
+	return o.SellingPrice.Get(), o.SellingPrice.IsSet()
+}
+
+// HasSellingPrice returns a boolean if a field has been set.
+func (o *EsimOrderItem) HasSellingPrice() bool {
+	if o != nil && o.SellingPrice.IsSet() {
+		return true
+	}
+
+	return false
+}
+
+// SetSellingPrice gets a reference to the given NullableMoney and assigns it to the SellingPrice field.
+func (o *EsimOrderItem) SetSellingPrice(v Money) {
+	o.SellingPrice.Set(&v)
+}
+// SetSellingPriceNil sets the value for SellingPrice to be an explicit nil
+func (o *EsimOrderItem) SetSellingPriceNil() {
+	o.SellingPrice.Set(nil)
+}
+
+// UnsetSellingPrice ensures that no value is present for SellingPrice, not even an explicit nil
+func (o *EsimOrderItem) UnsetSellingPrice() {
+	o.SellingPrice.Unset()
+}
+
 func (o EsimOrderItem) MarshalJSON() ([]byte, error) {
 	toSerialize,err := o.ToMap()
 	if err != nil {
@@ -394,33 +409,21 @@ func (o EsimOrderItem) MarshalJSON() ([]byte, error) {
 
 func (o EsimOrderItem) ToMap() (map[string]interface{}, error) {
 	toSerialize := map[string]interface{}{}
-	if !IsNil(o.Id) {
-		toSerialize["id"] = o.Id
-	}
-	if !IsNil(o.OrderId) {
-		toSerialize["orderId"] = o.OrderId
-	}
+	toSerialize["id"] = o.Id
+	toSerialize["orderId"] = o.OrderId
 	toSerialize["productType"] = o.ProductType
-	if !IsNil(o.Price) {
-		toSerialize["price"] = o.Price
-	}
-	if !IsNil(o.PurchasedProduct) {
-		toSerialize["purchasedProduct"] = o.PurchasedProduct
-	}
-	if !IsNil(o.Fulfillment) {
-		toSerialize["fulfillment"] = o.Fulfillment
-	}
-	if !IsNil(o.Actions) {
-		toSerialize["actions"] = o.Actions
-	}
-	if !IsNil(o.CreatedAt) {
-		toSerialize["createdAt"] = o.CreatedAt
-	}
-	if !IsNil(o.EffectivePaidAmount) {
-		toSerialize["effectivePaidAmount"] = o.EffectivePaidAmount
-	}
+	toSerialize["price"] = o.Price
+	toSerialize["taxes"] = o.Taxes
+	toSerialize["purchasedProduct"] = o.PurchasedProduct
+	toSerialize["fulfillment"] = o.Fulfillment
+	toSerialize["actions"] = o.Actions
+	toSerialize["createdAt"] = o.CreatedAt
+	toSerialize["effectivePaidAmount"] = o.EffectivePaidAmount
 	if o.Refund.IsSet() {
 		toSerialize["refund"] = o.Refund.Get()
+	}
+	if o.SellingPrice.IsSet() {
+		toSerialize["sellingPrice"] = o.SellingPrice.Get()
 	}
 	return toSerialize, nil
 }
@@ -430,7 +433,16 @@ func (o *EsimOrderItem) UnmarshalJSON(data []byte) (err error) {
 	// by unmarshalling the object into a generic map with string keys and checking
 	// that every required field exists as a key in the generic map.
 	requiredProperties := []string{
+		"id",
+		"orderId",
 		"productType",
+		"price",
+		"taxes",
+		"purchasedProduct",
+		"fulfillment",
+		"actions",
+		"createdAt",
+		"effectivePaidAmount",
 	}
 
 	allProperties := make(map[string]interface{})
@@ -450,7 +462,6 @@ func (o *EsimOrderItem) UnmarshalJSON(data []byte) (err error) {
 	varEsimOrderItem := _EsimOrderItem{}
 
 	decoder := json.NewDecoder(bytes.NewReader(data))
-	decoder.DisallowUnknownFields()
 	err = decoder.Decode(&varEsimOrderItem)
 
 	if err != nil {

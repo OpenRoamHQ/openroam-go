@@ -13,6 +13,8 @@ package openroam
 
 import (
 	"encoding/json"
+	"bytes"
+	"fmt"
 )
 
 // checks if the MobileNetwork type satisfies the MappedNullable interface at compile time
@@ -20,20 +22,26 @@ var _ MappedNullable = &MobileNetwork{}
 
 // MobileNetwork One mobile network code (ITU E.212). `mcc` is the 3-digit mobile country code and `mnc` the 2- or 3-digit network code, kept as strings because leading zeros matter. `countryCode` is ISO 3166-1 alpha-2, null for international and non-ISO networks; `countryName` and `dialCode` come from the countries dataset when the country is known, as on /common/countries.
 type MobileNetwork struct {
-	Mcc *string `json:"mcc,omitempty"`
-	Mnc *string `json:"mnc,omitempty"`
+	Mcc string `json:"mcc"`
+	Mnc string `json:"mnc"`
 	CountryCode NullableString `json:"countryCode,omitempty"`
-	CountryName *string `json:"countryName,omitempty"`
-	Operator *string `json:"operator,omitempty"`
+	CountryName string `json:"countryName"`
+	Operator string `json:"operator"`
 	DialCode NullableString `json:"dialCode,omitempty"`
 }
+
+type _MobileNetwork MobileNetwork
 
 // NewMobileNetwork instantiates a new MobileNetwork object
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewMobileNetwork() *MobileNetwork {
+func NewMobileNetwork(mcc string, mnc string, countryName string, operator string) *MobileNetwork {
 	this := MobileNetwork{}
+	this.Mcc = mcc
+	this.Mnc = mnc
+	this.CountryName = countryName
+	this.Operator = operator
 	return &this
 }
 
@@ -45,68 +53,52 @@ func NewMobileNetworkWithDefaults() *MobileNetwork {
 	return &this
 }
 
-// GetMcc returns the Mcc field value if set, zero value otherwise.
+// GetMcc returns the Mcc field value
 func (o *MobileNetwork) GetMcc() string {
-	if o == nil || IsNil(o.Mcc) {
+	if o == nil {
 		var ret string
 		return ret
 	}
-	return *o.Mcc
+
+	return o.Mcc
 }
 
-// GetMccOk returns a tuple with the Mcc field value if set, nil otherwise
+// GetMccOk returns a tuple with the Mcc field value
 // and a boolean to check if the value has been set.
 func (o *MobileNetwork) GetMccOk() (*string, bool) {
-	if o == nil || IsNil(o.Mcc) {
+	if o == nil {
 		return nil, false
 	}
-	return o.Mcc, true
+	return &o.Mcc, true
 }
 
-// HasMcc returns a boolean if a field has been set.
-func (o *MobileNetwork) HasMcc() bool {
-	if o != nil && !IsNil(o.Mcc) {
-		return true
-	}
-
-	return false
-}
-
-// SetMcc gets a reference to the given string and assigns it to the Mcc field.
+// SetMcc sets field value
 func (o *MobileNetwork) SetMcc(v string) {
-	o.Mcc = &v
+	o.Mcc = v
 }
 
-// GetMnc returns the Mnc field value if set, zero value otherwise.
+// GetMnc returns the Mnc field value
 func (o *MobileNetwork) GetMnc() string {
-	if o == nil || IsNil(o.Mnc) {
+	if o == nil {
 		var ret string
 		return ret
 	}
-	return *o.Mnc
+
+	return o.Mnc
 }
 
-// GetMncOk returns a tuple with the Mnc field value if set, nil otherwise
+// GetMncOk returns a tuple with the Mnc field value
 // and a boolean to check if the value has been set.
 func (o *MobileNetwork) GetMncOk() (*string, bool) {
-	if o == nil || IsNil(o.Mnc) {
+	if o == nil {
 		return nil, false
 	}
-	return o.Mnc, true
+	return &o.Mnc, true
 }
 
-// HasMnc returns a boolean if a field has been set.
-func (o *MobileNetwork) HasMnc() bool {
-	if o != nil && !IsNil(o.Mnc) {
-		return true
-	}
-
-	return false
-}
-
-// SetMnc gets a reference to the given string and assigns it to the Mnc field.
+// SetMnc sets field value
 func (o *MobileNetwork) SetMnc(v string) {
-	o.Mnc = &v
+	o.Mnc = v
 }
 
 // GetCountryCode returns the CountryCode field value if set, zero value otherwise (both if not set or set to explicit null).
@@ -151,68 +143,52 @@ func (o *MobileNetwork) UnsetCountryCode() {
 	o.CountryCode.Unset()
 }
 
-// GetCountryName returns the CountryName field value if set, zero value otherwise.
+// GetCountryName returns the CountryName field value
 func (o *MobileNetwork) GetCountryName() string {
-	if o == nil || IsNil(o.CountryName) {
+	if o == nil {
 		var ret string
 		return ret
 	}
-	return *o.CountryName
+
+	return o.CountryName
 }
 
-// GetCountryNameOk returns a tuple with the CountryName field value if set, nil otherwise
+// GetCountryNameOk returns a tuple with the CountryName field value
 // and a boolean to check if the value has been set.
 func (o *MobileNetwork) GetCountryNameOk() (*string, bool) {
-	if o == nil || IsNil(o.CountryName) {
+	if o == nil {
 		return nil, false
 	}
-	return o.CountryName, true
+	return &o.CountryName, true
 }
 
-// HasCountryName returns a boolean if a field has been set.
-func (o *MobileNetwork) HasCountryName() bool {
-	if o != nil && !IsNil(o.CountryName) {
-		return true
-	}
-
-	return false
-}
-
-// SetCountryName gets a reference to the given string and assigns it to the CountryName field.
+// SetCountryName sets field value
 func (o *MobileNetwork) SetCountryName(v string) {
-	o.CountryName = &v
+	o.CountryName = v
 }
 
-// GetOperator returns the Operator field value if set, zero value otherwise.
+// GetOperator returns the Operator field value
 func (o *MobileNetwork) GetOperator() string {
-	if o == nil || IsNil(o.Operator) {
+	if o == nil {
 		var ret string
 		return ret
 	}
-	return *o.Operator
+
+	return o.Operator
 }
 
-// GetOperatorOk returns a tuple with the Operator field value if set, nil otherwise
+// GetOperatorOk returns a tuple with the Operator field value
 // and a boolean to check if the value has been set.
 func (o *MobileNetwork) GetOperatorOk() (*string, bool) {
-	if o == nil || IsNil(o.Operator) {
+	if o == nil {
 		return nil, false
 	}
-	return o.Operator, true
+	return &o.Operator, true
 }
 
-// HasOperator returns a boolean if a field has been set.
-func (o *MobileNetwork) HasOperator() bool {
-	if o != nil && !IsNil(o.Operator) {
-		return true
-	}
-
-	return false
-}
-
-// SetOperator gets a reference to the given string and assigns it to the Operator field.
+// SetOperator sets field value
 func (o *MobileNetwork) SetOperator(v string) {
-	o.Operator = &v
+	o.Operator = v
 }
 
 // GetDialCode returns the DialCode field value if set, zero value otherwise (both if not set or set to explicit null).
@@ -267,25 +243,56 @@ func (o MobileNetwork) MarshalJSON() ([]byte, error) {
 
 func (o MobileNetwork) ToMap() (map[string]interface{}, error) {
 	toSerialize := map[string]interface{}{}
-	if !IsNil(o.Mcc) {
-		toSerialize["mcc"] = o.Mcc
-	}
-	if !IsNil(o.Mnc) {
-		toSerialize["mnc"] = o.Mnc
-	}
+	toSerialize["mcc"] = o.Mcc
+	toSerialize["mnc"] = o.Mnc
 	if o.CountryCode.IsSet() {
 		toSerialize["countryCode"] = o.CountryCode.Get()
 	}
-	if !IsNil(o.CountryName) {
-		toSerialize["countryName"] = o.CountryName
-	}
-	if !IsNil(o.Operator) {
-		toSerialize["operator"] = o.Operator
-	}
+	toSerialize["countryName"] = o.CountryName
+	toSerialize["operator"] = o.Operator
 	if o.DialCode.IsSet() {
 		toSerialize["dialCode"] = o.DialCode.Get()
 	}
 	return toSerialize, nil
+}
+
+func (o *MobileNetwork) UnmarshalJSON(data []byte) (err error) {
+	// This validates that all required properties are included in the JSON object
+	// by unmarshalling the object into a generic map with string keys and checking
+	// that every required field exists as a key in the generic map.
+	requiredProperties := []string{
+		"mcc",
+		"mnc",
+		"countryName",
+		"operator",
+	}
+
+	allProperties := make(map[string]interface{})
+
+	err = json.Unmarshal(data, &allProperties)
+
+	if err != nil {
+		return err;
+	}
+
+	for _, requiredProperty := range(requiredProperties) {
+		if _, exists := allProperties[requiredProperty]; !exists {
+			return fmt.Errorf("no value given for required property %v", requiredProperty)
+		}
+	}
+
+	varMobileNetwork := _MobileNetwork{}
+
+	decoder := json.NewDecoder(bytes.NewReader(data))
+	err = decoder.Decode(&varMobileNetwork)
+
+	if err != nil {
+		return err
+	}
+
+	*o = MobileNetwork(varMobileNetwork)
+
+	return err
 }
 
 type NullableMobileNetwork struct {

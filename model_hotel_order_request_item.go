@@ -193,7 +193,6 @@ func (o *HotelOrderRequestItem) UnmarshalJSON(data []byte) (err error) {
 	varHotelOrderRequestItem := _HotelOrderRequestItem{}
 
 	decoder := json.NewDecoder(bytes.NewReader(data))
-	decoder.DisallowUnknownFields()
 	err = decoder.Decode(&varHotelOrderRequestItem)
 
 	if err != nil {

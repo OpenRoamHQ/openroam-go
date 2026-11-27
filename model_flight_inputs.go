@@ -24,7 +24,7 @@ var _ MappedNullable = &FlightInputs{}
 type FlightInputs struct {
 	// Every passenger of the offer exactly once, in `passengerIndex` order 1 to N.
 	Passengers []PassengerInput `json:"passengers"`
-	// Paid services such as extra baggage, from the quote item's `details.availableServices`. Seats are chosen in `passengers[].selectedSeats`, not here.
+	// Paid services such as extra baggage, from the quote item's `availableServices`. Seats are chosen in `passengers[].selectedSeats`, not here.
 	SelectedServices []SelectedServiceInput `json:"selectedServices,omitempty"`
 	// Optional highest accepted unit price, in the order or cart currency; a higher current unit price gives 409 / 11002.
 	MaxPrice NullableMoneyInput `json:"maxPrice,omitempty"`
@@ -193,7 +193,6 @@ func (o *FlightInputs) UnmarshalJSON(data []byte) (err error) {
 	varFlightInputs := _FlightInputs{}
 
 	decoder := json.NewDecoder(bytes.NewReader(data))
-	decoder.DisallowUnknownFields()
 	err = decoder.Decode(&varFlightInputs)
 
 	if err != nil {

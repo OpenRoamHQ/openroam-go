@@ -136,7 +136,6 @@ func (o *SegmentPosition) UnmarshalJSON(data []byte) (err error) {
 	varSegmentPosition := _SegmentPosition{}
 
 	decoder := json.NewDecoder(bytes.NewReader(data))
-	decoder.DisallowUnknownFields()
 	err = decoder.Decode(&varSegmentPosition)
 
 	if err != nil {

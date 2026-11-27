@@ -193,7 +193,6 @@ func (o *EsimOrderRequestItem) UnmarshalJSON(data []byte) (err error) {
 	varEsimOrderRequestItem := _EsimOrderRequestItem{}
 
 	decoder := json.NewDecoder(bytes.NewReader(data))
-	decoder.DisallowUnknownFields()
 	err = decoder.Decode(&varEsimOrderRequestItem)
 
 	if err != nil {

@@ -20,15 +20,16 @@ import (
 // checks if the UtilityQuoteItem type satisfies the MappedNullable interface at compile time
 var _ MappedNullable = &UtilityQuoteItem{}
 
-// UtilityQuoteItem One quoted item: the offer, the value it pays and its current unit price in the quote currency.
+// UtilityQuoteItem One quoted item: the offer, the value it pays, its current unit price in the quote currency and how the biller delivers it. `taxes` is `notStated`: no tax is stated for bill payment prices yet.
 type UtilityQuoteItem struct {
 	PublicId string `json:"publicId"`
-	Quantity *int32 `json:"quantity,omitempty"`
-	Name *string `json:"name,omitempty"`
-	Value *Money `json:"value,omitempty"`
-	Price *Money `json:"price,omitempty"`
-	// Quoted item facts outside the quote item keys every partner service shares.
-	Details *UtilityQuoteItemDetails `json:"details,omitempty"`
+	Quantity int32 `json:"quantity"`
+	Name string `json:"name"`
+	Value Money `json:"value"`
+	Price Money `json:"price"`
+	// The taxes inside one unit of the `price` beside it, in one shape for every service. The server sets every field; a client never derives a treatment, never adds up `lines` and never computes an amount.
+	Taxes TaxSummary `json:"taxes"`
+	DeliveryType string `json:"deliveryType"`
 }
 
 type _UtilityQuoteItem UtilityQuoteItem
@@ -37,9 +38,15 @@ type _UtilityQuoteItem UtilityQuoteItem
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewUtilityQuoteItem(publicId string) *UtilityQuoteItem {
+func NewUtilityQuoteItem(publicId string, quantity int32, name string, value Money, price Money, taxes TaxSummary, deliveryType string) *UtilityQuoteItem {
 	this := UtilityQuoteItem{}
 	this.PublicId = publicId
+	this.Quantity = quantity
+	this.Name = name
+	this.Value = value
+	this.Price = price
+	this.Taxes = taxes
+	this.DeliveryType = deliveryType
 	return &this
 }
 
@@ -75,164 +82,148 @@ func (o *UtilityQuoteItem) SetPublicId(v string) {
 	o.PublicId = v
 }
 
-// GetQuantity returns the Quantity field value if set, zero value otherwise.
+// GetQuantity returns the Quantity field value
 func (o *UtilityQuoteItem) GetQuantity() int32 {
-	if o == nil || IsNil(o.Quantity) {
+	if o == nil {
 		var ret int32
 		return ret
 	}
-	return *o.Quantity
+
+	return o.Quantity
 }
 
-// GetQuantityOk returns a tuple with the Quantity field value if set, nil otherwise
+// GetQuantityOk returns a tuple with the Quantity field value
 // and a boolean to check if the value has been set.
 func (o *UtilityQuoteItem) GetQuantityOk() (*int32, bool) {
-	if o == nil || IsNil(o.Quantity) {
+	if o == nil {
 		return nil, false
 	}
-	return o.Quantity, true
+	return &o.Quantity, true
 }
 
-// HasQuantity returns a boolean if a field has been set.
-func (o *UtilityQuoteItem) HasQuantity() bool {
-	if o != nil && !IsNil(o.Quantity) {
-		return true
-	}
-
-	return false
-}
-
-// SetQuantity gets a reference to the given int32 and assigns it to the Quantity field.
+// SetQuantity sets field value
 func (o *UtilityQuoteItem) SetQuantity(v int32) {
-	o.Quantity = &v
+	o.Quantity = v
 }
 
-// GetName returns the Name field value if set, zero value otherwise.
+// GetName returns the Name field value
 func (o *UtilityQuoteItem) GetName() string {
-	if o == nil || IsNil(o.Name) {
+	if o == nil {
 		var ret string
 		return ret
 	}
-	return *o.Name
+
+	return o.Name
 }
 
-// GetNameOk returns a tuple with the Name field value if set, nil otherwise
+// GetNameOk returns a tuple with the Name field value
 // and a boolean to check if the value has been set.
 func (o *UtilityQuoteItem) GetNameOk() (*string, bool) {
-	if o == nil || IsNil(o.Name) {
+	if o == nil {
 		return nil, false
 	}
-	return o.Name, true
+	return &o.Name, true
 }
 
-// HasName returns a boolean if a field has been set.
-func (o *UtilityQuoteItem) HasName() bool {
-	if o != nil && !IsNil(o.Name) {
-		return true
-	}
-
-	return false
-}
-
-// SetName gets a reference to the given string and assigns it to the Name field.
+// SetName sets field value
 func (o *UtilityQuoteItem) SetName(v string) {
-	o.Name = &v
+	o.Name = v
 }
 
-// GetValue returns the Value field value if set, zero value otherwise.
+// GetValue returns the Value field value
 func (o *UtilityQuoteItem) GetValue() Money {
-	if o == nil || IsNil(o.Value) {
+	if o == nil {
 		var ret Money
 		return ret
 	}
-	return *o.Value
+
+	return o.Value
 }
 
-// GetValueOk returns a tuple with the Value field value if set, nil otherwise
+// GetValueOk returns a tuple with the Value field value
 // and a boolean to check if the value has been set.
 func (o *UtilityQuoteItem) GetValueOk() (*Money, bool) {
-	if o == nil || IsNil(o.Value) {
+	if o == nil {
 		return nil, false
 	}
-	return o.Value, true
+	return &o.Value, true
 }
 
-// HasValue returns a boolean if a field has been set.
-func (o *UtilityQuoteItem) HasValue() bool {
-	if o != nil && !IsNil(o.Value) {
-		return true
-	}
-
-	return false
-}
-
-// SetValue gets a reference to the given Money and assigns it to the Value field.
+// SetValue sets field value
 func (o *UtilityQuoteItem) SetValue(v Money) {
-	o.Value = &v
+	o.Value = v
 }
 
-// GetPrice returns the Price field value if set, zero value otherwise.
+// GetPrice returns the Price field value
 func (o *UtilityQuoteItem) GetPrice() Money {
-	if o == nil || IsNil(o.Price) {
+	if o == nil {
 		var ret Money
 		return ret
 	}
-	return *o.Price
+
+	return o.Price
 }
 
-// GetPriceOk returns a tuple with the Price field value if set, nil otherwise
+// GetPriceOk returns a tuple with the Price field value
 // and a boolean to check if the value has been set.
 func (o *UtilityQuoteItem) GetPriceOk() (*Money, bool) {
-	if o == nil || IsNil(o.Price) {
+	if o == nil {
 		return nil, false
 	}
-	return o.Price, true
+	return &o.Price, true
 }
 
-// HasPrice returns a boolean if a field has been set.
-func (o *UtilityQuoteItem) HasPrice() bool {
-	if o != nil && !IsNil(o.Price) {
-		return true
-	}
-
-	return false
-}
-
-// SetPrice gets a reference to the given Money and assigns it to the Price field.
+// SetPrice sets field value
 func (o *UtilityQuoteItem) SetPrice(v Money) {
-	o.Price = &v
+	o.Price = v
 }
 
-// GetDetails returns the Details field value if set, zero value otherwise.
-func (o *UtilityQuoteItem) GetDetails() UtilityQuoteItemDetails {
-	if o == nil || IsNil(o.Details) {
-		var ret UtilityQuoteItemDetails
+// GetTaxes returns the Taxes field value
+func (o *UtilityQuoteItem) GetTaxes() TaxSummary {
+	if o == nil {
+		var ret TaxSummary
 		return ret
 	}
-	return *o.Details
+
+	return o.Taxes
 }
 
-// GetDetailsOk returns a tuple with the Details field value if set, nil otherwise
+// GetTaxesOk returns a tuple with the Taxes field value
 // and a boolean to check if the value has been set.
-func (o *UtilityQuoteItem) GetDetailsOk() (*UtilityQuoteItemDetails, bool) {
-	if o == nil || IsNil(o.Details) {
+func (o *UtilityQuoteItem) GetTaxesOk() (*TaxSummary, bool) {
+	if o == nil {
 		return nil, false
 	}
-	return o.Details, true
+	return &o.Taxes, true
 }
 
-// HasDetails returns a boolean if a field has been set.
-func (o *UtilityQuoteItem) HasDetails() bool {
-	if o != nil && !IsNil(o.Details) {
-		return true
+// SetTaxes sets field value
+func (o *UtilityQuoteItem) SetTaxes(v TaxSummary) {
+	o.Taxes = v
+}
+
+// GetDeliveryType returns the DeliveryType field value
+func (o *UtilityQuoteItem) GetDeliveryType() string {
+	if o == nil {
+		var ret string
+		return ret
 	}
 
-	return false
+	return o.DeliveryType
 }
 
-// SetDetails gets a reference to the given UtilityQuoteItemDetails and assigns it to the Details field.
-func (o *UtilityQuoteItem) SetDetails(v UtilityQuoteItemDetails) {
-	o.Details = &v
+// GetDeliveryTypeOk returns a tuple with the DeliveryType field value
+// and a boolean to check if the value has been set.
+func (o *UtilityQuoteItem) GetDeliveryTypeOk() (*string, bool) {
+	if o == nil {
+		return nil, false
+	}
+	return &o.DeliveryType, true
+}
+
+// SetDeliveryType sets field value
+func (o *UtilityQuoteItem) SetDeliveryType(v string) {
+	o.DeliveryType = v
 }
 
 func (o UtilityQuoteItem) MarshalJSON() ([]byte, error) {
@@ -246,21 +237,12 @@ func (o UtilityQuoteItem) MarshalJSON() ([]byte, error) {
 func (o UtilityQuoteItem) ToMap() (map[string]interface{}, error) {
 	toSerialize := map[string]interface{}{}
 	toSerialize["publicId"] = o.PublicId
-	if !IsNil(o.Quantity) {
-		toSerialize["quantity"] = o.Quantity
-	}
-	if !IsNil(o.Name) {
-		toSerialize["name"] = o.Name
-	}
-	if !IsNil(o.Value) {
-		toSerialize["value"] = o.Value
-	}
-	if !IsNil(o.Price) {
-		toSerialize["price"] = o.Price
-	}
-	if !IsNil(o.Details) {
-		toSerialize["details"] = o.Details
-	}
+	toSerialize["quantity"] = o.Quantity
+	toSerialize["name"] = o.Name
+	toSerialize["value"] = o.Value
+	toSerialize["price"] = o.Price
+	toSerialize["taxes"] = o.Taxes
+	toSerialize["deliveryType"] = o.DeliveryType
 	return toSerialize, nil
 }
 
@@ -270,6 +252,12 @@ func (o *UtilityQuoteItem) UnmarshalJSON(data []byte) (err error) {
 	// that every required field exists as a key in the generic map.
 	requiredProperties := []string{
 		"publicId",
+		"quantity",
+		"name",
+		"value",
+		"price",
+		"taxes",
+		"deliveryType",
 	}
 
 	allProperties := make(map[string]interface{})
@@ -289,7 +277,6 @@ func (o *UtilityQuoteItem) UnmarshalJSON(data []byte) (err error) {
 	varUtilityQuoteItem := _UtilityQuoteItem{}
 
 	decoder := json.NewDecoder(bytes.NewReader(data))
-	decoder.DisallowUnknownFields()
 	err = decoder.Decode(&varUtilityQuoteItem)
 
 	if err != nil {

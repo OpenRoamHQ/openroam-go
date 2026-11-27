@@ -13,6 +13,8 @@ package openroam
 
 import (
 	"encoding/json"
+	"bytes"
+	"fmt"
 )
 
 // checks if the EsimPurchasedDetails type satisfies the MappedNullable interface at compile time
@@ -20,18 +22,22 @@ var _ MappedNullable = &EsimPurchasedDetails{}
 
 // EsimPurchasedDetails eSIM facts outside the purchased-product keys every partner service shares. `isInstant` says whether the eSIM is provisioned when the item is fulfilled; a deferred one waits for `POST /esims/{id}/provisioning`. A top-up is always instant.
 type EsimPurchasedDetails struct {
-	OrderType *string `json:"orderType,omitempty"`
-	IsInstant *bool `json:"isInstant,omitempty"`
+	OrderType string `json:"orderType"`
+	IsInstant bool `json:"isInstant"`
 	// The destination the item was bought for; null for an item stored without one.
 	Destination NullableEsimPurchasedDestination `json:"destination,omitempty"`
 }
+
+type _EsimPurchasedDetails EsimPurchasedDetails
 
 // NewEsimPurchasedDetails instantiates a new EsimPurchasedDetails object
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewEsimPurchasedDetails() *EsimPurchasedDetails {
+func NewEsimPurchasedDetails(orderType string, isInstant bool) *EsimPurchasedDetails {
 	this := EsimPurchasedDetails{}
+	this.OrderType = orderType
+	this.IsInstant = isInstant
 	return &this
 }
 
@@ -43,68 +49,52 @@ func NewEsimPurchasedDetailsWithDefaults() *EsimPurchasedDetails {
 	return &this
 }
 
-// GetOrderType returns the OrderType field value if set, zero value otherwise.
+// GetOrderType returns the OrderType field value
 func (o *EsimPurchasedDetails) GetOrderType() string {
-	if o == nil || IsNil(o.OrderType) {
+	if o == nil {
 		var ret string
 		return ret
 	}
-	return *o.OrderType
+
+	return o.OrderType
 }
 
-// GetOrderTypeOk returns a tuple with the OrderType field value if set, nil otherwise
+// GetOrderTypeOk returns a tuple with the OrderType field value
 // and a boolean to check if the value has been set.
 func (o *EsimPurchasedDetails) GetOrderTypeOk() (*string, bool) {
-	if o == nil || IsNil(o.OrderType) {
+	if o == nil {
 		return nil, false
 	}
-	return o.OrderType, true
+	return &o.OrderType, true
 }
 
-// HasOrderType returns a boolean if a field has been set.
-func (o *EsimPurchasedDetails) HasOrderType() bool {
-	if o != nil && !IsNil(o.OrderType) {
-		return true
-	}
-
-	return false
-}
-
-// SetOrderType gets a reference to the given string and assigns it to the OrderType field.
+// SetOrderType sets field value
 func (o *EsimPurchasedDetails) SetOrderType(v string) {
-	o.OrderType = &v
+	o.OrderType = v
 }
 
-// GetIsInstant returns the IsInstant field value if set, zero value otherwise.
+// GetIsInstant returns the IsInstant field value
 func (o *EsimPurchasedDetails) GetIsInstant() bool {
-	if o == nil || IsNil(o.IsInstant) {
+	if o == nil {
 		var ret bool
 		return ret
 	}
-	return *o.IsInstant
+
+	return o.IsInstant
 }
 
-// GetIsInstantOk returns a tuple with the IsInstant field value if set, nil otherwise
+// GetIsInstantOk returns a tuple with the IsInstant field value
 // and a boolean to check if the value has been set.
 func (o *EsimPurchasedDetails) GetIsInstantOk() (*bool, bool) {
-	if o == nil || IsNil(o.IsInstant) {
+	if o == nil {
 		return nil, false
 	}
-	return o.IsInstant, true
+	return &o.IsInstant, true
 }
 
-// HasIsInstant returns a boolean if a field has been set.
-func (o *EsimPurchasedDetails) HasIsInstant() bool {
-	if o != nil && !IsNil(o.IsInstant) {
-		return true
-	}
-
-	return false
-}
-
-// SetIsInstant gets a reference to the given bool and assigns it to the IsInstant field.
+// SetIsInstant sets field value
 func (o *EsimPurchasedDetails) SetIsInstant(v bool) {
-	o.IsInstant = &v
+	o.IsInstant = v
 }
 
 // GetDestination returns the Destination field value if set, zero value otherwise (both if not set or set to explicit null).
@@ -159,16 +149,49 @@ func (o EsimPurchasedDetails) MarshalJSON() ([]byte, error) {
 
 func (o EsimPurchasedDetails) ToMap() (map[string]interface{}, error) {
 	toSerialize := map[string]interface{}{}
-	if !IsNil(o.OrderType) {
-		toSerialize["orderType"] = o.OrderType
-	}
-	if !IsNil(o.IsInstant) {
-		toSerialize["isInstant"] = o.IsInstant
-	}
+	toSerialize["orderType"] = o.OrderType
+	toSerialize["isInstant"] = o.IsInstant
 	if o.Destination.IsSet() {
 		toSerialize["destination"] = o.Destination.Get()
 	}
 	return toSerialize, nil
+}
+
+func (o *EsimPurchasedDetails) UnmarshalJSON(data []byte) (err error) {
+	// This validates that all required properties are included in the JSON object
+	// by unmarshalling the object into a generic map with string keys and checking
+	// that every required field exists as a key in the generic map.
+	requiredProperties := []string{
+		"orderType",
+		"isInstant",
+	}
+
+	allProperties := make(map[string]interface{})
+
+	err = json.Unmarshal(data, &allProperties)
+
+	if err != nil {
+		return err;
+	}
+
+	for _, requiredProperty := range(requiredProperties) {
+		if _, exists := allProperties[requiredProperty]; !exists {
+			return fmt.Errorf("no value given for required property %v", requiredProperty)
+		}
+	}
+
+	varEsimPurchasedDetails := _EsimPurchasedDetails{}
+
+	decoder := json.NewDecoder(bytes.NewReader(data))
+	err = decoder.Decode(&varEsimPurchasedDetails)
+
+	if err != nil {
+		return err
+	}
+
+	*o = EsimPurchasedDetails(varEsimPurchasedDetails)
+
+	return err
 }
 
 type NullableEsimPurchasedDetails struct {

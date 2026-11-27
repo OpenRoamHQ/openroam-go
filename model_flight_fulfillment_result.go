@@ -13,6 +13,8 @@ package openroam
 
 import (
 	"encoding/json"
+	"bytes"
+	"fmt"
 )
 
 // checks if the FlightFulfillmentResult type satisfies the MappedNullable interface at compile time
@@ -21,15 +23,18 @@ var _ MappedNullable = &FlightFulfillmentResult{}
 // FlightFulfillmentResult What a fulfilled flight order item delivered: booking facts only, under `details`. A flight sells no monetary value, so there is no `deliveredValue`. Order reads, fulfillment status and streams, and the `order.fulfillment.updated` webhook carry the same result.
 type FlightFulfillmentResult struct {
 	// The booking as it stands now.
-	Details *FlightFulfillmentDetails `json:"details,omitempty"`
+	Details FlightFulfillmentDetails `json:"details"`
 }
+
+type _FlightFulfillmentResult FlightFulfillmentResult
 
 // NewFlightFulfillmentResult instantiates a new FlightFulfillmentResult object
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewFlightFulfillmentResult() *FlightFulfillmentResult {
+func NewFlightFulfillmentResult(details FlightFulfillmentDetails) *FlightFulfillmentResult {
 	this := FlightFulfillmentResult{}
+	this.Details = details
 	return &this
 }
 
@@ -41,36 +46,28 @@ func NewFlightFulfillmentResultWithDefaults() *FlightFulfillmentResult {
 	return &this
 }
 
-// GetDetails returns the Details field value if set, zero value otherwise.
+// GetDetails returns the Details field value
 func (o *FlightFulfillmentResult) GetDetails() FlightFulfillmentDetails {
-	if o == nil || IsNil(o.Details) {
+	if o == nil {
 		var ret FlightFulfillmentDetails
 		return ret
 	}
-	return *o.Details
+
+	return o.Details
 }
 
-// GetDetailsOk returns a tuple with the Details field value if set, nil otherwise
+// GetDetailsOk returns a tuple with the Details field value
 // and a boolean to check if the value has been set.
 func (o *FlightFulfillmentResult) GetDetailsOk() (*FlightFulfillmentDetails, bool) {
-	if o == nil || IsNil(o.Details) {
+	if o == nil {
 		return nil, false
 	}
-	return o.Details, true
+	return &o.Details, true
 }
 
-// HasDetails returns a boolean if a field has been set.
-func (o *FlightFulfillmentResult) HasDetails() bool {
-	if o != nil && !IsNil(o.Details) {
-		return true
-	}
-
-	return false
-}
-
-// SetDetails gets a reference to the given FlightFulfillmentDetails and assigns it to the Details field.
+// SetDetails sets field value
 func (o *FlightFulfillmentResult) SetDetails(v FlightFulfillmentDetails) {
-	o.Details = &v
+	o.Details = v
 }
 
 func (o FlightFulfillmentResult) MarshalJSON() ([]byte, error) {
@@ -83,10 +80,44 @@ func (o FlightFulfillmentResult) MarshalJSON() ([]byte, error) {
 
 func (o FlightFulfillmentResult) ToMap() (map[string]interface{}, error) {
 	toSerialize := map[string]interface{}{}
-	if !IsNil(o.Details) {
-		toSerialize["details"] = o.Details
-	}
+	toSerialize["details"] = o.Details
 	return toSerialize, nil
+}
+
+func (o *FlightFulfillmentResult) UnmarshalJSON(data []byte) (err error) {
+	// This validates that all required properties are included in the JSON object
+	// by unmarshalling the object into a generic map with string keys and checking
+	// that every required field exists as a key in the generic map.
+	requiredProperties := []string{
+		"details",
+	}
+
+	allProperties := make(map[string]interface{})
+
+	err = json.Unmarshal(data, &allProperties)
+
+	if err != nil {
+		return err;
+	}
+
+	for _, requiredProperty := range(requiredProperties) {
+		if _, exists := allProperties[requiredProperty]; !exists {
+			return fmt.Errorf("no value given for required property %v", requiredProperty)
+		}
+	}
+
+	varFlightFulfillmentResult := _FlightFulfillmentResult{}
+
+	decoder := json.NewDecoder(bytes.NewReader(data))
+	err = decoder.Decode(&varFlightFulfillmentResult)
+
+	if err != nil {
+		return err
+	}
+
+	*o = FlightFulfillmentResult(varFlightFulfillmentResult)
+
+	return err
 }
 
 type NullableFlightFulfillmentResult struct {

@@ -15,8 +15,8 @@ import (
 
 // The base URLs of the two environments.
 const (
-	ProductionURL = "https://b2b-api.openroam.com"
-	SandboxURL    = "https://b2b-api-sandbox.openroam.com"
+	ProductionURL = "https://api.openroam.com"
+	SandboxURL    = "https://api.sandbox.openroam.com"
 )
 
 // ErrWebhookSignature means the request was not signed by OpenRoam with this secret, or is too old.
@@ -26,6 +26,9 @@ var ErrWebhookSignature = errors.New("openroam: invalid webhook signature")
 // timestamp, eventID and signature are the X-OpenRoam-Timestamp, X-OpenRoam-Event-Id and X-OpenRoam-Signature
 // headers; rawBody is the request body exactly as received. A zero tolerance means 5 minutes; a zero now means now.
 func VerifyWebhook(secret, timestamp, eventID, signature string, rawBody []byte, tolerance time.Duration, now time.Time) error {
+	if strings.TrimSpace(secret) == "" {
+		return ErrWebhookSignature
+	}
 	sentAt, err := strconv.ParseFloat(timestamp, 64)
 	if err != nil {
 		return ErrWebhookSignature

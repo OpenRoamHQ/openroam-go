@@ -196,7 +196,6 @@ func (o *IdentityDocumentInput) UnmarshalJSON(data []byte) (err error) {
 	varIdentityDocumentInput := _IdentityDocumentInput{}
 
 	decoder := json.NewDecoder(bytes.NewReader(data))
-	decoder.DisallowUnknownFields()
 	err = decoder.Decode(&varIdentityDocumentInput)
 
 	if err != nil {

@@ -90,7 +90,7 @@ func (a *AirtimeAPIService) AirtimeCatalogExecute(r ApiAirtimeCatalogRequest) (*
 		return localVarReturnValue, nil, &GenericOpenAPIError{error: err.Error()}
 	}
 
-	localVarPath := localBasePath + "/api/v1/b2b/airtime/catalog"
+	localVarPath := localBasePath + "/v1/airtime/catalog"
 
 	localVarHeaderParams := make(map[string]string)
 	localVarQueryParams := url.Values{}
@@ -223,10 +223,12 @@ Places an airtime top-up order and returns the accepted order.
 
 Takes the same body as quote and needs the `manage` order permission (403 / 10003 without it). An
 `Idempotency-Key` header with a new UUID is required for every purchase: a retry with the same key and body
-returns the order already accepted, 202 / 12002 with `Retry-After` while it is still being accepted, and a
+returns the order already accepted, 409 / 12002 with `Retry-After` while it is still being accepted, and a
 changed body gives 409 / 12001. The number's operator is looked up again, as in quote; item errors are named
 at `items[i]`, and a current price above `inputs.maxPrice` gives 409 / 11002 before anything is
-charged. Track fulfillment with the order routes or the `order.fulfillment.updated` webhook.
+charged. Track fulfillment with the order routes or the `order.fulfillment.updated` webhook. A wallet
+charge that fails creates no order and gives 402 / 16000, with `details[0]` naming `wallet` and
+`INSUFFICIENT_BALANCE` or `WALLET_BLOCKED`; send the same request with the same key after a top-up.
 
  @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
  @return ApiAirtimeCreateOrderRequest
@@ -253,7 +255,7 @@ func (a *AirtimeAPIService) AirtimeCreateOrderExecute(r ApiAirtimeCreateOrderReq
 		return localVarReturnValue, nil, &GenericOpenAPIError{error: err.Error()}
 	}
 
-	localVarPath := localBasePath + "/api/v1/b2b/airtime/order"
+	localVarPath := localBasePath + "/v1/airtime/order"
 
 	localVarHeaderParams := make(map[string]string)
 	localVarQueryParams := url.Values{}
@@ -319,6 +321,17 @@ func (a *AirtimeAPIService) AirtimeCreateOrderExecute(r ApiAirtimeCreateOrderReq
 			error: localVarHTTPResponse.Status,
 		}
 		if localVarHTTPResponse.StatusCode == 400 {
+			var v ErrorResponse
+			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = err.Error()
+				return localVarReturnValue, localVarHTTPResponse, newErr
+			}
+					newErr.error = formatErrorMessage(localVarHTTPResponse.Status, &v)
+					newErr.model = v
+			return localVarReturnValue, localVarHTTPResponse, newErr
+		}
+		if localVarHTTPResponse.StatusCode == 402 {
 			var v ErrorResponse
 			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 			if err != nil {
@@ -432,7 +445,7 @@ func (r ApiAirtimeGetOperatorRequest) MaxPrice(maxPrice float32) ApiAirtimeGetOp
 	return r
 }
 
-// Price currency, three letters in either case; the API key&#39;s currency when omitted. An unsupported code gives 404 / 10004.
+// Price currency, three letters in either case; the API key&#39;s currency when omitted. An unsupported code gives 400 / 10001 at &#x60;currency&#x60;, reason &#x60;NOT_SUPPORTED&#x60;.
 func (r ApiAirtimeGetOperatorRequest) Currency(currency string) ApiAirtimeGetOperatorRequest {
 	r.currency = &currency
 	return r
@@ -449,12 +462,13 @@ Returns one operator with its offers for a phone number of its country (manual f
 
 Returns the operator in the item shape that search returns, without a carrier lookup. A number of another
 country than the operator's gives 400 / 10001 with `COUNTRY_MISMATCH` at `phoneNumber`. An unknown
-or unparseable ID, or an operator without an orderable offer, gives 404 / 10004. Offer filters that match none
-of the operator's offers leave `offers` empty. A manual choice is not checked against the number's
-carrier, so have the customer confirm the operator before ordering.
+ID, including any value that is not an operator ID, or an operator without an orderable offer, gives
+404 / 10004. Offer filters that match none of the operator's offers leave `offers` empty. A manual choice
+is not checked against the number's carrier, so have the customer confirm the operator before ordering. A browser
+session may not filter by price: `minPrice` or `maxPrice` gives 400 / 10001, `NOT_ALLOWED`.
 
  @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- @param id The operator ID from the operator list, the catalog or search.
+ @param id The operator ID (`operator_…`) from the operator list, the catalog or search.
  @return ApiAirtimeGetOperatorRequest
 */
 func (a *AirtimeAPIService) AirtimeGetOperator(ctx context.Context, id string) ApiAirtimeGetOperatorRequest {
@@ -480,7 +494,7 @@ func (a *AirtimeAPIService) AirtimeGetOperatorExecute(r ApiAirtimeGetOperatorReq
 		return localVarReturnValue, nil, &GenericOpenAPIError{error: err.Error()}
 	}
 
-	localVarPath := localBasePath + "/api/v1/b2b/airtime/operators/{id}"
+	localVarPath := localBasePath + "/v1/airtime/operators/{id}"
 	localVarPath = strings.Replace(localVarPath, "{"+"id"+"}", url.PathEscape(parameterValueToString(r.id, "id")), -1)
 
 	localVarHeaderParams := make(map[string]string)
@@ -607,7 +621,7 @@ type ApiAirtimeGetOperatorsRequest struct {
 	countryCode *string
 }
 
-// Required ISO 3166-1 alpha-2 country code, in either case, for example the &#x60;details.phoneLookup.countryCode&#x60; of a search.
+// Required ISO 3166-1 alpha-2 country code, in either case, for example the &#x60;phoneLookup.countryCode&#x60; of a search.
 func (r ApiAirtimeGetOperatorsRequest) CountryCode(countryCode string) ApiAirtimeGetOperatorsRequest {
 	r.countryCode = &countryCode
 	return r
@@ -652,7 +666,7 @@ func (a *AirtimeAPIService) AirtimeGetOperatorsExecute(r ApiAirtimeGetOperatorsR
 		return localVarReturnValue, nil, &GenericOpenAPIError{error: err.Error()}
 	}
 
-	localVarPath := localBasePath + "/api/v1/b2b/airtime/operators"
+	localVarPath := localBasePath + "/v1/airtime/operators"
 
 	localVarHeaderParams := make(map[string]string)
 	localVarQueryParams := url.Values{}
@@ -803,7 +817,7 @@ func (a *AirtimeAPIService) AirtimeLookupNumberExecute(r ApiAirtimeLookupNumberR
 		return localVarReturnValue, nil, &GenericOpenAPIError{error: err.Error()}
 	}
 
-	localVarPath := localBasePath + "/api/v1/b2b/airtime/number-lookup"
+	localVarPath := localBasePath + "/v1/airtime/number-lookup"
 
 	localVarHeaderParams := make(map[string]string)
 	localVarQueryParams := url.Values{}
@@ -938,7 +952,8 @@ item. Each item is priced on its own, in request order; the first failing item a
 `items[i]`, for example 409 / 11002 at `items[i].inputs.maxPrice` when the current price is above
 it. 409 / 20000 means the lookup shows that the offer's operator cannot be the number's: search again. A
 carrier lookup that fails gives 503 / 10007. A quote reserves nothing and does not expire; to hold the quoted
-price, send it as `inputs.maxPrice` in the order.
+price, send it as `inputs.maxPrice` in the order. A browser session may not send `inputs.maxPrice`
+(400 / 10001, `NOT_ALLOWED`).
 
  @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
  @return ApiAirtimeQuoteRequest
@@ -965,7 +980,7 @@ func (a *AirtimeAPIService) AirtimeQuoteExecute(r ApiAirtimeQuoteRequest) (*Airt
 		return localVarReturnValue, nil, &GenericOpenAPIError{error: err.Error()}
 	}
 
-	localVarPath := localBasePath + "/api/v1/b2b/airtime/quote"
+	localVarPath := localBasePath + "/v1/airtime/quote"
 
 	localVarHeaderParams := make(map[string]string)
 	localVarQueryParams := url.Values{}
@@ -1130,7 +1145,7 @@ func (r ApiAirtimeSearchRequest) MaxPrice(maxPrice float32) ApiAirtimeSearchRequ
 	return r
 }
 
-// Price currency, three letters in either case; the API key&#39;s currency when omitted. An unsupported code gives 404 / 10004.
+// Price currency, three letters in either case; the API key&#39;s currency when omitted. An unsupported code gives 400 / 10001 at &#x60;currency&#x60;, reason &#x60;NOT_SUPPORTED&#x60;.
 func (r ApiAirtimeSearchRequest) Currency(currency string) ApiAirtimeSearchRequest {
 	r.currency = &currency
 	return r
@@ -1157,12 +1172,13 @@ AirtimeSearch Search airtime by phone number
 
 Searches for a phone number's operator by carrier lookup and returns it with its offers (detected flow).
 
-Returns `{ items, pagination, details: { phoneLookup: { status, carrierName, countryCode } } }`.
+Returns `{ items, pagination, phoneLookup: { status, carrierName, countryCode } }`.
 `items` holds at most the detected operator with its offers. It is empty when `status` is not
 `detected` or no offer remains after the filters; then let the customer choose the operator with
-`GET operators?countryCode=`, using `details.phoneLookup.countryCode`. Each call makes exactly one
+`GET operators?countryCode=`, using `phoneLookup.countryCode`. Each call makes exactly one
 carrier lookup and returns at most one item, so `page` must be 1. A `phoneNumber` that is not in
-international format gives 400 / 10001; a carrier lookup that fails gives 503 / 10007, retry later.
+international format gives 400 / 10001; a carrier lookup that fails gives 503 / 10007, retry later. A browser
+session may not filter by price: `minPrice` or `maxPrice` gives 400 / 10001, `NOT_ALLOWED`.
 
  @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
  @return ApiAirtimeSearchRequest
@@ -1189,7 +1205,7 @@ func (a *AirtimeAPIService) AirtimeSearchExecute(r ApiAirtimeSearchRequest) (*Ai
 		return localVarReturnValue, nil, &GenericOpenAPIError{error: err.Error()}
 	}
 
-	localVarPath := localBasePath + "/api/v1/b2b/airtime/search"
+	localVarPath := localBasePath + "/v1/airtime/search"
 
 	localVarHeaderParams := make(map[string]string)
 	localVarQueryParams := url.Values{}

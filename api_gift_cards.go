@@ -53,12 +53,14 @@ Places a gift card order and returns the accepted order.
 
 Takes the same body as quote and needs the `manage` order permission (403 / 10003 without it).
 An `Idempotency-Key` header with a new UUID is required for every purchase: a retry with the same key and body
-returns the order already accepted, 202 / 12002 with `Retry-After` while it is still being accepted, and a
+returns the order already accepted, 409 / 12002 with `Retry-After` while it is still being accepted, and a
 changed body gives 409 / 12001.
 Order with the `publicId` a quote returned. Every price is recalculated: a current price above
 `inputs.maxPrice` gives 409 / 11002 at `items[i].inputs.maxPrice` before anything is charged. Each card
 of an item's `quantity` becomes its own order item; read the codes from the order routes or the
-`order.fulfillment.updated` webhook.
+`order.fulfillment.updated` webhook. A wallet charge that fails creates no order and gives 402 / 16000,
+with `details[0]` naming `wallet` and `INSUFFICIENT_BALANCE` or `WALLET_BLOCKED`; send the
+same request with the same key after a top-up.
 
  @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
  @return ApiGiftCardsCreateOrderRequest
@@ -85,7 +87,7 @@ func (a *GiftCardsAPIService) GiftCardsCreateOrderExecute(r ApiGiftCardsCreateOr
 		return localVarReturnValue, nil, &GenericOpenAPIError{error: err.Error()}
 	}
 
-	localVarPath := localBasePath + "/api/v1/b2b/giftcards/order"
+	localVarPath := localBasePath + "/v1/giftcards/order"
 
 	localVarHeaderParams := make(map[string]string)
 	localVarQueryParams := url.Values{}
@@ -161,6 +163,17 @@ func (a *GiftCardsAPIService) GiftCardsCreateOrderExecute(r ApiGiftCardsCreateOr
 					newErr.model = v
 			return localVarReturnValue, localVarHTTPResponse, newErr
 		}
+		if localVarHTTPResponse.StatusCode == 402 {
+			var v ErrorResponse
+			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = err.Error()
+				return localVarReturnValue, localVarHTTPResponse, newErr
+			}
+					newErr.error = formatErrorMessage(localVarHTTPResponse.Status, &v)
+					newErr.model = v
+			return localVarReturnValue, localVarHTTPResponse, newErr
+		}
 		if localVarHTTPResponse.StatusCode == 409 {
 			var v ErrorResponse
 			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
@@ -215,7 +228,7 @@ type ApiGiftCardsGetCardRequest struct {
 	currency *string
 }
 
-// Price currency, three letters in either case; the API key&#39;s currency when omitted. An unsupported code gives 404 / 10004.
+// Price currency, three letters in either case; the API key&#39;s currency when omitted. An unsupported code gives 400 / 10001 at &#x60;currency&#x60;, reason &#x60;NOT_SUPPORTED&#x60;.
 func (r ApiGiftCardsGetCardRequest) Currency(currency string) ApiGiftCardsGetCardRequest {
 	r.currency = &currency
 	return r
@@ -233,7 +246,7 @@ Returns one gift card with its offers, in the item shape that search returns.
 An unknown or unparseable ID, or a card without an orderable offer, gives 404 / 10004.
 
  @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- @param id The card's `id` (its SKU) from search or the catalog, for example `amazon-us`.
+ @param id The card's `id` (`card_…`) from search or the catalog.
  @return ApiGiftCardsGetCardRequest
 */
 func (a *GiftCardsAPIService) GiftCardsGetCard(ctx context.Context, id string) ApiGiftCardsGetCardRequest {
@@ -259,7 +272,7 @@ func (a *GiftCardsAPIService) GiftCardsGetCardExecute(r ApiGiftCardsGetCardReque
 		return localVarReturnValue, nil, &GenericOpenAPIError{error: err.Error()}
 	}
 
-	localVarPath := localBasePath + "/api/v1/b2b/giftcards/cards/{id}"
+	localVarPath := localBasePath + "/v1/giftcards/cards/{id}"
 	localVarPath = strings.Replace(localVarPath, "{"+"id"+"}", url.PathEscape(parameterValueToString(r.id, "id")), -1)
 
 	localVarHeaderParams := make(map[string]string)
@@ -394,7 +407,7 @@ func (r ApiGiftCardsGetCatalogRequest) IsRedeemableGlobally(isRedeemableGlobally
 	return r
 }
 
-// Price currency, three letters in either case; the API key&#39;s currency when omitted. An unsupported code gives 404 / 10004.
+// Price currency, three letters in either case; the API key&#39;s currency when omitted. An unsupported code gives 400 / 10001 at &#x60;currency&#x60;, reason &#x60;NOT_SUPPORTED&#x60;.
 func (r ApiGiftCardsGetCatalogRequest) Currency(currency string) ApiGiftCardsGetCatalogRequest {
 	r.currency = &currency
 	return r
@@ -452,7 +465,7 @@ func (a *GiftCardsAPIService) GiftCardsGetCatalogExecute(r ApiGiftCardsGetCatalo
 		return localVarReturnValue, nil, &GenericOpenAPIError{error: err.Error()}
 	}
 
-	localVarPath := localBasePath + "/api/v1/b2b/giftcards/catalog"
+	localVarPath := localBasePath + "/v1/giftcards/catalog"
 
 	localVarHeaderParams := make(map[string]string)
 	localVarQueryParams := url.Values{}
@@ -610,7 +623,7 @@ func (a *GiftCardsAPIService) GiftCardsGetCategoriesExecute(r ApiGiftCardsGetCat
 		return localVarReturnValue, nil, &GenericOpenAPIError{error: err.Error()}
 	}
 
-	localVarPath := localBasePath + "/api/v1/b2b/giftcards/categories"
+	localVarPath := localBasePath + "/v1/giftcards/categories"
 
 	localVarHeaderParams := make(map[string]string)
 	localVarQueryParams := url.Values{}
@@ -730,7 +743,7 @@ Takes the same body as order and checks it the same way: each item completely (i
 named at `items[i]`, as the order names it, for example 409 / 11002 at `items[i].inputs.maxPrice` when
 the current price is above it. A range offer may be quoted on an equivalent offer of the same card that
 sells the same value for less: the item then returns that offer's `publicId`, which the order should
-use.
+use. A browser session may not send `inputs.maxPrice` (400 / 10001, `NOT_ALLOWED`).
 
  @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
  @return ApiGiftCardsQuoteRequest
@@ -757,7 +770,7 @@ func (a *GiftCardsAPIService) GiftCardsQuoteExecute(r ApiGiftCardsQuoteRequest) 
 		return localVarReturnValue, nil, &GenericOpenAPIError{error: err.Error()}
 	}
 
-	localVarPath := localBasePath + "/api/v1/b2b/giftcards/quote"
+	localVarPath := localBasePath + "/v1/giftcards/quote"
 
 	localVarHeaderParams := make(map[string]string)
 	localVarQueryParams := url.Values{}
@@ -908,7 +921,7 @@ func (r ApiGiftCardsSearchRequest) IsRedeemableGlobally(isRedeemableGlobally boo
 	return r
 }
 
-// Price currency, three letters in either case; the API key&#39;s currency when omitted. An unsupported code gives 404 / 10004.
+// Price currency, three letters in either case; the API key&#39;s currency when omitted. An unsupported code gives 400 / 10001 at &#x60;currency&#x60;, reason &#x60;NOT_SUPPORTED&#x60;.
 func (r ApiGiftCardsSearchRequest) Currency(currency string) ApiGiftCardsSearchRequest {
 	r.currency = &currency
 	return r
@@ -939,7 +952,7 @@ Returns `{ items, pagination }`. `countryCode`, `category`, `q` and
 `isRedeemableGlobally` select cards; `valueType` selects offers within them, and a card left without
 an offer is dropped. Pages count cards. Prices are indicative, in `currency`; a fixed offer is listed only
 when it is cheaper than the card's range at the same value. An invalid or unknown parameter gives 400 / 10001;
-an unsupported `currency` gives 404 / 10004.
+an unsupported `currency` gives 400 / 10001 at `currency`.
 
  @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
  @return ApiGiftCardsSearchRequest
@@ -966,7 +979,7 @@ func (a *GiftCardsAPIService) GiftCardsSearchExecute(r ApiGiftCardsSearchRequest
 		return localVarReturnValue, nil, &GenericOpenAPIError{error: err.Error()}
 	}
 
-	localVarPath := localBasePath + "/api/v1/b2b/giftcards/search"
+	localVarPath := localBasePath + "/v1/giftcards/search"
 
 	localVarHeaderParams := make(map[string]string)
 	localVarQueryParams := url.Values{}

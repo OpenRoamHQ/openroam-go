@@ -270,7 +270,6 @@ func (o *HotelInputs) UnmarshalJSON(data []byte) (err error) {
 	varHotelInputs := _HotelInputs{}
 
 	decoder := json.NewDecoder(bytes.NewReader(data))
-	decoder.DisallowUnknownFields()
 	err = decoder.Decode(&varHotelInputs)
 
 	if err != nil {

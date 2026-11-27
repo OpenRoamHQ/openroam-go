@@ -13,6 +13,8 @@ package openroam
 
 import (
 	"encoding/json"
+	"bytes"
+	"fmt"
 )
 
 // checks if the WalletTransactionList type satisfies the MappedNullable interface at compile time
@@ -21,17 +23,21 @@ var _ MappedNullable = &WalletTransactionList{}
 // WalletTransactionList A page of a wallet's transactions, newest first.
 type WalletTransactionList struct {
 	// The transactions on this page.
-	Transactions []WalletTransaction `json:"transactions,omitempty"`
+	Transactions []WalletTransaction `json:"transactions"`
 	// Paging of the list.
-	Pagination *Pagination `json:"pagination,omitempty"`
+	Pagination Pagination `json:"pagination"`
 }
+
+type _WalletTransactionList WalletTransactionList
 
 // NewWalletTransactionList instantiates a new WalletTransactionList object
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewWalletTransactionList() *WalletTransactionList {
+func NewWalletTransactionList(transactions []WalletTransaction, pagination Pagination) *WalletTransactionList {
 	this := WalletTransactionList{}
+	this.Transactions = transactions
+	this.Pagination = pagination
 	return &this
 }
 
@@ -43,68 +49,52 @@ func NewWalletTransactionListWithDefaults() *WalletTransactionList {
 	return &this
 }
 
-// GetTransactions returns the Transactions field value if set, zero value otherwise.
+// GetTransactions returns the Transactions field value
 func (o *WalletTransactionList) GetTransactions() []WalletTransaction {
-	if o == nil || IsNil(o.Transactions) {
+	if o == nil {
 		var ret []WalletTransaction
 		return ret
 	}
+
 	return o.Transactions
 }
 
-// GetTransactionsOk returns a tuple with the Transactions field value if set, nil otherwise
+// GetTransactionsOk returns a tuple with the Transactions field value
 // and a boolean to check if the value has been set.
 func (o *WalletTransactionList) GetTransactionsOk() ([]WalletTransaction, bool) {
-	if o == nil || IsNil(o.Transactions) {
+	if o == nil {
 		return nil, false
 	}
 	return o.Transactions, true
 }
 
-// HasTransactions returns a boolean if a field has been set.
-func (o *WalletTransactionList) HasTransactions() bool {
-	if o != nil && !IsNil(o.Transactions) {
-		return true
-	}
-
-	return false
-}
-
-// SetTransactions gets a reference to the given []WalletTransaction and assigns it to the Transactions field.
+// SetTransactions sets field value
 func (o *WalletTransactionList) SetTransactions(v []WalletTransaction) {
 	o.Transactions = v
 }
 
-// GetPagination returns the Pagination field value if set, zero value otherwise.
+// GetPagination returns the Pagination field value
 func (o *WalletTransactionList) GetPagination() Pagination {
-	if o == nil || IsNil(o.Pagination) {
+	if o == nil {
 		var ret Pagination
 		return ret
 	}
-	return *o.Pagination
+
+	return o.Pagination
 }
 
-// GetPaginationOk returns a tuple with the Pagination field value if set, nil otherwise
+// GetPaginationOk returns a tuple with the Pagination field value
 // and a boolean to check if the value has been set.
 func (o *WalletTransactionList) GetPaginationOk() (*Pagination, bool) {
-	if o == nil || IsNil(o.Pagination) {
+	if o == nil {
 		return nil, false
 	}
-	return o.Pagination, true
+	return &o.Pagination, true
 }
 
-// HasPagination returns a boolean if a field has been set.
-func (o *WalletTransactionList) HasPagination() bool {
-	if o != nil && !IsNil(o.Pagination) {
-		return true
-	}
-
-	return false
-}
-
-// SetPagination gets a reference to the given Pagination and assigns it to the Pagination field.
+// SetPagination sets field value
 func (o *WalletTransactionList) SetPagination(v Pagination) {
-	o.Pagination = &v
+	o.Pagination = v
 }
 
 func (o WalletTransactionList) MarshalJSON() ([]byte, error) {
@@ -117,13 +107,46 @@ func (o WalletTransactionList) MarshalJSON() ([]byte, error) {
 
 func (o WalletTransactionList) ToMap() (map[string]interface{}, error) {
 	toSerialize := map[string]interface{}{}
-	if !IsNil(o.Transactions) {
-		toSerialize["transactions"] = o.Transactions
-	}
-	if !IsNil(o.Pagination) {
-		toSerialize["pagination"] = o.Pagination
-	}
+	toSerialize["transactions"] = o.Transactions
+	toSerialize["pagination"] = o.Pagination
 	return toSerialize, nil
+}
+
+func (o *WalletTransactionList) UnmarshalJSON(data []byte) (err error) {
+	// This validates that all required properties are included in the JSON object
+	// by unmarshalling the object into a generic map with string keys and checking
+	// that every required field exists as a key in the generic map.
+	requiredProperties := []string{
+		"transactions",
+		"pagination",
+	}
+
+	allProperties := make(map[string]interface{})
+
+	err = json.Unmarshal(data, &allProperties)
+
+	if err != nil {
+		return err;
+	}
+
+	for _, requiredProperty := range(requiredProperties) {
+		if _, exists := allProperties[requiredProperty]; !exists {
+			return fmt.Errorf("no value given for required property %v", requiredProperty)
+		}
+	}
+
+	varWalletTransactionList := _WalletTransactionList{}
+
+	decoder := json.NewDecoder(bytes.NewReader(data))
+	err = decoder.Decode(&varWalletTransactionList)
+
+	if err != nil {
+		return err
+	}
+
+	*o = WalletTransactionList(varWalletTransactionList)
+
+	return err
 }
 
 type NullableWalletTransactionList struct {

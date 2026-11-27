@@ -13,6 +13,8 @@ package openroam
 
 import (
 	"encoding/json"
+	"bytes"
+	"fmt"
 )
 
 // checks if the OrderPayment type satisfies the MappedNullable interface at compile time
@@ -20,24 +22,33 @@ var _ MappedNullable = &OrderPayment{}
 
 // OrderPayment A payment attempt.
 type OrderPayment struct {
-	// Payment status.
-	Status *string `json:"status,omitempty"`
-	// How the payment was made; `balance` for wallet payments.
-	Method *string `json:"method,omitempty"`
-	// The amount charged, in the order's currency.
-	Amount *Money `json:"amount,omitempty"`
+	// `pending`; `authorized` (a traveller's card on your hosted site is held for the order             and is charged for what is delivered); `completed`; `failed`; `partiallyRefunded` (some items were             refunded); `refunded` (every item was refunded); or `cancelled` (the order ended without payment, or a             card hold was released with nothing charged).
+	Status string `json:"status"`
+	// How the payment was made; `balance` for wallet payments, `card` for a card, including             a traveller's card on your hosted site.
+	Method string `json:"method"`
+	// The amount charged, in the order's currency. For a traveller's card on your hosted site it             includes any tax added at checkout: the amount held while `authorized`, then the amount charged, which leaves             out what was released from the hold; 0 when the hold was released with nothing charged. Refunds are not taken             off.
+	Amount Money `json:"amount"`
+	// For a traveller's card on your hosted site, the part of `amount` that is the tax             OpenRoam added at checkout: the tax held while `authorized`, then the tax charged. It is already in             `amount`, so never add it. `null` on every other payment, and when the checkout added no tax.
+	CheckoutTax NullableCheckoutTax `json:"checkoutTax,omitempty"`
 	// The wallet charged by a balance payment, when known; otherwise `null`.
 	Wallet NullableOrderPaymentWallet `json:"wallet,omitempty"`
 	// Why the payment failed; `null` unless it failed.
 	Failure NullablePaymentFailure `json:"failure,omitempty"`
+	// Card details for a card payment, including when the last four digits are unavailable.
+	Card NullableOrderPaymentCard `json:"card,omitempty"`
 }
+
+type _OrderPayment OrderPayment
 
 // NewOrderPayment instantiates a new OrderPayment object
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewOrderPayment() *OrderPayment {
+func NewOrderPayment(status string, method string, amount Money) *OrderPayment {
 	this := OrderPayment{}
+	this.Status = status
+	this.Method = method
+	this.Amount = amount
 	return &this
 }
 
@@ -49,100 +60,118 @@ func NewOrderPaymentWithDefaults() *OrderPayment {
 	return &this
 }
 
-// GetStatus returns the Status field value if set, zero value otherwise.
+// GetStatus returns the Status field value
 func (o *OrderPayment) GetStatus() string {
-	if o == nil || IsNil(o.Status) {
+	if o == nil {
 		var ret string
 		return ret
 	}
-	return *o.Status
+
+	return o.Status
 }
 
-// GetStatusOk returns a tuple with the Status field value if set, nil otherwise
+// GetStatusOk returns a tuple with the Status field value
 // and a boolean to check if the value has been set.
 func (o *OrderPayment) GetStatusOk() (*string, bool) {
-	if o == nil || IsNil(o.Status) {
+	if o == nil {
 		return nil, false
 	}
-	return o.Status, true
+	return &o.Status, true
 }
 
-// HasStatus returns a boolean if a field has been set.
-func (o *OrderPayment) HasStatus() bool {
-	if o != nil && !IsNil(o.Status) {
-		return true
-	}
-
-	return false
-}
-
-// SetStatus gets a reference to the given string and assigns it to the Status field.
+// SetStatus sets field value
 func (o *OrderPayment) SetStatus(v string) {
-	o.Status = &v
+	o.Status = v
 }
 
-// GetMethod returns the Method field value if set, zero value otherwise.
+// GetMethod returns the Method field value
 func (o *OrderPayment) GetMethod() string {
-	if o == nil || IsNil(o.Method) {
+	if o == nil {
 		var ret string
 		return ret
 	}
-	return *o.Method
+
+	return o.Method
 }
 
-// GetMethodOk returns a tuple with the Method field value if set, nil otherwise
+// GetMethodOk returns a tuple with the Method field value
 // and a boolean to check if the value has been set.
 func (o *OrderPayment) GetMethodOk() (*string, bool) {
-	if o == nil || IsNil(o.Method) {
+	if o == nil {
 		return nil, false
 	}
-	return o.Method, true
+	return &o.Method, true
 }
 
-// HasMethod returns a boolean if a field has been set.
-func (o *OrderPayment) HasMethod() bool {
-	if o != nil && !IsNil(o.Method) {
-		return true
-	}
-
-	return false
-}
-
-// SetMethod gets a reference to the given string and assigns it to the Method field.
+// SetMethod sets field value
 func (o *OrderPayment) SetMethod(v string) {
-	o.Method = &v
+	o.Method = v
 }
 
-// GetAmount returns the Amount field value if set, zero value otherwise.
+// GetAmount returns the Amount field value
 func (o *OrderPayment) GetAmount() Money {
-	if o == nil || IsNil(o.Amount) {
+	if o == nil {
 		var ret Money
 		return ret
 	}
-	return *o.Amount
+
+	return o.Amount
 }
 
-// GetAmountOk returns a tuple with the Amount field value if set, nil otherwise
+// GetAmountOk returns a tuple with the Amount field value
 // and a boolean to check if the value has been set.
 func (o *OrderPayment) GetAmountOk() (*Money, bool) {
-	if o == nil || IsNil(o.Amount) {
+	if o == nil {
 		return nil, false
 	}
-	return o.Amount, true
+	return &o.Amount, true
 }
 
-// HasAmount returns a boolean if a field has been set.
-func (o *OrderPayment) HasAmount() bool {
-	if o != nil && !IsNil(o.Amount) {
+// SetAmount sets field value
+func (o *OrderPayment) SetAmount(v Money) {
+	o.Amount = v
+}
+
+// GetCheckoutTax returns the CheckoutTax field value if set, zero value otherwise (both if not set or set to explicit null).
+func (o *OrderPayment) GetCheckoutTax() CheckoutTax {
+	if o == nil || IsNil(o.CheckoutTax.Get()) {
+		var ret CheckoutTax
+		return ret
+	}
+	return *o.CheckoutTax.Get()
+}
+
+// GetCheckoutTaxOk returns a tuple with the CheckoutTax field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+// NOTE: If the value is an explicit nil, `nil, true` will be returned
+func (o *OrderPayment) GetCheckoutTaxOk() (*CheckoutTax, bool) {
+	if o == nil {
+		return nil, false
+	}
+	return o.CheckoutTax.Get(), o.CheckoutTax.IsSet()
+}
+
+// HasCheckoutTax returns a boolean if a field has been set.
+func (o *OrderPayment) HasCheckoutTax() bool {
+	if o != nil && o.CheckoutTax.IsSet() {
 		return true
 	}
 
 	return false
 }
 
-// SetAmount gets a reference to the given Money and assigns it to the Amount field.
-func (o *OrderPayment) SetAmount(v Money) {
-	o.Amount = &v
+// SetCheckoutTax gets a reference to the given NullableCheckoutTax and assigns it to the CheckoutTax field.
+func (o *OrderPayment) SetCheckoutTax(v CheckoutTax) {
+	o.CheckoutTax.Set(&v)
+}
+// SetCheckoutTaxNil sets the value for CheckoutTax to be an explicit nil
+func (o *OrderPayment) SetCheckoutTaxNil() {
+	o.CheckoutTax.Set(nil)
+}
+
+// UnsetCheckoutTax ensures that no value is present for CheckoutTax, not even an explicit nil
+func (o *OrderPayment) UnsetCheckoutTax() {
+	o.CheckoutTax.Unset()
 }
 
 // GetWallet returns the Wallet field value if set, zero value otherwise (both if not set or set to explicit null).
@@ -229,6 +258,48 @@ func (o *OrderPayment) UnsetFailure() {
 	o.Failure.Unset()
 }
 
+// GetCard returns the Card field value if set, zero value otherwise (both if not set or set to explicit null).
+func (o *OrderPayment) GetCard() OrderPaymentCard {
+	if o == nil || IsNil(o.Card.Get()) {
+		var ret OrderPaymentCard
+		return ret
+	}
+	return *o.Card.Get()
+}
+
+// GetCardOk returns a tuple with the Card field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+// NOTE: If the value is an explicit nil, `nil, true` will be returned
+func (o *OrderPayment) GetCardOk() (*OrderPaymentCard, bool) {
+	if o == nil {
+		return nil, false
+	}
+	return o.Card.Get(), o.Card.IsSet()
+}
+
+// HasCard returns a boolean if a field has been set.
+func (o *OrderPayment) HasCard() bool {
+	if o != nil && o.Card.IsSet() {
+		return true
+	}
+
+	return false
+}
+
+// SetCard gets a reference to the given NullableOrderPaymentCard and assigns it to the Card field.
+func (o *OrderPayment) SetCard(v OrderPaymentCard) {
+	o.Card.Set(&v)
+}
+// SetCardNil sets the value for Card to be an explicit nil
+func (o *OrderPayment) SetCardNil() {
+	o.Card.Set(nil)
+}
+
+// UnsetCard ensures that no value is present for Card, not even an explicit nil
+func (o *OrderPayment) UnsetCard() {
+	o.Card.Unset()
+}
+
 func (o OrderPayment) MarshalJSON() ([]byte, error) {
 	toSerialize,err := o.ToMap()
 	if err != nil {
@@ -239,14 +310,11 @@ func (o OrderPayment) MarshalJSON() ([]byte, error) {
 
 func (o OrderPayment) ToMap() (map[string]interface{}, error) {
 	toSerialize := map[string]interface{}{}
-	if !IsNil(o.Status) {
-		toSerialize["status"] = o.Status
-	}
-	if !IsNil(o.Method) {
-		toSerialize["method"] = o.Method
-	}
-	if !IsNil(o.Amount) {
-		toSerialize["amount"] = o.Amount
+	toSerialize["status"] = o.Status
+	toSerialize["method"] = o.Method
+	toSerialize["amount"] = o.Amount
+	if o.CheckoutTax.IsSet() {
+		toSerialize["checkoutTax"] = o.CheckoutTax.Get()
 	}
 	if o.Wallet.IsSet() {
 		toSerialize["wallet"] = o.Wallet.Get()
@@ -254,7 +322,48 @@ func (o OrderPayment) ToMap() (map[string]interface{}, error) {
 	if o.Failure.IsSet() {
 		toSerialize["failure"] = o.Failure.Get()
 	}
+	if o.Card.IsSet() {
+		toSerialize["card"] = o.Card.Get()
+	}
 	return toSerialize, nil
+}
+
+func (o *OrderPayment) UnmarshalJSON(data []byte) (err error) {
+	// This validates that all required properties are included in the JSON object
+	// by unmarshalling the object into a generic map with string keys and checking
+	// that every required field exists as a key in the generic map.
+	requiredProperties := []string{
+		"status",
+		"method",
+		"amount",
+	}
+
+	allProperties := make(map[string]interface{})
+
+	err = json.Unmarshal(data, &allProperties)
+
+	if err != nil {
+		return err;
+	}
+
+	for _, requiredProperty := range(requiredProperties) {
+		if _, exists := allProperties[requiredProperty]; !exists {
+			return fmt.Errorf("no value given for required property %v", requiredProperty)
+		}
+	}
+
+	varOrderPayment := _OrderPayment{}
+
+	decoder := json.NewDecoder(bytes.NewReader(data))
+	err = decoder.Decode(&varOrderPayment)
+
+	if err != nil {
+		return err
+	}
+
+	*o = OrderPayment(varOrderPayment)
+
+	return err
 }
 
 type NullableOrderPayment struct {

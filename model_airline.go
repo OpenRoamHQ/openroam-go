@@ -200,7 +200,6 @@ func (o *Airline) UnmarshalJSON(data []byte) (err error) {
 	varAirline := _Airline{}
 
 	decoder := json.NewDecoder(bytes.NewReader(data))
-	decoder.DisallowUnknownFields()
 	err = decoder.Decode(&varAirline)
 
 	if err != nil {

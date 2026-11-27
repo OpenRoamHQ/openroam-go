@@ -13,23 +13,29 @@ package openroam
 
 import (
 	"encoding/json"
+	"bytes"
+	"fmt"
 )
 
 // checks if the RoomAmendmentCapabilities type satisfies the MappedNullable interface at compile time
 var _ MappedNullable = &RoomAmendmentCapabilities{}
 
-// RoomAmendmentCapabilities What may change about the rooms themselves. Adding or removing rooms is not offered today, so both are false.
+// RoomAmendmentCapabilities What may change about the rooms themselves. Adding a room is offered nowhere; removing one only where a single room of a multi-room stay can be cancelled on its own (`roomRemovalOnly`).
 type RoomAmendmentCapabilities struct {
-	AddMore *bool `json:"addMore,omitempty"`
-	Remove *bool `json:"remove,omitempty"`
+	AddMore bool `json:"addMore"`
+	Remove bool `json:"remove"`
 }
+
+type _RoomAmendmentCapabilities RoomAmendmentCapabilities
 
 // NewRoomAmendmentCapabilities instantiates a new RoomAmendmentCapabilities object
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewRoomAmendmentCapabilities() *RoomAmendmentCapabilities {
+func NewRoomAmendmentCapabilities(addMore bool, remove bool) *RoomAmendmentCapabilities {
 	this := RoomAmendmentCapabilities{}
+	this.AddMore = addMore
+	this.Remove = remove
 	return &this
 }
 
@@ -41,68 +47,52 @@ func NewRoomAmendmentCapabilitiesWithDefaults() *RoomAmendmentCapabilities {
 	return &this
 }
 
-// GetAddMore returns the AddMore field value if set, zero value otherwise.
+// GetAddMore returns the AddMore field value
 func (o *RoomAmendmentCapabilities) GetAddMore() bool {
-	if o == nil || IsNil(o.AddMore) {
+	if o == nil {
 		var ret bool
 		return ret
 	}
-	return *o.AddMore
+
+	return o.AddMore
 }
 
-// GetAddMoreOk returns a tuple with the AddMore field value if set, nil otherwise
+// GetAddMoreOk returns a tuple with the AddMore field value
 // and a boolean to check if the value has been set.
 func (o *RoomAmendmentCapabilities) GetAddMoreOk() (*bool, bool) {
-	if o == nil || IsNil(o.AddMore) {
+	if o == nil {
 		return nil, false
 	}
-	return o.AddMore, true
+	return &o.AddMore, true
 }
 
-// HasAddMore returns a boolean if a field has been set.
-func (o *RoomAmendmentCapabilities) HasAddMore() bool {
-	if o != nil && !IsNil(o.AddMore) {
-		return true
-	}
-
-	return false
-}
-
-// SetAddMore gets a reference to the given bool and assigns it to the AddMore field.
+// SetAddMore sets field value
 func (o *RoomAmendmentCapabilities) SetAddMore(v bool) {
-	o.AddMore = &v
+	o.AddMore = v
 }
 
-// GetRemove returns the Remove field value if set, zero value otherwise.
+// GetRemove returns the Remove field value
 func (o *RoomAmendmentCapabilities) GetRemove() bool {
-	if o == nil || IsNil(o.Remove) {
+	if o == nil {
 		var ret bool
 		return ret
 	}
-	return *o.Remove
+
+	return o.Remove
 }
 
-// GetRemoveOk returns a tuple with the Remove field value if set, nil otherwise
+// GetRemoveOk returns a tuple with the Remove field value
 // and a boolean to check if the value has been set.
 func (o *RoomAmendmentCapabilities) GetRemoveOk() (*bool, bool) {
-	if o == nil || IsNil(o.Remove) {
+	if o == nil {
 		return nil, false
 	}
-	return o.Remove, true
+	return &o.Remove, true
 }
 
-// HasRemove returns a boolean if a field has been set.
-func (o *RoomAmendmentCapabilities) HasRemove() bool {
-	if o != nil && !IsNil(o.Remove) {
-		return true
-	}
-
-	return false
-}
-
-// SetRemove gets a reference to the given bool and assigns it to the Remove field.
+// SetRemove sets field value
 func (o *RoomAmendmentCapabilities) SetRemove(v bool) {
-	o.Remove = &v
+	o.Remove = v
 }
 
 func (o RoomAmendmentCapabilities) MarshalJSON() ([]byte, error) {
@@ -115,13 +105,46 @@ func (o RoomAmendmentCapabilities) MarshalJSON() ([]byte, error) {
 
 func (o RoomAmendmentCapabilities) ToMap() (map[string]interface{}, error) {
 	toSerialize := map[string]interface{}{}
-	if !IsNil(o.AddMore) {
-		toSerialize["addMore"] = o.AddMore
-	}
-	if !IsNil(o.Remove) {
-		toSerialize["remove"] = o.Remove
-	}
+	toSerialize["addMore"] = o.AddMore
+	toSerialize["remove"] = o.Remove
 	return toSerialize, nil
+}
+
+func (o *RoomAmendmentCapabilities) UnmarshalJSON(data []byte) (err error) {
+	// This validates that all required properties are included in the JSON object
+	// by unmarshalling the object into a generic map with string keys and checking
+	// that every required field exists as a key in the generic map.
+	requiredProperties := []string{
+		"addMore",
+		"remove",
+	}
+
+	allProperties := make(map[string]interface{})
+
+	err = json.Unmarshal(data, &allProperties)
+
+	if err != nil {
+		return err;
+	}
+
+	for _, requiredProperty := range(requiredProperties) {
+		if _, exists := allProperties[requiredProperty]; !exists {
+			return fmt.Errorf("no value given for required property %v", requiredProperty)
+		}
+	}
+
+	varRoomAmendmentCapabilities := _RoomAmendmentCapabilities{}
+
+	decoder := json.NewDecoder(bytes.NewReader(data))
+	err = decoder.Decode(&varRoomAmendmentCapabilities)
+
+	if err != nil {
+		return err
+	}
+
+	*o = RoomAmendmentCapabilities(varRoomAmendmentCapabilities)
+
+	return err
 }
 
 type NullableRoomAmendmentCapabilities struct {

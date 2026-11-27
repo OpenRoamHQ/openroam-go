@@ -20,31 +20,29 @@ import (
 // checks if the SimCard type satisfies the MappedNullable interface at compile time
 var _ MappedNullable = &SimCard{}
 
-// SimCard The eSIM's SIM card details: how to install it and its current usage.
+// SimCard The eSIM's SIM card details: how to install it and its usage last read.
 type SimCard struct {
-	// Physical ICCID of the SIM card.
+	// The ICCID of the SIM card.
 	Iccid string `json:"iccid"`
-	// The installation state of the SIM card profile on the device.
-	Status string `json:"status"`
-	// Full LPA activation string in the format `LPA:1$smdpAddress$activationCode`. Scan this with the device camera to install.
+	// Full LPA activation string in the format `LPA:1$smdpAddress$activationCode`. Scan it with the device camera to install.
 	LpaCode NullableString `json:"lpaCode,omitempty"`
-	// SM-DP+ server address extracted from the LPA code.
+	// SM-DP+ server address taken from the LPA code.
 	SmdpAddress NullableString `json:"smdpAddress,omitempty"`
-	// Activation code extracted from the LPA code.
+	// Activation code taken from the LPA code.
 	ActivationCode NullableString `json:"activationCode,omitempty"`
-	// URL to a QR code image representing the LPA code.
+	// URL of a PNG QR code of the LPA code. It does not expire and needs no key.
 	QrCodeUrl NullableString `json:"qrCodeUrl,omitempty"`
-	// SIM PIN (if provided by the carrier).
+	// SIM PIN, when the network issues one.
 	Pin NullableString `json:"pin,omitempty"`
-	// SIM PUK (if provided by the carrier).
+	// SIM PUK, when the network issues one.
 	Puk NullableString `json:"puk,omitempty"`
-	// Phone number assigned to this eSIM, if applicable.
+	// Phone number assigned to this eSIM, when the plan includes one.
 	Number NullableString `json:"number,omitempty"`
 	// Deep-link URL for one-tap eSIM installation on iOS.
 	IosQuickInstall NullableString `json:"iosQuickInstall,omitempty"`
 	// Deep-link URL for one-tap eSIM installation on Android.
 	AndroidQuickInstall NullableString `json:"androidQuickInstall,omitempty"`
-	// The data, SMS and voice usage last read; null until usage has first been read.
+	// The base plan's usage last read, without top-ups; null until usage has first been read.
 	Usage NullableEsimUsage `json:"usage,omitempty"`
 }
 
@@ -54,10 +52,9 @@ type _SimCard SimCard
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewSimCard(iccid string, status string) *SimCard {
+func NewSimCard(iccid string) *SimCard {
 	this := SimCard{}
 	this.Iccid = iccid
-	this.Status = status
 	return &this
 }
 
@@ -91,30 +88,6 @@ func (o *SimCard) GetIccidOk() (*string, bool) {
 // SetIccid sets field value
 func (o *SimCard) SetIccid(v string) {
 	o.Iccid = v
-}
-
-// GetStatus returns the Status field value
-func (o *SimCard) GetStatus() string {
-	if o == nil {
-		var ret string
-		return ret
-	}
-
-	return o.Status
-}
-
-// GetStatusOk returns a tuple with the Status field value
-// and a boolean to check if the value has been set.
-func (o *SimCard) GetStatusOk() (*string, bool) {
-	if o == nil {
-		return nil, false
-	}
-	return &o.Status, true
-}
-
-// SetStatus sets field value
-func (o *SimCard) SetStatus(v string) {
-	o.Status = v
 }
 
 // GetLpaCode returns the LpaCode field value if set, zero value otherwise (both if not set or set to explicit null).
@@ -548,7 +521,6 @@ func (o SimCard) MarshalJSON() ([]byte, error) {
 func (o SimCard) ToMap() (map[string]interface{}, error) {
 	toSerialize := map[string]interface{}{}
 	toSerialize["iccid"] = o.Iccid
-	toSerialize["status"] = o.Status
 	if o.LpaCode.IsSet() {
 		toSerialize["lpaCode"] = o.LpaCode.Get()
 	}
@@ -588,7 +560,6 @@ func (o *SimCard) UnmarshalJSON(data []byte) (err error) {
 	// that every required field exists as a key in the generic map.
 	requiredProperties := []string{
 		"iccid",
-		"status",
 	}
 
 	allProperties := make(map[string]interface{})
@@ -608,7 +579,6 @@ func (o *SimCard) UnmarshalJSON(data []byte) (err error) {
 	varSimCard := _SimCard{}
 
 	decoder := json.NewDecoder(bytes.NewReader(data))
-	decoder.DisallowUnknownFields()
 	err = decoder.Decode(&varSimCard)
 
 	if err != nil {

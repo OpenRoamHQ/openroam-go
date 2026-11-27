@@ -13,6 +13,8 @@ package openroam
 
 import (
 	"encoding/json"
+	"bytes"
+	"fmt"
 )
 
 // checks if the UtilityPurchasedDetails type satisfies the MappedNullable interface at compile time
@@ -20,16 +22,20 @@ var _ MappedNullable = &UtilityPurchasedDetails{}
 
 // UtilityPurchasedDetails Biller facts outside the purchased-product keys every partner service shares, as captured when the item was added. `deliveryType` is `unknown` for items added before it was captured.
 type UtilityPurchasedDetails struct {
-	ServiceType *string `json:"serviceType,omitempty"`
-	DeliveryType *string `json:"deliveryType,omitempty"`
+	ServiceType string `json:"serviceType"`
+	DeliveryType string `json:"deliveryType"`
 }
+
+type _UtilityPurchasedDetails UtilityPurchasedDetails
 
 // NewUtilityPurchasedDetails instantiates a new UtilityPurchasedDetails object
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewUtilityPurchasedDetails() *UtilityPurchasedDetails {
+func NewUtilityPurchasedDetails(serviceType string, deliveryType string) *UtilityPurchasedDetails {
 	this := UtilityPurchasedDetails{}
+	this.ServiceType = serviceType
+	this.DeliveryType = deliveryType
 	return &this
 }
 
@@ -41,68 +47,52 @@ func NewUtilityPurchasedDetailsWithDefaults() *UtilityPurchasedDetails {
 	return &this
 }
 
-// GetServiceType returns the ServiceType field value if set, zero value otherwise.
+// GetServiceType returns the ServiceType field value
 func (o *UtilityPurchasedDetails) GetServiceType() string {
-	if o == nil || IsNil(o.ServiceType) {
+	if o == nil {
 		var ret string
 		return ret
 	}
-	return *o.ServiceType
+
+	return o.ServiceType
 }
 
-// GetServiceTypeOk returns a tuple with the ServiceType field value if set, nil otherwise
+// GetServiceTypeOk returns a tuple with the ServiceType field value
 // and a boolean to check if the value has been set.
 func (o *UtilityPurchasedDetails) GetServiceTypeOk() (*string, bool) {
-	if o == nil || IsNil(o.ServiceType) {
+	if o == nil {
 		return nil, false
 	}
-	return o.ServiceType, true
+	return &o.ServiceType, true
 }
 
-// HasServiceType returns a boolean if a field has been set.
-func (o *UtilityPurchasedDetails) HasServiceType() bool {
-	if o != nil && !IsNil(o.ServiceType) {
-		return true
-	}
-
-	return false
-}
-
-// SetServiceType gets a reference to the given string and assigns it to the ServiceType field.
+// SetServiceType sets field value
 func (o *UtilityPurchasedDetails) SetServiceType(v string) {
-	o.ServiceType = &v
+	o.ServiceType = v
 }
 
-// GetDeliveryType returns the DeliveryType field value if set, zero value otherwise.
+// GetDeliveryType returns the DeliveryType field value
 func (o *UtilityPurchasedDetails) GetDeliveryType() string {
-	if o == nil || IsNil(o.DeliveryType) {
+	if o == nil {
 		var ret string
 		return ret
 	}
-	return *o.DeliveryType
+
+	return o.DeliveryType
 }
 
-// GetDeliveryTypeOk returns a tuple with the DeliveryType field value if set, nil otherwise
+// GetDeliveryTypeOk returns a tuple with the DeliveryType field value
 // and a boolean to check if the value has been set.
 func (o *UtilityPurchasedDetails) GetDeliveryTypeOk() (*string, bool) {
-	if o == nil || IsNil(o.DeliveryType) {
+	if o == nil {
 		return nil, false
 	}
-	return o.DeliveryType, true
+	return &o.DeliveryType, true
 }
 
-// HasDeliveryType returns a boolean if a field has been set.
-func (o *UtilityPurchasedDetails) HasDeliveryType() bool {
-	if o != nil && !IsNil(o.DeliveryType) {
-		return true
-	}
-
-	return false
-}
-
-// SetDeliveryType gets a reference to the given string and assigns it to the DeliveryType field.
+// SetDeliveryType sets field value
 func (o *UtilityPurchasedDetails) SetDeliveryType(v string) {
-	o.DeliveryType = &v
+	o.DeliveryType = v
 }
 
 func (o UtilityPurchasedDetails) MarshalJSON() ([]byte, error) {
@@ -115,13 +105,46 @@ func (o UtilityPurchasedDetails) MarshalJSON() ([]byte, error) {
 
 func (o UtilityPurchasedDetails) ToMap() (map[string]interface{}, error) {
 	toSerialize := map[string]interface{}{}
-	if !IsNil(o.ServiceType) {
-		toSerialize["serviceType"] = o.ServiceType
-	}
-	if !IsNil(o.DeliveryType) {
-		toSerialize["deliveryType"] = o.DeliveryType
-	}
+	toSerialize["serviceType"] = o.ServiceType
+	toSerialize["deliveryType"] = o.DeliveryType
 	return toSerialize, nil
+}
+
+func (o *UtilityPurchasedDetails) UnmarshalJSON(data []byte) (err error) {
+	// This validates that all required properties are included in the JSON object
+	// by unmarshalling the object into a generic map with string keys and checking
+	// that every required field exists as a key in the generic map.
+	requiredProperties := []string{
+		"serviceType",
+		"deliveryType",
+	}
+
+	allProperties := make(map[string]interface{})
+
+	err = json.Unmarshal(data, &allProperties)
+
+	if err != nil {
+		return err;
+	}
+
+	for _, requiredProperty := range(requiredProperties) {
+		if _, exists := allProperties[requiredProperty]; !exists {
+			return fmt.Errorf("no value given for required property %v", requiredProperty)
+		}
+	}
+
+	varUtilityPurchasedDetails := _UtilityPurchasedDetails{}
+
+	decoder := json.NewDecoder(bytes.NewReader(data))
+	err = decoder.Decode(&varUtilityPurchasedDetails)
+
+	if err != nil {
+		return err
+	}
+
+	*o = UtilityPurchasedDetails(varUtilityPurchasedDetails)
+
+	return err
 }
 
 type NullableUtilityPurchasedDetails struct {

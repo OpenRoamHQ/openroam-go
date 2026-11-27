@@ -13,6 +13,8 @@ package openroam
 
 import (
 	"encoding/json"
+	"bytes"
+	"fmt"
 )
 
 // checks if the Passenger type satisfies the MappedNullable interface at compile time
@@ -21,13 +23,13 @@ var _ MappedNullable = &Passenger{}
 // Passenger One passenger as booked. Names, title, gender and date of birth read as sent; `email` and `phoneNumber` are masked, and a document number shows only its last four characters.
 type Passenger struct {
 	// The passenger's 1-based position in the fare's `offerPassengers`.
-	PassengerIndex *int32 `json:"passengerIndex,omitempty"`
+	PassengerIndex int32 `json:"passengerIndex"`
 	// As sent, for example `mr`.
 	Title NullableString `json:"title,omitempty"`
 	// As sent.
-	GivenName *string `json:"givenName,omitempty"`
+	GivenName string `json:"givenName"`
 	// As sent.
-	FamilyName *string `json:"familyName,omitempty"`
+	FamilyName string `json:"familyName"`
 	// As sent, for example `m`.
 	Gender NullableString `json:"gender,omitempty"`
 	// Date of birth, as sent.
@@ -37,17 +39,24 @@ type Passenger struct {
 	// Masked, for example `+44***0123`; null when none was sent.
 	PhoneNumber NullableString `json:"phoneNumber,omitempty"`
 	// The passenger's travel document, at most one; empty when none was given.
-	IdentityDocuments []IdentityDocument `json:"identityDocuments,omitempty"`
+	IdentityDocuments []IdentityDocument `json:"identityDocuments"`
 	// The seats chosen for the passenger; empty when none was chosen.
-	SelectedSeats []SelectedSeat `json:"selectedSeats,omitempty"`
+	SelectedSeats []SelectedSeat `json:"selectedSeats"`
 }
+
+type _Passenger Passenger
 
 // NewPassenger instantiates a new Passenger object
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewPassenger() *Passenger {
+func NewPassenger(passengerIndex int32, givenName string, familyName string, identityDocuments []IdentityDocument, selectedSeats []SelectedSeat) *Passenger {
 	this := Passenger{}
+	this.PassengerIndex = passengerIndex
+	this.GivenName = givenName
+	this.FamilyName = familyName
+	this.IdentityDocuments = identityDocuments
+	this.SelectedSeats = selectedSeats
 	return &this
 }
 
@@ -59,36 +68,28 @@ func NewPassengerWithDefaults() *Passenger {
 	return &this
 }
 
-// GetPassengerIndex returns the PassengerIndex field value if set, zero value otherwise.
+// GetPassengerIndex returns the PassengerIndex field value
 func (o *Passenger) GetPassengerIndex() int32 {
-	if o == nil || IsNil(o.PassengerIndex) {
+	if o == nil {
 		var ret int32
 		return ret
 	}
-	return *o.PassengerIndex
+
+	return o.PassengerIndex
 }
 
-// GetPassengerIndexOk returns a tuple with the PassengerIndex field value if set, nil otherwise
+// GetPassengerIndexOk returns a tuple with the PassengerIndex field value
 // and a boolean to check if the value has been set.
 func (o *Passenger) GetPassengerIndexOk() (*int32, bool) {
-	if o == nil || IsNil(o.PassengerIndex) {
+	if o == nil {
 		return nil, false
 	}
-	return o.PassengerIndex, true
+	return &o.PassengerIndex, true
 }
 
-// HasPassengerIndex returns a boolean if a field has been set.
-func (o *Passenger) HasPassengerIndex() bool {
-	if o != nil && !IsNil(o.PassengerIndex) {
-		return true
-	}
-
-	return false
-}
-
-// SetPassengerIndex gets a reference to the given int32 and assigns it to the PassengerIndex field.
+// SetPassengerIndex sets field value
 func (o *Passenger) SetPassengerIndex(v int32) {
-	o.PassengerIndex = &v
+	o.PassengerIndex = v
 }
 
 // GetTitle returns the Title field value if set, zero value otherwise (both if not set or set to explicit null).
@@ -133,68 +134,52 @@ func (o *Passenger) UnsetTitle() {
 	o.Title.Unset()
 }
 
-// GetGivenName returns the GivenName field value if set, zero value otherwise.
+// GetGivenName returns the GivenName field value
 func (o *Passenger) GetGivenName() string {
-	if o == nil || IsNil(o.GivenName) {
+	if o == nil {
 		var ret string
 		return ret
 	}
-	return *o.GivenName
+
+	return o.GivenName
 }
 
-// GetGivenNameOk returns a tuple with the GivenName field value if set, nil otherwise
+// GetGivenNameOk returns a tuple with the GivenName field value
 // and a boolean to check if the value has been set.
 func (o *Passenger) GetGivenNameOk() (*string, bool) {
-	if o == nil || IsNil(o.GivenName) {
+	if o == nil {
 		return nil, false
 	}
-	return o.GivenName, true
+	return &o.GivenName, true
 }
 
-// HasGivenName returns a boolean if a field has been set.
-func (o *Passenger) HasGivenName() bool {
-	if o != nil && !IsNil(o.GivenName) {
-		return true
-	}
-
-	return false
-}
-
-// SetGivenName gets a reference to the given string and assigns it to the GivenName field.
+// SetGivenName sets field value
 func (o *Passenger) SetGivenName(v string) {
-	o.GivenName = &v
+	o.GivenName = v
 }
 
-// GetFamilyName returns the FamilyName field value if set, zero value otherwise.
+// GetFamilyName returns the FamilyName field value
 func (o *Passenger) GetFamilyName() string {
-	if o == nil || IsNil(o.FamilyName) {
+	if o == nil {
 		var ret string
 		return ret
 	}
-	return *o.FamilyName
+
+	return o.FamilyName
 }
 
-// GetFamilyNameOk returns a tuple with the FamilyName field value if set, nil otherwise
+// GetFamilyNameOk returns a tuple with the FamilyName field value
 // and a boolean to check if the value has been set.
 func (o *Passenger) GetFamilyNameOk() (*string, bool) {
-	if o == nil || IsNil(o.FamilyName) {
+	if o == nil {
 		return nil, false
 	}
-	return o.FamilyName, true
+	return &o.FamilyName, true
 }
 
-// HasFamilyName returns a boolean if a field has been set.
-func (o *Passenger) HasFamilyName() bool {
-	if o != nil && !IsNil(o.FamilyName) {
-		return true
-	}
-
-	return false
-}
-
-// SetFamilyName gets a reference to the given string and assigns it to the FamilyName field.
+// SetFamilyName sets field value
 func (o *Passenger) SetFamilyName(v string) {
-	o.FamilyName = &v
+	o.FamilyName = v
 }
 
 // GetGender returns the Gender field value if set, zero value otherwise (both if not set or set to explicit null).
@@ -365,66 +350,50 @@ func (o *Passenger) UnsetPhoneNumber() {
 	o.PhoneNumber.Unset()
 }
 
-// GetIdentityDocuments returns the IdentityDocuments field value if set, zero value otherwise.
+// GetIdentityDocuments returns the IdentityDocuments field value
 func (o *Passenger) GetIdentityDocuments() []IdentityDocument {
-	if o == nil || IsNil(o.IdentityDocuments) {
+	if o == nil {
 		var ret []IdentityDocument
 		return ret
 	}
+
 	return o.IdentityDocuments
 }
 
-// GetIdentityDocumentsOk returns a tuple with the IdentityDocuments field value if set, nil otherwise
+// GetIdentityDocumentsOk returns a tuple with the IdentityDocuments field value
 // and a boolean to check if the value has been set.
 func (o *Passenger) GetIdentityDocumentsOk() ([]IdentityDocument, bool) {
-	if o == nil || IsNil(o.IdentityDocuments) {
+	if o == nil {
 		return nil, false
 	}
 	return o.IdentityDocuments, true
 }
 
-// HasIdentityDocuments returns a boolean if a field has been set.
-func (o *Passenger) HasIdentityDocuments() bool {
-	if o != nil && !IsNil(o.IdentityDocuments) {
-		return true
-	}
-
-	return false
-}
-
-// SetIdentityDocuments gets a reference to the given []IdentityDocument and assigns it to the IdentityDocuments field.
+// SetIdentityDocuments sets field value
 func (o *Passenger) SetIdentityDocuments(v []IdentityDocument) {
 	o.IdentityDocuments = v
 }
 
-// GetSelectedSeats returns the SelectedSeats field value if set, zero value otherwise.
+// GetSelectedSeats returns the SelectedSeats field value
 func (o *Passenger) GetSelectedSeats() []SelectedSeat {
-	if o == nil || IsNil(o.SelectedSeats) {
+	if o == nil {
 		var ret []SelectedSeat
 		return ret
 	}
+
 	return o.SelectedSeats
 }
 
-// GetSelectedSeatsOk returns a tuple with the SelectedSeats field value if set, nil otherwise
+// GetSelectedSeatsOk returns a tuple with the SelectedSeats field value
 // and a boolean to check if the value has been set.
 func (o *Passenger) GetSelectedSeatsOk() ([]SelectedSeat, bool) {
-	if o == nil || IsNil(o.SelectedSeats) {
+	if o == nil {
 		return nil, false
 	}
 	return o.SelectedSeats, true
 }
 
-// HasSelectedSeats returns a boolean if a field has been set.
-func (o *Passenger) HasSelectedSeats() bool {
-	if o != nil && !IsNil(o.SelectedSeats) {
-		return true
-	}
-
-	return false
-}
-
-// SetSelectedSeats gets a reference to the given []SelectedSeat and assigns it to the SelectedSeats field.
+// SetSelectedSeats sets field value
 func (o *Passenger) SetSelectedSeats(v []SelectedSeat) {
 	o.SelectedSeats = v
 }
@@ -439,18 +408,12 @@ func (o Passenger) MarshalJSON() ([]byte, error) {
 
 func (o Passenger) ToMap() (map[string]interface{}, error) {
 	toSerialize := map[string]interface{}{}
-	if !IsNil(o.PassengerIndex) {
-		toSerialize["passengerIndex"] = o.PassengerIndex
-	}
+	toSerialize["passengerIndex"] = o.PassengerIndex
 	if o.Title.IsSet() {
 		toSerialize["title"] = o.Title.Get()
 	}
-	if !IsNil(o.GivenName) {
-		toSerialize["givenName"] = o.GivenName
-	}
-	if !IsNil(o.FamilyName) {
-		toSerialize["familyName"] = o.FamilyName
-	}
+	toSerialize["givenName"] = o.GivenName
+	toSerialize["familyName"] = o.FamilyName
 	if o.Gender.IsSet() {
 		toSerialize["gender"] = o.Gender.Get()
 	}
@@ -463,13 +426,49 @@ func (o Passenger) ToMap() (map[string]interface{}, error) {
 	if o.PhoneNumber.IsSet() {
 		toSerialize["phoneNumber"] = o.PhoneNumber.Get()
 	}
-	if !IsNil(o.IdentityDocuments) {
-		toSerialize["identityDocuments"] = o.IdentityDocuments
-	}
-	if !IsNil(o.SelectedSeats) {
-		toSerialize["selectedSeats"] = o.SelectedSeats
-	}
+	toSerialize["identityDocuments"] = o.IdentityDocuments
+	toSerialize["selectedSeats"] = o.SelectedSeats
 	return toSerialize, nil
+}
+
+func (o *Passenger) UnmarshalJSON(data []byte) (err error) {
+	// This validates that all required properties are included in the JSON object
+	// by unmarshalling the object into a generic map with string keys and checking
+	// that every required field exists as a key in the generic map.
+	requiredProperties := []string{
+		"passengerIndex",
+		"givenName",
+		"familyName",
+		"identityDocuments",
+		"selectedSeats",
+	}
+
+	allProperties := make(map[string]interface{})
+
+	err = json.Unmarshal(data, &allProperties)
+
+	if err != nil {
+		return err;
+	}
+
+	for _, requiredProperty := range(requiredProperties) {
+		if _, exists := allProperties[requiredProperty]; !exists {
+			return fmt.Errorf("no value given for required property %v", requiredProperty)
+		}
+	}
+
+	varPassenger := _Passenger{}
+
+	decoder := json.NewDecoder(bytes.NewReader(data))
+	err = decoder.Decode(&varPassenger)
+
+	if err != nil {
+		return err
+	}
+
+	*o = Passenger(varPassenger)
+
+	return err
 }
 
 type NullablePassenger struct {

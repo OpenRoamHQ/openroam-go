@@ -20,13 +20,15 @@ import (
 // checks if the GiftCardQuoteItem type satisfies the MappedNullable interface at compile time
 var _ MappedNullable = &GiftCardQuoteItem{}
 
-// GiftCardQuoteItem One quoted item. `price` is the current unit price in the quote currency. A range offer may be quoted on an equivalent offer of the same card that sells the same value for less; `publicId` is then that offer's ID rather than the requested one, and the order should use it.
+// GiftCardQuoteItem One quoted item. `price` is the current unit price in the quote currency. A range offer may be quoted on an equivalent offer of the same card that sells the same value for less; `publicId` is then that offer's ID rather than the requested one, and the order should use it. `taxes` is `notStated`: no tax is stated for gift card prices yet.
 type GiftCardQuoteItem struct {
 	PublicId string `json:"publicId"`
-	Quantity *int32 `json:"quantity,omitempty"`
-	Name *string `json:"name,omitempty"`
-	Value *Money `json:"value,omitempty"`
-	Price *Money `json:"price,omitempty"`
+	Quantity int32 `json:"quantity"`
+	Name string `json:"name"`
+	Value Money `json:"value"`
+	Price Money `json:"price"`
+	// The taxes inside one unit of the `price` beside it, in one shape for every service. The server sets every field; a client never derives a treatment, never adds up `lines` and never computes an amount.
+	Taxes TaxSummary `json:"taxes"`
 }
 
 type _GiftCardQuoteItem GiftCardQuoteItem
@@ -35,9 +37,14 @@ type _GiftCardQuoteItem GiftCardQuoteItem
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewGiftCardQuoteItem(publicId string) *GiftCardQuoteItem {
+func NewGiftCardQuoteItem(publicId string, quantity int32, name string, value Money, price Money, taxes TaxSummary) *GiftCardQuoteItem {
 	this := GiftCardQuoteItem{}
 	this.PublicId = publicId
+	this.Quantity = quantity
+	this.Name = name
+	this.Value = value
+	this.Price = price
+	this.Taxes = taxes
 	return &this
 }
 
@@ -73,132 +80,124 @@ func (o *GiftCardQuoteItem) SetPublicId(v string) {
 	o.PublicId = v
 }
 
-// GetQuantity returns the Quantity field value if set, zero value otherwise.
+// GetQuantity returns the Quantity field value
 func (o *GiftCardQuoteItem) GetQuantity() int32 {
-	if o == nil || IsNil(o.Quantity) {
+	if o == nil {
 		var ret int32
 		return ret
 	}
-	return *o.Quantity
+
+	return o.Quantity
 }
 
-// GetQuantityOk returns a tuple with the Quantity field value if set, nil otherwise
+// GetQuantityOk returns a tuple with the Quantity field value
 // and a boolean to check if the value has been set.
 func (o *GiftCardQuoteItem) GetQuantityOk() (*int32, bool) {
-	if o == nil || IsNil(o.Quantity) {
+	if o == nil {
 		return nil, false
 	}
-	return o.Quantity, true
+	return &o.Quantity, true
 }
 
-// HasQuantity returns a boolean if a field has been set.
-func (o *GiftCardQuoteItem) HasQuantity() bool {
-	if o != nil && !IsNil(o.Quantity) {
-		return true
-	}
-
-	return false
-}
-
-// SetQuantity gets a reference to the given int32 and assigns it to the Quantity field.
+// SetQuantity sets field value
 func (o *GiftCardQuoteItem) SetQuantity(v int32) {
-	o.Quantity = &v
+	o.Quantity = v
 }
 
-// GetName returns the Name field value if set, zero value otherwise.
+// GetName returns the Name field value
 func (o *GiftCardQuoteItem) GetName() string {
-	if o == nil || IsNil(o.Name) {
+	if o == nil {
 		var ret string
 		return ret
 	}
-	return *o.Name
+
+	return o.Name
 }
 
-// GetNameOk returns a tuple with the Name field value if set, nil otherwise
+// GetNameOk returns a tuple with the Name field value
 // and a boolean to check if the value has been set.
 func (o *GiftCardQuoteItem) GetNameOk() (*string, bool) {
-	if o == nil || IsNil(o.Name) {
+	if o == nil {
 		return nil, false
 	}
-	return o.Name, true
+	return &o.Name, true
 }
 
-// HasName returns a boolean if a field has been set.
-func (o *GiftCardQuoteItem) HasName() bool {
-	if o != nil && !IsNil(o.Name) {
-		return true
-	}
-
-	return false
-}
-
-// SetName gets a reference to the given string and assigns it to the Name field.
+// SetName sets field value
 func (o *GiftCardQuoteItem) SetName(v string) {
-	o.Name = &v
+	o.Name = v
 }
 
-// GetValue returns the Value field value if set, zero value otherwise.
+// GetValue returns the Value field value
 func (o *GiftCardQuoteItem) GetValue() Money {
-	if o == nil || IsNil(o.Value) {
+	if o == nil {
 		var ret Money
 		return ret
 	}
-	return *o.Value
+
+	return o.Value
 }
 
-// GetValueOk returns a tuple with the Value field value if set, nil otherwise
+// GetValueOk returns a tuple with the Value field value
 // and a boolean to check if the value has been set.
 func (o *GiftCardQuoteItem) GetValueOk() (*Money, bool) {
-	if o == nil || IsNil(o.Value) {
+	if o == nil {
 		return nil, false
 	}
-	return o.Value, true
+	return &o.Value, true
 }
 
-// HasValue returns a boolean if a field has been set.
-func (o *GiftCardQuoteItem) HasValue() bool {
-	if o != nil && !IsNil(o.Value) {
-		return true
-	}
-
-	return false
-}
-
-// SetValue gets a reference to the given Money and assigns it to the Value field.
+// SetValue sets field value
 func (o *GiftCardQuoteItem) SetValue(v Money) {
-	o.Value = &v
+	o.Value = v
 }
 
-// GetPrice returns the Price field value if set, zero value otherwise.
+// GetPrice returns the Price field value
 func (o *GiftCardQuoteItem) GetPrice() Money {
-	if o == nil || IsNil(o.Price) {
+	if o == nil {
 		var ret Money
 		return ret
 	}
-	return *o.Price
+
+	return o.Price
 }
 
-// GetPriceOk returns a tuple with the Price field value if set, nil otherwise
+// GetPriceOk returns a tuple with the Price field value
 // and a boolean to check if the value has been set.
 func (o *GiftCardQuoteItem) GetPriceOk() (*Money, bool) {
-	if o == nil || IsNil(o.Price) {
+	if o == nil {
 		return nil, false
 	}
-	return o.Price, true
+	return &o.Price, true
 }
 
-// HasPrice returns a boolean if a field has been set.
-func (o *GiftCardQuoteItem) HasPrice() bool {
-	if o != nil && !IsNil(o.Price) {
-		return true
+// SetPrice sets field value
+func (o *GiftCardQuoteItem) SetPrice(v Money) {
+	o.Price = v
+}
+
+// GetTaxes returns the Taxes field value
+func (o *GiftCardQuoteItem) GetTaxes() TaxSummary {
+	if o == nil {
+		var ret TaxSummary
+		return ret
 	}
 
-	return false
+	return o.Taxes
 }
 
-// SetPrice gets a reference to the given Money and assigns it to the Price field.
-func (o *GiftCardQuoteItem) SetPrice(v Money) {
-	o.Price = &v
+// GetTaxesOk returns a tuple with the Taxes field value
+// and a boolean to check if the value has been set.
+func (o *GiftCardQuoteItem) GetTaxesOk() (*TaxSummary, bool) {
+	if o == nil {
+		return nil, false
+	}
+	return &o.Taxes, true
+}
+
+// SetTaxes sets field value
+func (o *GiftCardQuoteItem) SetTaxes(v TaxSummary) {
+	o.Taxes = v
 }
 
 func (o GiftCardQuoteItem) MarshalJSON() ([]byte, error) {
@@ -212,18 +211,11 @@ func (o GiftCardQuoteItem) MarshalJSON() ([]byte, error) {
 func (o GiftCardQuoteItem) ToMap() (map[string]interface{}, error) {
 	toSerialize := map[string]interface{}{}
 	toSerialize["publicId"] = o.PublicId
-	if !IsNil(o.Quantity) {
-		toSerialize["quantity"] = o.Quantity
-	}
-	if !IsNil(o.Name) {
-		toSerialize["name"] = o.Name
-	}
-	if !IsNil(o.Value) {
-		toSerialize["value"] = o.Value
-	}
-	if !IsNil(o.Price) {
-		toSerialize["price"] = o.Price
-	}
+	toSerialize["quantity"] = o.Quantity
+	toSerialize["name"] = o.Name
+	toSerialize["value"] = o.Value
+	toSerialize["price"] = o.Price
+	toSerialize["taxes"] = o.Taxes
 	return toSerialize, nil
 }
 
@@ -233,6 +225,11 @@ func (o *GiftCardQuoteItem) UnmarshalJSON(data []byte) (err error) {
 	// that every required field exists as a key in the generic map.
 	requiredProperties := []string{
 		"publicId",
+		"quantity",
+		"name",
+		"value",
+		"price",
+		"taxes",
 	}
 
 	allProperties := make(map[string]interface{})
@@ -252,7 +249,6 @@ func (o *GiftCardQuoteItem) UnmarshalJSON(data []byte) (err error) {
 	varGiftCardQuoteItem := _GiftCardQuoteItem{}
 
 	decoder := json.NewDecoder(bytes.NewReader(data))
-	decoder.DisallowUnknownFields()
 	err = decoder.Decode(&varGiftCardQuoteItem)
 
 	if err != nil {

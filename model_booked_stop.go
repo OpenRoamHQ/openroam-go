@@ -14,25 +14,41 @@ package openroam
 import (
 	"encoding/json"
 	"time"
+	"bytes"
+	"fmt"
 )
 
 // checks if the BookedStop type satisfies the MappedNullable interface at compile time
 var _ MappedNullable = &BookedStop{}
 
-// BookedStop struct for BookedStop
+// BookedStop A stop within a flight, where the aircraft lands and leaves again.
 type BookedStop struct {
-	Airport *BookedAirport `json:"airport,omitempty"`
-	ArrivingAt *time.Time `json:"arrivingAt,omitempty"`
-	DepartingAt *time.Time `json:"departingAt,omitempty"`
-	DurationMinutes *int32 `json:"durationMinutes,omitempty"`
+	// The airport of the stop.
+	Airport BookedAirport `json:"airport"`
+	// When the aircraft lands at the stop, a UTC instant; `airport.timezone` gives the airport's clock.
+	ArrivingAt time.Time `json:"arrivingAt"`
+	// The clock at the stop's airport (`airport.timezone`) at `arrivingAt`. Written yyyy-MM-ddTHH:mm:ss with no zone, for display only: compute and compare with `arrivingAt`. Null when the place's time zone is unknown.
+	ArrivingLocalTime NullableString `json:"arrivingLocalTime,omitempty"`
+	// When the aircraft leaves the stop, a UTC instant.
+	DepartingAt time.Time `json:"departingAt"`
+	// The clock at the stop's airport (`airport.timezone`) at `departingAt`. Written yyyy-MM-ddTHH:mm:ss with no zone, for display only: compute and compare with `departingAt`. Null when the place's time zone is unknown.
+	DepartingLocalTime NullableString `json:"departingLocalTime,omitempty"`
+	// How long the aircraft stays at the stop.
+	DurationMinutes int32 `json:"durationMinutes"`
 }
+
+type _BookedStop BookedStop
 
 // NewBookedStop instantiates a new BookedStop object
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewBookedStop() *BookedStop {
+func NewBookedStop(airport BookedAirport, arrivingAt time.Time, departingAt time.Time, durationMinutes int32) *BookedStop {
 	this := BookedStop{}
+	this.Airport = airport
+	this.ArrivingAt = arrivingAt
+	this.DepartingAt = departingAt
+	this.DurationMinutes = durationMinutes
 	return &this
 }
 
@@ -44,132 +60,184 @@ func NewBookedStopWithDefaults() *BookedStop {
 	return &this
 }
 
-// GetAirport returns the Airport field value if set, zero value otherwise.
+// GetAirport returns the Airport field value
 func (o *BookedStop) GetAirport() BookedAirport {
-	if o == nil || IsNil(o.Airport) {
+	if o == nil {
 		var ret BookedAirport
 		return ret
 	}
-	return *o.Airport
+
+	return o.Airport
 }
 
-// GetAirportOk returns a tuple with the Airport field value if set, nil otherwise
+// GetAirportOk returns a tuple with the Airport field value
 // and a boolean to check if the value has been set.
 func (o *BookedStop) GetAirportOk() (*BookedAirport, bool) {
-	if o == nil || IsNil(o.Airport) {
+	if o == nil {
 		return nil, false
 	}
-	return o.Airport, true
+	return &o.Airport, true
 }
 
-// HasAirport returns a boolean if a field has been set.
-func (o *BookedStop) HasAirport() bool {
-	if o != nil && !IsNil(o.Airport) {
-		return true
-	}
-
-	return false
-}
-
-// SetAirport gets a reference to the given BookedAirport and assigns it to the Airport field.
+// SetAirport sets field value
 func (o *BookedStop) SetAirport(v BookedAirport) {
-	o.Airport = &v
+	o.Airport = v
 }
 
-// GetArrivingAt returns the ArrivingAt field value if set, zero value otherwise.
+// GetArrivingAt returns the ArrivingAt field value
 func (o *BookedStop) GetArrivingAt() time.Time {
-	if o == nil || IsNil(o.ArrivingAt) {
+	if o == nil {
 		var ret time.Time
 		return ret
 	}
-	return *o.ArrivingAt
+
+	return o.ArrivingAt
 }
 
-// GetArrivingAtOk returns a tuple with the ArrivingAt field value if set, nil otherwise
+// GetArrivingAtOk returns a tuple with the ArrivingAt field value
 // and a boolean to check if the value has been set.
 func (o *BookedStop) GetArrivingAtOk() (*time.Time, bool) {
-	if o == nil || IsNil(o.ArrivingAt) {
+	if o == nil {
 		return nil, false
 	}
-	return o.ArrivingAt, true
+	return &o.ArrivingAt, true
 }
 
-// HasArrivingAt returns a boolean if a field has been set.
-func (o *BookedStop) HasArrivingAt() bool {
-	if o != nil && !IsNil(o.ArrivingAt) {
+// SetArrivingAt sets field value
+func (o *BookedStop) SetArrivingAt(v time.Time) {
+	o.ArrivingAt = v
+}
+
+// GetArrivingLocalTime returns the ArrivingLocalTime field value if set, zero value otherwise (both if not set or set to explicit null).
+func (o *BookedStop) GetArrivingLocalTime() string {
+	if o == nil || IsNil(o.ArrivingLocalTime.Get()) {
+		var ret string
+		return ret
+	}
+	return *o.ArrivingLocalTime.Get()
+}
+
+// GetArrivingLocalTimeOk returns a tuple with the ArrivingLocalTime field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+// NOTE: If the value is an explicit nil, `nil, true` will be returned
+func (o *BookedStop) GetArrivingLocalTimeOk() (*string, bool) {
+	if o == nil {
+		return nil, false
+	}
+	return o.ArrivingLocalTime.Get(), o.ArrivingLocalTime.IsSet()
+}
+
+// HasArrivingLocalTime returns a boolean if a field has been set.
+func (o *BookedStop) HasArrivingLocalTime() bool {
+	if o != nil && o.ArrivingLocalTime.IsSet() {
 		return true
 	}
 
 	return false
 }
 
-// SetArrivingAt gets a reference to the given time.Time and assigns it to the ArrivingAt field.
-func (o *BookedStop) SetArrivingAt(v time.Time) {
-	o.ArrivingAt = &v
+// SetArrivingLocalTime gets a reference to the given NullableString and assigns it to the ArrivingLocalTime field.
+func (o *BookedStop) SetArrivingLocalTime(v string) {
+	o.ArrivingLocalTime.Set(&v)
+}
+// SetArrivingLocalTimeNil sets the value for ArrivingLocalTime to be an explicit nil
+func (o *BookedStop) SetArrivingLocalTimeNil() {
+	o.ArrivingLocalTime.Set(nil)
 }
 
-// GetDepartingAt returns the DepartingAt field value if set, zero value otherwise.
+// UnsetArrivingLocalTime ensures that no value is present for ArrivingLocalTime, not even an explicit nil
+func (o *BookedStop) UnsetArrivingLocalTime() {
+	o.ArrivingLocalTime.Unset()
+}
+
+// GetDepartingAt returns the DepartingAt field value
 func (o *BookedStop) GetDepartingAt() time.Time {
-	if o == nil || IsNil(o.DepartingAt) {
+	if o == nil {
 		var ret time.Time
 		return ret
 	}
-	return *o.DepartingAt
+
+	return o.DepartingAt
 }
 
-// GetDepartingAtOk returns a tuple with the DepartingAt field value if set, nil otherwise
+// GetDepartingAtOk returns a tuple with the DepartingAt field value
 // and a boolean to check if the value has been set.
 func (o *BookedStop) GetDepartingAtOk() (*time.Time, bool) {
-	if o == nil || IsNil(o.DepartingAt) {
+	if o == nil {
 		return nil, false
 	}
-	return o.DepartingAt, true
+	return &o.DepartingAt, true
 }
 
-// HasDepartingAt returns a boolean if a field has been set.
-func (o *BookedStop) HasDepartingAt() bool {
-	if o != nil && !IsNil(o.DepartingAt) {
+// SetDepartingAt sets field value
+func (o *BookedStop) SetDepartingAt(v time.Time) {
+	o.DepartingAt = v
+}
+
+// GetDepartingLocalTime returns the DepartingLocalTime field value if set, zero value otherwise (both if not set or set to explicit null).
+func (o *BookedStop) GetDepartingLocalTime() string {
+	if o == nil || IsNil(o.DepartingLocalTime.Get()) {
+		var ret string
+		return ret
+	}
+	return *o.DepartingLocalTime.Get()
+}
+
+// GetDepartingLocalTimeOk returns a tuple with the DepartingLocalTime field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+// NOTE: If the value is an explicit nil, `nil, true` will be returned
+func (o *BookedStop) GetDepartingLocalTimeOk() (*string, bool) {
+	if o == nil {
+		return nil, false
+	}
+	return o.DepartingLocalTime.Get(), o.DepartingLocalTime.IsSet()
+}
+
+// HasDepartingLocalTime returns a boolean if a field has been set.
+func (o *BookedStop) HasDepartingLocalTime() bool {
+	if o != nil && o.DepartingLocalTime.IsSet() {
 		return true
 	}
 
 	return false
 }
 
-// SetDepartingAt gets a reference to the given time.Time and assigns it to the DepartingAt field.
-func (o *BookedStop) SetDepartingAt(v time.Time) {
-	o.DepartingAt = &v
+// SetDepartingLocalTime gets a reference to the given NullableString and assigns it to the DepartingLocalTime field.
+func (o *BookedStop) SetDepartingLocalTime(v string) {
+	o.DepartingLocalTime.Set(&v)
+}
+// SetDepartingLocalTimeNil sets the value for DepartingLocalTime to be an explicit nil
+func (o *BookedStop) SetDepartingLocalTimeNil() {
+	o.DepartingLocalTime.Set(nil)
 }
 
-// GetDurationMinutes returns the DurationMinutes field value if set, zero value otherwise.
+// UnsetDepartingLocalTime ensures that no value is present for DepartingLocalTime, not even an explicit nil
+func (o *BookedStop) UnsetDepartingLocalTime() {
+	o.DepartingLocalTime.Unset()
+}
+
+// GetDurationMinutes returns the DurationMinutes field value
 func (o *BookedStop) GetDurationMinutes() int32 {
-	if o == nil || IsNil(o.DurationMinutes) {
+	if o == nil {
 		var ret int32
 		return ret
 	}
-	return *o.DurationMinutes
+
+	return o.DurationMinutes
 }
 
-// GetDurationMinutesOk returns a tuple with the DurationMinutes field value if set, nil otherwise
+// GetDurationMinutesOk returns a tuple with the DurationMinutes field value
 // and a boolean to check if the value has been set.
 func (o *BookedStop) GetDurationMinutesOk() (*int32, bool) {
-	if o == nil || IsNil(o.DurationMinutes) {
+	if o == nil {
 		return nil, false
 	}
-	return o.DurationMinutes, true
+	return &o.DurationMinutes, true
 }
 
-// HasDurationMinutes returns a boolean if a field has been set.
-func (o *BookedStop) HasDurationMinutes() bool {
-	if o != nil && !IsNil(o.DurationMinutes) {
-		return true
-	}
-
-	return false
-}
-
-// SetDurationMinutes gets a reference to the given int32 and assigns it to the DurationMinutes field.
+// SetDurationMinutes sets field value
 func (o *BookedStop) SetDurationMinutes(v int32) {
-	o.DurationMinutes = &v
+	o.DurationMinutes = v
 }
 
 func (o BookedStop) MarshalJSON() ([]byte, error) {
@@ -182,19 +250,56 @@ func (o BookedStop) MarshalJSON() ([]byte, error) {
 
 func (o BookedStop) ToMap() (map[string]interface{}, error) {
 	toSerialize := map[string]interface{}{}
-	if !IsNil(o.Airport) {
-		toSerialize["airport"] = o.Airport
+	toSerialize["airport"] = o.Airport
+	toSerialize["arrivingAt"] = o.ArrivingAt
+	if o.ArrivingLocalTime.IsSet() {
+		toSerialize["arrivingLocalTime"] = o.ArrivingLocalTime.Get()
 	}
-	if !IsNil(o.ArrivingAt) {
-		toSerialize["arrivingAt"] = o.ArrivingAt
+	toSerialize["departingAt"] = o.DepartingAt
+	if o.DepartingLocalTime.IsSet() {
+		toSerialize["departingLocalTime"] = o.DepartingLocalTime.Get()
 	}
-	if !IsNil(o.DepartingAt) {
-		toSerialize["departingAt"] = o.DepartingAt
-	}
-	if !IsNil(o.DurationMinutes) {
-		toSerialize["durationMinutes"] = o.DurationMinutes
-	}
+	toSerialize["durationMinutes"] = o.DurationMinutes
 	return toSerialize, nil
+}
+
+func (o *BookedStop) UnmarshalJSON(data []byte) (err error) {
+	// This validates that all required properties are included in the JSON object
+	// by unmarshalling the object into a generic map with string keys and checking
+	// that every required field exists as a key in the generic map.
+	requiredProperties := []string{
+		"airport",
+		"arrivingAt",
+		"departingAt",
+		"durationMinutes",
+	}
+
+	allProperties := make(map[string]interface{})
+
+	err = json.Unmarshal(data, &allProperties)
+
+	if err != nil {
+		return err;
+	}
+
+	for _, requiredProperty := range(requiredProperties) {
+		if _, exists := allProperties[requiredProperty]; !exists {
+			return fmt.Errorf("no value given for required property %v", requiredProperty)
+		}
+	}
+
+	varBookedStop := _BookedStop{}
+
+	decoder := json.NewDecoder(bytes.NewReader(data))
+	err = decoder.Decode(&varBookedStop)
+
+	if err != nil {
+		return err
+	}
+
+	*o = BookedStop(varBookedStop)
+
+	return err
 }
 
 type NullableBookedStop struct {

@@ -14,6 +14,8 @@ package openroam
 import (
 	"encoding/json"
 	"time"
+	"bytes"
+	"fmt"
 )
 
 // checks if the CancellationStep type satisfies the MappedNullable interface at compile time
@@ -22,19 +24,26 @@ var _ MappedNullable = &CancellationStep{}
 // CancellationStep struct for CancellationStep
 type CancellationStep struct {
 	// The instant (UTC) the step starts; it runs until the next step's.
-	From *time.Time `json:"from,omitempty"`
+	From time.Time `json:"from"`
+	// The clock of the cancellation's `timezone` at `from`. Written yyyy-MM-ddTHH:mm:ss with no zone, for display only: compute and compare with `from`. Null when the place's time zone is unknown.
+	FromLocalTime NullableString `json:"fromLocalTime,omitempty"`
 	// What comes back when cancelling in this step.
-	Refund *Money `json:"refund,omitempty"`
+	Refund Money `json:"refund"`
 	// What is kept when cancelling in this step; it and the refund add up to the price.
-	Penalty *Money `json:"penalty,omitempty"`
+	Penalty Money `json:"penalty"`
 }
+
+type _CancellationStep CancellationStep
 
 // NewCancellationStep instantiates a new CancellationStep object
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewCancellationStep() *CancellationStep {
+func NewCancellationStep(from time.Time, refund Money, penalty Money) *CancellationStep {
 	this := CancellationStep{}
+	this.From = from
+	this.Refund = refund
+	this.Penalty = penalty
 	return &this
 }
 
@@ -46,100 +55,118 @@ func NewCancellationStepWithDefaults() *CancellationStep {
 	return &this
 }
 
-// GetFrom returns the From field value if set, zero value otherwise.
+// GetFrom returns the From field value
 func (o *CancellationStep) GetFrom() time.Time {
-	if o == nil || IsNil(o.From) {
+	if o == nil {
 		var ret time.Time
 		return ret
 	}
-	return *o.From
+
+	return o.From
 }
 
-// GetFromOk returns a tuple with the From field value if set, nil otherwise
+// GetFromOk returns a tuple with the From field value
 // and a boolean to check if the value has been set.
 func (o *CancellationStep) GetFromOk() (*time.Time, bool) {
-	if o == nil || IsNil(o.From) {
+	if o == nil {
 		return nil, false
 	}
-	return o.From, true
+	return &o.From, true
 }
 
-// HasFrom returns a boolean if a field has been set.
-func (o *CancellationStep) HasFrom() bool {
-	if o != nil && !IsNil(o.From) {
+// SetFrom sets field value
+func (o *CancellationStep) SetFrom(v time.Time) {
+	o.From = v
+}
+
+// GetFromLocalTime returns the FromLocalTime field value if set, zero value otherwise (both if not set or set to explicit null).
+func (o *CancellationStep) GetFromLocalTime() string {
+	if o == nil || IsNil(o.FromLocalTime.Get()) {
+		var ret string
+		return ret
+	}
+	return *o.FromLocalTime.Get()
+}
+
+// GetFromLocalTimeOk returns a tuple with the FromLocalTime field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+// NOTE: If the value is an explicit nil, `nil, true` will be returned
+func (o *CancellationStep) GetFromLocalTimeOk() (*string, bool) {
+	if o == nil {
+		return nil, false
+	}
+	return o.FromLocalTime.Get(), o.FromLocalTime.IsSet()
+}
+
+// HasFromLocalTime returns a boolean if a field has been set.
+func (o *CancellationStep) HasFromLocalTime() bool {
+	if o != nil && o.FromLocalTime.IsSet() {
 		return true
 	}
 
 	return false
 }
 
-// SetFrom gets a reference to the given time.Time and assigns it to the From field.
-func (o *CancellationStep) SetFrom(v time.Time) {
-	o.From = &v
+// SetFromLocalTime gets a reference to the given NullableString and assigns it to the FromLocalTime field.
+func (o *CancellationStep) SetFromLocalTime(v string) {
+	o.FromLocalTime.Set(&v)
+}
+// SetFromLocalTimeNil sets the value for FromLocalTime to be an explicit nil
+func (o *CancellationStep) SetFromLocalTimeNil() {
+	o.FromLocalTime.Set(nil)
 }
 
-// GetRefund returns the Refund field value if set, zero value otherwise.
+// UnsetFromLocalTime ensures that no value is present for FromLocalTime, not even an explicit nil
+func (o *CancellationStep) UnsetFromLocalTime() {
+	o.FromLocalTime.Unset()
+}
+
+// GetRefund returns the Refund field value
 func (o *CancellationStep) GetRefund() Money {
-	if o == nil || IsNil(o.Refund) {
+	if o == nil {
 		var ret Money
 		return ret
 	}
-	return *o.Refund
+
+	return o.Refund
 }
 
-// GetRefundOk returns a tuple with the Refund field value if set, nil otherwise
+// GetRefundOk returns a tuple with the Refund field value
 // and a boolean to check if the value has been set.
 func (o *CancellationStep) GetRefundOk() (*Money, bool) {
-	if o == nil || IsNil(o.Refund) {
+	if o == nil {
 		return nil, false
 	}
-	return o.Refund, true
+	return &o.Refund, true
 }
 
-// HasRefund returns a boolean if a field has been set.
-func (o *CancellationStep) HasRefund() bool {
-	if o != nil && !IsNil(o.Refund) {
-		return true
-	}
-
-	return false
-}
-
-// SetRefund gets a reference to the given Money and assigns it to the Refund field.
+// SetRefund sets field value
 func (o *CancellationStep) SetRefund(v Money) {
-	o.Refund = &v
+	o.Refund = v
 }
 
-// GetPenalty returns the Penalty field value if set, zero value otherwise.
+// GetPenalty returns the Penalty field value
 func (o *CancellationStep) GetPenalty() Money {
-	if o == nil || IsNil(o.Penalty) {
+	if o == nil {
 		var ret Money
 		return ret
 	}
-	return *o.Penalty
+
+	return o.Penalty
 }
 
-// GetPenaltyOk returns a tuple with the Penalty field value if set, nil otherwise
+// GetPenaltyOk returns a tuple with the Penalty field value
 // and a boolean to check if the value has been set.
 func (o *CancellationStep) GetPenaltyOk() (*Money, bool) {
-	if o == nil || IsNil(o.Penalty) {
+	if o == nil {
 		return nil, false
 	}
-	return o.Penalty, true
+	return &o.Penalty, true
 }
 
-// HasPenalty returns a boolean if a field has been set.
-func (o *CancellationStep) HasPenalty() bool {
-	if o != nil && !IsNil(o.Penalty) {
-		return true
-	}
-
-	return false
-}
-
-// SetPenalty gets a reference to the given Money and assigns it to the Penalty field.
+// SetPenalty sets field value
 func (o *CancellationStep) SetPenalty(v Money) {
-	o.Penalty = &v
+	o.Penalty = v
 }
 
 func (o CancellationStep) MarshalJSON() ([]byte, error) {
@@ -152,16 +179,51 @@ func (o CancellationStep) MarshalJSON() ([]byte, error) {
 
 func (o CancellationStep) ToMap() (map[string]interface{}, error) {
 	toSerialize := map[string]interface{}{}
-	if !IsNil(o.From) {
-		toSerialize["from"] = o.From
+	toSerialize["from"] = o.From
+	if o.FromLocalTime.IsSet() {
+		toSerialize["fromLocalTime"] = o.FromLocalTime.Get()
 	}
-	if !IsNil(o.Refund) {
-		toSerialize["refund"] = o.Refund
-	}
-	if !IsNil(o.Penalty) {
-		toSerialize["penalty"] = o.Penalty
-	}
+	toSerialize["refund"] = o.Refund
+	toSerialize["penalty"] = o.Penalty
 	return toSerialize, nil
+}
+
+func (o *CancellationStep) UnmarshalJSON(data []byte) (err error) {
+	// This validates that all required properties are included in the JSON object
+	// by unmarshalling the object into a generic map with string keys and checking
+	// that every required field exists as a key in the generic map.
+	requiredProperties := []string{
+		"from",
+		"refund",
+		"penalty",
+	}
+
+	allProperties := make(map[string]interface{})
+
+	err = json.Unmarshal(data, &allProperties)
+
+	if err != nil {
+		return err;
+	}
+
+	for _, requiredProperty := range(requiredProperties) {
+		if _, exists := allProperties[requiredProperty]; !exists {
+			return fmt.Errorf("no value given for required property %v", requiredProperty)
+		}
+	}
+
+	varCancellationStep := _CancellationStep{}
+
+	decoder := json.NewDecoder(bytes.NewReader(data))
+	err = decoder.Decode(&varCancellationStep)
+
+	if err != nil {
+		return err
+	}
+
+	*o = CancellationStep(varCancellationStep)
+
+	return err
 }
 
 type NullableCancellationStep struct {

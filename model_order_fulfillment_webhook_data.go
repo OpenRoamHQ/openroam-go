@@ -13,6 +13,8 @@ package openroam
 
 import (
 	"encoding/json"
+	"bytes"
+	"fmt"
 )
 
 // checks if the OrderFulfillmentWebhookData type satisfies the MappedNullable interface at compile time
@@ -20,20 +22,28 @@ var _ MappedNullable = &OrderFulfillmentWebhookData{}
 
 // OrderFulfillmentWebhookData struct for OrderFulfillmentWebhookData
 type OrderFulfillmentWebhookData struct {
-	OrderId *string `json:"orderId,omitempty"`
+	OrderId string `json:"orderId"`
 	// Where an order was created.
-	Origin *OrderOrigin `json:"origin,omitempty"`
-	Status *string `json:"status,omitempty"`
-	FulfillmentVersion *int64 `json:"fulfillmentVersion,omitempty"`
-	Items []FulfillmentUpdate `json:"items,omitempty"`
+	Origin OrderOrigin `json:"origin"`
+	// The order's status, including the refunds of its delivered items.
+	Status string `json:"status"`
+	FulfillmentVersion int64 `json:"fulfillmentVersion"`
+	Items []FulfillmentUpdate `json:"items"`
 }
+
+type _OrderFulfillmentWebhookData OrderFulfillmentWebhookData
 
 // NewOrderFulfillmentWebhookData instantiates a new OrderFulfillmentWebhookData object
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewOrderFulfillmentWebhookData() *OrderFulfillmentWebhookData {
+func NewOrderFulfillmentWebhookData(orderId string, origin OrderOrigin, status string, fulfillmentVersion int64, items []FulfillmentUpdate) *OrderFulfillmentWebhookData {
 	this := OrderFulfillmentWebhookData{}
+	this.OrderId = orderId
+	this.Origin = origin
+	this.Status = status
+	this.FulfillmentVersion = fulfillmentVersion
+	this.Items = items
 	return &this
 }
 
@@ -45,162 +55,122 @@ func NewOrderFulfillmentWebhookDataWithDefaults() *OrderFulfillmentWebhookData {
 	return &this
 }
 
-// GetOrderId returns the OrderId field value if set, zero value otherwise.
+// GetOrderId returns the OrderId field value
 func (o *OrderFulfillmentWebhookData) GetOrderId() string {
-	if o == nil || IsNil(o.OrderId) {
+	if o == nil {
 		var ret string
 		return ret
 	}
-	return *o.OrderId
+
+	return o.OrderId
 }
 
-// GetOrderIdOk returns a tuple with the OrderId field value if set, nil otherwise
+// GetOrderIdOk returns a tuple with the OrderId field value
 // and a boolean to check if the value has been set.
 func (o *OrderFulfillmentWebhookData) GetOrderIdOk() (*string, bool) {
-	if o == nil || IsNil(o.OrderId) {
+	if o == nil {
 		return nil, false
 	}
-	return o.OrderId, true
+	return &o.OrderId, true
 }
 
-// HasOrderId returns a boolean if a field has been set.
-func (o *OrderFulfillmentWebhookData) HasOrderId() bool {
-	if o != nil && !IsNil(o.OrderId) {
-		return true
-	}
-
-	return false
-}
-
-// SetOrderId gets a reference to the given string and assigns it to the OrderId field.
+// SetOrderId sets field value
 func (o *OrderFulfillmentWebhookData) SetOrderId(v string) {
-	o.OrderId = &v
+	o.OrderId = v
 }
 
-// GetOrigin returns the Origin field value if set, zero value otherwise.
+// GetOrigin returns the Origin field value
 func (o *OrderFulfillmentWebhookData) GetOrigin() OrderOrigin {
-	if o == nil || IsNil(o.Origin) {
+	if o == nil {
 		var ret OrderOrigin
 		return ret
 	}
-	return *o.Origin
+
+	return o.Origin
 }
 
-// GetOriginOk returns a tuple with the Origin field value if set, nil otherwise
+// GetOriginOk returns a tuple with the Origin field value
 // and a boolean to check if the value has been set.
 func (o *OrderFulfillmentWebhookData) GetOriginOk() (*OrderOrigin, bool) {
-	if o == nil || IsNil(o.Origin) {
+	if o == nil {
 		return nil, false
 	}
-	return o.Origin, true
+	return &o.Origin, true
 }
 
-// HasOrigin returns a boolean if a field has been set.
-func (o *OrderFulfillmentWebhookData) HasOrigin() bool {
-	if o != nil && !IsNil(o.Origin) {
-		return true
-	}
-
-	return false
-}
-
-// SetOrigin gets a reference to the given OrderOrigin and assigns it to the Origin field.
+// SetOrigin sets field value
 func (o *OrderFulfillmentWebhookData) SetOrigin(v OrderOrigin) {
-	o.Origin = &v
+	o.Origin = v
 }
 
-// GetStatus returns the Status field value if set, zero value otherwise.
+// GetStatus returns the Status field value
 func (o *OrderFulfillmentWebhookData) GetStatus() string {
-	if o == nil || IsNil(o.Status) {
+	if o == nil {
 		var ret string
 		return ret
 	}
-	return *o.Status
+
+	return o.Status
 }
 
-// GetStatusOk returns a tuple with the Status field value if set, nil otherwise
+// GetStatusOk returns a tuple with the Status field value
 // and a boolean to check if the value has been set.
 func (o *OrderFulfillmentWebhookData) GetStatusOk() (*string, bool) {
-	if o == nil || IsNil(o.Status) {
+	if o == nil {
 		return nil, false
 	}
-	return o.Status, true
+	return &o.Status, true
 }
 
-// HasStatus returns a boolean if a field has been set.
-func (o *OrderFulfillmentWebhookData) HasStatus() bool {
-	if o != nil && !IsNil(o.Status) {
-		return true
-	}
-
-	return false
-}
-
-// SetStatus gets a reference to the given string and assigns it to the Status field.
+// SetStatus sets field value
 func (o *OrderFulfillmentWebhookData) SetStatus(v string) {
-	o.Status = &v
+	o.Status = v
 }
 
-// GetFulfillmentVersion returns the FulfillmentVersion field value if set, zero value otherwise.
+// GetFulfillmentVersion returns the FulfillmentVersion field value
 func (o *OrderFulfillmentWebhookData) GetFulfillmentVersion() int64 {
-	if o == nil || IsNil(o.FulfillmentVersion) {
+	if o == nil {
 		var ret int64
 		return ret
 	}
-	return *o.FulfillmentVersion
+
+	return o.FulfillmentVersion
 }
 
-// GetFulfillmentVersionOk returns a tuple with the FulfillmentVersion field value if set, nil otherwise
+// GetFulfillmentVersionOk returns a tuple with the FulfillmentVersion field value
 // and a boolean to check if the value has been set.
 func (o *OrderFulfillmentWebhookData) GetFulfillmentVersionOk() (*int64, bool) {
-	if o == nil || IsNil(o.FulfillmentVersion) {
+	if o == nil {
 		return nil, false
 	}
-	return o.FulfillmentVersion, true
+	return &o.FulfillmentVersion, true
 }
 
-// HasFulfillmentVersion returns a boolean if a field has been set.
-func (o *OrderFulfillmentWebhookData) HasFulfillmentVersion() bool {
-	if o != nil && !IsNil(o.FulfillmentVersion) {
-		return true
-	}
-
-	return false
-}
-
-// SetFulfillmentVersion gets a reference to the given int64 and assigns it to the FulfillmentVersion field.
+// SetFulfillmentVersion sets field value
 func (o *OrderFulfillmentWebhookData) SetFulfillmentVersion(v int64) {
-	o.FulfillmentVersion = &v
+	o.FulfillmentVersion = v
 }
 
-// GetItems returns the Items field value if set, zero value otherwise.
+// GetItems returns the Items field value
 func (o *OrderFulfillmentWebhookData) GetItems() []FulfillmentUpdate {
-	if o == nil || IsNil(o.Items) {
+	if o == nil {
 		var ret []FulfillmentUpdate
 		return ret
 	}
+
 	return o.Items
 }
 
-// GetItemsOk returns a tuple with the Items field value if set, nil otherwise
+// GetItemsOk returns a tuple with the Items field value
 // and a boolean to check if the value has been set.
 func (o *OrderFulfillmentWebhookData) GetItemsOk() ([]FulfillmentUpdate, bool) {
-	if o == nil || IsNil(o.Items) {
+	if o == nil {
 		return nil, false
 	}
 	return o.Items, true
 }
 
-// HasItems returns a boolean if a field has been set.
-func (o *OrderFulfillmentWebhookData) HasItems() bool {
-	if o != nil && !IsNil(o.Items) {
-		return true
-	}
-
-	return false
-}
-
-// SetItems gets a reference to the given []FulfillmentUpdate and assigns it to the Items field.
+// SetItems sets field value
 func (o *OrderFulfillmentWebhookData) SetItems(v []FulfillmentUpdate) {
 	o.Items = v
 }
@@ -215,22 +185,52 @@ func (o OrderFulfillmentWebhookData) MarshalJSON() ([]byte, error) {
 
 func (o OrderFulfillmentWebhookData) ToMap() (map[string]interface{}, error) {
 	toSerialize := map[string]interface{}{}
-	if !IsNil(o.OrderId) {
-		toSerialize["orderId"] = o.OrderId
-	}
-	if !IsNil(o.Origin) {
-		toSerialize["origin"] = o.Origin
-	}
-	if !IsNil(o.Status) {
-		toSerialize["status"] = o.Status
-	}
-	if !IsNil(o.FulfillmentVersion) {
-		toSerialize["fulfillmentVersion"] = o.FulfillmentVersion
-	}
-	if !IsNil(o.Items) {
-		toSerialize["items"] = o.Items
-	}
+	toSerialize["orderId"] = o.OrderId
+	toSerialize["origin"] = o.Origin
+	toSerialize["status"] = o.Status
+	toSerialize["fulfillmentVersion"] = o.FulfillmentVersion
+	toSerialize["items"] = o.Items
 	return toSerialize, nil
+}
+
+func (o *OrderFulfillmentWebhookData) UnmarshalJSON(data []byte) (err error) {
+	// This validates that all required properties are included in the JSON object
+	// by unmarshalling the object into a generic map with string keys and checking
+	// that every required field exists as a key in the generic map.
+	requiredProperties := []string{
+		"orderId",
+		"origin",
+		"status",
+		"fulfillmentVersion",
+		"items",
+	}
+
+	allProperties := make(map[string]interface{})
+
+	err = json.Unmarshal(data, &allProperties)
+
+	if err != nil {
+		return err;
+	}
+
+	for _, requiredProperty := range(requiredProperties) {
+		if _, exists := allProperties[requiredProperty]; !exists {
+			return fmt.Errorf("no value given for required property %v", requiredProperty)
+		}
+	}
+
+	varOrderFulfillmentWebhookData := _OrderFulfillmentWebhookData{}
+
+	decoder := json.NewDecoder(bytes.NewReader(data))
+	err = decoder.Decode(&varOrderFulfillmentWebhookData)
+
+	if err != nil {
+		return err
+	}
+
+	*o = OrderFulfillmentWebhookData(varOrderFulfillmentWebhookData)
+
+	return err
 }
 
 type NullableOrderFulfillmentWebhookData struct {

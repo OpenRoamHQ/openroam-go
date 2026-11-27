@@ -18,13 +18,11 @@ import (
 // checks if the WalletUpdateRequest type satisfies the MappedNullable interface at compile time
 var _ MappedNullable = &WalletUpdateRequest{}
 
-// WalletUpdateRequest The new label and low-balance threshold of a wallet. Both values are replaced.
+// WalletUpdateRequest The changes to a wallet. A member left out keeps its value; send at least one member. The wallet id             comes from the route only.
 type WalletUpdateRequest struct {
-	// Ignored; the wallet id comes from the route.
-	WalletId *string `json:"walletId,omitempty"`
-	// Required. Display name, unique among the partner's wallets ignoring case.
-	Label *string `json:"label,omitempty"`
-	// Low-balance threshold in the wallet's currency. When it is above zero, the             `partner.balance.low` webhook reports the balance falling toward and below it. Omit it or send             `null` to clear it.
+	// New display name, unique among the partner's wallets ignoring case. Leave it out to keep the             current label; it cannot be `null` or blank.
+	Label NullableString `json:"label,omitempty"`
+	// New low-balance threshold in the wallet's currency, with at most that currency's ISO 4217 decimals             (`INVALID_VALUE` at `lowBalanceThreshold` otherwise, whose `message` names the decimals             allowed, such as `An amount in JPY cannot have decimals.`). When it is above zero, the             `partner.balance.low` webhook reports the balance falling toward and below it. Leave it out to keep             the current threshold; send `null` to clear it.
 	LowBalanceThreshold NullableFloat32 `json:"lowBalanceThreshold,omitempty"`
 }
 
@@ -45,68 +43,46 @@ func NewWalletUpdateRequestWithDefaults() *WalletUpdateRequest {
 	return &this
 }
 
-// GetWalletId returns the WalletId field value if set, zero value otherwise.
-func (o *WalletUpdateRequest) GetWalletId() string {
-	if o == nil || IsNil(o.WalletId) {
-		var ret string
-		return ret
-	}
-	return *o.WalletId
-}
-
-// GetWalletIdOk returns a tuple with the WalletId field value if set, nil otherwise
-// and a boolean to check if the value has been set.
-func (o *WalletUpdateRequest) GetWalletIdOk() (*string, bool) {
-	if o == nil || IsNil(o.WalletId) {
-		return nil, false
-	}
-	return o.WalletId, true
-}
-
-// HasWalletId returns a boolean if a field has been set.
-func (o *WalletUpdateRequest) HasWalletId() bool {
-	if o != nil && !IsNil(o.WalletId) {
-		return true
-	}
-
-	return false
-}
-
-// SetWalletId gets a reference to the given string and assigns it to the WalletId field.
-func (o *WalletUpdateRequest) SetWalletId(v string) {
-	o.WalletId = &v
-}
-
-// GetLabel returns the Label field value if set, zero value otherwise.
+// GetLabel returns the Label field value if set, zero value otherwise (both if not set or set to explicit null).
 func (o *WalletUpdateRequest) GetLabel() string {
-	if o == nil || IsNil(o.Label) {
+	if o == nil || IsNil(o.Label.Get()) {
 		var ret string
 		return ret
 	}
-	return *o.Label
+	return *o.Label.Get()
 }
 
 // GetLabelOk returns a tuple with the Label field value if set, nil otherwise
 // and a boolean to check if the value has been set.
+// NOTE: If the value is an explicit nil, `nil, true` will be returned
 func (o *WalletUpdateRequest) GetLabelOk() (*string, bool) {
-	if o == nil || IsNil(o.Label) {
+	if o == nil {
 		return nil, false
 	}
-	return o.Label, true
+	return o.Label.Get(), o.Label.IsSet()
 }
 
 // HasLabel returns a boolean if a field has been set.
 func (o *WalletUpdateRequest) HasLabel() bool {
-	if o != nil && !IsNil(o.Label) {
+	if o != nil && o.Label.IsSet() {
 		return true
 	}
 
 	return false
 }
 
-// SetLabel gets a reference to the given string and assigns it to the Label field.
+// SetLabel gets a reference to the given NullableString and assigns it to the Label field.
 func (o *WalletUpdateRequest) SetLabel(v string) {
-	o.Label = &v
+	o.Label.Set(&v)
+}
+// SetLabelNil sets the value for Label to be an explicit nil
+func (o *WalletUpdateRequest) SetLabelNil() {
+	o.Label.Set(nil)
+}
+
+// UnsetLabel ensures that no value is present for Label, not even an explicit nil
+func (o *WalletUpdateRequest) UnsetLabel() {
+	o.Label.Unset()
 }
 
 // GetLowBalanceThreshold returns the LowBalanceThreshold field value if set, zero value otherwise (both if not set or set to explicit null).
@@ -161,11 +137,8 @@ func (o WalletUpdateRequest) MarshalJSON() ([]byte, error) {
 
 func (o WalletUpdateRequest) ToMap() (map[string]interface{}, error) {
 	toSerialize := map[string]interface{}{}
-	if !IsNil(o.WalletId) {
-		toSerialize["walletId"] = o.WalletId
-	}
-	if !IsNil(o.Label) {
-		toSerialize["label"] = o.Label
+	if o.Label.IsSet() {
+		toSerialize["label"] = o.Label.Get()
 	}
 	if o.LowBalanceThreshold.IsSet() {
 		toSerialize["lowBalanceThreshold"] = o.LowBalanceThreshold.Get()

@@ -17,7 +17,9 @@ func TestOrderItemIsReadAsItsOwnProductVariant(t *testing.T) {
 		"utility":  func(i OrderItem) bool { return i.UtilityOrderItem != nil },
 	} {
 		var item OrderItem
-		if err := json.Unmarshal([]byte(`{"id":"11111111-1111-1111-1111-111111111111","productType":"`+productType+`"}`), &item); err != nil {
+		variant := strings.ToUpper(productType[:1]) + productType[1:] + "OrderItem"
+		body := sampleJSON(variant, map[string]any{"id": "11111111-1111-1111-1111-111111111111", "productType": productType})
+		if err := json.Unmarshal(body, &item); err != nil {
 			t.Fatalf("%s: %v", productType, err)
 		}
 		if !check(item) {
@@ -28,8 +30,10 @@ func TestOrderItemIsReadAsItsOwnProductVariant(t *testing.T) {
 
 func TestEsimWebhookItemKeepsItsDeliveryDetails(t *testing.T) {
 	var item FulfillmentUpdate
-	body := `{"id":"11111111-1111-1111-1111-111111111111","productType":"esim","fulfillment":{"status":"fulfilled","result":{"details":{"iccid":"8900000000000000001","mode":"instant"}}}}`
-	if err := json.Unmarshal([]byte(body), &item); err != nil {
+	details := sampleWith("EsimFulfillmentDetails", map[string]any{"iccid": "8900000000000000001", "mode": "instant"})
+	body := sampleJSON("EsimFulfillmentUpdate", map[string]any{"id": "11111111-1111-1111-1111-111111111111", "productType": "esim",
+		"fulfillment": map[string]any{"status": "fulfilled", "result": map[string]any{"details": details}}})
+	if err := json.Unmarshal(body, &item); err != nil {
 		t.Fatal(err)
 	}
 	if item.EsimFulfillmentUpdate == nil {
@@ -43,8 +47,9 @@ func TestEsimWebhookItemKeepsItsDeliveryDetails(t *testing.T) {
 
 func TestPendingWebhookItemHasNoResult(t *testing.T) {
 	var item FulfillmentUpdate
-	body := `{"id":"11111111-1111-1111-1111-111111111111","productType":"airtime","fulfillment":{"status":"pending","result":null}}`
-	if err := json.Unmarshal([]byte(body), &item); err != nil {
+	body := sampleJSON("AirtimeFulfillmentUpdate", map[string]any{"id": "11111111-1111-1111-1111-111111111111",
+		"fulfillment": map[string]any{"status": "pending", "result": nil}})
+	if err := json.Unmarshal(body, &item); err != nil {
 		t.Fatal(err)
 	}
 	if item.AirtimeFulfillmentUpdate == nil {
@@ -73,23 +78,51 @@ func TestOrderCommandItemsKeepTheirVariant(t *testing.T) {
 // An offer's price is a fixed amount or a range, and its value is discriminated by `type`.
 func TestOfferValueAndPriceAreReadByTheirShape(t *testing.T) {
 	var offer AirtimeOffer
-	body := `{"publicId":"airtime_abc","name":"MTN 1000 NGN","value":{"type":"fixed","amount":1000,"currency":"NGN"},"price":{"amount":0.68,"currency":"USD"}}`
-	if err := json.Unmarshal([]byte(body), &offer); err != nil {
+	body := sampleJSON("AirtimeOffer", map[string]any{"publicId": "airtime_abc", "name": "MTN 1000 NGN",
+		"value": map[string]any{"type": "fixed", "amount": 1000, "currency": "NGN"}, "price": map[string]any{"amount": 0.68, "currency": "USD"}})
+	if err := json.Unmarshal(body, &offer); err != nil {
 		t.Fatal(err)
 	}
-	if offer.Value == nil || offer.Value.FixedValue == nil {
+	if offer.Value.FixedValue == nil {
 		t.Fatalf("the value is not the fixed variant: %+v", offer.Value)
 	}
-	if offer.Price == nil || offer.Price.FixedPrice == nil {
+	if offer.Price.FixedPrice == nil {
 		t.Fatalf("the price is not the fixed variant: %+v", offer.Price)
 	}
 
 	var ranged AirtimeOffer
-	body = `{"publicId":"airtime_abd","name":"MTN range","value":{"type":"range","min":50,"max":50000,"step":1,"currency":"NGN"},"price":{"min":0.04,"max":33.5,"currency":"USD"}}`
-	if err := json.Unmarshal([]byte(body), &ranged); err != nil {
+	body = sampleJSON("AirtimeOffer", map[string]any{"publicId": "airtime_abd", "name": "MTN range",
+		"value": map[string]any{"type": "range", "min": 50, "max": 50000, "step": 1, "currency": "NGN"}, "price": map[string]any{"min": 0.04, "max": 33.5, "currency": "USD"}})
+	if err := json.Unmarshal(body, &ranged); err != nil {
 		t.Fatal(err)
 	}
 	if ranged.Value.ValueRange == nil || ranged.Price.PriceRange == nil {
 		t.Fatalf("the range variants were not read: %+v %+v", ranged.Value, ranged.Price)
+	}
+}
+
+// The API may add a field at any time: a model the SDK already knows must still be read.
+func TestAFieldTheSdkDoesNotKnowIsIgnored(t *testing.T) {
+	var money Money
+	if err := json.Unmarshal([]byte(`{"amount":12.5,"currency":"USD","addedLater":true}`), &money); err != nil {
+		t.Fatalf("an unknown field broke the answer: %v", err)
+	}
+	if money.Currency != "USD" {
+		t.Fatalf("the known fields were not read: %+v", money)
+	}
+
+	var offer AirtimeOffer
+	body := sampleJSON("AirtimeOffer", map[string]any{"addedLater": "x", "publicId": "airtime_abc",
+		"price": map[string]any{"amount": 0.68, "currency": "USD", "addedLater": 1}})
+	if err := json.Unmarshal(body, &offer); err != nil {
+		t.Fatalf("an unknown field broke the offer: %v", err)
+	}
+	if offer.Price.FixedPrice == nil {
+		t.Fatalf("the price is not the fixed variant: %+v", offer.Price)
+	}
+
+	// A required field is still required.
+	if err := json.Unmarshal([]byte(`{"currency":"USD"}`), &money); err == nil || !strings.Contains(err.Error(), "amount") {
+		t.Fatalf("want an error naming the missing amount, got %v", err)
 	}
 }

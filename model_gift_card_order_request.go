@@ -22,7 +22,7 @@ var _ MappedNullable = &GiftCardOrderRequest{}
 
 // GiftCardOrderRequest The body B2B gift card quote and order both take.
 type GiftCardOrderRequest struct {
-	// Order currency, three letters in either case; the API key's currency when omitted. An unsupported code gives 404 / 10004 before any item is checked.
+	// Order currency, three letters in either case; the API key's currency when omitted. An unsupported code gives 400 / 10001 at `currency`, reason `NOT_SUPPORTED`, before any item is checked.
 	Currency NullableString `json:"currency,omitempty"`
 	// Optional partner order reference, unique per partner, at most 128 characters without leading or trailing spaces. A quote validates it and ignores it.
 	ReferenceId NullableString `json:"referenceId,omitempty"`
@@ -203,7 +203,6 @@ func (o *GiftCardOrderRequest) UnmarshalJSON(data []byte) (err error) {
 	varGiftCardOrderRequest := _GiftCardOrderRequest{}
 
 	decoder := json.NewDecoder(bytes.NewReader(data))
-	decoder.DisallowUnknownFields()
 	err = decoder.Decode(&varGiftCardOrderRequest)
 
 	if err != nil {

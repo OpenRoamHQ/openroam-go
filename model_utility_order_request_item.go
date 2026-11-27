@@ -193,7 +193,6 @@ func (o *UtilityOrderRequestItem) UnmarshalJSON(data []byte) (err error) {
 	varUtilityOrderRequestItem := _UtilityOrderRequestItem{}
 
 	decoder := json.NewDecoder(bytes.NewReader(data))
-	decoder.DisallowUnknownFields()
 	err = decoder.Decode(&varUtilityOrderRequestItem)
 
 	if err != nil {

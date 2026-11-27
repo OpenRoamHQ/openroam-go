@@ -14,25 +14,31 @@ package openroam
 import (
 	"encoding/json"
 	"time"
+	"bytes"
+	"fmt"
 )
 
 // checks if the OrderTimelineEntry type satisfies the MappedNullable interface at compile time
 var _ MappedNullable = &OrderTimelineEntry{}
 
-// OrderTimelineEntry A status the order entered.
+// OrderTimelineEntry A status the order entered. Each status appears once per stretch: `processing` at the time the             payment succeeded, `partiallyRefunded` or `refunded` at the time of the refund that caused it.
 type OrderTimelineEntry struct {
 	// The order status.
-	Status *string `json:"status,omitempty"`
+	Status string `json:"status"`
 	// When the order entered it (UTC).
-	OccurredAt *time.Time `json:"occurredAt,omitempty"`
+	OccurredAt time.Time `json:"occurredAt"`
 }
+
+type _OrderTimelineEntry OrderTimelineEntry
 
 // NewOrderTimelineEntry instantiates a new OrderTimelineEntry object
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewOrderTimelineEntry() *OrderTimelineEntry {
+func NewOrderTimelineEntry(status string, occurredAt time.Time) *OrderTimelineEntry {
 	this := OrderTimelineEntry{}
+	this.Status = status
+	this.OccurredAt = occurredAt
 	return &this
 }
 
@@ -44,68 +50,52 @@ func NewOrderTimelineEntryWithDefaults() *OrderTimelineEntry {
 	return &this
 }
 
-// GetStatus returns the Status field value if set, zero value otherwise.
+// GetStatus returns the Status field value
 func (o *OrderTimelineEntry) GetStatus() string {
-	if o == nil || IsNil(o.Status) {
+	if o == nil {
 		var ret string
 		return ret
 	}
-	return *o.Status
+
+	return o.Status
 }
 
-// GetStatusOk returns a tuple with the Status field value if set, nil otherwise
+// GetStatusOk returns a tuple with the Status field value
 // and a boolean to check if the value has been set.
 func (o *OrderTimelineEntry) GetStatusOk() (*string, bool) {
-	if o == nil || IsNil(o.Status) {
+	if o == nil {
 		return nil, false
 	}
-	return o.Status, true
+	return &o.Status, true
 }
 
-// HasStatus returns a boolean if a field has been set.
-func (o *OrderTimelineEntry) HasStatus() bool {
-	if o != nil && !IsNil(o.Status) {
-		return true
-	}
-
-	return false
-}
-
-// SetStatus gets a reference to the given string and assigns it to the Status field.
+// SetStatus sets field value
 func (o *OrderTimelineEntry) SetStatus(v string) {
-	o.Status = &v
+	o.Status = v
 }
 
-// GetOccurredAt returns the OccurredAt field value if set, zero value otherwise.
+// GetOccurredAt returns the OccurredAt field value
 func (o *OrderTimelineEntry) GetOccurredAt() time.Time {
-	if o == nil || IsNil(o.OccurredAt) {
+	if o == nil {
 		var ret time.Time
 		return ret
 	}
-	return *o.OccurredAt
+
+	return o.OccurredAt
 }
 
-// GetOccurredAtOk returns a tuple with the OccurredAt field value if set, nil otherwise
+// GetOccurredAtOk returns a tuple with the OccurredAt field value
 // and a boolean to check if the value has been set.
 func (o *OrderTimelineEntry) GetOccurredAtOk() (*time.Time, bool) {
-	if o == nil || IsNil(o.OccurredAt) {
+	if o == nil {
 		return nil, false
 	}
-	return o.OccurredAt, true
+	return &o.OccurredAt, true
 }
 
-// HasOccurredAt returns a boolean if a field has been set.
-func (o *OrderTimelineEntry) HasOccurredAt() bool {
-	if o != nil && !IsNil(o.OccurredAt) {
-		return true
-	}
-
-	return false
-}
-
-// SetOccurredAt gets a reference to the given time.Time and assigns it to the OccurredAt field.
+// SetOccurredAt sets field value
 func (o *OrderTimelineEntry) SetOccurredAt(v time.Time) {
-	o.OccurredAt = &v
+	o.OccurredAt = v
 }
 
 func (o OrderTimelineEntry) MarshalJSON() ([]byte, error) {
@@ -118,13 +108,46 @@ func (o OrderTimelineEntry) MarshalJSON() ([]byte, error) {
 
 func (o OrderTimelineEntry) ToMap() (map[string]interface{}, error) {
 	toSerialize := map[string]interface{}{}
-	if !IsNil(o.Status) {
-		toSerialize["status"] = o.Status
-	}
-	if !IsNil(o.OccurredAt) {
-		toSerialize["occurredAt"] = o.OccurredAt
-	}
+	toSerialize["status"] = o.Status
+	toSerialize["occurredAt"] = o.OccurredAt
 	return toSerialize, nil
+}
+
+func (o *OrderTimelineEntry) UnmarshalJSON(data []byte) (err error) {
+	// This validates that all required properties are included in the JSON object
+	// by unmarshalling the object into a generic map with string keys and checking
+	// that every required field exists as a key in the generic map.
+	requiredProperties := []string{
+		"status",
+		"occurredAt",
+	}
+
+	allProperties := make(map[string]interface{})
+
+	err = json.Unmarshal(data, &allProperties)
+
+	if err != nil {
+		return err;
+	}
+
+	for _, requiredProperty := range(requiredProperties) {
+		if _, exists := allProperties[requiredProperty]; !exists {
+			return fmt.Errorf("no value given for required property %v", requiredProperty)
+		}
+	}
+
+	varOrderTimelineEntry := _OrderTimelineEntry{}
+
+	decoder := json.NewDecoder(bytes.NewReader(data))
+	err = decoder.Decode(&varOrderTimelineEntry)
+
+	if err != nil {
+		return err
+	}
+
+	*o = OrderTimelineEntry(varOrderTimelineEntry)
+
+	return err
 }
 
 type NullableOrderTimelineEntry struct {

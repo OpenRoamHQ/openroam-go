@@ -13,26 +13,33 @@ package openroam
 
 import (
 	"encoding/json"
+	"bytes"
+	"fmt"
 )
 
 // checks if the AirtimeOperatorSummary type satisfies the MappedNullable interface at compile time
 var _ MappedNullable = &AirtimeOperatorSummary{}
 
-// AirtimeOperatorSummary One operator as the operator list and the catalog return it, without offers. `id` is the stable canonical operator ID that `operators/{id}` takes. Airtime has no categories, so `category` is always null.
+// AirtimeOperatorSummary One operator as the operator list and the catalog return it, without offers. `id` is the stable operator id `operator_…` that `operators/{id}` takes. Airtime has no categories, so `category` is always null.
 type AirtimeOperatorSummary struct {
-	Id *string `json:"id,omitempty"`
-	Name *string `json:"name,omitempty"`
-	CountryCode *string `json:"countryCode,omitempty"`
+	Id string `json:"id"`
+	Name string `json:"name"`
+	CountryCode string `json:"countryCode"`
 	Category NullableString `json:"category,omitempty"`
 	LogoUrl NullableString `json:"logoUrl,omitempty"`
 }
+
+type _AirtimeOperatorSummary AirtimeOperatorSummary
 
 // NewAirtimeOperatorSummary instantiates a new AirtimeOperatorSummary object
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewAirtimeOperatorSummary() *AirtimeOperatorSummary {
+func NewAirtimeOperatorSummary(id string, name string, countryCode string) *AirtimeOperatorSummary {
 	this := AirtimeOperatorSummary{}
+	this.Id = id
+	this.Name = name
+	this.CountryCode = countryCode
 	return &this
 }
 
@@ -44,100 +51,76 @@ func NewAirtimeOperatorSummaryWithDefaults() *AirtimeOperatorSummary {
 	return &this
 }
 
-// GetId returns the Id field value if set, zero value otherwise.
+// GetId returns the Id field value
 func (o *AirtimeOperatorSummary) GetId() string {
-	if o == nil || IsNil(o.Id) {
+	if o == nil {
 		var ret string
 		return ret
 	}
-	return *o.Id
+
+	return o.Id
 }
 
-// GetIdOk returns a tuple with the Id field value if set, nil otherwise
+// GetIdOk returns a tuple with the Id field value
 // and a boolean to check if the value has been set.
 func (o *AirtimeOperatorSummary) GetIdOk() (*string, bool) {
-	if o == nil || IsNil(o.Id) {
+	if o == nil {
 		return nil, false
 	}
-	return o.Id, true
+	return &o.Id, true
 }
 
-// HasId returns a boolean if a field has been set.
-func (o *AirtimeOperatorSummary) HasId() bool {
-	if o != nil && !IsNil(o.Id) {
-		return true
-	}
-
-	return false
-}
-
-// SetId gets a reference to the given string and assigns it to the Id field.
+// SetId sets field value
 func (o *AirtimeOperatorSummary) SetId(v string) {
-	o.Id = &v
+	o.Id = v
 }
 
-// GetName returns the Name field value if set, zero value otherwise.
+// GetName returns the Name field value
 func (o *AirtimeOperatorSummary) GetName() string {
-	if o == nil || IsNil(o.Name) {
+	if o == nil {
 		var ret string
 		return ret
 	}
-	return *o.Name
+
+	return o.Name
 }
 
-// GetNameOk returns a tuple with the Name field value if set, nil otherwise
+// GetNameOk returns a tuple with the Name field value
 // and a boolean to check if the value has been set.
 func (o *AirtimeOperatorSummary) GetNameOk() (*string, bool) {
-	if o == nil || IsNil(o.Name) {
+	if o == nil {
 		return nil, false
 	}
-	return o.Name, true
+	return &o.Name, true
 }
 
-// HasName returns a boolean if a field has been set.
-func (o *AirtimeOperatorSummary) HasName() bool {
-	if o != nil && !IsNil(o.Name) {
-		return true
-	}
-
-	return false
-}
-
-// SetName gets a reference to the given string and assigns it to the Name field.
+// SetName sets field value
 func (o *AirtimeOperatorSummary) SetName(v string) {
-	o.Name = &v
+	o.Name = v
 }
 
-// GetCountryCode returns the CountryCode field value if set, zero value otherwise.
+// GetCountryCode returns the CountryCode field value
 func (o *AirtimeOperatorSummary) GetCountryCode() string {
-	if o == nil || IsNil(o.CountryCode) {
+	if o == nil {
 		var ret string
 		return ret
 	}
-	return *o.CountryCode
+
+	return o.CountryCode
 }
 
-// GetCountryCodeOk returns a tuple with the CountryCode field value if set, nil otherwise
+// GetCountryCodeOk returns a tuple with the CountryCode field value
 // and a boolean to check if the value has been set.
 func (o *AirtimeOperatorSummary) GetCountryCodeOk() (*string, bool) {
-	if o == nil || IsNil(o.CountryCode) {
+	if o == nil {
 		return nil, false
 	}
-	return o.CountryCode, true
+	return &o.CountryCode, true
 }
 
-// HasCountryCode returns a boolean if a field has been set.
-func (o *AirtimeOperatorSummary) HasCountryCode() bool {
-	if o != nil && !IsNil(o.CountryCode) {
-		return true
-	}
-
-	return false
-}
-
-// SetCountryCode gets a reference to the given string and assigns it to the CountryCode field.
+// SetCountryCode sets field value
 func (o *AirtimeOperatorSummary) SetCountryCode(v string) {
-	o.CountryCode = &v
+	o.CountryCode = v
 }
 
 // GetCategory returns the Category field value if set, zero value otherwise (both if not set or set to explicit null).
@@ -234,15 +217,9 @@ func (o AirtimeOperatorSummary) MarshalJSON() ([]byte, error) {
 
 func (o AirtimeOperatorSummary) ToMap() (map[string]interface{}, error) {
 	toSerialize := map[string]interface{}{}
-	if !IsNil(o.Id) {
-		toSerialize["id"] = o.Id
-	}
-	if !IsNil(o.Name) {
-		toSerialize["name"] = o.Name
-	}
-	if !IsNil(o.CountryCode) {
-		toSerialize["countryCode"] = o.CountryCode
-	}
+	toSerialize["id"] = o.Id
+	toSerialize["name"] = o.Name
+	toSerialize["countryCode"] = o.CountryCode
 	if o.Category.IsSet() {
 		toSerialize["category"] = o.Category.Get()
 	}
@@ -250,6 +227,44 @@ func (o AirtimeOperatorSummary) ToMap() (map[string]interface{}, error) {
 		toSerialize["logoUrl"] = o.LogoUrl.Get()
 	}
 	return toSerialize, nil
+}
+
+func (o *AirtimeOperatorSummary) UnmarshalJSON(data []byte) (err error) {
+	// This validates that all required properties are included in the JSON object
+	// by unmarshalling the object into a generic map with string keys and checking
+	// that every required field exists as a key in the generic map.
+	requiredProperties := []string{
+		"id",
+		"name",
+		"countryCode",
+	}
+
+	allProperties := make(map[string]interface{})
+
+	err = json.Unmarshal(data, &allProperties)
+
+	if err != nil {
+		return err;
+	}
+
+	for _, requiredProperty := range(requiredProperties) {
+		if _, exists := allProperties[requiredProperty]; !exists {
+			return fmt.Errorf("no value given for required property %v", requiredProperty)
+		}
+	}
+
+	varAirtimeOperatorSummary := _AirtimeOperatorSummary{}
+
+	decoder := json.NewDecoder(bytes.NewReader(data))
+	err = decoder.Decode(&varAirtimeOperatorSummary)
+
+	if err != nil {
+		return err
+	}
+
+	*o = AirtimeOperatorSummary(varAirtimeOperatorSummary)
+
+	return err
 }
 
 type NullableAirtimeOperatorSummary struct {

@@ -14,6 +14,8 @@ package openroam
 import (
 	"encoding/json"
 	"time"
+	"bytes"
+	"fmt"
 )
 
 // checks if the Currency type satisfies the MappedNullable interface at compile time
@@ -22,23 +24,30 @@ var _ MappedNullable = &Currency{}
 // Currency A supported currency with its current rate.
 type Currency struct {
 	// Currency id, used as `currencyId` when creating a wallet.
-	Id *string `json:"id,omitempty"`
+	Id string `json:"id"`
 	// Three-letter currency code, for example `USD`.
-	Code *string `json:"code,omitempty"`
+	Code string `json:"code"`
 	// The USD value of one unit of the currency.
-	RateToUsd *float32 `json:"rateToUsd,omitempty"`
+	RateToUsd float32 `json:"rateToUsd"`
 	// When the rate was last updated (UTC).
-	RateDate *time.Time `json:"rateDate,omitempty"`
+	RateDate time.Time `json:"rateDate"`
 	// Percentage change of the rate against the previous day.
-	DailyPercentageDifference *float32 `json:"dailyPercentageDifference,omitempty"`
+	DailyPercentageDifference float32 `json:"dailyPercentageDifference"`
 }
+
+type _Currency Currency
 
 // NewCurrency instantiates a new Currency object
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewCurrency() *Currency {
+func NewCurrency(id string, code string, rateToUsd float32, rateDate time.Time, dailyPercentageDifference float32) *Currency {
 	this := Currency{}
+	this.Id = id
+	this.Code = code
+	this.RateToUsd = rateToUsd
+	this.RateDate = rateDate
+	this.DailyPercentageDifference = dailyPercentageDifference
 	return &this
 }
 
@@ -50,164 +59,124 @@ func NewCurrencyWithDefaults() *Currency {
 	return &this
 }
 
-// GetId returns the Id field value if set, zero value otherwise.
+// GetId returns the Id field value
 func (o *Currency) GetId() string {
-	if o == nil || IsNil(o.Id) {
+	if o == nil {
 		var ret string
 		return ret
 	}
-	return *o.Id
+
+	return o.Id
 }
 
-// GetIdOk returns a tuple with the Id field value if set, nil otherwise
+// GetIdOk returns a tuple with the Id field value
 // and a boolean to check if the value has been set.
 func (o *Currency) GetIdOk() (*string, bool) {
-	if o == nil || IsNil(o.Id) {
+	if o == nil {
 		return nil, false
 	}
-	return o.Id, true
+	return &o.Id, true
 }
 
-// HasId returns a boolean if a field has been set.
-func (o *Currency) HasId() bool {
-	if o != nil && !IsNil(o.Id) {
-		return true
-	}
-
-	return false
-}
-
-// SetId gets a reference to the given string and assigns it to the Id field.
+// SetId sets field value
 func (o *Currency) SetId(v string) {
-	o.Id = &v
+	o.Id = v
 }
 
-// GetCode returns the Code field value if set, zero value otherwise.
+// GetCode returns the Code field value
 func (o *Currency) GetCode() string {
-	if o == nil || IsNil(o.Code) {
+	if o == nil {
 		var ret string
 		return ret
 	}
-	return *o.Code
+
+	return o.Code
 }
 
-// GetCodeOk returns a tuple with the Code field value if set, nil otherwise
+// GetCodeOk returns a tuple with the Code field value
 // and a boolean to check if the value has been set.
 func (o *Currency) GetCodeOk() (*string, bool) {
-	if o == nil || IsNil(o.Code) {
+	if o == nil {
 		return nil, false
 	}
-	return o.Code, true
+	return &o.Code, true
 }
 
-// HasCode returns a boolean if a field has been set.
-func (o *Currency) HasCode() bool {
-	if o != nil && !IsNil(o.Code) {
-		return true
-	}
-
-	return false
-}
-
-// SetCode gets a reference to the given string and assigns it to the Code field.
+// SetCode sets field value
 func (o *Currency) SetCode(v string) {
-	o.Code = &v
+	o.Code = v
 }
 
-// GetRateToUsd returns the RateToUsd field value if set, zero value otherwise.
+// GetRateToUsd returns the RateToUsd field value
 func (o *Currency) GetRateToUsd() float32 {
-	if o == nil || IsNil(o.RateToUsd) {
+	if o == nil {
 		var ret float32
 		return ret
 	}
-	return *o.RateToUsd
+
+	return o.RateToUsd
 }
 
-// GetRateToUsdOk returns a tuple with the RateToUsd field value if set, nil otherwise
+// GetRateToUsdOk returns a tuple with the RateToUsd field value
 // and a boolean to check if the value has been set.
 func (o *Currency) GetRateToUsdOk() (*float32, bool) {
-	if o == nil || IsNil(o.RateToUsd) {
+	if o == nil {
 		return nil, false
 	}
-	return o.RateToUsd, true
+	return &o.RateToUsd, true
 }
 
-// HasRateToUsd returns a boolean if a field has been set.
-func (o *Currency) HasRateToUsd() bool {
-	if o != nil && !IsNil(o.RateToUsd) {
-		return true
-	}
-
-	return false
-}
-
-// SetRateToUsd gets a reference to the given float32 and assigns it to the RateToUsd field.
+// SetRateToUsd sets field value
 func (o *Currency) SetRateToUsd(v float32) {
-	o.RateToUsd = &v
+	o.RateToUsd = v
 }
 
-// GetRateDate returns the RateDate field value if set, zero value otherwise.
+// GetRateDate returns the RateDate field value
 func (o *Currency) GetRateDate() time.Time {
-	if o == nil || IsNil(o.RateDate) {
+	if o == nil {
 		var ret time.Time
 		return ret
 	}
-	return *o.RateDate
+
+	return o.RateDate
 }
 
-// GetRateDateOk returns a tuple with the RateDate field value if set, nil otherwise
+// GetRateDateOk returns a tuple with the RateDate field value
 // and a boolean to check if the value has been set.
 func (o *Currency) GetRateDateOk() (*time.Time, bool) {
-	if o == nil || IsNil(o.RateDate) {
+	if o == nil {
 		return nil, false
 	}
-	return o.RateDate, true
+	return &o.RateDate, true
 }
 
-// HasRateDate returns a boolean if a field has been set.
-func (o *Currency) HasRateDate() bool {
-	if o != nil && !IsNil(o.RateDate) {
-		return true
-	}
-
-	return false
-}
-
-// SetRateDate gets a reference to the given time.Time and assigns it to the RateDate field.
+// SetRateDate sets field value
 func (o *Currency) SetRateDate(v time.Time) {
-	o.RateDate = &v
+	o.RateDate = v
 }
 
-// GetDailyPercentageDifference returns the DailyPercentageDifference field value if set, zero value otherwise.
+// GetDailyPercentageDifference returns the DailyPercentageDifference field value
 func (o *Currency) GetDailyPercentageDifference() float32 {
-	if o == nil || IsNil(o.DailyPercentageDifference) {
+	if o == nil {
 		var ret float32
 		return ret
 	}
-	return *o.DailyPercentageDifference
+
+	return o.DailyPercentageDifference
 }
 
-// GetDailyPercentageDifferenceOk returns a tuple with the DailyPercentageDifference field value if set, nil otherwise
+// GetDailyPercentageDifferenceOk returns a tuple with the DailyPercentageDifference field value
 // and a boolean to check if the value has been set.
 func (o *Currency) GetDailyPercentageDifferenceOk() (*float32, bool) {
-	if o == nil || IsNil(o.DailyPercentageDifference) {
+	if o == nil {
 		return nil, false
 	}
-	return o.DailyPercentageDifference, true
+	return &o.DailyPercentageDifference, true
 }
 
-// HasDailyPercentageDifference returns a boolean if a field has been set.
-func (o *Currency) HasDailyPercentageDifference() bool {
-	if o != nil && !IsNil(o.DailyPercentageDifference) {
-		return true
-	}
-
-	return false
-}
-
-// SetDailyPercentageDifference gets a reference to the given float32 and assigns it to the DailyPercentageDifference field.
+// SetDailyPercentageDifference sets field value
 func (o *Currency) SetDailyPercentageDifference(v float32) {
-	o.DailyPercentageDifference = &v
+	o.DailyPercentageDifference = v
 }
 
 func (o Currency) MarshalJSON() ([]byte, error) {
@@ -220,22 +189,52 @@ func (o Currency) MarshalJSON() ([]byte, error) {
 
 func (o Currency) ToMap() (map[string]interface{}, error) {
 	toSerialize := map[string]interface{}{}
-	if !IsNil(o.Id) {
-		toSerialize["id"] = o.Id
-	}
-	if !IsNil(o.Code) {
-		toSerialize["code"] = o.Code
-	}
-	if !IsNil(o.RateToUsd) {
-		toSerialize["rateToUsd"] = o.RateToUsd
-	}
-	if !IsNil(o.RateDate) {
-		toSerialize["rateDate"] = o.RateDate
-	}
-	if !IsNil(o.DailyPercentageDifference) {
-		toSerialize["dailyPercentageDifference"] = o.DailyPercentageDifference
-	}
+	toSerialize["id"] = o.Id
+	toSerialize["code"] = o.Code
+	toSerialize["rateToUsd"] = o.RateToUsd
+	toSerialize["rateDate"] = o.RateDate
+	toSerialize["dailyPercentageDifference"] = o.DailyPercentageDifference
 	return toSerialize, nil
+}
+
+func (o *Currency) UnmarshalJSON(data []byte) (err error) {
+	// This validates that all required properties are included in the JSON object
+	// by unmarshalling the object into a generic map with string keys and checking
+	// that every required field exists as a key in the generic map.
+	requiredProperties := []string{
+		"id",
+		"code",
+		"rateToUsd",
+		"rateDate",
+		"dailyPercentageDifference",
+	}
+
+	allProperties := make(map[string]interface{})
+
+	err = json.Unmarshal(data, &allProperties)
+
+	if err != nil {
+		return err;
+	}
+
+	for _, requiredProperty := range(requiredProperties) {
+		if _, exists := allProperties[requiredProperty]; !exists {
+			return fmt.Errorf("no value given for required property %v", requiredProperty)
+		}
+	}
+
+	varCurrency := _Currency{}
+
+	decoder := json.NewDecoder(bytes.NewReader(data))
+	err = decoder.Decode(&varCurrency)
+
+	if err != nil {
+		return err
+	}
+
+	*o = Currency(varCurrency)
+
+	return err
 }
 
 type NullableCurrency struct {

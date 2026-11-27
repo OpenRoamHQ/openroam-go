@@ -13,6 +13,8 @@ package openroam
 
 import (
 	"encoding/json"
+	"bytes"
+	"fmt"
 )
 
 // checks if the HotelPurchasedDetails type satisfies the MappedNullable interface at compile time
@@ -21,25 +23,33 @@ var _ MappedNullable = &HotelPurchasedDetails{}
 // HotelPurchasedDetails Hotel facts outside the purchased-product keys every partner service shares.
 type HotelPurchasedDetails struct {
 	// The check-in date bought.
-	CheckInDate *string `json:"checkInDate,omitempty"`
+	CheckInDate string `json:"checkInDate"`
 	// The check-out date bought.
-	CheckOutDate *string `json:"checkOutDate,omitempty"`
+	CheckOutDate string `json:"checkOutDate"`
 	// The rooms bought, in room order: adults, children and child ages, in the quote's `requestedRooms` shape.
-	RequestedRooms []RoomOccupancy `json:"requestedRooms,omitempty"`
+	RequestedRooms []RoomOccupancy `json:"requestedRooms"`
 	// The hotel of the stay.
-	Hotel *BookedHotel `json:"hotel,omitempty"`
-	// The terms the stay was bought on, as quoted: they do not change when a free window later closes.
-	Terms *BookingTerms `json:"terms,omitempty"`
+	Hotel BookedHotel `json:"hotel"`
+	// The terms the stay was bought on, as quoted: they do not change when a free window later closes. Each cancellation instant is also stated on the hotel's clock.
+	Terms BookingTerms `json:"terms"`
 	// The rate bought: rooms, board, taxes, nightly prices and surcharges, as on the quote.
-	Rate *QuotedRate `json:"rate,omitempty"`
+	Rate QuotedRate `json:"rate"`
 }
+
+type _HotelPurchasedDetails HotelPurchasedDetails
 
 // NewHotelPurchasedDetails instantiates a new HotelPurchasedDetails object
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewHotelPurchasedDetails() *HotelPurchasedDetails {
+func NewHotelPurchasedDetails(checkInDate string, checkOutDate string, requestedRooms []RoomOccupancy, hotel BookedHotel, terms BookingTerms, rate QuotedRate) *HotelPurchasedDetails {
 	this := HotelPurchasedDetails{}
+	this.CheckInDate = checkInDate
+	this.CheckOutDate = checkOutDate
+	this.RequestedRooms = requestedRooms
+	this.Hotel = hotel
+	this.Terms = terms
+	this.Rate = rate
 	return &this
 }
 
@@ -51,196 +61,148 @@ func NewHotelPurchasedDetailsWithDefaults() *HotelPurchasedDetails {
 	return &this
 }
 
-// GetCheckInDate returns the CheckInDate field value if set, zero value otherwise.
+// GetCheckInDate returns the CheckInDate field value
 func (o *HotelPurchasedDetails) GetCheckInDate() string {
-	if o == nil || IsNil(o.CheckInDate) {
+	if o == nil {
 		var ret string
 		return ret
 	}
-	return *o.CheckInDate
+
+	return o.CheckInDate
 }
 
-// GetCheckInDateOk returns a tuple with the CheckInDate field value if set, nil otherwise
+// GetCheckInDateOk returns a tuple with the CheckInDate field value
 // and a boolean to check if the value has been set.
 func (o *HotelPurchasedDetails) GetCheckInDateOk() (*string, bool) {
-	if o == nil || IsNil(o.CheckInDate) {
+	if o == nil {
 		return nil, false
 	}
-	return o.CheckInDate, true
+	return &o.CheckInDate, true
 }
 
-// HasCheckInDate returns a boolean if a field has been set.
-func (o *HotelPurchasedDetails) HasCheckInDate() bool {
-	if o != nil && !IsNil(o.CheckInDate) {
-		return true
-	}
-
-	return false
-}
-
-// SetCheckInDate gets a reference to the given string and assigns it to the CheckInDate field.
+// SetCheckInDate sets field value
 func (o *HotelPurchasedDetails) SetCheckInDate(v string) {
-	o.CheckInDate = &v
+	o.CheckInDate = v
 }
 
-// GetCheckOutDate returns the CheckOutDate field value if set, zero value otherwise.
+// GetCheckOutDate returns the CheckOutDate field value
 func (o *HotelPurchasedDetails) GetCheckOutDate() string {
-	if o == nil || IsNil(o.CheckOutDate) {
+	if o == nil {
 		var ret string
 		return ret
 	}
-	return *o.CheckOutDate
+
+	return o.CheckOutDate
 }
 
-// GetCheckOutDateOk returns a tuple with the CheckOutDate field value if set, nil otherwise
+// GetCheckOutDateOk returns a tuple with the CheckOutDate field value
 // and a boolean to check if the value has been set.
 func (o *HotelPurchasedDetails) GetCheckOutDateOk() (*string, bool) {
-	if o == nil || IsNil(o.CheckOutDate) {
+	if o == nil {
 		return nil, false
 	}
-	return o.CheckOutDate, true
+	return &o.CheckOutDate, true
 }
 
-// HasCheckOutDate returns a boolean if a field has been set.
-func (o *HotelPurchasedDetails) HasCheckOutDate() bool {
-	if o != nil && !IsNil(o.CheckOutDate) {
-		return true
-	}
-
-	return false
-}
-
-// SetCheckOutDate gets a reference to the given string and assigns it to the CheckOutDate field.
+// SetCheckOutDate sets field value
 func (o *HotelPurchasedDetails) SetCheckOutDate(v string) {
-	o.CheckOutDate = &v
+	o.CheckOutDate = v
 }
 
-// GetRequestedRooms returns the RequestedRooms field value if set, zero value otherwise.
+// GetRequestedRooms returns the RequestedRooms field value
 func (o *HotelPurchasedDetails) GetRequestedRooms() []RoomOccupancy {
-	if o == nil || IsNil(o.RequestedRooms) {
+	if o == nil {
 		var ret []RoomOccupancy
 		return ret
 	}
+
 	return o.RequestedRooms
 }
 
-// GetRequestedRoomsOk returns a tuple with the RequestedRooms field value if set, nil otherwise
+// GetRequestedRoomsOk returns a tuple with the RequestedRooms field value
 // and a boolean to check if the value has been set.
 func (o *HotelPurchasedDetails) GetRequestedRoomsOk() ([]RoomOccupancy, bool) {
-	if o == nil || IsNil(o.RequestedRooms) {
+	if o == nil {
 		return nil, false
 	}
 	return o.RequestedRooms, true
 }
 
-// HasRequestedRooms returns a boolean if a field has been set.
-func (o *HotelPurchasedDetails) HasRequestedRooms() bool {
-	if o != nil && !IsNil(o.RequestedRooms) {
-		return true
-	}
-
-	return false
-}
-
-// SetRequestedRooms gets a reference to the given []RoomOccupancy and assigns it to the RequestedRooms field.
+// SetRequestedRooms sets field value
 func (o *HotelPurchasedDetails) SetRequestedRooms(v []RoomOccupancy) {
 	o.RequestedRooms = v
 }
 
-// GetHotel returns the Hotel field value if set, zero value otherwise.
+// GetHotel returns the Hotel field value
 func (o *HotelPurchasedDetails) GetHotel() BookedHotel {
-	if o == nil || IsNil(o.Hotel) {
+	if o == nil {
 		var ret BookedHotel
 		return ret
 	}
-	return *o.Hotel
+
+	return o.Hotel
 }
 
-// GetHotelOk returns a tuple with the Hotel field value if set, nil otherwise
+// GetHotelOk returns a tuple with the Hotel field value
 // and a boolean to check if the value has been set.
 func (o *HotelPurchasedDetails) GetHotelOk() (*BookedHotel, bool) {
-	if o == nil || IsNil(o.Hotel) {
+	if o == nil {
 		return nil, false
 	}
-	return o.Hotel, true
+	return &o.Hotel, true
 }
 
-// HasHotel returns a boolean if a field has been set.
-func (o *HotelPurchasedDetails) HasHotel() bool {
-	if o != nil && !IsNil(o.Hotel) {
-		return true
-	}
-
-	return false
-}
-
-// SetHotel gets a reference to the given BookedHotel and assigns it to the Hotel field.
+// SetHotel sets field value
 func (o *HotelPurchasedDetails) SetHotel(v BookedHotel) {
-	o.Hotel = &v
+	o.Hotel = v
 }
 
-// GetTerms returns the Terms field value if set, zero value otherwise.
+// GetTerms returns the Terms field value
 func (o *HotelPurchasedDetails) GetTerms() BookingTerms {
-	if o == nil || IsNil(o.Terms) {
+	if o == nil {
 		var ret BookingTerms
 		return ret
 	}
-	return *o.Terms
+
+	return o.Terms
 }
 
-// GetTermsOk returns a tuple with the Terms field value if set, nil otherwise
+// GetTermsOk returns a tuple with the Terms field value
 // and a boolean to check if the value has been set.
 func (o *HotelPurchasedDetails) GetTermsOk() (*BookingTerms, bool) {
-	if o == nil || IsNil(o.Terms) {
+	if o == nil {
 		return nil, false
 	}
-	return o.Terms, true
+	return &o.Terms, true
 }
 
-// HasTerms returns a boolean if a field has been set.
-func (o *HotelPurchasedDetails) HasTerms() bool {
-	if o != nil && !IsNil(o.Terms) {
-		return true
-	}
-
-	return false
-}
-
-// SetTerms gets a reference to the given BookingTerms and assigns it to the Terms field.
+// SetTerms sets field value
 func (o *HotelPurchasedDetails) SetTerms(v BookingTerms) {
-	o.Terms = &v
+	o.Terms = v
 }
 
-// GetRate returns the Rate field value if set, zero value otherwise.
+// GetRate returns the Rate field value
 func (o *HotelPurchasedDetails) GetRate() QuotedRate {
-	if o == nil || IsNil(o.Rate) {
+	if o == nil {
 		var ret QuotedRate
 		return ret
 	}
-	return *o.Rate
+
+	return o.Rate
 }
 
-// GetRateOk returns a tuple with the Rate field value if set, nil otherwise
+// GetRateOk returns a tuple with the Rate field value
 // and a boolean to check if the value has been set.
 func (o *HotelPurchasedDetails) GetRateOk() (*QuotedRate, bool) {
-	if o == nil || IsNil(o.Rate) {
+	if o == nil {
 		return nil, false
 	}
-	return o.Rate, true
+	return &o.Rate, true
 }
 
-// HasRate returns a boolean if a field has been set.
-func (o *HotelPurchasedDetails) HasRate() bool {
-	if o != nil && !IsNil(o.Rate) {
-		return true
-	}
-
-	return false
-}
-
-// SetRate gets a reference to the given QuotedRate and assigns it to the Rate field.
+// SetRate sets field value
 func (o *HotelPurchasedDetails) SetRate(v QuotedRate) {
-	o.Rate = &v
+	o.Rate = v
 }
 
 func (o HotelPurchasedDetails) MarshalJSON() ([]byte, error) {
@@ -253,25 +215,54 @@ func (o HotelPurchasedDetails) MarshalJSON() ([]byte, error) {
 
 func (o HotelPurchasedDetails) ToMap() (map[string]interface{}, error) {
 	toSerialize := map[string]interface{}{}
-	if !IsNil(o.CheckInDate) {
-		toSerialize["checkInDate"] = o.CheckInDate
-	}
-	if !IsNil(o.CheckOutDate) {
-		toSerialize["checkOutDate"] = o.CheckOutDate
-	}
-	if !IsNil(o.RequestedRooms) {
-		toSerialize["requestedRooms"] = o.RequestedRooms
-	}
-	if !IsNil(o.Hotel) {
-		toSerialize["hotel"] = o.Hotel
-	}
-	if !IsNil(o.Terms) {
-		toSerialize["terms"] = o.Terms
-	}
-	if !IsNil(o.Rate) {
-		toSerialize["rate"] = o.Rate
-	}
+	toSerialize["checkInDate"] = o.CheckInDate
+	toSerialize["checkOutDate"] = o.CheckOutDate
+	toSerialize["requestedRooms"] = o.RequestedRooms
+	toSerialize["hotel"] = o.Hotel
+	toSerialize["terms"] = o.Terms
+	toSerialize["rate"] = o.Rate
 	return toSerialize, nil
+}
+
+func (o *HotelPurchasedDetails) UnmarshalJSON(data []byte) (err error) {
+	// This validates that all required properties are included in the JSON object
+	// by unmarshalling the object into a generic map with string keys and checking
+	// that every required field exists as a key in the generic map.
+	requiredProperties := []string{
+		"checkInDate",
+		"checkOutDate",
+		"requestedRooms",
+		"hotel",
+		"terms",
+		"rate",
+	}
+
+	allProperties := make(map[string]interface{})
+
+	err = json.Unmarshal(data, &allProperties)
+
+	if err != nil {
+		return err;
+	}
+
+	for _, requiredProperty := range(requiredProperties) {
+		if _, exists := allProperties[requiredProperty]; !exists {
+			return fmt.Errorf("no value given for required property %v", requiredProperty)
+		}
+	}
+
+	varHotelPurchasedDetails := _HotelPurchasedDetails{}
+
+	decoder := json.NewDecoder(bytes.NewReader(data))
+	err = decoder.Decode(&varHotelPurchasedDetails)
+
+	if err != nil {
+		return err
+	}
+
+	*o = HotelPurchasedDetails(varHotelPurchasedDetails)
+
+	return err
 }
 
 type NullableHotelPurchasedDetails struct {

@@ -13,6 +13,8 @@ package openroam
 
 import (
 	"encoding/json"
+	"bytes"
+	"fmt"
 )
 
 // checks if the CatalogHotel type satisfies the MappedNullable interface at compile time
@@ -21,9 +23,9 @@ var _ MappedNullable = &CatalogHotel{}
 // CatalogHotel One catalog hotel's content, as `properties/{id}` and the catalog files return it: the search item (Hotel) without `offers`, because a hotel has no price without a stay. Search its `id` in `searchCriteria.hotelIds` for its rates.
 type CatalogHotel struct {
 	// The hotel's stable catalog ID (`hotel_…`).
-	Id *string `json:"id,omitempty"`
+	Id string `json:"id"`
 	// The hotel's name.
-	Name *string `json:"name,omitempty"`
+	Name string `json:"name"`
 	// ISO 3166-1 alpha-2 code of the hotel's country; null when it is not known.
 	CountryCode NullableString `json:"countryCode,omitempty"`
 	// Always null: the property type is not available yet.
@@ -32,16 +34,34 @@ type CatalogHotel struct {
 	LogoUrl NullableString `json:"logoUrl,omitempty"`
 	// The stored hotel description, in HTML.
 	Description NullableString `json:"description,omitempty"`
-	// Hotel facts outside the item keys every partner service shares.
-	Details *HotelDetails `json:"details,omitempty"`
+	// Star rating, for example 4 or 4.5; null when not known.
+	StarRating NullableFloat32 `json:"starRating,omitempty"`
+	// The hotel's address; null when not known.
+	Address NullableAddress `json:"address,omitempty"`
+	// The hotel's position; null when not known.
+	Coordinates NullableCoordinates `json:"coordinates,omitempty"`
+	// Gallery images hosted by OpenRoam.
+	ImageUrls []string `json:"imageUrls"`
+	// The hotel's amenities as codes in display groups; label them from `hotels/amenities/catalog`.
+	AmenityGroups []HotelAmenityGroup `json:"amenityGroups"`
+	// The hotel's phone, email and website; null when none is known.
+	Contact NullableHotelContact `json:"contact,omitempty"`
+	// Always null here: only a dashboard search card stands for several bookable units.
+	DisplayGroup NullableUnitAvailability `json:"displayGroup,omitempty"`
 }
+
+type _CatalogHotel CatalogHotel
 
 // NewCatalogHotel instantiates a new CatalogHotel object
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewCatalogHotel() *CatalogHotel {
+func NewCatalogHotel(id string, name string, imageUrls []string, amenityGroups []HotelAmenityGroup) *CatalogHotel {
 	this := CatalogHotel{}
+	this.Id = id
+	this.Name = name
+	this.ImageUrls = imageUrls
+	this.AmenityGroups = amenityGroups
 	return &this
 }
 
@@ -53,68 +73,52 @@ func NewCatalogHotelWithDefaults() *CatalogHotel {
 	return &this
 }
 
-// GetId returns the Id field value if set, zero value otherwise.
+// GetId returns the Id field value
 func (o *CatalogHotel) GetId() string {
-	if o == nil || IsNil(o.Id) {
+	if o == nil {
 		var ret string
 		return ret
 	}
-	return *o.Id
+
+	return o.Id
 }
 
-// GetIdOk returns a tuple with the Id field value if set, nil otherwise
+// GetIdOk returns a tuple with the Id field value
 // and a boolean to check if the value has been set.
 func (o *CatalogHotel) GetIdOk() (*string, bool) {
-	if o == nil || IsNil(o.Id) {
+	if o == nil {
 		return nil, false
 	}
-	return o.Id, true
+	return &o.Id, true
 }
 
-// HasId returns a boolean if a field has been set.
-func (o *CatalogHotel) HasId() bool {
-	if o != nil && !IsNil(o.Id) {
-		return true
-	}
-
-	return false
-}
-
-// SetId gets a reference to the given string and assigns it to the Id field.
+// SetId sets field value
 func (o *CatalogHotel) SetId(v string) {
-	o.Id = &v
+	o.Id = v
 }
 
-// GetName returns the Name field value if set, zero value otherwise.
+// GetName returns the Name field value
 func (o *CatalogHotel) GetName() string {
-	if o == nil || IsNil(o.Name) {
+	if o == nil {
 		var ret string
 		return ret
 	}
-	return *o.Name
+
+	return o.Name
 }
 
-// GetNameOk returns a tuple with the Name field value if set, nil otherwise
+// GetNameOk returns a tuple with the Name field value
 // and a boolean to check if the value has been set.
 func (o *CatalogHotel) GetNameOk() (*string, bool) {
-	if o == nil || IsNil(o.Name) {
+	if o == nil {
 		return nil, false
 	}
-	return o.Name, true
+	return &o.Name, true
 }
 
-// HasName returns a boolean if a field has been set.
-func (o *CatalogHotel) HasName() bool {
-	if o != nil && !IsNil(o.Name) {
-		return true
-	}
-
-	return false
-}
-
-// SetName gets a reference to the given string and assigns it to the Name field.
+// SetName sets field value
 func (o *CatalogHotel) SetName(v string) {
-	o.Name = &v
+	o.Name = v
 }
 
 // GetCountryCode returns the CountryCode field value if set, zero value otherwise (both if not set or set to explicit null).
@@ -285,36 +289,262 @@ func (o *CatalogHotel) UnsetDescription() {
 	o.Description.Unset()
 }
 
-// GetDetails returns the Details field value if set, zero value otherwise.
-func (o *CatalogHotel) GetDetails() HotelDetails {
-	if o == nil || IsNil(o.Details) {
-		var ret HotelDetails
+// GetStarRating returns the StarRating field value if set, zero value otherwise (both if not set or set to explicit null).
+func (o *CatalogHotel) GetStarRating() float32 {
+	if o == nil || IsNil(o.StarRating.Get()) {
+		var ret float32
 		return ret
 	}
-	return *o.Details
+	return *o.StarRating.Get()
 }
 
-// GetDetailsOk returns a tuple with the Details field value if set, nil otherwise
+// GetStarRatingOk returns a tuple with the StarRating field value if set, nil otherwise
 // and a boolean to check if the value has been set.
-func (o *CatalogHotel) GetDetailsOk() (*HotelDetails, bool) {
-	if o == nil || IsNil(o.Details) {
+// NOTE: If the value is an explicit nil, `nil, true` will be returned
+func (o *CatalogHotel) GetStarRatingOk() (*float32, bool) {
+	if o == nil {
 		return nil, false
 	}
-	return o.Details, true
+	return o.StarRating.Get(), o.StarRating.IsSet()
 }
 
-// HasDetails returns a boolean if a field has been set.
-func (o *CatalogHotel) HasDetails() bool {
-	if o != nil && !IsNil(o.Details) {
+// HasStarRating returns a boolean if a field has been set.
+func (o *CatalogHotel) HasStarRating() bool {
+	if o != nil && o.StarRating.IsSet() {
 		return true
 	}
 
 	return false
 }
 
-// SetDetails gets a reference to the given HotelDetails and assigns it to the Details field.
-func (o *CatalogHotel) SetDetails(v HotelDetails) {
-	o.Details = &v
+// SetStarRating gets a reference to the given NullableFloat32 and assigns it to the StarRating field.
+func (o *CatalogHotel) SetStarRating(v float32) {
+	o.StarRating.Set(&v)
+}
+// SetStarRatingNil sets the value for StarRating to be an explicit nil
+func (o *CatalogHotel) SetStarRatingNil() {
+	o.StarRating.Set(nil)
+}
+
+// UnsetStarRating ensures that no value is present for StarRating, not even an explicit nil
+func (o *CatalogHotel) UnsetStarRating() {
+	o.StarRating.Unset()
+}
+
+// GetAddress returns the Address field value if set, zero value otherwise (both if not set or set to explicit null).
+func (o *CatalogHotel) GetAddress() Address {
+	if o == nil || IsNil(o.Address.Get()) {
+		var ret Address
+		return ret
+	}
+	return *o.Address.Get()
+}
+
+// GetAddressOk returns a tuple with the Address field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+// NOTE: If the value is an explicit nil, `nil, true` will be returned
+func (o *CatalogHotel) GetAddressOk() (*Address, bool) {
+	if o == nil {
+		return nil, false
+	}
+	return o.Address.Get(), o.Address.IsSet()
+}
+
+// HasAddress returns a boolean if a field has been set.
+func (o *CatalogHotel) HasAddress() bool {
+	if o != nil && o.Address.IsSet() {
+		return true
+	}
+
+	return false
+}
+
+// SetAddress gets a reference to the given NullableAddress and assigns it to the Address field.
+func (o *CatalogHotel) SetAddress(v Address) {
+	o.Address.Set(&v)
+}
+// SetAddressNil sets the value for Address to be an explicit nil
+func (o *CatalogHotel) SetAddressNil() {
+	o.Address.Set(nil)
+}
+
+// UnsetAddress ensures that no value is present for Address, not even an explicit nil
+func (o *CatalogHotel) UnsetAddress() {
+	o.Address.Unset()
+}
+
+// GetCoordinates returns the Coordinates field value if set, zero value otherwise (both if not set or set to explicit null).
+func (o *CatalogHotel) GetCoordinates() Coordinates {
+	if o == nil || IsNil(o.Coordinates.Get()) {
+		var ret Coordinates
+		return ret
+	}
+	return *o.Coordinates.Get()
+}
+
+// GetCoordinatesOk returns a tuple with the Coordinates field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+// NOTE: If the value is an explicit nil, `nil, true` will be returned
+func (o *CatalogHotel) GetCoordinatesOk() (*Coordinates, bool) {
+	if o == nil {
+		return nil, false
+	}
+	return o.Coordinates.Get(), o.Coordinates.IsSet()
+}
+
+// HasCoordinates returns a boolean if a field has been set.
+func (o *CatalogHotel) HasCoordinates() bool {
+	if o != nil && o.Coordinates.IsSet() {
+		return true
+	}
+
+	return false
+}
+
+// SetCoordinates gets a reference to the given NullableCoordinates and assigns it to the Coordinates field.
+func (o *CatalogHotel) SetCoordinates(v Coordinates) {
+	o.Coordinates.Set(&v)
+}
+// SetCoordinatesNil sets the value for Coordinates to be an explicit nil
+func (o *CatalogHotel) SetCoordinatesNil() {
+	o.Coordinates.Set(nil)
+}
+
+// UnsetCoordinates ensures that no value is present for Coordinates, not even an explicit nil
+func (o *CatalogHotel) UnsetCoordinates() {
+	o.Coordinates.Unset()
+}
+
+// GetImageUrls returns the ImageUrls field value
+func (o *CatalogHotel) GetImageUrls() []string {
+	if o == nil {
+		var ret []string
+		return ret
+	}
+
+	return o.ImageUrls
+}
+
+// GetImageUrlsOk returns a tuple with the ImageUrls field value
+// and a boolean to check if the value has been set.
+func (o *CatalogHotel) GetImageUrlsOk() ([]string, bool) {
+	if o == nil {
+		return nil, false
+	}
+	return o.ImageUrls, true
+}
+
+// SetImageUrls sets field value
+func (o *CatalogHotel) SetImageUrls(v []string) {
+	o.ImageUrls = v
+}
+
+// GetAmenityGroups returns the AmenityGroups field value
+func (o *CatalogHotel) GetAmenityGroups() []HotelAmenityGroup {
+	if o == nil {
+		var ret []HotelAmenityGroup
+		return ret
+	}
+
+	return o.AmenityGroups
+}
+
+// GetAmenityGroupsOk returns a tuple with the AmenityGroups field value
+// and a boolean to check if the value has been set.
+func (o *CatalogHotel) GetAmenityGroupsOk() ([]HotelAmenityGroup, bool) {
+	if o == nil {
+		return nil, false
+	}
+	return o.AmenityGroups, true
+}
+
+// SetAmenityGroups sets field value
+func (o *CatalogHotel) SetAmenityGroups(v []HotelAmenityGroup) {
+	o.AmenityGroups = v
+}
+
+// GetContact returns the Contact field value if set, zero value otherwise (both if not set or set to explicit null).
+func (o *CatalogHotel) GetContact() HotelContact {
+	if o == nil || IsNil(o.Contact.Get()) {
+		var ret HotelContact
+		return ret
+	}
+	return *o.Contact.Get()
+}
+
+// GetContactOk returns a tuple with the Contact field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+// NOTE: If the value is an explicit nil, `nil, true` will be returned
+func (o *CatalogHotel) GetContactOk() (*HotelContact, bool) {
+	if o == nil {
+		return nil, false
+	}
+	return o.Contact.Get(), o.Contact.IsSet()
+}
+
+// HasContact returns a boolean if a field has been set.
+func (o *CatalogHotel) HasContact() bool {
+	if o != nil && o.Contact.IsSet() {
+		return true
+	}
+
+	return false
+}
+
+// SetContact gets a reference to the given NullableHotelContact and assigns it to the Contact field.
+func (o *CatalogHotel) SetContact(v HotelContact) {
+	o.Contact.Set(&v)
+}
+// SetContactNil sets the value for Contact to be an explicit nil
+func (o *CatalogHotel) SetContactNil() {
+	o.Contact.Set(nil)
+}
+
+// UnsetContact ensures that no value is present for Contact, not even an explicit nil
+func (o *CatalogHotel) UnsetContact() {
+	o.Contact.Unset()
+}
+
+// GetDisplayGroup returns the DisplayGroup field value if set, zero value otherwise (both if not set or set to explicit null).
+func (o *CatalogHotel) GetDisplayGroup() UnitAvailability {
+	if o == nil || IsNil(o.DisplayGroup.Get()) {
+		var ret UnitAvailability
+		return ret
+	}
+	return *o.DisplayGroup.Get()
+}
+
+// GetDisplayGroupOk returns a tuple with the DisplayGroup field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+// NOTE: If the value is an explicit nil, `nil, true` will be returned
+func (o *CatalogHotel) GetDisplayGroupOk() (*UnitAvailability, bool) {
+	if o == nil {
+		return nil, false
+	}
+	return o.DisplayGroup.Get(), o.DisplayGroup.IsSet()
+}
+
+// HasDisplayGroup returns a boolean if a field has been set.
+func (o *CatalogHotel) HasDisplayGroup() bool {
+	if o != nil && o.DisplayGroup.IsSet() {
+		return true
+	}
+
+	return false
+}
+
+// SetDisplayGroup gets a reference to the given NullableUnitAvailability and assigns it to the DisplayGroup field.
+func (o *CatalogHotel) SetDisplayGroup(v UnitAvailability) {
+	o.DisplayGroup.Set(&v)
+}
+// SetDisplayGroupNil sets the value for DisplayGroup to be an explicit nil
+func (o *CatalogHotel) SetDisplayGroupNil() {
+	o.DisplayGroup.Set(nil)
+}
+
+// UnsetDisplayGroup ensures that no value is present for DisplayGroup, not even an explicit nil
+func (o *CatalogHotel) UnsetDisplayGroup() {
+	o.DisplayGroup.Unset()
 }
 
 func (o CatalogHotel) MarshalJSON() ([]byte, error) {
@@ -327,12 +557,8 @@ func (o CatalogHotel) MarshalJSON() ([]byte, error) {
 
 func (o CatalogHotel) ToMap() (map[string]interface{}, error) {
 	toSerialize := map[string]interface{}{}
-	if !IsNil(o.Id) {
-		toSerialize["id"] = o.Id
-	}
-	if !IsNil(o.Name) {
-		toSerialize["name"] = o.Name
-	}
+	toSerialize["id"] = o.Id
+	toSerialize["name"] = o.Name
 	if o.CountryCode.IsSet() {
 		toSerialize["countryCode"] = o.CountryCode.Get()
 	}
@@ -345,10 +571,63 @@ func (o CatalogHotel) ToMap() (map[string]interface{}, error) {
 	if o.Description.IsSet() {
 		toSerialize["description"] = o.Description.Get()
 	}
-	if !IsNil(o.Details) {
-		toSerialize["details"] = o.Details
+	if o.StarRating.IsSet() {
+		toSerialize["starRating"] = o.StarRating.Get()
+	}
+	if o.Address.IsSet() {
+		toSerialize["address"] = o.Address.Get()
+	}
+	if o.Coordinates.IsSet() {
+		toSerialize["coordinates"] = o.Coordinates.Get()
+	}
+	toSerialize["imageUrls"] = o.ImageUrls
+	toSerialize["amenityGroups"] = o.AmenityGroups
+	if o.Contact.IsSet() {
+		toSerialize["contact"] = o.Contact.Get()
+	}
+	if o.DisplayGroup.IsSet() {
+		toSerialize["displayGroup"] = o.DisplayGroup.Get()
 	}
 	return toSerialize, nil
+}
+
+func (o *CatalogHotel) UnmarshalJSON(data []byte) (err error) {
+	// This validates that all required properties are included in the JSON object
+	// by unmarshalling the object into a generic map with string keys and checking
+	// that every required field exists as a key in the generic map.
+	requiredProperties := []string{
+		"id",
+		"name",
+		"imageUrls",
+		"amenityGroups",
+	}
+
+	allProperties := make(map[string]interface{})
+
+	err = json.Unmarshal(data, &allProperties)
+
+	if err != nil {
+		return err;
+	}
+
+	for _, requiredProperty := range(requiredProperties) {
+		if _, exists := allProperties[requiredProperty]; !exists {
+			return fmt.Errorf("no value given for required property %v", requiredProperty)
+		}
+	}
+
+	varCatalogHotel := _CatalogHotel{}
+
+	decoder := json.NewDecoder(bytes.NewReader(data))
+	err = decoder.Decode(&varCatalogHotel)
+
+	if err != nil {
+		return err
+	}
+
+	*o = CatalogHotel(varCatalogHotel)
+
+	return err
 }
 
 type NullableCatalogHotel struct {

@@ -13,6 +13,8 @@ package openroam
 
 import (
 	"encoding/json"
+	"bytes"
+	"fmt"
 )
 
 // checks if the LeadGuest type satisfies the MappedNullable interface at compile time
@@ -23,21 +25,27 @@ type LeadGuest struct {
 	// The title as sent; null when none was sent.
 	Title NullableString `json:"title,omitempty"`
 	// The first name as sent.
-	FirstName *string `json:"firstName,omitempty"`
+	FirstName string `json:"firstName"`
 	// The last name as sent.
-	LastName *string `json:"lastName,omitempty"`
+	LastName string `json:"lastName"`
 	// The email, masked as `a***@example.com`.
-	Email *string `json:"email,omitempty"`
+	Email string `json:"email"`
 	// The phone number, masked as `+34***3456`.
-	Phone *string `json:"phone,omitempty"`
+	Phone string `json:"phone"`
 }
+
+type _LeadGuest LeadGuest
 
 // NewLeadGuest instantiates a new LeadGuest object
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewLeadGuest() *LeadGuest {
+func NewLeadGuest(firstName string, lastName string, email string, phone string) *LeadGuest {
 	this := LeadGuest{}
+	this.FirstName = firstName
+	this.LastName = lastName
+	this.Email = email
+	this.Phone = phone
 	return &this
 }
 
@@ -91,132 +99,100 @@ func (o *LeadGuest) UnsetTitle() {
 	o.Title.Unset()
 }
 
-// GetFirstName returns the FirstName field value if set, zero value otherwise.
+// GetFirstName returns the FirstName field value
 func (o *LeadGuest) GetFirstName() string {
-	if o == nil || IsNil(o.FirstName) {
+	if o == nil {
 		var ret string
 		return ret
 	}
-	return *o.FirstName
+
+	return o.FirstName
 }
 
-// GetFirstNameOk returns a tuple with the FirstName field value if set, nil otherwise
+// GetFirstNameOk returns a tuple with the FirstName field value
 // and a boolean to check if the value has been set.
 func (o *LeadGuest) GetFirstNameOk() (*string, bool) {
-	if o == nil || IsNil(o.FirstName) {
+	if o == nil {
 		return nil, false
 	}
-	return o.FirstName, true
+	return &o.FirstName, true
 }
 
-// HasFirstName returns a boolean if a field has been set.
-func (o *LeadGuest) HasFirstName() bool {
-	if o != nil && !IsNil(o.FirstName) {
-		return true
-	}
-
-	return false
-}
-
-// SetFirstName gets a reference to the given string and assigns it to the FirstName field.
+// SetFirstName sets field value
 func (o *LeadGuest) SetFirstName(v string) {
-	o.FirstName = &v
+	o.FirstName = v
 }
 
-// GetLastName returns the LastName field value if set, zero value otherwise.
+// GetLastName returns the LastName field value
 func (o *LeadGuest) GetLastName() string {
-	if o == nil || IsNil(o.LastName) {
+	if o == nil {
 		var ret string
 		return ret
 	}
-	return *o.LastName
+
+	return o.LastName
 }
 
-// GetLastNameOk returns a tuple with the LastName field value if set, nil otherwise
+// GetLastNameOk returns a tuple with the LastName field value
 // and a boolean to check if the value has been set.
 func (o *LeadGuest) GetLastNameOk() (*string, bool) {
-	if o == nil || IsNil(o.LastName) {
+	if o == nil {
 		return nil, false
 	}
-	return o.LastName, true
+	return &o.LastName, true
 }
 
-// HasLastName returns a boolean if a field has been set.
-func (o *LeadGuest) HasLastName() bool {
-	if o != nil && !IsNil(o.LastName) {
-		return true
-	}
-
-	return false
-}
-
-// SetLastName gets a reference to the given string and assigns it to the LastName field.
+// SetLastName sets field value
 func (o *LeadGuest) SetLastName(v string) {
-	o.LastName = &v
+	o.LastName = v
 }
 
-// GetEmail returns the Email field value if set, zero value otherwise.
+// GetEmail returns the Email field value
 func (o *LeadGuest) GetEmail() string {
-	if o == nil || IsNil(o.Email) {
+	if o == nil {
 		var ret string
 		return ret
 	}
-	return *o.Email
+
+	return o.Email
 }
 
-// GetEmailOk returns a tuple with the Email field value if set, nil otherwise
+// GetEmailOk returns a tuple with the Email field value
 // and a boolean to check if the value has been set.
 func (o *LeadGuest) GetEmailOk() (*string, bool) {
-	if o == nil || IsNil(o.Email) {
+	if o == nil {
 		return nil, false
 	}
-	return o.Email, true
+	return &o.Email, true
 }
 
-// HasEmail returns a boolean if a field has been set.
-func (o *LeadGuest) HasEmail() bool {
-	if o != nil && !IsNil(o.Email) {
-		return true
-	}
-
-	return false
-}
-
-// SetEmail gets a reference to the given string and assigns it to the Email field.
+// SetEmail sets field value
 func (o *LeadGuest) SetEmail(v string) {
-	o.Email = &v
+	o.Email = v
 }
 
-// GetPhone returns the Phone field value if set, zero value otherwise.
+// GetPhone returns the Phone field value
 func (o *LeadGuest) GetPhone() string {
-	if o == nil || IsNil(o.Phone) {
+	if o == nil {
 		var ret string
 		return ret
 	}
-	return *o.Phone
+
+	return o.Phone
 }
 
-// GetPhoneOk returns a tuple with the Phone field value if set, nil otherwise
+// GetPhoneOk returns a tuple with the Phone field value
 // and a boolean to check if the value has been set.
 func (o *LeadGuest) GetPhoneOk() (*string, bool) {
-	if o == nil || IsNil(o.Phone) {
+	if o == nil {
 		return nil, false
 	}
-	return o.Phone, true
+	return &o.Phone, true
 }
 
-// HasPhone returns a boolean if a field has been set.
-func (o *LeadGuest) HasPhone() bool {
-	if o != nil && !IsNil(o.Phone) {
-		return true
-	}
-
-	return false
-}
-
-// SetPhone gets a reference to the given string and assigns it to the Phone field.
+// SetPhone sets field value
 func (o *LeadGuest) SetPhone(v string) {
-	o.Phone = &v
+	o.Phone = v
 }
 
 func (o LeadGuest) MarshalJSON() ([]byte, error) {
@@ -232,19 +208,50 @@ func (o LeadGuest) ToMap() (map[string]interface{}, error) {
 	if o.Title.IsSet() {
 		toSerialize["title"] = o.Title.Get()
 	}
-	if !IsNil(o.FirstName) {
-		toSerialize["firstName"] = o.FirstName
-	}
-	if !IsNil(o.LastName) {
-		toSerialize["lastName"] = o.LastName
-	}
-	if !IsNil(o.Email) {
-		toSerialize["email"] = o.Email
-	}
-	if !IsNil(o.Phone) {
-		toSerialize["phone"] = o.Phone
-	}
+	toSerialize["firstName"] = o.FirstName
+	toSerialize["lastName"] = o.LastName
+	toSerialize["email"] = o.Email
+	toSerialize["phone"] = o.Phone
 	return toSerialize, nil
+}
+
+func (o *LeadGuest) UnmarshalJSON(data []byte) (err error) {
+	// This validates that all required properties are included in the JSON object
+	// by unmarshalling the object into a generic map with string keys and checking
+	// that every required field exists as a key in the generic map.
+	requiredProperties := []string{
+		"firstName",
+		"lastName",
+		"email",
+		"phone",
+	}
+
+	allProperties := make(map[string]interface{})
+
+	err = json.Unmarshal(data, &allProperties)
+
+	if err != nil {
+		return err;
+	}
+
+	for _, requiredProperty := range(requiredProperties) {
+		if _, exists := allProperties[requiredProperty]; !exists {
+			return fmt.Errorf("no value given for required property %v", requiredProperty)
+		}
+	}
+
+	varLeadGuest := _LeadGuest{}
+
+	decoder := json.NewDecoder(bytes.NewReader(data))
+	err = decoder.Decode(&varLeadGuest)
+
+	if err != nil {
+		return err
+	}
+
+	*o = LeadGuest(varLeadGuest)
+
+	return err
 }
 
 type NullableLeadGuest struct {

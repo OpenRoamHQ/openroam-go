@@ -78,7 +78,7 @@ func (a *WalletsAPIService) WalletsCreateExecute(r ApiWalletsCreateRequest) (*ht
 		return nil, &GenericOpenAPIError{error: err.Error()}
 	}
 
-	localVarPath := localBasePath + "/api/v1/b2b/wallets"
+	localVarPath := localBasePath + "/v1/wallets"
 
 	localVarHeaderParams := make(map[string]string)
 	localVarQueryParams := url.Values{}
@@ -230,7 +230,7 @@ func (a *WalletsAPIService) WalletsGetAllExecute(r ApiWalletsGetAllRequest) ([]W
 		return localVarReturnValue, nil, &GenericOpenAPIError{error: err.Error()}
 	}
 
-	localVarPath := localBasePath + "/api/v1/b2b/wallets"
+	localVarPath := localBasePath + "/v1/wallets"
 
 	localVarHeaderParams := make(map[string]string)
 	localVarQueryParams := url.Values{}
@@ -381,7 +381,7 @@ func (a *WalletsAPIService) WalletsGetByIdExecute(r ApiWalletsGetByIdRequest) (*
 		return localVarReturnValue, nil, &GenericOpenAPIError{error: err.Error()}
 	}
 
-	localVarPath := localBasePath + "/api/v1/b2b/wallets/{id}"
+	localVarPath := localBasePath + "/v1/wallets/{id}"
 	localVarPath = strings.Replace(localVarPath, "{"+"id"+"}", url.PathEscape(parameterValueToString(r.id, "id")), -1)
 
 	localVarHeaderParams := make(map[string]string)
@@ -523,19 +523,19 @@ func (r ApiWalletsGetTransactionsRequest) Limit(limit int32) ApiWalletsGetTransa
 	return r
 }
 
-// Only transactions made at or after this time (UTC).
+// Only transactions made at or after this time (UTC). ISO 8601 date-time. A value with Z or an offset is converted to UTC; a value without a zone is read as UTC, and a date alone means 00:00 UTC on that day.
 func (r ApiWalletsGetTransactionsRequest) StartDate(startDate time.Time) ApiWalletsGetTransactionsRequest {
 	r.startDate = &startDate
 	return r
 }
 
-// Only transactions made at or before this time (UTC).
+// Only transactions made at or before this time (UTC). ISO 8601 date-time. A value with Z or an offset is converted to UTC; a value without a zone is read as UTC, and a date alone means 00:00 UTC on that day.
 func (r ApiWalletsGetTransactionsRequest) EndDate(endDate time.Time) ApiWalletsGetTransactionsRequest {
 	r.endDate = &endDate
 	return r
 }
 
-// Only this direction: &#x60;debit&#x60; adds funds to the wallet, &#x60;credit&#x60; takes funds from it.
+// Only this direction: &#x60;debit&#x60; takes funds from the wallet, &#x60;credit&#x60; adds funds to it.
 func (r ApiWalletsGetTransactionsRequest) Type_(type_ string) ApiWalletsGetTransactionsRequest {
 	r.type_ = &type_
 	return r
@@ -556,10 +556,10 @@ WalletsGetTransactions List wallet transactions
 
 Lists a wallet's transactions, newest first, with optional filters.
 
-Returns `{ transactions, pagination }`. In a transaction, `type` `debit` adds funds to the
-wallet and `credit` takes funds from it; `source` says why (`topUp`, `payOut`,
-`order`, `exchange` or `reversal`). Filters combine with AND and apply before counting and
-paging.
+Returns `{ transactions, pagination }`. In a transaction, `type` `debit` takes funds from the
+wallet and `credit` adds funds to it; `source` says why (`topUp`, `payOut`,
+`order`, `exchange` or `reversal`), and `orderId` names the order a payment or refund
+belongs to. Filters combine with AND and apply before counting and paging.
             
 Use flat `page` (default 1) and `limit` (default 10, 1 to 100) query parameters.
 `cursor`, `skip`, `offset`, nested paging keys and repeated paging parameters return
@@ -593,7 +593,7 @@ func (a *WalletsAPIService) WalletsGetTransactionsExecute(r ApiWalletsGetTransac
 		return localVarReturnValue, nil, &GenericOpenAPIError{error: err.Error()}
 	}
 
-	localVarPath := localBasePath + "/api/v1/b2b/wallets/{walletId}/transactions"
+	localVarPath := localBasePath + "/v1/wallets/{walletId}/transactions"
 	localVarPath = strings.Replace(localVarPath, "{"+"walletId"+"}", url.PathEscape(parameterValueToString(r.walletId, "walletId")), -1)
 
 	localVarHeaderParams := make(map[string]string)
@@ -772,7 +772,7 @@ func (a *WalletsAPIService) WalletsSelectExecute(r ApiWalletsSelectRequest) (*ht
 		return nil, &GenericOpenAPIError{error: err.Error()}
 	}
 
-	localVarPath := localBasePath + "/api/v1/b2b/wallets/select/{id}"
+	localVarPath := localBasePath + "/v1/wallets/select/{id}"
 	localVarPath = strings.Replace(localVarPath, "{"+"id"+"}", url.PathEscape(parameterValueToString(r.id, "id")), -1)
 
 	localVarHeaderParams := make(map[string]string)
@@ -920,20 +920,25 @@ WalletsTransfer Transfer between wallets
 
 Moves funds from one of the partner's wallets to another, converting between their currencies.
 
-`amount` is in the source wallet's currency and is rounded to two decimals. The destination receives
-the amount converted at the current rate, rounded to two decimals. Returns the `transferId`, the sent
+`amount` is in the source wallet's currency and has at most that currency's ISO 4217 decimals (none
+in `KRW` or `JPY`, three in `KWD`, two in most); more decimals return `400` with code
+`10001` and `INVALID_VALUE` at `amount`, whose `message` names the decimals allowed,
+such as `An amount in JPY cannot have decimals.` The destination receives the amount converted at
+the current rate, rounded to its own currency's decimals. Returns the `transferId`, the sent
 and received amounts and currencies, the `conversionRate` and the `transferDate`. Both wallets
 record an `exchange` transaction.
             
-The two wallets must differ, and the amount must be above zero; otherwise, or when the source balance is
-too low, the call returns `400` with code `10001`. An unknown wallet returns `404` with code
-`10004`.
+The two wallets must differ, and the amount must be above zero; otherwise the call returns `400` with
+code `10001`. An unknown wallet returns `404` with code `10004`. A source wallet that cannot
+pay the amount now returns `409` with code `10005` (`CONFLICT`) and
+`details[0] = { path: "fromWalletId", reason }`: `INSUFFICIENT_BALANCE` when its balance is too
+low, `WALLET_BLOCKED` while its spending is blocked. The same request can succeed once that changes.
             
-Requires an `Idempotency-Key` header (a UUID). Repeating a completed transfer with the same key
-returns `409` with code `12000` (`IDEMPOTENCY_KEY_ALREADY_USED`) and moves no money; one
-still running returns `409` with code `12002`, and a different body with the same key
-`409` with code `12001`. A request that ended in an error can be sent again with the same key and
-body.
+Requires an `Idempotency-Key` header (a UUID). Repeating a completed transfer with the same key and body
+returns `200` with that transfer, the same `transferId` and amounts, and moves no money again. One
+still running returns `409` with code `12002` (`IDEMPOTENCY_KEY_IN_PROGRESS`) and a
+`Retry-After` header, and a different body with the same key `409` with code `12001`. A
+request that ended in an error can be sent again with the same key and body.
 
  @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
  @return ApiWalletsTransferRequest
@@ -960,7 +965,7 @@ func (a *WalletsAPIService) WalletsTransferExecute(r ApiWalletsTransferRequest) 
 		return localVarReturnValue, nil, &GenericOpenAPIError{error: err.Error()}
 	}
 
-	localVarPath := localBasePath + "/api/v1/b2b/wallets/transfer"
+	localVarPath := localBasePath + "/v1/wallets/transfer"
 
 	localVarHeaderParams := make(map[string]string)
 	localVarQueryParams := url.Values{}
@@ -1123,7 +1128,7 @@ type ApiWalletsUpdateRequest struct {
 	walletUpdateRequest *WalletUpdateRequest
 }
 
-// The new label and threshold.
+// The members to change.
 func (r ApiWalletsUpdateRequest) WalletUpdateRequest(walletUpdateRequest WalletUpdateRequest) ApiWalletsUpdateRequest {
 	r.walletUpdateRequest = &walletUpdateRequest
 	return r
@@ -1136,12 +1141,15 @@ func (r ApiWalletsUpdateRequest) Execute() (*http.Response, error) {
 /*
 WalletsUpdate Update a wallet
 
-Renames a wallet and sets its low-balance threshold.
+Renames a wallet or changes its low-balance threshold.
 
-Both values are replaced: `label` is required, and omitting `lowBalanceThreshold` clears the
-threshold. The wallet id comes from the route; a `walletId` in the body is ignored. A label already
-used by another of the partner's wallets, ignoring case, returns `400` with code `17001`
-(`WALLET_LABEL_ALREADY_EXISTS`); an unknown wallet returns `404` with code `10004`.
+Only the members in the body change; a member left out keeps its value. Send at least one member: an
+empty body returns `400` with code `10001` and `REQUIRED` at `$`. `label` cannot
+be `null` or blank (`INVALID_VALUE` at `label`); `lowBalanceThreshold: null` clears
+the threshold. The wallet id comes from the route only: any other member, such as `walletId`, returns
+`400` with code `10001` at its path. A label already used by another of the partner's wallets,
+ignoring case, returns `400` with code `17001` (`WALLET_LABEL_ALREADY_EXISTS`); an unknown
+wallet returns `404` with code `10004`.
 
  @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
  @param id Wallet id.
@@ -1168,7 +1176,7 @@ func (a *WalletsAPIService) WalletsUpdateExecute(r ApiWalletsUpdateRequest) (*ht
 		return nil, &GenericOpenAPIError{error: err.Error()}
 	}
 
-	localVarPath := localBasePath + "/api/v1/b2b/wallets/{id}"
+	localVarPath := localBasePath + "/v1/wallets/{id}"
 	localVarPath = strings.Replace(localVarPath, "{"+"id"+"}", url.PathEscape(parameterValueToString(r.id, "id")), -1)
 
 	localVarHeaderParams := make(map[string]string)

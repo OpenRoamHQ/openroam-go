@@ -13,23 +13,28 @@ package openroam
 
 import (
 	"encoding/json"
+	"bytes"
+	"fmt"
 )
 
 // checks if the EsimCatalogPage type satisfies the MappedNullable interface at compile time
 var _ MappedNullable = &EsimCatalogPage{}
 
-// EsimCatalogPage A page of the partner catalog walk, ordered by destination ID. Continue with `nextCursor`, the same filters and the same currency until it is null.
+// EsimCatalogPage A page of the partner catalog walk, in a fixed order. Continue with `nextCursor`, the same filters and the same currency until it is null.
 type EsimCatalogPage struct {
-	Items []EsimDestination `json:"items,omitempty"`
+	Items []EsimDestination `json:"items"`
 	NextCursor NullableString `json:"nextCursor,omitempty"`
 }
+
+type _EsimCatalogPage EsimCatalogPage
 
 // NewEsimCatalogPage instantiates a new EsimCatalogPage object
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewEsimCatalogPage() *EsimCatalogPage {
+func NewEsimCatalogPage(items []EsimDestination) *EsimCatalogPage {
 	this := EsimCatalogPage{}
+	this.Items = items
 	return &this
 }
 
@@ -41,34 +46,26 @@ func NewEsimCatalogPageWithDefaults() *EsimCatalogPage {
 	return &this
 }
 
-// GetItems returns the Items field value if set, zero value otherwise.
+// GetItems returns the Items field value
 func (o *EsimCatalogPage) GetItems() []EsimDestination {
-	if o == nil || IsNil(o.Items) {
+	if o == nil {
 		var ret []EsimDestination
 		return ret
 	}
+
 	return o.Items
 }
 
-// GetItemsOk returns a tuple with the Items field value if set, nil otherwise
+// GetItemsOk returns a tuple with the Items field value
 // and a boolean to check if the value has been set.
 func (o *EsimCatalogPage) GetItemsOk() ([]EsimDestination, bool) {
-	if o == nil || IsNil(o.Items) {
+	if o == nil {
 		return nil, false
 	}
 	return o.Items, true
 }
 
-// HasItems returns a boolean if a field has been set.
-func (o *EsimCatalogPage) HasItems() bool {
-	if o != nil && !IsNil(o.Items) {
-		return true
-	}
-
-	return false
-}
-
-// SetItems gets a reference to the given []EsimDestination and assigns it to the Items field.
+// SetItems sets field value
 func (o *EsimCatalogPage) SetItems(v []EsimDestination) {
 	o.Items = v
 }
@@ -125,13 +122,47 @@ func (o EsimCatalogPage) MarshalJSON() ([]byte, error) {
 
 func (o EsimCatalogPage) ToMap() (map[string]interface{}, error) {
 	toSerialize := map[string]interface{}{}
-	if !IsNil(o.Items) {
-		toSerialize["items"] = o.Items
-	}
+	toSerialize["items"] = o.Items
 	if o.NextCursor.IsSet() {
 		toSerialize["nextCursor"] = o.NextCursor.Get()
 	}
 	return toSerialize, nil
+}
+
+func (o *EsimCatalogPage) UnmarshalJSON(data []byte) (err error) {
+	// This validates that all required properties are included in the JSON object
+	// by unmarshalling the object into a generic map with string keys and checking
+	// that every required field exists as a key in the generic map.
+	requiredProperties := []string{
+		"items",
+	}
+
+	allProperties := make(map[string]interface{})
+
+	err = json.Unmarshal(data, &allProperties)
+
+	if err != nil {
+		return err;
+	}
+
+	for _, requiredProperty := range(requiredProperties) {
+		if _, exists := allProperties[requiredProperty]; !exists {
+			return fmt.Errorf("no value given for required property %v", requiredProperty)
+		}
+	}
+
+	varEsimCatalogPage := _EsimCatalogPage{}
+
+	decoder := json.NewDecoder(bytes.NewReader(data))
+	err = decoder.Decode(&varEsimCatalogPage)
+
+	if err != nil {
+		return err
+	}
+
+	*o = EsimCatalogPage(varEsimCatalogPage)
+
+	return err
 }
 
 type NullableEsimCatalogPage struct {

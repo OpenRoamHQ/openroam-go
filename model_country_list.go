@@ -13,6 +13,8 @@ package openroam
 
 import (
 	"encoding/json"
+	"bytes"
+	"fmt"
 )
 
 // checks if the CountryList type satisfies the MappedNullable interface at compile time
@@ -20,15 +22,18 @@ var _ MappedNullable = &CountryList{}
 
 // CountryList The complete country reference list, ordered by country code. The list is small and fixed, so it is not paged.
 type CountryList struct {
-	Items []Country `json:"items,omitempty"`
+	Items []Country `json:"items"`
 }
+
+type _CountryList CountryList
 
 // NewCountryList instantiates a new CountryList object
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewCountryList() *CountryList {
+func NewCountryList(items []Country) *CountryList {
 	this := CountryList{}
+	this.Items = items
 	return &this
 }
 
@@ -40,34 +45,26 @@ func NewCountryListWithDefaults() *CountryList {
 	return &this
 }
 
-// GetItems returns the Items field value if set, zero value otherwise.
+// GetItems returns the Items field value
 func (o *CountryList) GetItems() []Country {
-	if o == nil || IsNil(o.Items) {
+	if o == nil {
 		var ret []Country
 		return ret
 	}
+
 	return o.Items
 }
 
-// GetItemsOk returns a tuple with the Items field value if set, nil otherwise
+// GetItemsOk returns a tuple with the Items field value
 // and a boolean to check if the value has been set.
 func (o *CountryList) GetItemsOk() ([]Country, bool) {
-	if o == nil || IsNil(o.Items) {
+	if o == nil {
 		return nil, false
 	}
 	return o.Items, true
 }
 
-// HasItems returns a boolean if a field has been set.
-func (o *CountryList) HasItems() bool {
-	if o != nil && !IsNil(o.Items) {
-		return true
-	}
-
-	return false
-}
-
-// SetItems gets a reference to the given []Country and assigns it to the Items field.
+// SetItems sets field value
 func (o *CountryList) SetItems(v []Country) {
 	o.Items = v
 }
@@ -82,10 +79,44 @@ func (o CountryList) MarshalJSON() ([]byte, error) {
 
 func (o CountryList) ToMap() (map[string]interface{}, error) {
 	toSerialize := map[string]interface{}{}
-	if !IsNil(o.Items) {
-		toSerialize["items"] = o.Items
-	}
+	toSerialize["items"] = o.Items
 	return toSerialize, nil
+}
+
+func (o *CountryList) UnmarshalJSON(data []byte) (err error) {
+	// This validates that all required properties are included in the JSON object
+	// by unmarshalling the object into a generic map with string keys and checking
+	// that every required field exists as a key in the generic map.
+	requiredProperties := []string{
+		"items",
+	}
+
+	allProperties := make(map[string]interface{})
+
+	err = json.Unmarshal(data, &allProperties)
+
+	if err != nil {
+		return err;
+	}
+
+	for _, requiredProperty := range(requiredProperties) {
+		if _, exists := allProperties[requiredProperty]; !exists {
+			return fmt.Errorf("no value given for required property %v", requiredProperty)
+		}
+	}
+
+	varCountryList := _CountryList{}
+
+	decoder := json.NewDecoder(bytes.NewReader(data))
+	err = decoder.Decode(&varCountryList)
+
+	if err != nil {
+		return err
+	}
+
+	*o = CountryList(varCountryList)
+
+	return err
 }
 
 type NullableCountryList struct {

@@ -13,6 +13,8 @@ package openroam
 
 import (
 	"encoding/json"
+	"bytes"
+	"fmt"
 )
 
 // checks if the FlightPurchasedInputs type satisfies the MappedNullable interface at compile time
@@ -21,17 +23,21 @@ var _ MappedNullable = &FlightPurchasedInputs{}
 // FlightPurchasedInputs The item's `inputs` under the request's keys, as applied. The price guard is not echoed.
 type FlightPurchasedInputs struct {
 	// Every passenger of the fare, in `passengerIndex` order.
-	Passengers []Passenger `json:"passengers,omitempty"`
+	Passengers []Passenger `json:"passengers"`
 	// The paid extras chosen in `selectedServices`; seats are on the passengers.
-	SelectedServices []SelectedServiceInput `json:"selectedServices,omitempty"`
+	SelectedServices []SelectedServiceInput `json:"selectedServices"`
 }
+
+type _FlightPurchasedInputs FlightPurchasedInputs
 
 // NewFlightPurchasedInputs instantiates a new FlightPurchasedInputs object
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewFlightPurchasedInputs() *FlightPurchasedInputs {
+func NewFlightPurchasedInputs(passengers []Passenger, selectedServices []SelectedServiceInput) *FlightPurchasedInputs {
 	this := FlightPurchasedInputs{}
+	this.Passengers = passengers
+	this.SelectedServices = selectedServices
 	return &this
 }
 
@@ -43,66 +49,50 @@ func NewFlightPurchasedInputsWithDefaults() *FlightPurchasedInputs {
 	return &this
 }
 
-// GetPassengers returns the Passengers field value if set, zero value otherwise.
+// GetPassengers returns the Passengers field value
 func (o *FlightPurchasedInputs) GetPassengers() []Passenger {
-	if o == nil || IsNil(o.Passengers) {
+	if o == nil {
 		var ret []Passenger
 		return ret
 	}
+
 	return o.Passengers
 }
 
-// GetPassengersOk returns a tuple with the Passengers field value if set, nil otherwise
+// GetPassengersOk returns a tuple with the Passengers field value
 // and a boolean to check if the value has been set.
 func (o *FlightPurchasedInputs) GetPassengersOk() ([]Passenger, bool) {
-	if o == nil || IsNil(o.Passengers) {
+	if o == nil {
 		return nil, false
 	}
 	return o.Passengers, true
 }
 
-// HasPassengers returns a boolean if a field has been set.
-func (o *FlightPurchasedInputs) HasPassengers() bool {
-	if o != nil && !IsNil(o.Passengers) {
-		return true
-	}
-
-	return false
-}
-
-// SetPassengers gets a reference to the given []Passenger and assigns it to the Passengers field.
+// SetPassengers sets field value
 func (o *FlightPurchasedInputs) SetPassengers(v []Passenger) {
 	o.Passengers = v
 }
 
-// GetSelectedServices returns the SelectedServices field value if set, zero value otherwise.
+// GetSelectedServices returns the SelectedServices field value
 func (o *FlightPurchasedInputs) GetSelectedServices() []SelectedServiceInput {
-	if o == nil || IsNil(o.SelectedServices) {
+	if o == nil {
 		var ret []SelectedServiceInput
 		return ret
 	}
+
 	return o.SelectedServices
 }
 
-// GetSelectedServicesOk returns a tuple with the SelectedServices field value if set, nil otherwise
+// GetSelectedServicesOk returns a tuple with the SelectedServices field value
 // and a boolean to check if the value has been set.
 func (o *FlightPurchasedInputs) GetSelectedServicesOk() ([]SelectedServiceInput, bool) {
-	if o == nil || IsNil(o.SelectedServices) {
+	if o == nil {
 		return nil, false
 	}
 	return o.SelectedServices, true
 }
 
-// HasSelectedServices returns a boolean if a field has been set.
-func (o *FlightPurchasedInputs) HasSelectedServices() bool {
-	if o != nil && !IsNil(o.SelectedServices) {
-		return true
-	}
-
-	return false
-}
-
-// SetSelectedServices gets a reference to the given []SelectedServiceInput and assigns it to the SelectedServices field.
+// SetSelectedServices sets field value
 func (o *FlightPurchasedInputs) SetSelectedServices(v []SelectedServiceInput) {
 	o.SelectedServices = v
 }
@@ -117,13 +107,46 @@ func (o FlightPurchasedInputs) MarshalJSON() ([]byte, error) {
 
 func (o FlightPurchasedInputs) ToMap() (map[string]interface{}, error) {
 	toSerialize := map[string]interface{}{}
-	if !IsNil(o.Passengers) {
-		toSerialize["passengers"] = o.Passengers
-	}
-	if !IsNil(o.SelectedServices) {
-		toSerialize["selectedServices"] = o.SelectedServices
-	}
+	toSerialize["passengers"] = o.Passengers
+	toSerialize["selectedServices"] = o.SelectedServices
 	return toSerialize, nil
+}
+
+func (o *FlightPurchasedInputs) UnmarshalJSON(data []byte) (err error) {
+	// This validates that all required properties are included in the JSON object
+	// by unmarshalling the object into a generic map with string keys and checking
+	// that every required field exists as a key in the generic map.
+	requiredProperties := []string{
+		"passengers",
+		"selectedServices",
+	}
+
+	allProperties := make(map[string]interface{})
+
+	err = json.Unmarshal(data, &allProperties)
+
+	if err != nil {
+		return err;
+	}
+
+	for _, requiredProperty := range(requiredProperties) {
+		if _, exists := allProperties[requiredProperty]; !exists {
+			return fmt.Errorf("no value given for required property %v", requiredProperty)
+		}
+	}
+
+	varFlightPurchasedInputs := _FlightPurchasedInputs{}
+
+	decoder := json.NewDecoder(bytes.NewReader(data))
+	err = decoder.Decode(&varFlightPurchasedInputs)
+
+	if err != nil {
+		return err
+	}
+
+	*o = FlightPurchasedInputs(varFlightPurchasedInputs)
+
+	return err
 }
 
 type NullableFlightPurchasedInputs struct {

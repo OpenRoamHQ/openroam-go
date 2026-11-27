@@ -13,6 +13,8 @@ package openroam
 
 import (
 	"encoding/json"
+	"bytes"
+	"fmt"
 )
 
 // checks if the SelectedService type satisfies the MappedNullable interface at compile time
@@ -23,7 +25,7 @@ type SelectedService struct {
 	// The service type: `baggage`, `meal`, `seat` or `other`; null when unknown.
 	Type NullableString `json:"type,omitempty"`
 	// What was bought, for example `1 × 23 kg`.
-	Label *string `json:"label,omitempty"`
+	Label string `json:"label"`
 	// The passenger the service is for; null when it is not tied to one passenger.
 	PassengerIndex NullableInt32 `json:"passengerIndex,omitempty"`
 	// The slice of the segment the service is for; null when it is not tied to one segment.
@@ -31,15 +33,19 @@ type SelectedService struct {
 	// The segment within that slice; null when it is not tied to one segment.
 	SegmentIndex NullableInt32 `json:"segmentIndex,omitempty"`
 	// Units bought.
-	Quantity *int32 `json:"quantity,omitempty"`
+	Quantity int32 `json:"quantity"`
 }
+
+type _SelectedService SelectedService
 
 // NewSelectedService instantiates a new SelectedService object
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewSelectedService() *SelectedService {
+func NewSelectedService(label string, quantity int32) *SelectedService {
 	this := SelectedService{}
+	this.Label = label
+	this.Quantity = quantity
 	return &this
 }
 
@@ -93,36 +99,28 @@ func (o *SelectedService) UnsetType() {
 	o.Type.Unset()
 }
 
-// GetLabel returns the Label field value if set, zero value otherwise.
+// GetLabel returns the Label field value
 func (o *SelectedService) GetLabel() string {
-	if o == nil || IsNil(o.Label) {
+	if o == nil {
 		var ret string
 		return ret
 	}
-	return *o.Label
+
+	return o.Label
 }
 
-// GetLabelOk returns a tuple with the Label field value if set, nil otherwise
+// GetLabelOk returns a tuple with the Label field value
 // and a boolean to check if the value has been set.
 func (o *SelectedService) GetLabelOk() (*string, bool) {
-	if o == nil || IsNil(o.Label) {
+	if o == nil {
 		return nil, false
 	}
-	return o.Label, true
+	return &o.Label, true
 }
 
-// HasLabel returns a boolean if a field has been set.
-func (o *SelectedService) HasLabel() bool {
-	if o != nil && !IsNil(o.Label) {
-		return true
-	}
-
-	return false
-}
-
-// SetLabel gets a reference to the given string and assigns it to the Label field.
+// SetLabel sets field value
 func (o *SelectedService) SetLabel(v string) {
-	o.Label = &v
+	o.Label = v
 }
 
 // GetPassengerIndex returns the PassengerIndex field value if set, zero value otherwise (both if not set or set to explicit null).
@@ -251,36 +249,28 @@ func (o *SelectedService) UnsetSegmentIndex() {
 	o.SegmentIndex.Unset()
 }
 
-// GetQuantity returns the Quantity field value if set, zero value otherwise.
+// GetQuantity returns the Quantity field value
 func (o *SelectedService) GetQuantity() int32 {
-	if o == nil || IsNil(o.Quantity) {
+	if o == nil {
 		var ret int32
 		return ret
 	}
-	return *o.Quantity
+
+	return o.Quantity
 }
 
-// GetQuantityOk returns a tuple with the Quantity field value if set, nil otherwise
+// GetQuantityOk returns a tuple with the Quantity field value
 // and a boolean to check if the value has been set.
 func (o *SelectedService) GetQuantityOk() (*int32, bool) {
-	if o == nil || IsNil(o.Quantity) {
+	if o == nil {
 		return nil, false
 	}
-	return o.Quantity, true
+	return &o.Quantity, true
 }
 
-// HasQuantity returns a boolean if a field has been set.
-func (o *SelectedService) HasQuantity() bool {
-	if o != nil && !IsNil(o.Quantity) {
-		return true
-	}
-
-	return false
-}
-
-// SetQuantity gets a reference to the given int32 and assigns it to the Quantity field.
+// SetQuantity sets field value
 func (o *SelectedService) SetQuantity(v int32) {
-	o.Quantity = &v
+	o.Quantity = v
 }
 
 func (o SelectedService) MarshalJSON() ([]byte, error) {
@@ -296,9 +286,7 @@ func (o SelectedService) ToMap() (map[string]interface{}, error) {
 	if o.Type.IsSet() {
 		toSerialize["type"] = o.Type.Get()
 	}
-	if !IsNil(o.Label) {
-		toSerialize["label"] = o.Label
-	}
+	toSerialize["label"] = o.Label
 	if o.PassengerIndex.IsSet() {
 		toSerialize["passengerIndex"] = o.PassengerIndex.Get()
 	}
@@ -308,10 +296,45 @@ func (o SelectedService) ToMap() (map[string]interface{}, error) {
 	if o.SegmentIndex.IsSet() {
 		toSerialize["segmentIndex"] = o.SegmentIndex.Get()
 	}
-	if !IsNil(o.Quantity) {
-		toSerialize["quantity"] = o.Quantity
-	}
+	toSerialize["quantity"] = o.Quantity
 	return toSerialize, nil
+}
+
+func (o *SelectedService) UnmarshalJSON(data []byte) (err error) {
+	// This validates that all required properties are included in the JSON object
+	// by unmarshalling the object into a generic map with string keys and checking
+	// that every required field exists as a key in the generic map.
+	requiredProperties := []string{
+		"label",
+		"quantity",
+	}
+
+	allProperties := make(map[string]interface{})
+
+	err = json.Unmarshal(data, &allProperties)
+
+	if err != nil {
+		return err;
+	}
+
+	for _, requiredProperty := range(requiredProperties) {
+		if _, exists := allProperties[requiredProperty]; !exists {
+			return fmt.Errorf("no value given for required property %v", requiredProperty)
+		}
+	}
+
+	varSelectedService := _SelectedService{}
+
+	decoder := json.NewDecoder(bytes.NewReader(data))
+	err = decoder.Decode(&varSelectedService)
+
+	if err != nil {
+		return err
+	}
+
+	*o = SelectedService(varSelectedService)
+
+	return err
 }
 
 type NullableSelectedService struct {

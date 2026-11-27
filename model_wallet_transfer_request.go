@@ -167,7 +167,6 @@ func (o *WalletTransferRequest) UnmarshalJSON(data []byte) (err error) {
 	varWalletTransferRequest := _WalletTransferRequest{}
 
 	decoder := json.NewDecoder(bytes.NewReader(data))
-	decoder.DisallowUnknownFields()
 	err = decoder.Decode(&varWalletTransferRequest)
 
 	if err != nil {

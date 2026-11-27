@@ -13,6 +13,8 @@ package openroam
 
 import (
 	"encoding/json"
+	"bytes"
+	"fmt"
 )
 
 // checks if the AmenityCatalog type satisfies the MappedNullable interface at compile time
@@ -21,21 +23,27 @@ var _ MappedNullable = &AmenityCatalog{}
 // AmenityCatalog struct for AmenityCatalog
 type AmenityCatalog struct {
 	// Version of the amenity catalog the labels and codes come from.
-	MapVersion *int32 `json:"mapVersion,omitempty"`
+	MapVersion int32 `json:"mapVersion"`
 	// Every amenity group, labelled, with the codes it holds.
-	Groups []AmenityGroup `json:"groups,omitempty"`
+	Groups []AmenityGroup `json:"groups"`
 	// Every amenity code with its label, for rendering a card or a rail.
-	Amenities []Amenity `json:"amenities,omitempty"`
+	Amenities []Amenity `json:"amenities"`
 	// Heading for a card's `amenityNotes`. Those strings are free text with no code, so unlike every other label on a card this one cannot be looked up from Amenities.
-	NotesLabel *string `json:"notesLabel,omitempty"`
+	NotesLabel string `json:"notesLabel"`
 }
+
+type _AmenityCatalog AmenityCatalog
 
 // NewAmenityCatalog instantiates a new AmenityCatalog object
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewAmenityCatalog() *AmenityCatalog {
+func NewAmenityCatalog(mapVersion int32, groups []AmenityGroup, amenities []Amenity, notesLabel string) *AmenityCatalog {
 	this := AmenityCatalog{}
+	this.MapVersion = mapVersion
+	this.Groups = groups
+	this.Amenities = amenities
+	this.NotesLabel = notesLabel
 	return &this
 }
 
@@ -47,132 +55,100 @@ func NewAmenityCatalogWithDefaults() *AmenityCatalog {
 	return &this
 }
 
-// GetMapVersion returns the MapVersion field value if set, zero value otherwise.
+// GetMapVersion returns the MapVersion field value
 func (o *AmenityCatalog) GetMapVersion() int32 {
-	if o == nil || IsNil(o.MapVersion) {
+	if o == nil {
 		var ret int32
 		return ret
 	}
-	return *o.MapVersion
+
+	return o.MapVersion
 }
 
-// GetMapVersionOk returns a tuple with the MapVersion field value if set, nil otherwise
+// GetMapVersionOk returns a tuple with the MapVersion field value
 // and a boolean to check if the value has been set.
 func (o *AmenityCatalog) GetMapVersionOk() (*int32, bool) {
-	if o == nil || IsNil(o.MapVersion) {
+	if o == nil {
 		return nil, false
 	}
-	return o.MapVersion, true
+	return &o.MapVersion, true
 }
 
-// HasMapVersion returns a boolean if a field has been set.
-func (o *AmenityCatalog) HasMapVersion() bool {
-	if o != nil && !IsNil(o.MapVersion) {
-		return true
-	}
-
-	return false
-}
-
-// SetMapVersion gets a reference to the given int32 and assigns it to the MapVersion field.
+// SetMapVersion sets field value
 func (o *AmenityCatalog) SetMapVersion(v int32) {
-	o.MapVersion = &v
+	o.MapVersion = v
 }
 
-// GetGroups returns the Groups field value if set, zero value otherwise.
+// GetGroups returns the Groups field value
 func (o *AmenityCatalog) GetGroups() []AmenityGroup {
-	if o == nil || IsNil(o.Groups) {
+	if o == nil {
 		var ret []AmenityGroup
 		return ret
 	}
+
 	return o.Groups
 }
 
-// GetGroupsOk returns a tuple with the Groups field value if set, nil otherwise
+// GetGroupsOk returns a tuple with the Groups field value
 // and a boolean to check if the value has been set.
 func (o *AmenityCatalog) GetGroupsOk() ([]AmenityGroup, bool) {
-	if o == nil || IsNil(o.Groups) {
+	if o == nil {
 		return nil, false
 	}
 	return o.Groups, true
 }
 
-// HasGroups returns a boolean if a field has been set.
-func (o *AmenityCatalog) HasGroups() bool {
-	if o != nil && !IsNil(o.Groups) {
-		return true
-	}
-
-	return false
-}
-
-// SetGroups gets a reference to the given []AmenityGroup and assigns it to the Groups field.
+// SetGroups sets field value
 func (o *AmenityCatalog) SetGroups(v []AmenityGroup) {
 	o.Groups = v
 }
 
-// GetAmenities returns the Amenities field value if set, zero value otherwise.
+// GetAmenities returns the Amenities field value
 func (o *AmenityCatalog) GetAmenities() []Amenity {
-	if o == nil || IsNil(o.Amenities) {
+	if o == nil {
 		var ret []Amenity
 		return ret
 	}
+
 	return o.Amenities
 }
 
-// GetAmenitiesOk returns a tuple with the Amenities field value if set, nil otherwise
+// GetAmenitiesOk returns a tuple with the Amenities field value
 // and a boolean to check if the value has been set.
 func (o *AmenityCatalog) GetAmenitiesOk() ([]Amenity, bool) {
-	if o == nil || IsNil(o.Amenities) {
+	if o == nil {
 		return nil, false
 	}
 	return o.Amenities, true
 }
 
-// HasAmenities returns a boolean if a field has been set.
-func (o *AmenityCatalog) HasAmenities() bool {
-	if o != nil && !IsNil(o.Amenities) {
-		return true
-	}
-
-	return false
-}
-
-// SetAmenities gets a reference to the given []Amenity and assigns it to the Amenities field.
+// SetAmenities sets field value
 func (o *AmenityCatalog) SetAmenities(v []Amenity) {
 	o.Amenities = v
 }
 
-// GetNotesLabel returns the NotesLabel field value if set, zero value otherwise.
+// GetNotesLabel returns the NotesLabel field value
 func (o *AmenityCatalog) GetNotesLabel() string {
-	if o == nil || IsNil(o.NotesLabel) {
+	if o == nil {
 		var ret string
 		return ret
 	}
-	return *o.NotesLabel
+
+	return o.NotesLabel
 }
 
-// GetNotesLabelOk returns a tuple with the NotesLabel field value if set, nil otherwise
+// GetNotesLabelOk returns a tuple with the NotesLabel field value
 // and a boolean to check if the value has been set.
 func (o *AmenityCatalog) GetNotesLabelOk() (*string, bool) {
-	if o == nil || IsNil(o.NotesLabel) {
+	if o == nil {
 		return nil, false
 	}
-	return o.NotesLabel, true
+	return &o.NotesLabel, true
 }
 
-// HasNotesLabel returns a boolean if a field has been set.
-func (o *AmenityCatalog) HasNotesLabel() bool {
-	if o != nil && !IsNil(o.NotesLabel) {
-		return true
-	}
-
-	return false
-}
-
-// SetNotesLabel gets a reference to the given string and assigns it to the NotesLabel field.
+// SetNotesLabel sets field value
 func (o *AmenityCatalog) SetNotesLabel(v string) {
-	o.NotesLabel = &v
+	o.NotesLabel = v
 }
 
 func (o AmenityCatalog) MarshalJSON() ([]byte, error) {
@@ -185,19 +161,50 @@ func (o AmenityCatalog) MarshalJSON() ([]byte, error) {
 
 func (o AmenityCatalog) ToMap() (map[string]interface{}, error) {
 	toSerialize := map[string]interface{}{}
-	if !IsNil(o.MapVersion) {
-		toSerialize["mapVersion"] = o.MapVersion
-	}
-	if !IsNil(o.Groups) {
-		toSerialize["groups"] = o.Groups
-	}
-	if !IsNil(o.Amenities) {
-		toSerialize["amenities"] = o.Amenities
-	}
-	if !IsNil(o.NotesLabel) {
-		toSerialize["notesLabel"] = o.NotesLabel
-	}
+	toSerialize["mapVersion"] = o.MapVersion
+	toSerialize["groups"] = o.Groups
+	toSerialize["amenities"] = o.Amenities
+	toSerialize["notesLabel"] = o.NotesLabel
 	return toSerialize, nil
+}
+
+func (o *AmenityCatalog) UnmarshalJSON(data []byte) (err error) {
+	// This validates that all required properties are included in the JSON object
+	// by unmarshalling the object into a generic map with string keys and checking
+	// that every required field exists as a key in the generic map.
+	requiredProperties := []string{
+		"mapVersion",
+		"groups",
+		"amenities",
+		"notesLabel",
+	}
+
+	allProperties := make(map[string]interface{})
+
+	err = json.Unmarshal(data, &allProperties)
+
+	if err != nil {
+		return err;
+	}
+
+	for _, requiredProperty := range(requiredProperties) {
+		if _, exists := allProperties[requiredProperty]; !exists {
+			return fmt.Errorf("no value given for required property %v", requiredProperty)
+		}
+	}
+
+	varAmenityCatalog := _AmenityCatalog{}
+
+	decoder := json.NewDecoder(bytes.NewReader(data))
+	err = decoder.Decode(&varAmenityCatalog)
+
+	if err != nil {
+		return err
+	}
+
+	*o = AmenityCatalog(varAmenityCatalog)
+
+	return err
 }
 
 type NullableAmenityCatalog struct {

@@ -13,6 +13,8 @@ package openroam
 
 import (
 	"encoding/json"
+	"bytes"
+	"fmt"
 )
 
 // checks if the OrderItemActions type satisfies the MappedNullable interface at compile time
@@ -21,19 +23,26 @@ var _ MappedNullable = &OrderItemActions{}
 // OrderItemActions Item-level actions.
 type OrderItemActions struct {
 	// Whether the item can be changed through a priced amendment (hotels and flights).
-	Amendment *ActionAvailability `json:"amendment,omitempty"`
+	Amendment ActionAvailability `json:"amendment"`
 	// Whether the item can be cancelled now.
-	Cancellation *ActionAvailability `json:"cancellation,omitempty"`
-	// Whether the item can be updated now with `POST /order-items/{id}/update`, a change that             never charges. `notAvailable` for every product that cannot be updated.
-	Update *ActionAvailability `json:"update,omitempty"`
+	Cancellation ActionAvailability `json:"cancellation"`
+	// Whether the item can take a direct change without a charge. `notAvailable` for products             that do not support direct changes.
+	Update ActionAvailability `json:"update"`
+	// Whether the change command can start for this item.
+	Change NullableOrderItemChangeAction `json:"change,omitempty"`
 }
+
+type _OrderItemActions OrderItemActions
 
 // NewOrderItemActions instantiates a new OrderItemActions object
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewOrderItemActions() *OrderItemActions {
+func NewOrderItemActions(amendment ActionAvailability, cancellation ActionAvailability, update ActionAvailability) *OrderItemActions {
 	this := OrderItemActions{}
+	this.Amendment = amendment
+	this.Cancellation = cancellation
+	this.Update = update
 	return &this
 }
 
@@ -45,100 +54,118 @@ func NewOrderItemActionsWithDefaults() *OrderItemActions {
 	return &this
 }
 
-// GetAmendment returns the Amendment field value if set, zero value otherwise.
+// GetAmendment returns the Amendment field value
 func (o *OrderItemActions) GetAmendment() ActionAvailability {
-	if o == nil || IsNil(o.Amendment) {
+	if o == nil {
 		var ret ActionAvailability
 		return ret
 	}
-	return *o.Amendment
+
+	return o.Amendment
 }
 
-// GetAmendmentOk returns a tuple with the Amendment field value if set, nil otherwise
+// GetAmendmentOk returns a tuple with the Amendment field value
 // and a boolean to check if the value has been set.
 func (o *OrderItemActions) GetAmendmentOk() (*ActionAvailability, bool) {
-	if o == nil || IsNil(o.Amendment) {
+	if o == nil {
 		return nil, false
 	}
-	return o.Amendment, true
+	return &o.Amendment, true
 }
 
-// HasAmendment returns a boolean if a field has been set.
-func (o *OrderItemActions) HasAmendment() bool {
-	if o != nil && !IsNil(o.Amendment) {
-		return true
-	}
-
-	return false
-}
-
-// SetAmendment gets a reference to the given ActionAvailability and assigns it to the Amendment field.
+// SetAmendment sets field value
 func (o *OrderItemActions) SetAmendment(v ActionAvailability) {
-	o.Amendment = &v
+	o.Amendment = v
 }
 
-// GetCancellation returns the Cancellation field value if set, zero value otherwise.
+// GetCancellation returns the Cancellation field value
 func (o *OrderItemActions) GetCancellation() ActionAvailability {
-	if o == nil || IsNil(o.Cancellation) {
+	if o == nil {
 		var ret ActionAvailability
 		return ret
 	}
-	return *o.Cancellation
+
+	return o.Cancellation
 }
 
-// GetCancellationOk returns a tuple with the Cancellation field value if set, nil otherwise
+// GetCancellationOk returns a tuple with the Cancellation field value
 // and a boolean to check if the value has been set.
 func (o *OrderItemActions) GetCancellationOk() (*ActionAvailability, bool) {
-	if o == nil || IsNil(o.Cancellation) {
+	if o == nil {
 		return nil, false
 	}
-	return o.Cancellation, true
+	return &o.Cancellation, true
 }
 
-// HasCancellation returns a boolean if a field has been set.
-func (o *OrderItemActions) HasCancellation() bool {
-	if o != nil && !IsNil(o.Cancellation) {
-		return true
-	}
-
-	return false
-}
-
-// SetCancellation gets a reference to the given ActionAvailability and assigns it to the Cancellation field.
+// SetCancellation sets field value
 func (o *OrderItemActions) SetCancellation(v ActionAvailability) {
-	o.Cancellation = &v
+	o.Cancellation = v
 }
 
-// GetUpdate returns the Update field value if set, zero value otherwise.
+// GetUpdate returns the Update field value
 func (o *OrderItemActions) GetUpdate() ActionAvailability {
-	if o == nil || IsNil(o.Update) {
+	if o == nil {
 		var ret ActionAvailability
 		return ret
 	}
-	return *o.Update
+
+	return o.Update
 }
 
-// GetUpdateOk returns a tuple with the Update field value if set, nil otherwise
+// GetUpdateOk returns a tuple with the Update field value
 // and a boolean to check if the value has been set.
 func (o *OrderItemActions) GetUpdateOk() (*ActionAvailability, bool) {
-	if o == nil || IsNil(o.Update) {
+	if o == nil {
 		return nil, false
 	}
-	return o.Update, true
+	return &o.Update, true
 }
 
-// HasUpdate returns a boolean if a field has been set.
-func (o *OrderItemActions) HasUpdate() bool {
-	if o != nil && !IsNil(o.Update) {
+// SetUpdate sets field value
+func (o *OrderItemActions) SetUpdate(v ActionAvailability) {
+	o.Update = v
+}
+
+// GetChange returns the Change field value if set, zero value otherwise (both if not set or set to explicit null).
+func (o *OrderItemActions) GetChange() OrderItemChangeAction {
+	if o == nil || IsNil(o.Change.Get()) {
+		var ret OrderItemChangeAction
+		return ret
+	}
+	return *o.Change.Get()
+}
+
+// GetChangeOk returns a tuple with the Change field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+// NOTE: If the value is an explicit nil, `nil, true` will be returned
+func (o *OrderItemActions) GetChangeOk() (*OrderItemChangeAction, bool) {
+	if o == nil {
+		return nil, false
+	}
+	return o.Change.Get(), o.Change.IsSet()
+}
+
+// HasChange returns a boolean if a field has been set.
+func (o *OrderItemActions) HasChange() bool {
+	if o != nil && o.Change.IsSet() {
 		return true
 	}
 
 	return false
 }
 
-// SetUpdate gets a reference to the given ActionAvailability and assigns it to the Update field.
-func (o *OrderItemActions) SetUpdate(v ActionAvailability) {
-	o.Update = &v
+// SetChange gets a reference to the given NullableOrderItemChangeAction and assigns it to the Change field.
+func (o *OrderItemActions) SetChange(v OrderItemChangeAction) {
+	o.Change.Set(&v)
+}
+// SetChangeNil sets the value for Change to be an explicit nil
+func (o *OrderItemActions) SetChangeNil() {
+	o.Change.Set(nil)
+}
+
+// UnsetChange ensures that no value is present for Change, not even an explicit nil
+func (o *OrderItemActions) UnsetChange() {
+	o.Change.Unset()
 }
 
 func (o OrderItemActions) MarshalJSON() ([]byte, error) {
@@ -151,16 +178,51 @@ func (o OrderItemActions) MarshalJSON() ([]byte, error) {
 
 func (o OrderItemActions) ToMap() (map[string]interface{}, error) {
 	toSerialize := map[string]interface{}{}
-	if !IsNil(o.Amendment) {
-		toSerialize["amendment"] = o.Amendment
-	}
-	if !IsNil(o.Cancellation) {
-		toSerialize["cancellation"] = o.Cancellation
-	}
-	if !IsNil(o.Update) {
-		toSerialize["update"] = o.Update
+	toSerialize["amendment"] = o.Amendment
+	toSerialize["cancellation"] = o.Cancellation
+	toSerialize["update"] = o.Update
+	if o.Change.IsSet() {
+		toSerialize["change"] = o.Change.Get()
 	}
 	return toSerialize, nil
+}
+
+func (o *OrderItemActions) UnmarshalJSON(data []byte) (err error) {
+	// This validates that all required properties are included in the JSON object
+	// by unmarshalling the object into a generic map with string keys and checking
+	// that every required field exists as a key in the generic map.
+	requiredProperties := []string{
+		"amendment",
+		"cancellation",
+		"update",
+	}
+
+	allProperties := make(map[string]interface{})
+
+	err = json.Unmarshal(data, &allProperties)
+
+	if err != nil {
+		return err;
+	}
+
+	for _, requiredProperty := range(requiredProperties) {
+		if _, exists := allProperties[requiredProperty]; !exists {
+			return fmt.Errorf("no value given for required property %v", requiredProperty)
+		}
+	}
+
+	varOrderItemActions := _OrderItemActions{}
+
+	decoder := json.NewDecoder(bytes.NewReader(data))
+	err = decoder.Decode(&varOrderItemActions)
+
+	if err != nil {
+		return err
+	}
+
+	*o = OrderItemActions(varOrderItemActions)
+
+	return err
 }
 
 type NullableOrderItemActions struct {

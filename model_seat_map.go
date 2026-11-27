@@ -13,6 +13,8 @@ package openroam
 
 import (
 	"encoding/json"
+	"bytes"
+	"fmt"
 )
 
 // checks if the SeatMap type satisfies the MappedNullable interface at compile time
@@ -20,17 +22,22 @@ var _ MappedNullable = &SeatMap{}
 
 // SeatMap Partner seat map. Segments name their position in the offer; seats are chosen by sliceIndex, segmentIndex, passengerIndex and seatDesignator.
 type SeatMap struct {
-	IsSupported *bool `json:"isSupported,omitempty"`
-	Segments []SeatMapSegment `json:"segments,omitempty"`
-	Warnings []string `json:"warnings,omitempty"`
+	IsSupported bool `json:"isSupported"`
+	Segments []SeatMapSegment `json:"segments"`
+	Warnings []string `json:"warnings"`
 }
+
+type _SeatMap SeatMap
 
 // NewSeatMap instantiates a new SeatMap object
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewSeatMap() *SeatMap {
+func NewSeatMap(isSupported bool, segments []SeatMapSegment, warnings []string) *SeatMap {
 	this := SeatMap{}
+	this.IsSupported = isSupported
+	this.Segments = segments
+	this.Warnings = warnings
 	return &this
 }
 
@@ -42,98 +49,74 @@ func NewSeatMapWithDefaults() *SeatMap {
 	return &this
 }
 
-// GetIsSupported returns the IsSupported field value if set, zero value otherwise.
+// GetIsSupported returns the IsSupported field value
 func (o *SeatMap) GetIsSupported() bool {
-	if o == nil || IsNil(o.IsSupported) {
+	if o == nil {
 		var ret bool
 		return ret
 	}
-	return *o.IsSupported
+
+	return o.IsSupported
 }
 
-// GetIsSupportedOk returns a tuple with the IsSupported field value if set, nil otherwise
+// GetIsSupportedOk returns a tuple with the IsSupported field value
 // and a boolean to check if the value has been set.
 func (o *SeatMap) GetIsSupportedOk() (*bool, bool) {
-	if o == nil || IsNil(o.IsSupported) {
+	if o == nil {
 		return nil, false
 	}
-	return o.IsSupported, true
+	return &o.IsSupported, true
 }
 
-// HasIsSupported returns a boolean if a field has been set.
-func (o *SeatMap) HasIsSupported() bool {
-	if o != nil && !IsNil(o.IsSupported) {
-		return true
-	}
-
-	return false
-}
-
-// SetIsSupported gets a reference to the given bool and assigns it to the IsSupported field.
+// SetIsSupported sets field value
 func (o *SeatMap) SetIsSupported(v bool) {
-	o.IsSupported = &v
+	o.IsSupported = v
 }
 
-// GetSegments returns the Segments field value if set, zero value otherwise.
+// GetSegments returns the Segments field value
 func (o *SeatMap) GetSegments() []SeatMapSegment {
-	if o == nil || IsNil(o.Segments) {
+	if o == nil {
 		var ret []SeatMapSegment
 		return ret
 	}
+
 	return o.Segments
 }
 
-// GetSegmentsOk returns a tuple with the Segments field value if set, nil otherwise
+// GetSegmentsOk returns a tuple with the Segments field value
 // and a boolean to check if the value has been set.
 func (o *SeatMap) GetSegmentsOk() ([]SeatMapSegment, bool) {
-	if o == nil || IsNil(o.Segments) {
+	if o == nil {
 		return nil, false
 	}
 	return o.Segments, true
 }
 
-// HasSegments returns a boolean if a field has been set.
-func (o *SeatMap) HasSegments() bool {
-	if o != nil && !IsNil(o.Segments) {
-		return true
-	}
-
-	return false
-}
-
-// SetSegments gets a reference to the given []SeatMapSegment and assigns it to the Segments field.
+// SetSegments sets field value
 func (o *SeatMap) SetSegments(v []SeatMapSegment) {
 	o.Segments = v
 }
 
-// GetWarnings returns the Warnings field value if set, zero value otherwise.
+// GetWarnings returns the Warnings field value
 func (o *SeatMap) GetWarnings() []string {
-	if o == nil || IsNil(o.Warnings) {
+	if o == nil {
 		var ret []string
 		return ret
 	}
+
 	return o.Warnings
 }
 
-// GetWarningsOk returns a tuple with the Warnings field value if set, nil otherwise
+// GetWarningsOk returns a tuple with the Warnings field value
 // and a boolean to check if the value has been set.
 func (o *SeatMap) GetWarningsOk() ([]string, bool) {
-	if o == nil || IsNil(o.Warnings) {
+	if o == nil {
 		return nil, false
 	}
 	return o.Warnings, true
 }
 
-// HasWarnings returns a boolean if a field has been set.
-func (o *SeatMap) HasWarnings() bool {
-	if o != nil && !IsNil(o.Warnings) {
-		return true
-	}
-
-	return false
-}
-
-// SetWarnings gets a reference to the given []string and assigns it to the Warnings field.
+// SetWarnings sets field value
 func (o *SeatMap) SetWarnings(v []string) {
 	o.Warnings = v
 }
@@ -148,16 +131,48 @@ func (o SeatMap) MarshalJSON() ([]byte, error) {
 
 func (o SeatMap) ToMap() (map[string]interface{}, error) {
 	toSerialize := map[string]interface{}{}
-	if !IsNil(o.IsSupported) {
-		toSerialize["isSupported"] = o.IsSupported
-	}
-	if !IsNil(o.Segments) {
-		toSerialize["segments"] = o.Segments
-	}
-	if !IsNil(o.Warnings) {
-		toSerialize["warnings"] = o.Warnings
-	}
+	toSerialize["isSupported"] = o.IsSupported
+	toSerialize["segments"] = o.Segments
+	toSerialize["warnings"] = o.Warnings
 	return toSerialize, nil
+}
+
+func (o *SeatMap) UnmarshalJSON(data []byte) (err error) {
+	// This validates that all required properties are included in the JSON object
+	// by unmarshalling the object into a generic map with string keys and checking
+	// that every required field exists as a key in the generic map.
+	requiredProperties := []string{
+		"isSupported",
+		"segments",
+		"warnings",
+	}
+
+	allProperties := make(map[string]interface{})
+
+	err = json.Unmarshal(data, &allProperties)
+
+	if err != nil {
+		return err;
+	}
+
+	for _, requiredProperty := range(requiredProperties) {
+		if _, exists := allProperties[requiredProperty]; !exists {
+			return fmt.Errorf("no value given for required property %v", requiredProperty)
+		}
+	}
+
+	varSeatMap := _SeatMap{}
+
+	decoder := json.NewDecoder(bytes.NewReader(data))
+	err = decoder.Decode(&varSeatMap)
+
+	if err != nil {
+		return err
+	}
+
+	*o = SeatMap(varSeatMap)
+
+	return err
 }
 
 type NullableSeatMap struct {

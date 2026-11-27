@@ -14,6 +14,8 @@ package openroam
 import (
 	"encoding/json"
 	"time"
+	"bytes"
+	"fmt"
 )
 
 // checks if the EsimFulfillmentDetails type satisfies the MappedNullable interface at compile time
@@ -24,22 +26,22 @@ type EsimFulfillmentDetails struct {
 	// The eSIM's ICCID, which the post-purchase routes take; null until the eSIM is provisioned.
 	Iccid NullableString `json:"iccid,omitempty"`
 	// How the item was fulfilled: a new instant or deferred eSIM, or a top-up.
-	Mode *string `json:"mode,omitempty"`
+	Mode string `json:"mode"`
 	// Progress of provisioning the eSIM.
-	Provisioning *EsimProvisioning `json:"provisioning,omitempty"`
+	Provisioning EsimProvisioning `json:"provisioning"`
 	// True while a deferred eSIM waits for `POST /esims/{id}/provisioning`.
-	CanProvision *bool `json:"canProvision,omitempty"`
+	CanProvision bool `json:"canProvision"`
 	// The eSIM's lifecycle status. An eSIM under review reads as pending.
-	EsimStatus *string `json:"esimStatus,omitempty"`
+	EsimStatus string `json:"esimStatus"`
 	// The installed profile's status, as last recorded.
-	ProfileStatus *string `json:"profileStatus,omitempty"`
+	ProfileStatus string `json:"profileStatus"`
 	// Null until the eSIM is provisioned.
 	Installation NullableEsimInstallation `json:"installation,omitempty"`
 	Pin NullableString `json:"pin,omitempty"`
 	Puk NullableString `json:"puk,omitempty"`
 	// The number assigned to the eSIM, when the plan includes one.
 	PhoneNumber NullableString `json:"phoneNumber,omitempty"`
-	// The plan's data allowance as the catalogue stores it: amount, unit and display label.
+	// The plan's data allowance, as the offer shows it.
 	Data NullableEsimDataAllowance `json:"data,omitempty"`
 	// The plan's calling allowance; null when the plan includes no calls.
 	Voice NullableEsimVoiceAllowance `json:"voice,omitempty"`
@@ -47,18 +49,27 @@ type EsimFulfillmentDetails struct {
 	Sms NullableEsimSmsAllowance `json:"sms,omitempty"`
 	Apn NullableEsimApn `json:"apn,omitempty"`
 	// The top-ups applied to the eSIM.
-	Addons []EsimAddon `json:"addons,omitempty"`
+	Addons []EsimAddon `json:"addons"`
 	// Stored notes about the plan, shown verbatim.
-	Notes []string `json:"notes,omitempty"`
+	Notes []string `json:"notes"`
 	FulfilledAt NullableTime `json:"fulfilledAt,omitempty"`
 }
+
+type _EsimFulfillmentDetails EsimFulfillmentDetails
 
 // NewEsimFulfillmentDetails instantiates a new EsimFulfillmentDetails object
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewEsimFulfillmentDetails() *EsimFulfillmentDetails {
+func NewEsimFulfillmentDetails(mode string, provisioning EsimProvisioning, canProvision bool, esimStatus string, profileStatus string, addons []EsimAddon, notes []string) *EsimFulfillmentDetails {
 	this := EsimFulfillmentDetails{}
+	this.Mode = mode
+	this.Provisioning = provisioning
+	this.CanProvision = canProvision
+	this.EsimStatus = esimStatus
+	this.ProfileStatus = profileStatus
+	this.Addons = addons
+	this.Notes = notes
 	return &this
 }
 
@@ -112,164 +123,124 @@ func (o *EsimFulfillmentDetails) UnsetIccid() {
 	o.Iccid.Unset()
 }
 
-// GetMode returns the Mode field value if set, zero value otherwise.
+// GetMode returns the Mode field value
 func (o *EsimFulfillmentDetails) GetMode() string {
-	if o == nil || IsNil(o.Mode) {
+	if o == nil {
 		var ret string
 		return ret
 	}
-	return *o.Mode
+
+	return o.Mode
 }
 
-// GetModeOk returns a tuple with the Mode field value if set, nil otherwise
+// GetModeOk returns a tuple with the Mode field value
 // and a boolean to check if the value has been set.
 func (o *EsimFulfillmentDetails) GetModeOk() (*string, bool) {
-	if o == nil || IsNil(o.Mode) {
+	if o == nil {
 		return nil, false
 	}
-	return o.Mode, true
+	return &o.Mode, true
 }
 
-// HasMode returns a boolean if a field has been set.
-func (o *EsimFulfillmentDetails) HasMode() bool {
-	if o != nil && !IsNil(o.Mode) {
-		return true
-	}
-
-	return false
-}
-
-// SetMode gets a reference to the given string and assigns it to the Mode field.
+// SetMode sets field value
 func (o *EsimFulfillmentDetails) SetMode(v string) {
-	o.Mode = &v
+	o.Mode = v
 }
 
-// GetProvisioning returns the Provisioning field value if set, zero value otherwise.
+// GetProvisioning returns the Provisioning field value
 func (o *EsimFulfillmentDetails) GetProvisioning() EsimProvisioning {
-	if o == nil || IsNil(o.Provisioning) {
+	if o == nil {
 		var ret EsimProvisioning
 		return ret
 	}
-	return *o.Provisioning
+
+	return o.Provisioning
 }
 
-// GetProvisioningOk returns a tuple with the Provisioning field value if set, nil otherwise
+// GetProvisioningOk returns a tuple with the Provisioning field value
 // and a boolean to check if the value has been set.
 func (o *EsimFulfillmentDetails) GetProvisioningOk() (*EsimProvisioning, bool) {
-	if o == nil || IsNil(o.Provisioning) {
+	if o == nil {
 		return nil, false
 	}
-	return o.Provisioning, true
+	return &o.Provisioning, true
 }
 
-// HasProvisioning returns a boolean if a field has been set.
-func (o *EsimFulfillmentDetails) HasProvisioning() bool {
-	if o != nil && !IsNil(o.Provisioning) {
-		return true
-	}
-
-	return false
-}
-
-// SetProvisioning gets a reference to the given EsimProvisioning and assigns it to the Provisioning field.
+// SetProvisioning sets field value
 func (o *EsimFulfillmentDetails) SetProvisioning(v EsimProvisioning) {
-	o.Provisioning = &v
+	o.Provisioning = v
 }
 
-// GetCanProvision returns the CanProvision field value if set, zero value otherwise.
+// GetCanProvision returns the CanProvision field value
 func (o *EsimFulfillmentDetails) GetCanProvision() bool {
-	if o == nil || IsNil(o.CanProvision) {
+	if o == nil {
 		var ret bool
 		return ret
 	}
-	return *o.CanProvision
+
+	return o.CanProvision
 }
 
-// GetCanProvisionOk returns a tuple with the CanProvision field value if set, nil otherwise
+// GetCanProvisionOk returns a tuple with the CanProvision field value
 // and a boolean to check if the value has been set.
 func (o *EsimFulfillmentDetails) GetCanProvisionOk() (*bool, bool) {
-	if o == nil || IsNil(o.CanProvision) {
+	if o == nil {
 		return nil, false
 	}
-	return o.CanProvision, true
+	return &o.CanProvision, true
 }
 
-// HasCanProvision returns a boolean if a field has been set.
-func (o *EsimFulfillmentDetails) HasCanProvision() bool {
-	if o != nil && !IsNil(o.CanProvision) {
-		return true
-	}
-
-	return false
-}
-
-// SetCanProvision gets a reference to the given bool and assigns it to the CanProvision field.
+// SetCanProvision sets field value
 func (o *EsimFulfillmentDetails) SetCanProvision(v bool) {
-	o.CanProvision = &v
+	o.CanProvision = v
 }
 
-// GetEsimStatus returns the EsimStatus field value if set, zero value otherwise.
+// GetEsimStatus returns the EsimStatus field value
 func (o *EsimFulfillmentDetails) GetEsimStatus() string {
-	if o == nil || IsNil(o.EsimStatus) {
+	if o == nil {
 		var ret string
 		return ret
 	}
-	return *o.EsimStatus
+
+	return o.EsimStatus
 }
 
-// GetEsimStatusOk returns a tuple with the EsimStatus field value if set, nil otherwise
+// GetEsimStatusOk returns a tuple with the EsimStatus field value
 // and a boolean to check if the value has been set.
 func (o *EsimFulfillmentDetails) GetEsimStatusOk() (*string, bool) {
-	if o == nil || IsNil(o.EsimStatus) {
+	if o == nil {
 		return nil, false
 	}
-	return o.EsimStatus, true
+	return &o.EsimStatus, true
 }
 
-// HasEsimStatus returns a boolean if a field has been set.
-func (o *EsimFulfillmentDetails) HasEsimStatus() bool {
-	if o != nil && !IsNil(o.EsimStatus) {
-		return true
-	}
-
-	return false
-}
-
-// SetEsimStatus gets a reference to the given string and assigns it to the EsimStatus field.
+// SetEsimStatus sets field value
 func (o *EsimFulfillmentDetails) SetEsimStatus(v string) {
-	o.EsimStatus = &v
+	o.EsimStatus = v
 }
 
-// GetProfileStatus returns the ProfileStatus field value if set, zero value otherwise.
+// GetProfileStatus returns the ProfileStatus field value
 func (o *EsimFulfillmentDetails) GetProfileStatus() string {
-	if o == nil || IsNil(o.ProfileStatus) {
+	if o == nil {
 		var ret string
 		return ret
 	}
-	return *o.ProfileStatus
+
+	return o.ProfileStatus
 }
 
-// GetProfileStatusOk returns a tuple with the ProfileStatus field value if set, nil otherwise
+// GetProfileStatusOk returns a tuple with the ProfileStatus field value
 // and a boolean to check if the value has been set.
 func (o *EsimFulfillmentDetails) GetProfileStatusOk() (*string, bool) {
-	if o == nil || IsNil(o.ProfileStatus) {
+	if o == nil {
 		return nil, false
 	}
-	return o.ProfileStatus, true
+	return &o.ProfileStatus, true
 }
 
-// HasProfileStatus returns a boolean if a field has been set.
-func (o *EsimFulfillmentDetails) HasProfileStatus() bool {
-	if o != nil && !IsNil(o.ProfileStatus) {
-		return true
-	}
-
-	return false
-}
-
-// SetProfileStatus gets a reference to the given string and assigns it to the ProfileStatus field.
+// SetProfileStatus sets field value
 func (o *EsimFulfillmentDetails) SetProfileStatus(v string) {
-	o.ProfileStatus = &v
+	o.ProfileStatus = v
 }
 
 // GetInstallation returns the Installation field value if set, zero value otherwise (both if not set or set to explicit null).
@@ -608,66 +579,50 @@ func (o *EsimFulfillmentDetails) UnsetApn() {
 	o.Apn.Unset()
 }
 
-// GetAddons returns the Addons field value if set, zero value otherwise.
+// GetAddons returns the Addons field value
 func (o *EsimFulfillmentDetails) GetAddons() []EsimAddon {
-	if o == nil || IsNil(o.Addons) {
+	if o == nil {
 		var ret []EsimAddon
 		return ret
 	}
+
 	return o.Addons
 }
 
-// GetAddonsOk returns a tuple with the Addons field value if set, nil otherwise
+// GetAddonsOk returns a tuple with the Addons field value
 // and a boolean to check if the value has been set.
 func (o *EsimFulfillmentDetails) GetAddonsOk() ([]EsimAddon, bool) {
-	if o == nil || IsNil(o.Addons) {
+	if o == nil {
 		return nil, false
 	}
 	return o.Addons, true
 }
 
-// HasAddons returns a boolean if a field has been set.
-func (o *EsimFulfillmentDetails) HasAddons() bool {
-	if o != nil && !IsNil(o.Addons) {
-		return true
-	}
-
-	return false
-}
-
-// SetAddons gets a reference to the given []EsimAddon and assigns it to the Addons field.
+// SetAddons sets field value
 func (o *EsimFulfillmentDetails) SetAddons(v []EsimAddon) {
 	o.Addons = v
 }
 
-// GetNotes returns the Notes field value if set, zero value otherwise.
+// GetNotes returns the Notes field value
 func (o *EsimFulfillmentDetails) GetNotes() []string {
-	if o == nil || IsNil(o.Notes) {
+	if o == nil {
 		var ret []string
 		return ret
 	}
+
 	return o.Notes
 }
 
-// GetNotesOk returns a tuple with the Notes field value if set, nil otherwise
+// GetNotesOk returns a tuple with the Notes field value
 // and a boolean to check if the value has been set.
 func (o *EsimFulfillmentDetails) GetNotesOk() ([]string, bool) {
-	if o == nil || IsNil(o.Notes) {
+	if o == nil {
 		return nil, false
 	}
 	return o.Notes, true
 }
 
-// HasNotes returns a boolean if a field has been set.
-func (o *EsimFulfillmentDetails) HasNotes() bool {
-	if o != nil && !IsNil(o.Notes) {
-		return true
-	}
-
-	return false
-}
-
-// SetNotes gets a reference to the given []string and assigns it to the Notes field.
+// SetNotes sets field value
 func (o *EsimFulfillmentDetails) SetNotes(v []string) {
 	o.Notes = v
 }
@@ -727,21 +682,11 @@ func (o EsimFulfillmentDetails) ToMap() (map[string]interface{}, error) {
 	if o.Iccid.IsSet() {
 		toSerialize["iccid"] = o.Iccid.Get()
 	}
-	if !IsNil(o.Mode) {
-		toSerialize["mode"] = o.Mode
-	}
-	if !IsNil(o.Provisioning) {
-		toSerialize["provisioning"] = o.Provisioning
-	}
-	if !IsNil(o.CanProvision) {
-		toSerialize["canProvision"] = o.CanProvision
-	}
-	if !IsNil(o.EsimStatus) {
-		toSerialize["esimStatus"] = o.EsimStatus
-	}
-	if !IsNil(o.ProfileStatus) {
-		toSerialize["profileStatus"] = o.ProfileStatus
-	}
+	toSerialize["mode"] = o.Mode
+	toSerialize["provisioning"] = o.Provisioning
+	toSerialize["canProvision"] = o.CanProvision
+	toSerialize["esimStatus"] = o.EsimStatus
+	toSerialize["profileStatus"] = o.ProfileStatus
 	if o.Installation.IsSet() {
 		toSerialize["installation"] = o.Installation.Get()
 	}
@@ -766,16 +711,54 @@ func (o EsimFulfillmentDetails) ToMap() (map[string]interface{}, error) {
 	if o.Apn.IsSet() {
 		toSerialize["apn"] = o.Apn.Get()
 	}
-	if !IsNil(o.Addons) {
-		toSerialize["addons"] = o.Addons
-	}
-	if !IsNil(o.Notes) {
-		toSerialize["notes"] = o.Notes
-	}
+	toSerialize["addons"] = o.Addons
+	toSerialize["notes"] = o.Notes
 	if o.FulfilledAt.IsSet() {
 		toSerialize["fulfilledAt"] = o.FulfilledAt.Get()
 	}
 	return toSerialize, nil
+}
+
+func (o *EsimFulfillmentDetails) UnmarshalJSON(data []byte) (err error) {
+	// This validates that all required properties are included in the JSON object
+	// by unmarshalling the object into a generic map with string keys and checking
+	// that every required field exists as a key in the generic map.
+	requiredProperties := []string{
+		"mode",
+		"provisioning",
+		"canProvision",
+		"esimStatus",
+		"profileStatus",
+		"addons",
+		"notes",
+	}
+
+	allProperties := make(map[string]interface{})
+
+	err = json.Unmarshal(data, &allProperties)
+
+	if err != nil {
+		return err;
+	}
+
+	for _, requiredProperty := range(requiredProperties) {
+		if _, exists := allProperties[requiredProperty]; !exists {
+			return fmt.Errorf("no value given for required property %v", requiredProperty)
+		}
+	}
+
+	varEsimFulfillmentDetails := _EsimFulfillmentDetails{}
+
+	decoder := json.NewDecoder(bytes.NewReader(data))
+	err = decoder.Decode(&varEsimFulfillmentDetails)
+
+	if err != nil {
+		return err
+	}
+
+	*o = EsimFulfillmentDetails(varEsimFulfillmentDetails)
+
+	return err
 }
 
 type NullableEsimFulfillmentDetails struct {

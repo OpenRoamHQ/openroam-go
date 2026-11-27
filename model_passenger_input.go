@@ -476,7 +476,6 @@ func (o *PassengerInput) UnmarshalJSON(data []byte) (err error) {
 	varPassengerInput := _PassengerInput{}
 
 	decoder := json.NewDecoder(bytes.NewReader(data))
-	decoder.DisallowUnknownFields()
 	err = decoder.Decode(&varPassengerInput)
 
 	if err != nil {

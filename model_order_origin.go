@@ -13,6 +13,8 @@ package openroam
 
 import (
 	"encoding/json"
+	"bytes"
+	"fmt"
 )
 
 // checks if the OrderOrigin type satisfies the MappedNullable interface at compile time
@@ -20,16 +22,19 @@ var _ MappedNullable = &OrderOrigin{}
 
 // OrderOrigin Where an order was created.
 type OrderOrigin struct {
-	// `api` or `dashboard`.
-	Channel *string `json:"channel,omitempty"`
+	// `api`, `dashboard` or `site` (placed through one of the partner's sites).
+	Channel string `json:"channel"`
 }
+
+type _OrderOrigin OrderOrigin
 
 // NewOrderOrigin instantiates a new OrderOrigin object
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewOrderOrigin() *OrderOrigin {
+func NewOrderOrigin(channel string) *OrderOrigin {
 	this := OrderOrigin{}
+	this.Channel = channel
 	return &this
 }
 
@@ -41,36 +46,28 @@ func NewOrderOriginWithDefaults() *OrderOrigin {
 	return &this
 }
 
-// GetChannel returns the Channel field value if set, zero value otherwise.
+// GetChannel returns the Channel field value
 func (o *OrderOrigin) GetChannel() string {
-	if o == nil || IsNil(o.Channel) {
+	if o == nil {
 		var ret string
 		return ret
 	}
-	return *o.Channel
+
+	return o.Channel
 }
 
-// GetChannelOk returns a tuple with the Channel field value if set, nil otherwise
+// GetChannelOk returns a tuple with the Channel field value
 // and a boolean to check if the value has been set.
 func (o *OrderOrigin) GetChannelOk() (*string, bool) {
-	if o == nil || IsNil(o.Channel) {
+	if o == nil {
 		return nil, false
 	}
-	return o.Channel, true
+	return &o.Channel, true
 }
 
-// HasChannel returns a boolean if a field has been set.
-func (o *OrderOrigin) HasChannel() bool {
-	if o != nil && !IsNil(o.Channel) {
-		return true
-	}
-
-	return false
-}
-
-// SetChannel gets a reference to the given string and assigns it to the Channel field.
+// SetChannel sets field value
 func (o *OrderOrigin) SetChannel(v string) {
-	o.Channel = &v
+	o.Channel = v
 }
 
 func (o OrderOrigin) MarshalJSON() ([]byte, error) {
@@ -83,10 +80,44 @@ func (o OrderOrigin) MarshalJSON() ([]byte, error) {
 
 func (o OrderOrigin) ToMap() (map[string]interface{}, error) {
 	toSerialize := map[string]interface{}{}
-	if !IsNil(o.Channel) {
-		toSerialize["channel"] = o.Channel
-	}
+	toSerialize["channel"] = o.Channel
 	return toSerialize, nil
+}
+
+func (o *OrderOrigin) UnmarshalJSON(data []byte) (err error) {
+	// This validates that all required properties are included in the JSON object
+	// by unmarshalling the object into a generic map with string keys and checking
+	// that every required field exists as a key in the generic map.
+	requiredProperties := []string{
+		"channel",
+	}
+
+	allProperties := make(map[string]interface{})
+
+	err = json.Unmarshal(data, &allProperties)
+
+	if err != nil {
+		return err;
+	}
+
+	for _, requiredProperty := range(requiredProperties) {
+		if _, exists := allProperties[requiredProperty]; !exists {
+			return fmt.Errorf("no value given for required property %v", requiredProperty)
+		}
+	}
+
+	varOrderOrigin := _OrderOrigin{}
+
+	decoder := json.NewDecoder(bytes.NewReader(data))
+	err = decoder.Decode(&varOrderOrigin)
+
+	if err != nil {
+		return err
+	}
+
+	*o = OrderOrigin(varOrderOrigin)
+
+	return err
 }
 
 type NullableOrderOrigin struct {

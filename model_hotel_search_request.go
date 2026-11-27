@@ -24,7 +24,7 @@ var _ MappedNullable = &HotelSearchRequest{}
 type HotelSearchRequest struct {
 	// What to search: `location` or `hotelIds`. Required.
 	SearchCriteria NullableHotelSearchCriteria `json:"searchCriteria,omitempty"`
-	// Check-in date (`yyyy-MM-dd`); today or later.
+	// Check-in date (`yyyy-MM-dd`), the hotel's local date: today or later there. Only a date that             has ended everywhere is refused; availability decides the rest.
 	CheckIn string `json:"checkIn"`
 	// Check-out date (`yyyy-MM-dd`); after `checkIn`, at most 30 nights later.
 	CheckOut string `json:"checkOut"`
@@ -480,7 +480,6 @@ func (o *HotelSearchRequest) UnmarshalJSON(data []byte) (err error) {
 	varHotelSearchRequest := _HotelSearchRequest{}
 
 	decoder := json.NewDecoder(bytes.NewReader(data))
-	decoder.DisallowUnknownFields()
 	err = decoder.Decode(&varHotelSearchRequest)
 
 	if err != nil {

@@ -13,6 +13,8 @@ package openroam
 
 import (
 	"encoding/json"
+	"bytes"
+	"fmt"
 )
 
 // checks if the FlightSearchResult type satisfies the MappedNullable interface at compile time
@@ -20,17 +22,21 @@ var _ MappedNullable = &FlightSearchResult{}
 
 // FlightSearchResult A page of itineraries. `pagination.totalCount` counts the itineraries with at least one fare after the filters. Each page runs a new airline search, so offers can change between pages.
 type FlightSearchResult struct {
-	Items []Itinerary `json:"items,omitempty"`
+	Items []Itinerary `json:"items"`
 	// Paging of a list response.
-	Pagination *Pagination `json:"pagination,omitempty"`
+	Pagination Pagination `json:"pagination"`
 }
+
+type _FlightSearchResult FlightSearchResult
 
 // NewFlightSearchResult instantiates a new FlightSearchResult object
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewFlightSearchResult() *FlightSearchResult {
+func NewFlightSearchResult(items []Itinerary, pagination Pagination) *FlightSearchResult {
 	this := FlightSearchResult{}
+	this.Items = items
+	this.Pagination = pagination
 	return &this
 }
 
@@ -42,68 +48,52 @@ func NewFlightSearchResultWithDefaults() *FlightSearchResult {
 	return &this
 }
 
-// GetItems returns the Items field value if set, zero value otherwise.
+// GetItems returns the Items field value
 func (o *FlightSearchResult) GetItems() []Itinerary {
-	if o == nil || IsNil(o.Items) {
+	if o == nil {
 		var ret []Itinerary
 		return ret
 	}
+
 	return o.Items
 }
 
-// GetItemsOk returns a tuple with the Items field value if set, nil otherwise
+// GetItemsOk returns a tuple with the Items field value
 // and a boolean to check if the value has been set.
 func (o *FlightSearchResult) GetItemsOk() ([]Itinerary, bool) {
-	if o == nil || IsNil(o.Items) {
+	if o == nil {
 		return nil, false
 	}
 	return o.Items, true
 }
 
-// HasItems returns a boolean if a field has been set.
-func (o *FlightSearchResult) HasItems() bool {
-	if o != nil && !IsNil(o.Items) {
-		return true
-	}
-
-	return false
-}
-
-// SetItems gets a reference to the given []Itinerary and assigns it to the Items field.
+// SetItems sets field value
 func (o *FlightSearchResult) SetItems(v []Itinerary) {
 	o.Items = v
 }
 
-// GetPagination returns the Pagination field value if set, zero value otherwise.
+// GetPagination returns the Pagination field value
 func (o *FlightSearchResult) GetPagination() Pagination {
-	if o == nil || IsNil(o.Pagination) {
+	if o == nil {
 		var ret Pagination
 		return ret
 	}
-	return *o.Pagination
+
+	return o.Pagination
 }
 
-// GetPaginationOk returns a tuple with the Pagination field value if set, nil otherwise
+// GetPaginationOk returns a tuple with the Pagination field value
 // and a boolean to check if the value has been set.
 func (o *FlightSearchResult) GetPaginationOk() (*Pagination, bool) {
-	if o == nil || IsNil(o.Pagination) {
+	if o == nil {
 		return nil, false
 	}
-	return o.Pagination, true
+	return &o.Pagination, true
 }
 
-// HasPagination returns a boolean if a field has been set.
-func (o *FlightSearchResult) HasPagination() bool {
-	if o != nil && !IsNil(o.Pagination) {
-		return true
-	}
-
-	return false
-}
-
-// SetPagination gets a reference to the given Pagination and assigns it to the Pagination field.
+// SetPagination sets field value
 func (o *FlightSearchResult) SetPagination(v Pagination) {
-	o.Pagination = &v
+	o.Pagination = v
 }
 
 func (o FlightSearchResult) MarshalJSON() ([]byte, error) {
@@ -116,13 +106,46 @@ func (o FlightSearchResult) MarshalJSON() ([]byte, error) {
 
 func (o FlightSearchResult) ToMap() (map[string]interface{}, error) {
 	toSerialize := map[string]interface{}{}
-	if !IsNil(o.Items) {
-		toSerialize["items"] = o.Items
-	}
-	if !IsNil(o.Pagination) {
-		toSerialize["pagination"] = o.Pagination
-	}
+	toSerialize["items"] = o.Items
+	toSerialize["pagination"] = o.Pagination
 	return toSerialize, nil
+}
+
+func (o *FlightSearchResult) UnmarshalJSON(data []byte) (err error) {
+	// This validates that all required properties are included in the JSON object
+	// by unmarshalling the object into a generic map with string keys and checking
+	// that every required field exists as a key in the generic map.
+	requiredProperties := []string{
+		"items",
+		"pagination",
+	}
+
+	allProperties := make(map[string]interface{})
+
+	err = json.Unmarshal(data, &allProperties)
+
+	if err != nil {
+		return err;
+	}
+
+	for _, requiredProperty := range(requiredProperties) {
+		if _, exists := allProperties[requiredProperty]; !exists {
+			return fmt.Errorf("no value given for required property %v", requiredProperty)
+		}
+	}
+
+	varFlightSearchResult := _FlightSearchResult{}
+
+	decoder := json.NewDecoder(bytes.NewReader(data))
+	err = decoder.Decode(&varFlightSearchResult)
+
+	if err != nil {
+		return err
+	}
+
+	*o = FlightSearchResult(varFlightSearchResult)
+
+	return err
 }
 
 type NullableFlightSearchResult struct {

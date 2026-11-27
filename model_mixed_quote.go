@@ -14,6 +14,8 @@ package openroam
 import (
 	"encoding/json"
 	"time"
+	"bytes"
+	"fmt"
 )
 
 // checks if the MixedQuote type satisfies the MappedNullable interface at compile time
@@ -22,21 +24,26 @@ var _ MappedNullable = &MixedQuote{}
 // MixedQuote Current prices for the items of a mixed order body, in request order.
 type MixedQuote struct {
 	// The quote currency: the body `currency`, or the API key's currency when it is omitted.
-	Currency *string `json:"currency,omitempty"`
+	Currency string `json:"currency"`
 	// One quoted item per request item, in request order. Each is the quote item of its product with `productType`; its `publicId` may be a new one that the order should use.
-	Items []MixedQuoteItem `json:"items,omitempty"`
+	Items []MixedQuoteItem `json:"items"`
 	// The sum of each item's `price` times its `quantity`, in the quote currency.
-	Total *Money `json:"total,omitempty"`
-	// The earliest `details.expiresAt` of the items that have one (UTC): order before then. `null` when no item has an expiry.
+	Total Money `json:"total"`
+	// The earliest expiry of the items that have one (UTC), the `expiresAt` of a hotel or flight item: order before then. `null` when no item has an expiry.
 	ExpiresAt NullableTime `json:"expiresAt,omitempty"`
 }
+
+type _MixedQuote MixedQuote
 
 // NewMixedQuote instantiates a new MixedQuote object
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewMixedQuote() *MixedQuote {
+func NewMixedQuote(currency string, items []MixedQuoteItem, total Money) *MixedQuote {
 	this := MixedQuote{}
+	this.Currency = currency
+	this.Items = items
+	this.Total = total
 	return &this
 }
 
@@ -48,100 +55,76 @@ func NewMixedQuoteWithDefaults() *MixedQuote {
 	return &this
 }
 
-// GetCurrency returns the Currency field value if set, zero value otherwise.
+// GetCurrency returns the Currency field value
 func (o *MixedQuote) GetCurrency() string {
-	if o == nil || IsNil(o.Currency) {
+	if o == nil {
 		var ret string
 		return ret
 	}
-	return *o.Currency
+
+	return o.Currency
 }
 
-// GetCurrencyOk returns a tuple with the Currency field value if set, nil otherwise
+// GetCurrencyOk returns a tuple with the Currency field value
 // and a boolean to check if the value has been set.
 func (o *MixedQuote) GetCurrencyOk() (*string, bool) {
-	if o == nil || IsNil(o.Currency) {
+	if o == nil {
 		return nil, false
 	}
-	return o.Currency, true
+	return &o.Currency, true
 }
 
-// HasCurrency returns a boolean if a field has been set.
-func (o *MixedQuote) HasCurrency() bool {
-	if o != nil && !IsNil(o.Currency) {
-		return true
-	}
-
-	return false
-}
-
-// SetCurrency gets a reference to the given string and assigns it to the Currency field.
+// SetCurrency sets field value
 func (o *MixedQuote) SetCurrency(v string) {
-	o.Currency = &v
+	o.Currency = v
 }
 
-// GetItems returns the Items field value if set, zero value otherwise.
+// GetItems returns the Items field value
 func (o *MixedQuote) GetItems() []MixedQuoteItem {
-	if o == nil || IsNil(o.Items) {
+	if o == nil {
 		var ret []MixedQuoteItem
 		return ret
 	}
+
 	return o.Items
 }
 
-// GetItemsOk returns a tuple with the Items field value if set, nil otherwise
+// GetItemsOk returns a tuple with the Items field value
 // and a boolean to check if the value has been set.
 func (o *MixedQuote) GetItemsOk() ([]MixedQuoteItem, bool) {
-	if o == nil || IsNil(o.Items) {
+	if o == nil {
 		return nil, false
 	}
 	return o.Items, true
 }
 
-// HasItems returns a boolean if a field has been set.
-func (o *MixedQuote) HasItems() bool {
-	if o != nil && !IsNil(o.Items) {
-		return true
-	}
-
-	return false
-}
-
-// SetItems gets a reference to the given []MixedQuoteItem and assigns it to the Items field.
+// SetItems sets field value
 func (o *MixedQuote) SetItems(v []MixedQuoteItem) {
 	o.Items = v
 }
 
-// GetTotal returns the Total field value if set, zero value otherwise.
+// GetTotal returns the Total field value
 func (o *MixedQuote) GetTotal() Money {
-	if o == nil || IsNil(o.Total) {
+	if o == nil {
 		var ret Money
 		return ret
 	}
-	return *o.Total
+
+	return o.Total
 }
 
-// GetTotalOk returns a tuple with the Total field value if set, nil otherwise
+// GetTotalOk returns a tuple with the Total field value
 // and a boolean to check if the value has been set.
 func (o *MixedQuote) GetTotalOk() (*Money, bool) {
-	if o == nil || IsNil(o.Total) {
+	if o == nil {
 		return nil, false
 	}
-	return o.Total, true
+	return &o.Total, true
 }
 
-// HasTotal returns a boolean if a field has been set.
-func (o *MixedQuote) HasTotal() bool {
-	if o != nil && !IsNil(o.Total) {
-		return true
-	}
-
-	return false
-}
-
-// SetTotal gets a reference to the given Money and assigns it to the Total field.
+// SetTotal sets field value
 func (o *MixedQuote) SetTotal(v Money) {
-	o.Total = &v
+	o.Total = v
 }
 
 // GetExpiresAt returns the ExpiresAt field value if set, zero value otherwise (both if not set or set to explicit null).
@@ -196,19 +179,51 @@ func (o MixedQuote) MarshalJSON() ([]byte, error) {
 
 func (o MixedQuote) ToMap() (map[string]interface{}, error) {
 	toSerialize := map[string]interface{}{}
-	if !IsNil(o.Currency) {
-		toSerialize["currency"] = o.Currency
-	}
-	if !IsNil(o.Items) {
-		toSerialize["items"] = o.Items
-	}
-	if !IsNil(o.Total) {
-		toSerialize["total"] = o.Total
-	}
+	toSerialize["currency"] = o.Currency
+	toSerialize["items"] = o.Items
+	toSerialize["total"] = o.Total
 	if o.ExpiresAt.IsSet() {
 		toSerialize["expiresAt"] = o.ExpiresAt.Get()
 	}
 	return toSerialize, nil
+}
+
+func (o *MixedQuote) UnmarshalJSON(data []byte) (err error) {
+	// This validates that all required properties are included in the JSON object
+	// by unmarshalling the object into a generic map with string keys and checking
+	// that every required field exists as a key in the generic map.
+	requiredProperties := []string{
+		"currency",
+		"items",
+		"total",
+	}
+
+	allProperties := make(map[string]interface{})
+
+	err = json.Unmarshal(data, &allProperties)
+
+	if err != nil {
+		return err;
+	}
+
+	for _, requiredProperty := range(requiredProperties) {
+		if _, exists := allProperties[requiredProperty]; !exists {
+			return fmt.Errorf("no value given for required property %v", requiredProperty)
+		}
+	}
+
+	varMixedQuote := _MixedQuote{}
+
+	decoder := json.NewDecoder(bytes.NewReader(data))
+	err = decoder.Decode(&varMixedQuote)
+
+	if err != nil {
+		return err
+	}
+
+	*o = MixedQuote(varMixedQuote)
+
+	return err
 }
 
 type NullableMixedQuote struct {

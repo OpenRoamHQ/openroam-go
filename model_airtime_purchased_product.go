@@ -13,6 +13,8 @@ package openroam
 
 import (
 	"encoding/json"
+	"bytes"
+	"fmt"
 )
 
 // checks if the AirtimePurchasedProduct type satisfies the MappedNullable interface at compile time
@@ -20,22 +22,28 @@ var _ MappedNullable = &AirtimePurchasedProduct{}
 
 // AirtimePurchasedProduct The purchased top-up as captured at purchase. `name` keeps the name given at purchase; only `logoUrl` comes from the current catalogue. `inputs` masks the phone number. `value` is null only for older orders that did not record the ordered top-up apart from the recipient estimate.
 type AirtimePurchasedProduct struct {
-	Name *string `json:"name,omitempty"`
-	CountryCode *string `json:"countryCode,omitempty"`
+	Name string `json:"name"`
+	CountryCode string `json:"countryCode"`
 	LogoUrl NullableString `json:"logoUrl,omitempty"`
 	Value NullableMoney `json:"value,omitempty"`
 	// The item's `inputs` under the request's keys. `phoneNumber` is masked; `minDeliveredValue` is returned as accepted, in the value's currency, and is null when the item took no minimum. Operator settings are not echoed.
-	Inputs *AirtimePurchasedInputs `json:"inputs,omitempty"`
+	Inputs AirtimePurchasedInputs `json:"inputs"`
 	// Airtime facts outside the purchased-product keys every partner service shares, as captured at purchase. `redemptionType` is null when the selected route did not declare how the top-up is delivered. `estimatedDeliveredValue` is what the selected route expected the recipient to receive, null when it was not known. `readMore` is stored Markdown.
-	Details *AirtimePurchasedDetails `json:"details,omitempty"`
+	Details AirtimePurchasedDetails `json:"details"`
 }
+
+type _AirtimePurchasedProduct AirtimePurchasedProduct
 
 // NewAirtimePurchasedProduct instantiates a new AirtimePurchasedProduct object
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewAirtimePurchasedProduct() *AirtimePurchasedProduct {
+func NewAirtimePurchasedProduct(name string, countryCode string, inputs AirtimePurchasedInputs, details AirtimePurchasedDetails) *AirtimePurchasedProduct {
 	this := AirtimePurchasedProduct{}
+	this.Name = name
+	this.CountryCode = countryCode
+	this.Inputs = inputs
+	this.Details = details
 	return &this
 }
 
@@ -47,68 +55,52 @@ func NewAirtimePurchasedProductWithDefaults() *AirtimePurchasedProduct {
 	return &this
 }
 
-// GetName returns the Name field value if set, zero value otherwise.
+// GetName returns the Name field value
 func (o *AirtimePurchasedProduct) GetName() string {
-	if o == nil || IsNil(o.Name) {
+	if o == nil {
 		var ret string
 		return ret
 	}
-	return *o.Name
+
+	return o.Name
 }
 
-// GetNameOk returns a tuple with the Name field value if set, nil otherwise
+// GetNameOk returns a tuple with the Name field value
 // and a boolean to check if the value has been set.
 func (o *AirtimePurchasedProduct) GetNameOk() (*string, bool) {
-	if o == nil || IsNil(o.Name) {
+	if o == nil {
 		return nil, false
 	}
-	return o.Name, true
+	return &o.Name, true
 }
 
-// HasName returns a boolean if a field has been set.
-func (o *AirtimePurchasedProduct) HasName() bool {
-	if o != nil && !IsNil(o.Name) {
-		return true
-	}
-
-	return false
-}
-
-// SetName gets a reference to the given string and assigns it to the Name field.
+// SetName sets field value
 func (o *AirtimePurchasedProduct) SetName(v string) {
-	o.Name = &v
+	o.Name = v
 }
 
-// GetCountryCode returns the CountryCode field value if set, zero value otherwise.
+// GetCountryCode returns the CountryCode field value
 func (o *AirtimePurchasedProduct) GetCountryCode() string {
-	if o == nil || IsNil(o.CountryCode) {
+	if o == nil {
 		var ret string
 		return ret
 	}
-	return *o.CountryCode
+
+	return o.CountryCode
 }
 
-// GetCountryCodeOk returns a tuple with the CountryCode field value if set, nil otherwise
+// GetCountryCodeOk returns a tuple with the CountryCode field value
 // and a boolean to check if the value has been set.
 func (o *AirtimePurchasedProduct) GetCountryCodeOk() (*string, bool) {
-	if o == nil || IsNil(o.CountryCode) {
+	if o == nil {
 		return nil, false
 	}
-	return o.CountryCode, true
+	return &o.CountryCode, true
 }
 
-// HasCountryCode returns a boolean if a field has been set.
-func (o *AirtimePurchasedProduct) HasCountryCode() bool {
-	if o != nil && !IsNil(o.CountryCode) {
-		return true
-	}
-
-	return false
-}
-
-// SetCountryCode gets a reference to the given string and assigns it to the CountryCode field.
+// SetCountryCode sets field value
 func (o *AirtimePurchasedProduct) SetCountryCode(v string) {
-	o.CountryCode = &v
+	o.CountryCode = v
 }
 
 // GetLogoUrl returns the LogoUrl field value if set, zero value otherwise (both if not set or set to explicit null).
@@ -195,68 +187,52 @@ func (o *AirtimePurchasedProduct) UnsetValue() {
 	o.Value.Unset()
 }
 
-// GetInputs returns the Inputs field value if set, zero value otherwise.
+// GetInputs returns the Inputs field value
 func (o *AirtimePurchasedProduct) GetInputs() AirtimePurchasedInputs {
-	if o == nil || IsNil(o.Inputs) {
+	if o == nil {
 		var ret AirtimePurchasedInputs
 		return ret
 	}
-	return *o.Inputs
+
+	return o.Inputs
 }
 
-// GetInputsOk returns a tuple with the Inputs field value if set, nil otherwise
+// GetInputsOk returns a tuple with the Inputs field value
 // and a boolean to check if the value has been set.
 func (o *AirtimePurchasedProduct) GetInputsOk() (*AirtimePurchasedInputs, bool) {
-	if o == nil || IsNil(o.Inputs) {
+	if o == nil {
 		return nil, false
 	}
-	return o.Inputs, true
+	return &o.Inputs, true
 }
 
-// HasInputs returns a boolean if a field has been set.
-func (o *AirtimePurchasedProduct) HasInputs() bool {
-	if o != nil && !IsNil(o.Inputs) {
-		return true
-	}
-
-	return false
-}
-
-// SetInputs gets a reference to the given AirtimePurchasedInputs and assigns it to the Inputs field.
+// SetInputs sets field value
 func (o *AirtimePurchasedProduct) SetInputs(v AirtimePurchasedInputs) {
-	o.Inputs = &v
+	o.Inputs = v
 }
 
-// GetDetails returns the Details field value if set, zero value otherwise.
+// GetDetails returns the Details field value
 func (o *AirtimePurchasedProduct) GetDetails() AirtimePurchasedDetails {
-	if o == nil || IsNil(o.Details) {
+	if o == nil {
 		var ret AirtimePurchasedDetails
 		return ret
 	}
-	return *o.Details
+
+	return o.Details
 }
 
-// GetDetailsOk returns a tuple with the Details field value if set, nil otherwise
+// GetDetailsOk returns a tuple with the Details field value
 // and a boolean to check if the value has been set.
 func (o *AirtimePurchasedProduct) GetDetailsOk() (*AirtimePurchasedDetails, bool) {
-	if o == nil || IsNil(o.Details) {
+	if o == nil {
 		return nil, false
 	}
-	return o.Details, true
+	return &o.Details, true
 }
 
-// HasDetails returns a boolean if a field has been set.
-func (o *AirtimePurchasedProduct) HasDetails() bool {
-	if o != nil && !IsNil(o.Details) {
-		return true
-	}
-
-	return false
-}
-
-// SetDetails gets a reference to the given AirtimePurchasedDetails and assigns it to the Details field.
+// SetDetails sets field value
 func (o *AirtimePurchasedProduct) SetDetails(v AirtimePurchasedDetails) {
-	o.Details = &v
+	o.Details = v
 }
 
 func (o AirtimePurchasedProduct) MarshalJSON() ([]byte, error) {
@@ -269,25 +245,56 @@ func (o AirtimePurchasedProduct) MarshalJSON() ([]byte, error) {
 
 func (o AirtimePurchasedProduct) ToMap() (map[string]interface{}, error) {
 	toSerialize := map[string]interface{}{}
-	if !IsNil(o.Name) {
-		toSerialize["name"] = o.Name
-	}
-	if !IsNil(o.CountryCode) {
-		toSerialize["countryCode"] = o.CountryCode
-	}
+	toSerialize["name"] = o.Name
+	toSerialize["countryCode"] = o.CountryCode
 	if o.LogoUrl.IsSet() {
 		toSerialize["logoUrl"] = o.LogoUrl.Get()
 	}
 	if o.Value.IsSet() {
 		toSerialize["value"] = o.Value.Get()
 	}
-	if !IsNil(o.Inputs) {
-		toSerialize["inputs"] = o.Inputs
-	}
-	if !IsNil(o.Details) {
-		toSerialize["details"] = o.Details
-	}
+	toSerialize["inputs"] = o.Inputs
+	toSerialize["details"] = o.Details
 	return toSerialize, nil
+}
+
+func (o *AirtimePurchasedProduct) UnmarshalJSON(data []byte) (err error) {
+	// This validates that all required properties are included in the JSON object
+	// by unmarshalling the object into a generic map with string keys and checking
+	// that every required field exists as a key in the generic map.
+	requiredProperties := []string{
+		"name",
+		"countryCode",
+		"inputs",
+		"details",
+	}
+
+	allProperties := make(map[string]interface{})
+
+	err = json.Unmarshal(data, &allProperties)
+
+	if err != nil {
+		return err;
+	}
+
+	for _, requiredProperty := range(requiredProperties) {
+		if _, exists := allProperties[requiredProperty]; !exists {
+			return fmt.Errorf("no value given for required property %v", requiredProperty)
+		}
+	}
+
+	varAirtimePurchasedProduct := _AirtimePurchasedProduct{}
+
+	decoder := json.NewDecoder(bytes.NewReader(data))
+	err = decoder.Decode(&varAirtimePurchasedProduct)
+
+	if err != nil {
+		return err
+	}
+
+	*o = AirtimePurchasedProduct(varAirtimePurchasedProduct)
+
+	return err
 }
 
 type NullableAirtimePurchasedProduct struct {

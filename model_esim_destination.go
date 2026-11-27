@@ -13,6 +13,8 @@ package openroam
 
 import (
 	"encoding/json"
+	"bytes"
+	"fmt"
 )
 
 // checks if the EsimDestination type satisfies the MappedNullable interface at compile time
@@ -20,24 +22,35 @@ var _ MappedNullable = &EsimDestination{}
 
 // EsimDestination One destination as search, the one-destination route and the catalog return it. `id` is the destination's opaque ID; an order names one of its `offers` by public ID. Prices are indicative; quote recalculates them.
 type EsimDestination struct {
-	Id *string `json:"id,omitempty"`
-	Name *string `json:"name,omitempty"`
+	Id string `json:"id"`
+	Name string `json:"name"`
 	// ISO 3166-1 alpha-2 code of a local destination; null for regional and global ones.
 	CountryCode NullableString `json:"countryCode,omitempty"`
-	Category *string `json:"category,omitempty"`
+	Category string `json:"category"`
 	LogoUrl NullableString `json:"logoUrl,omitempty"`
 	Description NullableString `json:"description,omitempty"`
-	Offers []EsimOffer `json:"offers,omitempty"`
-	// Destination facts outside the item keys every partner service shares.
-	Details *EsimDestinationDetails `json:"details,omitempty"`
+	Offers []EsimOffer `json:"offers"`
+	// The destination's stored eSIM code, such as `JP`, `EU`, `NAM` or `GLOBAL`; null when none is stored. It names the destination, not a country: `countryCode` is the ISO code of a local destination only. An order item's `purchasedProduct.details.destination.code` carries the same code.
+	DestinationCode NullableString `json:"destinationCode,omitempty"`
+	// The destination's region, or null.
+	Region NullableString `json:"region,omitempty"`
+	// The countries the destination's plans work in, with their networks and carriers.
+	Coverage []EsimCoverageCountry `json:"coverage"`
 }
+
+type _EsimDestination EsimDestination
 
 // NewEsimDestination instantiates a new EsimDestination object
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewEsimDestination() *EsimDestination {
+func NewEsimDestination(id string, name string, category string, offers []EsimOffer, coverage []EsimCoverageCountry) *EsimDestination {
 	this := EsimDestination{}
+	this.Id = id
+	this.Name = name
+	this.Category = category
+	this.Offers = offers
+	this.Coverage = coverage
 	return &this
 }
 
@@ -49,68 +62,52 @@ func NewEsimDestinationWithDefaults() *EsimDestination {
 	return &this
 }
 
-// GetId returns the Id field value if set, zero value otherwise.
+// GetId returns the Id field value
 func (o *EsimDestination) GetId() string {
-	if o == nil || IsNil(o.Id) {
+	if o == nil {
 		var ret string
 		return ret
 	}
-	return *o.Id
+
+	return o.Id
 }
 
-// GetIdOk returns a tuple with the Id field value if set, nil otherwise
+// GetIdOk returns a tuple with the Id field value
 // and a boolean to check if the value has been set.
 func (o *EsimDestination) GetIdOk() (*string, bool) {
-	if o == nil || IsNil(o.Id) {
+	if o == nil {
 		return nil, false
 	}
-	return o.Id, true
+	return &o.Id, true
 }
 
-// HasId returns a boolean if a field has been set.
-func (o *EsimDestination) HasId() bool {
-	if o != nil && !IsNil(o.Id) {
-		return true
-	}
-
-	return false
-}
-
-// SetId gets a reference to the given string and assigns it to the Id field.
+// SetId sets field value
 func (o *EsimDestination) SetId(v string) {
-	o.Id = &v
+	o.Id = v
 }
 
-// GetName returns the Name field value if set, zero value otherwise.
+// GetName returns the Name field value
 func (o *EsimDestination) GetName() string {
-	if o == nil || IsNil(o.Name) {
+	if o == nil {
 		var ret string
 		return ret
 	}
-	return *o.Name
+
+	return o.Name
 }
 
-// GetNameOk returns a tuple with the Name field value if set, nil otherwise
+// GetNameOk returns a tuple with the Name field value
 // and a boolean to check if the value has been set.
 func (o *EsimDestination) GetNameOk() (*string, bool) {
-	if o == nil || IsNil(o.Name) {
+	if o == nil {
 		return nil, false
 	}
-	return o.Name, true
+	return &o.Name, true
 }
 
-// HasName returns a boolean if a field has been set.
-func (o *EsimDestination) HasName() bool {
-	if o != nil && !IsNil(o.Name) {
-		return true
-	}
-
-	return false
-}
-
-// SetName gets a reference to the given string and assigns it to the Name field.
+// SetName sets field value
 func (o *EsimDestination) SetName(v string) {
-	o.Name = &v
+	o.Name = v
 }
 
 // GetCountryCode returns the CountryCode field value if set, zero value otherwise (both if not set or set to explicit null).
@@ -155,36 +152,28 @@ func (o *EsimDestination) UnsetCountryCode() {
 	o.CountryCode.Unset()
 }
 
-// GetCategory returns the Category field value if set, zero value otherwise.
+// GetCategory returns the Category field value
 func (o *EsimDestination) GetCategory() string {
-	if o == nil || IsNil(o.Category) {
+	if o == nil {
 		var ret string
 		return ret
 	}
-	return *o.Category
+
+	return o.Category
 }
 
-// GetCategoryOk returns a tuple with the Category field value if set, nil otherwise
+// GetCategoryOk returns a tuple with the Category field value
 // and a boolean to check if the value has been set.
 func (o *EsimDestination) GetCategoryOk() (*string, bool) {
-	if o == nil || IsNil(o.Category) {
+	if o == nil {
 		return nil, false
 	}
-	return o.Category, true
+	return &o.Category, true
 }
 
-// HasCategory returns a boolean if a field has been set.
-func (o *EsimDestination) HasCategory() bool {
-	if o != nil && !IsNil(o.Category) {
-		return true
-	}
-
-	return false
-}
-
-// SetCategory gets a reference to the given string and assigns it to the Category field.
+// SetCategory sets field value
 func (o *EsimDestination) SetCategory(v string) {
-	o.Category = &v
+	o.Category = v
 }
 
 // GetLogoUrl returns the LogoUrl field value if set, zero value otherwise (both if not set or set to explicit null).
@@ -271,68 +260,136 @@ func (o *EsimDestination) UnsetDescription() {
 	o.Description.Unset()
 }
 
-// GetOffers returns the Offers field value if set, zero value otherwise.
+// GetOffers returns the Offers field value
 func (o *EsimDestination) GetOffers() []EsimOffer {
-	if o == nil || IsNil(o.Offers) {
+	if o == nil {
 		var ret []EsimOffer
 		return ret
 	}
+
 	return o.Offers
 }
 
-// GetOffersOk returns a tuple with the Offers field value if set, nil otherwise
+// GetOffersOk returns a tuple with the Offers field value
 // and a boolean to check if the value has been set.
 func (o *EsimDestination) GetOffersOk() ([]EsimOffer, bool) {
-	if o == nil || IsNil(o.Offers) {
+	if o == nil {
 		return nil, false
 	}
 	return o.Offers, true
 }
 
-// HasOffers returns a boolean if a field has been set.
-func (o *EsimDestination) HasOffers() bool {
-	if o != nil && !IsNil(o.Offers) {
-		return true
-	}
-
-	return false
-}
-
-// SetOffers gets a reference to the given []EsimOffer and assigns it to the Offers field.
+// SetOffers sets field value
 func (o *EsimDestination) SetOffers(v []EsimOffer) {
 	o.Offers = v
 }
 
-// GetDetails returns the Details field value if set, zero value otherwise.
-func (o *EsimDestination) GetDetails() EsimDestinationDetails {
-	if o == nil || IsNil(o.Details) {
-		var ret EsimDestinationDetails
+// GetDestinationCode returns the DestinationCode field value if set, zero value otherwise (both if not set or set to explicit null).
+func (o *EsimDestination) GetDestinationCode() string {
+	if o == nil || IsNil(o.DestinationCode.Get()) {
+		var ret string
 		return ret
 	}
-	return *o.Details
+	return *o.DestinationCode.Get()
 }
 
-// GetDetailsOk returns a tuple with the Details field value if set, nil otherwise
+// GetDestinationCodeOk returns a tuple with the DestinationCode field value if set, nil otherwise
 // and a boolean to check if the value has been set.
-func (o *EsimDestination) GetDetailsOk() (*EsimDestinationDetails, bool) {
-	if o == nil || IsNil(o.Details) {
+// NOTE: If the value is an explicit nil, `nil, true` will be returned
+func (o *EsimDestination) GetDestinationCodeOk() (*string, bool) {
+	if o == nil {
 		return nil, false
 	}
-	return o.Details, true
+	return o.DestinationCode.Get(), o.DestinationCode.IsSet()
 }
 
-// HasDetails returns a boolean if a field has been set.
-func (o *EsimDestination) HasDetails() bool {
-	if o != nil && !IsNil(o.Details) {
+// HasDestinationCode returns a boolean if a field has been set.
+func (o *EsimDestination) HasDestinationCode() bool {
+	if o != nil && o.DestinationCode.IsSet() {
 		return true
 	}
 
 	return false
 }
 
-// SetDetails gets a reference to the given EsimDestinationDetails and assigns it to the Details field.
-func (o *EsimDestination) SetDetails(v EsimDestinationDetails) {
-	o.Details = &v
+// SetDestinationCode gets a reference to the given NullableString and assigns it to the DestinationCode field.
+func (o *EsimDestination) SetDestinationCode(v string) {
+	o.DestinationCode.Set(&v)
+}
+// SetDestinationCodeNil sets the value for DestinationCode to be an explicit nil
+func (o *EsimDestination) SetDestinationCodeNil() {
+	o.DestinationCode.Set(nil)
+}
+
+// UnsetDestinationCode ensures that no value is present for DestinationCode, not even an explicit nil
+func (o *EsimDestination) UnsetDestinationCode() {
+	o.DestinationCode.Unset()
+}
+
+// GetRegion returns the Region field value if set, zero value otherwise (both if not set or set to explicit null).
+func (o *EsimDestination) GetRegion() string {
+	if o == nil || IsNil(o.Region.Get()) {
+		var ret string
+		return ret
+	}
+	return *o.Region.Get()
+}
+
+// GetRegionOk returns a tuple with the Region field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+// NOTE: If the value is an explicit nil, `nil, true` will be returned
+func (o *EsimDestination) GetRegionOk() (*string, bool) {
+	if o == nil {
+		return nil, false
+	}
+	return o.Region.Get(), o.Region.IsSet()
+}
+
+// HasRegion returns a boolean if a field has been set.
+func (o *EsimDestination) HasRegion() bool {
+	if o != nil && o.Region.IsSet() {
+		return true
+	}
+
+	return false
+}
+
+// SetRegion gets a reference to the given NullableString and assigns it to the Region field.
+func (o *EsimDestination) SetRegion(v string) {
+	o.Region.Set(&v)
+}
+// SetRegionNil sets the value for Region to be an explicit nil
+func (o *EsimDestination) SetRegionNil() {
+	o.Region.Set(nil)
+}
+
+// UnsetRegion ensures that no value is present for Region, not even an explicit nil
+func (o *EsimDestination) UnsetRegion() {
+	o.Region.Unset()
+}
+
+// GetCoverage returns the Coverage field value
+func (o *EsimDestination) GetCoverage() []EsimCoverageCountry {
+	if o == nil {
+		var ret []EsimCoverageCountry
+		return ret
+	}
+
+	return o.Coverage
+}
+
+// GetCoverageOk returns a tuple with the Coverage field value
+// and a boolean to check if the value has been set.
+func (o *EsimDestination) GetCoverageOk() ([]EsimCoverageCountry, bool) {
+	if o == nil {
+		return nil, false
+	}
+	return o.Coverage, true
+}
+
+// SetCoverage sets field value
+func (o *EsimDestination) SetCoverage(v []EsimCoverageCountry) {
+	o.Coverage = v
 }
 
 func (o EsimDestination) MarshalJSON() ([]byte, error) {
@@ -345,31 +402,67 @@ func (o EsimDestination) MarshalJSON() ([]byte, error) {
 
 func (o EsimDestination) ToMap() (map[string]interface{}, error) {
 	toSerialize := map[string]interface{}{}
-	if !IsNil(o.Id) {
-		toSerialize["id"] = o.Id
-	}
-	if !IsNil(o.Name) {
-		toSerialize["name"] = o.Name
-	}
+	toSerialize["id"] = o.Id
+	toSerialize["name"] = o.Name
 	if o.CountryCode.IsSet() {
 		toSerialize["countryCode"] = o.CountryCode.Get()
 	}
-	if !IsNil(o.Category) {
-		toSerialize["category"] = o.Category
-	}
+	toSerialize["category"] = o.Category
 	if o.LogoUrl.IsSet() {
 		toSerialize["logoUrl"] = o.LogoUrl.Get()
 	}
 	if o.Description.IsSet() {
 		toSerialize["description"] = o.Description.Get()
 	}
-	if !IsNil(o.Offers) {
-		toSerialize["offers"] = o.Offers
+	toSerialize["offers"] = o.Offers
+	if o.DestinationCode.IsSet() {
+		toSerialize["destinationCode"] = o.DestinationCode.Get()
 	}
-	if !IsNil(o.Details) {
-		toSerialize["details"] = o.Details
+	if o.Region.IsSet() {
+		toSerialize["region"] = o.Region.Get()
 	}
+	toSerialize["coverage"] = o.Coverage
 	return toSerialize, nil
+}
+
+func (o *EsimDestination) UnmarshalJSON(data []byte) (err error) {
+	// This validates that all required properties are included in the JSON object
+	// by unmarshalling the object into a generic map with string keys and checking
+	// that every required field exists as a key in the generic map.
+	requiredProperties := []string{
+		"id",
+		"name",
+		"category",
+		"offers",
+		"coverage",
+	}
+
+	allProperties := make(map[string]interface{})
+
+	err = json.Unmarshal(data, &allProperties)
+
+	if err != nil {
+		return err;
+	}
+
+	for _, requiredProperty := range(requiredProperties) {
+		if _, exists := allProperties[requiredProperty]; !exists {
+			return fmt.Errorf("no value given for required property %v", requiredProperty)
+		}
+	}
+
+	varEsimDestination := _EsimDestination{}
+
+	decoder := json.NewDecoder(bytes.NewReader(data))
+	err = decoder.Decode(&varEsimDestination)
+
+	if err != nil {
+		return err
+	}
+
+	*o = EsimDestination(varEsimDestination)
+
+	return err
 }
 
 type NullableEsimDestination struct {

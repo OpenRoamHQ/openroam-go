@@ -22,7 +22,7 @@ var _ MappedNullable = &HotelOrderRequest{}
 
 // HotelOrderRequest The body of a B2B hotel quote and order: the currency, an optional reference and the rates to price or book.
 type HotelOrderRequest struct {
-	// Quote and order currency, three letters in either case; the API key's currency when omitted. An order must be in the currency the offers were priced in; a quote prices them in it. An unsupported code gives 404 / 10004 before any item is checked.
+	// Quote and order currency, three letters in either case; the API key's currency when omitted. An order must be in the currency the offers were priced in; a quote prices them in it. An unsupported code gives 400 / 10001 at `currency`, reason `NOT_SUPPORTED`, before any item is checked.
 	Currency NullableString `json:"currency,omitempty"`
 	// Your own order reference, up to 128 characters without leading or trailing spaces, unique per partner. Reusing it for a different order returns 409. A quote checks it and ignores it.
 	ReferenceId NullableString `json:"referenceId,omitempty"`
@@ -203,7 +203,6 @@ func (o *HotelOrderRequest) UnmarshalJSON(data []byte) (err error) {
 	varHotelOrderRequest := _HotelOrderRequest{}
 
 	decoder := json.NewDecoder(bytes.NewReader(data))
-	decoder.DisallowUnknownFields()
 	err = decoder.Decode(&varHotelOrderRequest)
 
 	if err != nil {

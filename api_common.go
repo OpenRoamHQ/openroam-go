@@ -66,7 +66,7 @@ func (a *CommonAPIService) CommonGetCountriesExecute(r ApiCommonGetCountriesRequ
 		return localVarReturnValue, nil, &GenericOpenAPIError{error: err.Error()}
 	}
 
-	localVarPath := localBasePath + "/api/v1/b2b/common/countries"
+	localVarPath := localBasePath + "/v1/common/countries"
 
 	localVarHeaderParams := make(map[string]string)
 	localVarQueryParams := url.Values{}
@@ -219,7 +219,7 @@ func (a *CommonAPIService) CommonGetMobileNetworksExecute(r ApiCommonGetMobileNe
 		return localVarReturnValue, nil, &GenericOpenAPIError{error: err.Error()}
 	}
 
-	localVarPath := localBasePath + "/api/v1/b2b/common/mccmnc"
+	localVarPath := localBasePath + "/v1/common/mccmnc"
 
 	localVarHeaderParams := make(map[string]string)
 	localVarQueryParams := url.Values{}

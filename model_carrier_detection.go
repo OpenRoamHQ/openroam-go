@@ -13,6 +13,8 @@ package openroam
 
 import (
 	"encoding/json"
+	"bytes"
+	"fmt"
 )
 
 // checks if the CarrierDetection type satisfies the MappedNullable interface at compile time
@@ -20,17 +22,21 @@ var _ MappedNullable = &CarrierDetection{}
 
 // CarrierDetection Outcome of the search's carrier lookup. `carrierName` is the carrier the lookup reported, for display only; it is present for any status when the lookup returned one and is never an operator ID. `countryCode` is the number's country as ISO 3166-1 alpha-2, derived from the number itself and never from the lookup; it is present for every status, so a partner can list that country's operators for the manual flow.
 type CarrierDetection struct {
-	Status *string `json:"status,omitempty"`
+	Status string `json:"status"`
 	CarrierName NullableString `json:"carrierName,omitempty"`
-	CountryCode *string `json:"countryCode,omitempty"`
+	CountryCode string `json:"countryCode"`
 }
+
+type _CarrierDetection CarrierDetection
 
 // NewCarrierDetection instantiates a new CarrierDetection object
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewCarrierDetection() *CarrierDetection {
+func NewCarrierDetection(status string, countryCode string) *CarrierDetection {
 	this := CarrierDetection{}
+	this.Status = status
+	this.CountryCode = countryCode
 	return &this
 }
 
@@ -42,36 +48,28 @@ func NewCarrierDetectionWithDefaults() *CarrierDetection {
 	return &this
 }
 
-// GetStatus returns the Status field value if set, zero value otherwise.
+// GetStatus returns the Status field value
 func (o *CarrierDetection) GetStatus() string {
-	if o == nil || IsNil(o.Status) {
+	if o == nil {
 		var ret string
 		return ret
 	}
-	return *o.Status
+
+	return o.Status
 }
 
-// GetStatusOk returns a tuple with the Status field value if set, nil otherwise
+// GetStatusOk returns a tuple with the Status field value
 // and a boolean to check if the value has been set.
 func (o *CarrierDetection) GetStatusOk() (*string, bool) {
-	if o == nil || IsNil(o.Status) {
+	if o == nil {
 		return nil, false
 	}
-	return o.Status, true
+	return &o.Status, true
 }
 
-// HasStatus returns a boolean if a field has been set.
-func (o *CarrierDetection) HasStatus() bool {
-	if o != nil && !IsNil(o.Status) {
-		return true
-	}
-
-	return false
-}
-
-// SetStatus gets a reference to the given string and assigns it to the Status field.
+// SetStatus sets field value
 func (o *CarrierDetection) SetStatus(v string) {
-	o.Status = &v
+	o.Status = v
 }
 
 // GetCarrierName returns the CarrierName field value if set, zero value otherwise (both if not set or set to explicit null).
@@ -116,36 +114,28 @@ func (o *CarrierDetection) UnsetCarrierName() {
 	o.CarrierName.Unset()
 }
 
-// GetCountryCode returns the CountryCode field value if set, zero value otherwise.
+// GetCountryCode returns the CountryCode field value
 func (o *CarrierDetection) GetCountryCode() string {
-	if o == nil || IsNil(o.CountryCode) {
+	if o == nil {
 		var ret string
 		return ret
 	}
-	return *o.CountryCode
+
+	return o.CountryCode
 }
 
-// GetCountryCodeOk returns a tuple with the CountryCode field value if set, nil otherwise
+// GetCountryCodeOk returns a tuple with the CountryCode field value
 // and a boolean to check if the value has been set.
 func (o *CarrierDetection) GetCountryCodeOk() (*string, bool) {
-	if o == nil || IsNil(o.CountryCode) {
+	if o == nil {
 		return nil, false
 	}
-	return o.CountryCode, true
+	return &o.CountryCode, true
 }
 
-// HasCountryCode returns a boolean if a field has been set.
-func (o *CarrierDetection) HasCountryCode() bool {
-	if o != nil && !IsNil(o.CountryCode) {
-		return true
-	}
-
-	return false
-}
-
-// SetCountryCode gets a reference to the given string and assigns it to the CountryCode field.
+// SetCountryCode sets field value
 func (o *CarrierDetection) SetCountryCode(v string) {
-	o.CountryCode = &v
+	o.CountryCode = v
 }
 
 func (o CarrierDetection) MarshalJSON() ([]byte, error) {
@@ -158,16 +148,49 @@ func (o CarrierDetection) MarshalJSON() ([]byte, error) {
 
 func (o CarrierDetection) ToMap() (map[string]interface{}, error) {
 	toSerialize := map[string]interface{}{}
-	if !IsNil(o.Status) {
-		toSerialize["status"] = o.Status
-	}
+	toSerialize["status"] = o.Status
 	if o.CarrierName.IsSet() {
 		toSerialize["carrierName"] = o.CarrierName.Get()
 	}
-	if !IsNil(o.CountryCode) {
-		toSerialize["countryCode"] = o.CountryCode
-	}
+	toSerialize["countryCode"] = o.CountryCode
 	return toSerialize, nil
+}
+
+func (o *CarrierDetection) UnmarshalJSON(data []byte) (err error) {
+	// This validates that all required properties are included in the JSON object
+	// by unmarshalling the object into a generic map with string keys and checking
+	// that every required field exists as a key in the generic map.
+	requiredProperties := []string{
+		"status",
+		"countryCode",
+	}
+
+	allProperties := make(map[string]interface{})
+
+	err = json.Unmarshal(data, &allProperties)
+
+	if err != nil {
+		return err;
+	}
+
+	for _, requiredProperty := range(requiredProperties) {
+		if _, exists := allProperties[requiredProperty]; !exists {
+			return fmt.Errorf("no value given for required property %v", requiredProperty)
+		}
+	}
+
+	varCarrierDetection := _CarrierDetection{}
+
+	decoder := json.NewDecoder(bytes.NewReader(data))
+	err = decoder.Decode(&varCarrierDetection)
+
+	if err != nil {
+		return err
+	}
+
+	*o = CarrierDetection(varCarrierDetection)
+
+	return err
 }
 
 type NullableCarrierDetection struct {

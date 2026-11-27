@@ -53,12 +53,14 @@ Places a utility bill payment order and returns the accepted order.
 
 Takes the same body as quote and needs the `manage` order permission (403 / 10003 without it).
 An `Idempotency-Key` header with a new UUID is required for every purchase: a retry with the same key and body
-returns the order already accepted, 202 / 12002 with `Retry-After` while it is still being accepted, and a
+returns the order already accepted, 409 / 12002 with `Retry-After` while it is still being accepted, and a
 changed body gives 409 / 12001.
 Every price is recalculated: a current price above `inputs.maxPrice` gives 409 / 11002 at
 `items[i].inputs.maxPrice` before anything is charged, and without `inputs.maxPrice` the current price
 is charged. The item is fulfilled when the payment is confirmed and, for a `token` biller, the
-token is returned; track it with the order routes or the `order.fulfillment.updated` webhook.
+token is returned; track it with the order routes or the `order.fulfillment.updated` webhook. A wallet
+charge that fails creates no order and gives 402 / 16000, with `details[0]` naming `wallet` and
+`INSUFFICIENT_BALANCE` or `WALLET_BLOCKED`; send the same request with the same key after a top-up.
 
  @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
  @return ApiUtilityCreateOrderRequest
@@ -85,7 +87,7 @@ func (a *UtilityAPIService) UtilityCreateOrderExecute(r ApiUtilityCreateOrderReq
 		return localVarReturnValue, nil, &GenericOpenAPIError{error: err.Error()}
 	}
 
-	localVarPath := localBasePath + "/api/v1/b2b/utility/order"
+	localVarPath := localBasePath + "/v1/utility/order"
 
 	localVarHeaderParams := make(map[string]string)
 	localVarQueryParams := url.Values{}
@@ -161,6 +163,17 @@ func (a *UtilityAPIService) UtilityCreateOrderExecute(r ApiUtilityCreateOrderReq
 					newErr.model = v
 			return localVarReturnValue, localVarHTTPResponse, newErr
 		}
+		if localVarHTTPResponse.StatusCode == 402 {
+			var v ErrorResponse
+			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = err.Error()
+				return localVarReturnValue, localVarHTTPResponse, newErr
+			}
+					newErr.error = formatErrorMessage(localVarHTTPResponse.Status, &v)
+					newErr.model = v
+			return localVarReturnValue, localVarHTTPResponse, newErr
+		}
 		if localVarHTTPResponse.StatusCode == 409 {
 			var v ErrorResponse
 			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
@@ -215,7 +228,7 @@ type ApiUtilityGetBillerRequest struct {
 	currency *string
 }
 
-// Price currency, three letters in either case; the API key&#39;s currency when omitted. An unsupported code gives 404 / 10004.
+// Price currency, three letters in either case; the API key&#39;s currency when omitted. An unsupported code gives 400 / 10001 at &#x60;currency&#x60;, reason &#x60;NOT_SUPPORTED&#x60;.
 func (r ApiUtilityGetBillerRequest) Currency(currency string) ApiUtilityGetBillerRequest {
 	r.currency = &currency
 	return r
@@ -230,11 +243,11 @@ UtilityGetBiller Get a biller
 
 Returns one biller with its offers, in the item shape that search returns.
 
-An unknown or unparseable ID, an offer's `publicId`, or a biller without an orderable offer gives
-404 / 10004.
+An unknown ID, an ID that does not start with `biller_` (an offer's `publicId` among them), or a
+biller without an orderable offer gives 404 / 10004.
 
  @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- @param id The biller's opaque `id` from search or the catalog, for example `utility_3jx4…`.
+ @param id The biller's opaque `id` from search or the catalog, for example `biller_3jx4…`.
  @return ApiUtilityGetBillerRequest
 */
 func (a *UtilityAPIService) UtilityGetBiller(ctx context.Context, id string) ApiUtilityGetBillerRequest {
@@ -260,7 +273,7 @@ func (a *UtilityAPIService) UtilityGetBillerExecute(r ApiUtilityGetBillerRequest
 		return localVarReturnValue, nil, &GenericOpenAPIError{error: err.Error()}
 	}
 
-	localVarPath := localBasePath + "/api/v1/b2b/utility/billers/{id}"
+	localVarPath := localBasePath + "/v1/utility/billers/{id}"
 	localVarPath = strings.Replace(localVarPath, "{"+"id"+"}", url.PathEscape(parameterValueToString(r.id, "id")), -1)
 
 	localVarHeaderParams := make(map[string]string)
@@ -388,7 +401,7 @@ func (r ApiUtilityGetCatalogRequest) ServiceType(serviceType string) ApiUtilityG
 	return r
 }
 
-// Price currency, three letters in either case; the API key&#39;s currency when omitted. An unsupported code gives 404 / 10004.
+// Price currency, three letters in either case; the API key&#39;s currency when omitted. An unsupported code gives 400 / 10001 at &#x60;currency&#x60;, reason &#x60;NOT_SUPPORTED&#x60;.
 func (r ApiUtilityGetCatalogRequest) Currency(currency string) ApiUtilityGetCatalogRequest {
 	r.currency = &currency
 	return r
@@ -447,7 +460,7 @@ func (a *UtilityAPIService) UtilityGetCatalogExecute(r ApiUtilityGetCatalogReque
 		return localVarReturnValue, nil, &GenericOpenAPIError{error: err.Error()}
 	}
 
-	localVarPath := localBasePath + "/api/v1/b2b/utility/catalog"
+	localVarPath := localBasePath + "/v1/utility/catalog"
 
 	localVarHeaderParams := make(map[string]string)
 	localVarQueryParams := url.Values{}
@@ -584,7 +597,7 @@ Takes the same body as order, with offer public IDs; a biller's own ID is not an
 item is priced on its own, in request order; the first failing item aborts the quote and is named at
 `items[i]`, for example 409 / 11002 at `items[i].inputs.maxPrice` when the current price is above it.
 A quote reserves nothing, does not expire, submits no payment and does not check the customer's account with
-the biller.
+the biller. A browser session may not send `inputs.maxPrice` (400 / 10001, `NOT_ALLOWED`).
 
  @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
  @return ApiUtilityQuoteRequest
@@ -611,7 +624,7 @@ func (a *UtilityAPIService) UtilityQuoteExecute(r ApiUtilityQuoteRequest) (*Util
 		return localVarReturnValue, nil, &GenericOpenAPIError{error: err.Error()}
 	}
 
-	localVarPath := localBasePath + "/api/v1/b2b/utility/quote"
+	localVarPath := localBasePath + "/v1/utility/quote"
 
 	localVarHeaderParams := make(map[string]string)
 	localVarQueryParams := url.Values{}
@@ -755,7 +768,7 @@ func (r ApiUtilitySearchRequest) Q(q string) ApiUtilitySearchRequest {
 	return r
 }
 
-// Price currency, three letters in either case; the API key&#39;s currency when omitted. An unsupported code gives 404 / 10004.
+// Price currency, three letters in either case; the API key&#39;s currency when omitted. An unsupported code gives 400 / 10001 at &#x60;currency&#x60;, reason &#x60;NOT_SUPPORTED&#x60;.
 func (r ApiUtilitySearchRequest) Currency(currency string) ApiUtilitySearchRequest {
 	r.currency = &currency
 	return r
@@ -813,7 +826,7 @@ func (a *UtilityAPIService) UtilitySearchExecute(r ApiUtilitySearchRequest) (*Ut
 		return localVarReturnValue, nil, &GenericOpenAPIError{error: err.Error()}
 	}
 
-	localVarPath := localBasePath + "/api/v1/b2b/utility/search"
+	localVarPath := localBasePath + "/v1/utility/search"
 
 	localVarHeaderParams := make(map[string]string)
 	localVarQueryParams := url.Values{}

@@ -13,6 +13,8 @@ package openroam
 
 import (
 	"encoding/json"
+	"bytes"
+	"fmt"
 )
 
 // checks if the GiftCardFulfillmentDetails type satisfies the MappedNullable interface at compile time
@@ -20,17 +22,20 @@ var _ MappedNullable = &GiftCardFulfillmentDetails{}
 
 // GiftCardFulfillmentDetails The issued codes and, for a gift, the email delivery. `codes` is empty while the order item does not release them, for example after a refund. `delivery` is null for a card that is not a gift.
 type GiftCardFulfillmentDetails struct {
-	Codes []GiftCardCode `json:"codes,omitempty"`
+	Codes []GiftCardCode `json:"codes"`
 	// State of the gift email, which is sent independently of fulfillment. The recipient's address is part of the purchased product's inputs, so the result does not repeat it.
 	Delivery NullableGiftCardDelivery `json:"delivery,omitempty"`
 }
+
+type _GiftCardFulfillmentDetails GiftCardFulfillmentDetails
 
 // NewGiftCardFulfillmentDetails instantiates a new GiftCardFulfillmentDetails object
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewGiftCardFulfillmentDetails() *GiftCardFulfillmentDetails {
+func NewGiftCardFulfillmentDetails(codes []GiftCardCode) *GiftCardFulfillmentDetails {
 	this := GiftCardFulfillmentDetails{}
+	this.Codes = codes
 	return &this
 }
 
@@ -42,34 +47,26 @@ func NewGiftCardFulfillmentDetailsWithDefaults() *GiftCardFulfillmentDetails {
 	return &this
 }
 
-// GetCodes returns the Codes field value if set, zero value otherwise.
+// GetCodes returns the Codes field value
 func (o *GiftCardFulfillmentDetails) GetCodes() []GiftCardCode {
-	if o == nil || IsNil(o.Codes) {
+	if o == nil {
 		var ret []GiftCardCode
 		return ret
 	}
+
 	return o.Codes
 }
 
-// GetCodesOk returns a tuple with the Codes field value if set, nil otherwise
+// GetCodesOk returns a tuple with the Codes field value
 // and a boolean to check if the value has been set.
 func (o *GiftCardFulfillmentDetails) GetCodesOk() ([]GiftCardCode, bool) {
-	if o == nil || IsNil(o.Codes) {
+	if o == nil {
 		return nil, false
 	}
 	return o.Codes, true
 }
 
-// HasCodes returns a boolean if a field has been set.
-func (o *GiftCardFulfillmentDetails) HasCodes() bool {
-	if o != nil && !IsNil(o.Codes) {
-		return true
-	}
-
-	return false
-}
-
-// SetCodes gets a reference to the given []GiftCardCode and assigns it to the Codes field.
+// SetCodes sets field value
 func (o *GiftCardFulfillmentDetails) SetCodes(v []GiftCardCode) {
 	o.Codes = v
 }
@@ -126,13 +123,47 @@ func (o GiftCardFulfillmentDetails) MarshalJSON() ([]byte, error) {
 
 func (o GiftCardFulfillmentDetails) ToMap() (map[string]interface{}, error) {
 	toSerialize := map[string]interface{}{}
-	if !IsNil(o.Codes) {
-		toSerialize["codes"] = o.Codes
-	}
+	toSerialize["codes"] = o.Codes
 	if o.Delivery.IsSet() {
 		toSerialize["delivery"] = o.Delivery.Get()
 	}
 	return toSerialize, nil
+}
+
+func (o *GiftCardFulfillmentDetails) UnmarshalJSON(data []byte) (err error) {
+	// This validates that all required properties are included in the JSON object
+	// by unmarshalling the object into a generic map with string keys and checking
+	// that every required field exists as a key in the generic map.
+	requiredProperties := []string{
+		"codes",
+	}
+
+	allProperties := make(map[string]interface{})
+
+	err = json.Unmarshal(data, &allProperties)
+
+	if err != nil {
+		return err;
+	}
+
+	for _, requiredProperty := range(requiredProperties) {
+		if _, exists := allProperties[requiredProperty]; !exists {
+			return fmt.Errorf("no value given for required property %v", requiredProperty)
+		}
+	}
+
+	varGiftCardFulfillmentDetails := _GiftCardFulfillmentDetails{}
+
+	decoder := json.NewDecoder(bytes.NewReader(data))
+	err = decoder.Decode(&varGiftCardFulfillmentDetails)
+
+	if err != nil {
+		return err
+	}
+
+	*o = GiftCardFulfillmentDetails(varGiftCardFulfillmentDetails)
+
+	return err
 }
 
 type NullableGiftCardFulfillmentDetails struct {

@@ -24,7 +24,7 @@ var _ MappedNullable = &FlightSearchPassenger{}
 type FlightSearchPassenger struct {
 	// `adult`, `child`, `infantWithSeat` or `infantWithoutSeat`.
 	Type string `json:"type"`
-	// Age on the travel date, 0–17; required for children and infants.
+	// Age on the departure date of the trip's last flight, 0–17; required for children and infants.
 	Age NullableInt32 `json:"age,omitempty"`
 }
 
@@ -156,7 +156,6 @@ func (o *FlightSearchPassenger) UnmarshalJSON(data []byte) (err error) {
 	varFlightSearchPassenger := _FlightSearchPassenger{}
 
 	decoder := json.NewDecoder(bytes.NewReader(data))
-	decoder.DisallowUnknownFields()
 	err = decoder.Decode(&varFlightSearchPassenger)
 
 	if err != nil {

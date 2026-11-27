@@ -13,6 +13,8 @@ package openroam
 
 import (
 	"encoding/json"
+	"bytes"
+	"fmt"
 )
 
 // checks if the OrderList type satisfies the MappedNullable interface at compile time
@@ -21,17 +23,21 @@ var _ MappedNullable = &OrderList{}
 // OrderList A page of orders, newest first.
 type OrderList struct {
 	// The orders on this page.
-	Orders []OrderSummary `json:"orders,omitempty"`
+	Orders []OrderSummary `json:"orders"`
 	// Paging of the list.
-	Pagination *Pagination `json:"pagination,omitempty"`
+	Pagination Pagination `json:"pagination"`
 }
+
+type _OrderList OrderList
 
 // NewOrderList instantiates a new OrderList object
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewOrderList() *OrderList {
+func NewOrderList(orders []OrderSummary, pagination Pagination) *OrderList {
 	this := OrderList{}
+	this.Orders = orders
+	this.Pagination = pagination
 	return &this
 }
 
@@ -43,68 +49,52 @@ func NewOrderListWithDefaults() *OrderList {
 	return &this
 }
 
-// GetOrders returns the Orders field value if set, zero value otherwise.
+// GetOrders returns the Orders field value
 func (o *OrderList) GetOrders() []OrderSummary {
-	if o == nil || IsNil(o.Orders) {
+	if o == nil {
 		var ret []OrderSummary
 		return ret
 	}
+
 	return o.Orders
 }
 
-// GetOrdersOk returns a tuple with the Orders field value if set, nil otherwise
+// GetOrdersOk returns a tuple with the Orders field value
 // and a boolean to check if the value has been set.
 func (o *OrderList) GetOrdersOk() ([]OrderSummary, bool) {
-	if o == nil || IsNil(o.Orders) {
+	if o == nil {
 		return nil, false
 	}
 	return o.Orders, true
 }
 
-// HasOrders returns a boolean if a field has been set.
-func (o *OrderList) HasOrders() bool {
-	if o != nil && !IsNil(o.Orders) {
-		return true
-	}
-
-	return false
-}
-
-// SetOrders gets a reference to the given []OrderSummary and assigns it to the Orders field.
+// SetOrders sets field value
 func (o *OrderList) SetOrders(v []OrderSummary) {
 	o.Orders = v
 }
 
-// GetPagination returns the Pagination field value if set, zero value otherwise.
+// GetPagination returns the Pagination field value
 func (o *OrderList) GetPagination() Pagination {
-	if o == nil || IsNil(o.Pagination) {
+	if o == nil {
 		var ret Pagination
 		return ret
 	}
-	return *o.Pagination
+
+	return o.Pagination
 }
 
-// GetPaginationOk returns a tuple with the Pagination field value if set, nil otherwise
+// GetPaginationOk returns a tuple with the Pagination field value
 // and a boolean to check if the value has been set.
 func (o *OrderList) GetPaginationOk() (*Pagination, bool) {
-	if o == nil || IsNil(o.Pagination) {
+	if o == nil {
 		return nil, false
 	}
-	return o.Pagination, true
+	return &o.Pagination, true
 }
 
-// HasPagination returns a boolean if a field has been set.
-func (o *OrderList) HasPagination() bool {
-	if o != nil && !IsNil(o.Pagination) {
-		return true
-	}
-
-	return false
-}
-
-// SetPagination gets a reference to the given Pagination and assigns it to the Pagination field.
+// SetPagination sets field value
 func (o *OrderList) SetPagination(v Pagination) {
-	o.Pagination = &v
+	o.Pagination = v
 }
 
 func (o OrderList) MarshalJSON() ([]byte, error) {
@@ -117,13 +107,46 @@ func (o OrderList) MarshalJSON() ([]byte, error) {
 
 func (o OrderList) ToMap() (map[string]interface{}, error) {
 	toSerialize := map[string]interface{}{}
-	if !IsNil(o.Orders) {
-		toSerialize["orders"] = o.Orders
-	}
-	if !IsNil(o.Pagination) {
-		toSerialize["pagination"] = o.Pagination
-	}
+	toSerialize["orders"] = o.Orders
+	toSerialize["pagination"] = o.Pagination
 	return toSerialize, nil
+}
+
+func (o *OrderList) UnmarshalJSON(data []byte) (err error) {
+	// This validates that all required properties are included in the JSON object
+	// by unmarshalling the object into a generic map with string keys and checking
+	// that every required field exists as a key in the generic map.
+	requiredProperties := []string{
+		"orders",
+		"pagination",
+	}
+
+	allProperties := make(map[string]interface{})
+
+	err = json.Unmarshal(data, &allProperties)
+
+	if err != nil {
+		return err;
+	}
+
+	for _, requiredProperty := range(requiredProperties) {
+		if _, exists := allProperties[requiredProperty]; !exists {
+			return fmt.Errorf("no value given for required property %v", requiredProperty)
+		}
+	}
+
+	varOrderList := _OrderList{}
+
+	decoder := json.NewDecoder(bytes.NewReader(data))
+	err = decoder.Decode(&varOrderList)
+
+	if err != nil {
+		return err
+	}
+
+	*o = OrderList(varOrderList)
+
+	return err
 }
 
 type NullableOrderList struct {

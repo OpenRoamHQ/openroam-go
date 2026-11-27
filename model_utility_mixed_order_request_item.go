@@ -210,7 +210,6 @@ func (o *UtilityMixedOrderRequestItem) UnmarshalJSON(data []byte) (err error) {
 	varUtilityMixedOrderRequestItem := _UtilityMixedOrderRequestItem{}
 
 	decoder := json.NewDecoder(bytes.NewReader(data))
-	decoder.DisallowUnknownFields()
 	err = decoder.Decode(&varUtilityMixedOrderRequestItem)
 
 	if err != nil {

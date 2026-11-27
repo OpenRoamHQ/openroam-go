@@ -13,27 +13,34 @@ package openroam
 
 import (
 	"encoding/json"
+	"bytes"
+	"fmt"
 )
 
 // checks if the BookingTerms type satisfies the MappedNullable interface at compile time
 var _ MappedNullable = &BookingTerms{}
 
-// BookingTerms How a booked product is paid, what cancelling it gives back and whether it can be changed, in the same shape on the offer, the quote item and the purchased product. Every amount is in the partner's currency and in what the partner pays; OpenRoam's own fees are already included.
+// BookingTerms How a booked product is paid, what cancelling it gives back and whether it can be changed, in the same shape on the offer, the quote item and the purchased product, for a hotel stay and a flight alike. Every amount is in the partner's currency and in what the partner pays; OpenRoam's own fees are already included. The cancellation states each instant on the clock of the place the booking is bound to as well.
 type BookingTerms struct {
 	// What the partner's wallet is charged at order, and what the guest pays later.
-	Payment *PaymentTerms `json:"payment,omitempty"`
+	Payment PaymentTerms `json:"payment"`
 	// What cancelling gives back, and from when.
-	Cancellation *CancellationTerms `json:"cancellation,omitempty"`
+	Cancellation CancellationTerms `json:"cancellation"`
 	// Whether the booking can be changed, and OpenRoam's fee for a change.
-	Changes *ChangeTerms `json:"changes,omitempty"`
+	Changes ChangeTerms `json:"changes"`
 }
+
+type _BookingTerms BookingTerms
 
 // NewBookingTerms instantiates a new BookingTerms object
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewBookingTerms() *BookingTerms {
+func NewBookingTerms(payment PaymentTerms, cancellation CancellationTerms, changes ChangeTerms) *BookingTerms {
 	this := BookingTerms{}
+	this.Payment = payment
+	this.Cancellation = cancellation
+	this.Changes = changes
 	return &this
 }
 
@@ -45,100 +52,76 @@ func NewBookingTermsWithDefaults() *BookingTerms {
 	return &this
 }
 
-// GetPayment returns the Payment field value if set, zero value otherwise.
+// GetPayment returns the Payment field value
 func (o *BookingTerms) GetPayment() PaymentTerms {
-	if o == nil || IsNil(o.Payment) {
+	if o == nil {
 		var ret PaymentTerms
 		return ret
 	}
-	return *o.Payment
+
+	return o.Payment
 }
 
-// GetPaymentOk returns a tuple with the Payment field value if set, nil otherwise
+// GetPaymentOk returns a tuple with the Payment field value
 // and a boolean to check if the value has been set.
 func (o *BookingTerms) GetPaymentOk() (*PaymentTerms, bool) {
-	if o == nil || IsNil(o.Payment) {
+	if o == nil {
 		return nil, false
 	}
-	return o.Payment, true
+	return &o.Payment, true
 }
 
-// HasPayment returns a boolean if a field has been set.
-func (o *BookingTerms) HasPayment() bool {
-	if o != nil && !IsNil(o.Payment) {
-		return true
-	}
-
-	return false
-}
-
-// SetPayment gets a reference to the given PaymentTerms and assigns it to the Payment field.
+// SetPayment sets field value
 func (o *BookingTerms) SetPayment(v PaymentTerms) {
-	o.Payment = &v
+	o.Payment = v
 }
 
-// GetCancellation returns the Cancellation field value if set, zero value otherwise.
+// GetCancellation returns the Cancellation field value
 func (o *BookingTerms) GetCancellation() CancellationTerms {
-	if o == nil || IsNil(o.Cancellation) {
+	if o == nil {
 		var ret CancellationTerms
 		return ret
 	}
-	return *o.Cancellation
+
+	return o.Cancellation
 }
 
-// GetCancellationOk returns a tuple with the Cancellation field value if set, nil otherwise
+// GetCancellationOk returns a tuple with the Cancellation field value
 // and a boolean to check if the value has been set.
 func (o *BookingTerms) GetCancellationOk() (*CancellationTerms, bool) {
-	if o == nil || IsNil(o.Cancellation) {
+	if o == nil {
 		return nil, false
 	}
-	return o.Cancellation, true
+	return &o.Cancellation, true
 }
 
-// HasCancellation returns a boolean if a field has been set.
-func (o *BookingTerms) HasCancellation() bool {
-	if o != nil && !IsNil(o.Cancellation) {
-		return true
-	}
-
-	return false
-}
-
-// SetCancellation gets a reference to the given CancellationTerms and assigns it to the Cancellation field.
+// SetCancellation sets field value
 func (o *BookingTerms) SetCancellation(v CancellationTerms) {
-	o.Cancellation = &v
+	o.Cancellation = v
 }
 
-// GetChanges returns the Changes field value if set, zero value otherwise.
+// GetChanges returns the Changes field value
 func (o *BookingTerms) GetChanges() ChangeTerms {
-	if o == nil || IsNil(o.Changes) {
+	if o == nil {
 		var ret ChangeTerms
 		return ret
 	}
-	return *o.Changes
+
+	return o.Changes
 }
 
-// GetChangesOk returns a tuple with the Changes field value if set, nil otherwise
+// GetChangesOk returns a tuple with the Changes field value
 // and a boolean to check if the value has been set.
 func (o *BookingTerms) GetChangesOk() (*ChangeTerms, bool) {
-	if o == nil || IsNil(o.Changes) {
+	if o == nil {
 		return nil, false
 	}
-	return o.Changes, true
+	return &o.Changes, true
 }
 
-// HasChanges returns a boolean if a field has been set.
-func (o *BookingTerms) HasChanges() bool {
-	if o != nil && !IsNil(o.Changes) {
-		return true
-	}
-
-	return false
-}
-
-// SetChanges gets a reference to the given ChangeTerms and assigns it to the Changes field.
+// SetChanges sets field value
 func (o *BookingTerms) SetChanges(v ChangeTerms) {
-	o.Changes = &v
+	o.Changes = v
 }
 
 func (o BookingTerms) MarshalJSON() ([]byte, error) {
@@ -151,16 +134,48 @@ func (o BookingTerms) MarshalJSON() ([]byte, error) {
 
 func (o BookingTerms) ToMap() (map[string]interface{}, error) {
 	toSerialize := map[string]interface{}{}
-	if !IsNil(o.Payment) {
-		toSerialize["payment"] = o.Payment
-	}
-	if !IsNil(o.Cancellation) {
-		toSerialize["cancellation"] = o.Cancellation
-	}
-	if !IsNil(o.Changes) {
-		toSerialize["changes"] = o.Changes
-	}
+	toSerialize["payment"] = o.Payment
+	toSerialize["cancellation"] = o.Cancellation
+	toSerialize["changes"] = o.Changes
 	return toSerialize, nil
+}
+
+func (o *BookingTerms) UnmarshalJSON(data []byte) (err error) {
+	// This validates that all required properties are included in the JSON object
+	// by unmarshalling the object into a generic map with string keys and checking
+	// that every required field exists as a key in the generic map.
+	requiredProperties := []string{
+		"payment",
+		"cancellation",
+		"changes",
+	}
+
+	allProperties := make(map[string]interface{})
+
+	err = json.Unmarshal(data, &allProperties)
+
+	if err != nil {
+		return err;
+	}
+
+	for _, requiredProperty := range(requiredProperties) {
+		if _, exists := allProperties[requiredProperty]; !exists {
+			return fmt.Errorf("no value given for required property %v", requiredProperty)
+		}
+	}
+
+	varBookingTerms := _BookingTerms{}
+
+	decoder := json.NewDecoder(bytes.NewReader(data))
+	err = decoder.Decode(&varBookingTerms)
+
+	if err != nil {
+		return err
+	}
+
+	*o = BookingTerms(varBookingTerms)
+
+	return err
 }
 
 type NullableBookingTerms struct {

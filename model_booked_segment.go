@@ -14,35 +14,67 @@ package openroam
 import (
 	"encoding/json"
 	"time"
+	"bytes"
+	"fmt"
 )
 
 // checks if the BookedSegment type satisfies the MappedNullable interface at compile time
 var _ MappedNullable = &BookedSegment{}
 
-// BookedSegment struct for BookedSegment
+// BookedSegment One flight of a slice.
 type BookedSegment struct {
-	Origin *BookedAirport `json:"origin,omitempty"`
-	Destination *BookedAirport `json:"destination,omitempty"`
-	DepartureAt *time.Time `json:"departureAt,omitempty"`
-	ArrivalAt *time.Time `json:"arrivalAt,omitempty"`
-	DurationMinutes *int32 `json:"durationMinutes,omitempty"`
-	MarketingCarrier *BookedAirline `json:"marketingCarrier,omitempty"`
-	MarketingFlightNumber *string `json:"marketingFlightNumber,omitempty"`
+	// The airport the flight departs from.
+	Origin BookedAirport `json:"origin"`
+	// The airport the flight lands at.
+	Destination BookedAirport `json:"destination"`
+	// When the flight departs, a UTC instant; `origin.timezone` gives the airport's clock.
+	DepartureAt time.Time `json:"departureAt"`
+	// The clock at the departure airport (`origin.timezone`) at `departureAt`. Written yyyy-MM-ddTHH:mm:ss with no zone, for display only: compute and compare with `departureAt`. Null when the place's time zone is unknown.
+	DepartureLocalTime NullableString `json:"departureLocalTime,omitempty"`
+	// When the flight lands, a UTC instant; `destination.timezone` gives the airport's clock.
+	ArrivalAt time.Time `json:"arrivalAt"`
+	// The clock at the arrival airport (`destination.timezone`) at `arrivalAt`. Written yyyy-MM-ddTHH:mm:ss with no zone, for display only: compute and compare with `arrivalAt`. Null when the place's time zone is unknown.
+	ArrivalLocalTime NullableString `json:"arrivalLocalTime,omitempty"`
+	// Flying time of the flight.
+	DurationMinutes int32 `json:"durationMinutes"`
+	// The airline that sells the flight under its code.
+	MarketingCarrier BookedAirline `json:"marketingCarrier"`
+	// The flight number under the selling airline's code.
+	MarketingFlightNumber string `json:"marketingFlightNumber"`
+	// The airline that flies the aircraft; null when not stated.
 	OperatingCarrier NullableBookedAirline `json:"operatingCarrier,omitempty"`
+	// The flight number under the operating airline's code; null when not stated.
 	OperatingFlightNumber NullableString `json:"operatingFlightNumber,omitempty"`
+	// The aircraft; null when not stated.
 	Aircraft NullableAircraft `json:"aircraft,omitempty"`
+	// The cabin booked on the flight; null when not stated.
 	CabinClass NullableString `json:"cabinClass,omitempty"`
-	Stops []BookedStop `json:"stops,omitempty"`
-	Baggage []BookedBaggage `json:"baggage,omitempty"`
-	IsCodeshare *bool `json:"isCodeshare,omitempty"`
+	// Stops within the flight, where the aircraft lands and leaves again without a change of flight.
+	Stops []BookedStop `json:"stops"`
+	// Baggage included on the flight.
+	Baggage []BookedBaggage `json:"baggage"`
+	// Whether the selling and the operating airline differ.
+	IsCodeshare bool `json:"isCodeshare"`
 }
+
+type _BookedSegment BookedSegment
 
 // NewBookedSegment instantiates a new BookedSegment object
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewBookedSegment() *BookedSegment {
+func NewBookedSegment(origin BookedAirport, destination BookedAirport, departureAt time.Time, arrivalAt time.Time, durationMinutes int32, marketingCarrier BookedAirline, marketingFlightNumber string, stops []BookedStop, baggage []BookedBaggage, isCodeshare bool) *BookedSegment {
 	this := BookedSegment{}
+	this.Origin = origin
+	this.Destination = destination
+	this.DepartureAt = departureAt
+	this.ArrivalAt = arrivalAt
+	this.DurationMinutes = durationMinutes
+	this.MarketingCarrier = marketingCarrier
+	this.MarketingFlightNumber = marketingFlightNumber
+	this.Stops = stops
+	this.Baggage = baggage
+	this.IsCodeshare = isCodeshare
 	return &this
 }
 
@@ -54,228 +86,256 @@ func NewBookedSegmentWithDefaults() *BookedSegment {
 	return &this
 }
 
-// GetOrigin returns the Origin field value if set, zero value otherwise.
+// GetOrigin returns the Origin field value
 func (o *BookedSegment) GetOrigin() BookedAirport {
-	if o == nil || IsNil(o.Origin) {
+	if o == nil {
 		var ret BookedAirport
 		return ret
 	}
-	return *o.Origin
+
+	return o.Origin
 }
 
-// GetOriginOk returns a tuple with the Origin field value if set, nil otherwise
+// GetOriginOk returns a tuple with the Origin field value
 // and a boolean to check if the value has been set.
 func (o *BookedSegment) GetOriginOk() (*BookedAirport, bool) {
-	if o == nil || IsNil(o.Origin) {
+	if o == nil {
 		return nil, false
 	}
-	return o.Origin, true
+	return &o.Origin, true
 }
 
-// HasOrigin returns a boolean if a field has been set.
-func (o *BookedSegment) HasOrigin() bool {
-	if o != nil && !IsNil(o.Origin) {
-		return true
-	}
-
-	return false
-}
-
-// SetOrigin gets a reference to the given BookedAirport and assigns it to the Origin field.
+// SetOrigin sets field value
 func (o *BookedSegment) SetOrigin(v BookedAirport) {
-	o.Origin = &v
+	o.Origin = v
 }
 
-// GetDestination returns the Destination field value if set, zero value otherwise.
+// GetDestination returns the Destination field value
 func (o *BookedSegment) GetDestination() BookedAirport {
-	if o == nil || IsNil(o.Destination) {
+	if o == nil {
 		var ret BookedAirport
 		return ret
 	}
-	return *o.Destination
+
+	return o.Destination
 }
 
-// GetDestinationOk returns a tuple with the Destination field value if set, nil otherwise
+// GetDestinationOk returns a tuple with the Destination field value
 // and a boolean to check if the value has been set.
 func (o *BookedSegment) GetDestinationOk() (*BookedAirport, bool) {
-	if o == nil || IsNil(o.Destination) {
+	if o == nil {
 		return nil, false
 	}
-	return o.Destination, true
+	return &o.Destination, true
 }
 
-// HasDestination returns a boolean if a field has been set.
-func (o *BookedSegment) HasDestination() bool {
-	if o != nil && !IsNil(o.Destination) {
-		return true
-	}
-
-	return false
-}
-
-// SetDestination gets a reference to the given BookedAirport and assigns it to the Destination field.
+// SetDestination sets field value
 func (o *BookedSegment) SetDestination(v BookedAirport) {
-	o.Destination = &v
+	o.Destination = v
 }
 
-// GetDepartureAt returns the DepartureAt field value if set, zero value otherwise.
+// GetDepartureAt returns the DepartureAt field value
 func (o *BookedSegment) GetDepartureAt() time.Time {
-	if o == nil || IsNil(o.DepartureAt) {
+	if o == nil {
 		var ret time.Time
 		return ret
 	}
-	return *o.DepartureAt
+
+	return o.DepartureAt
 }
 
-// GetDepartureAtOk returns a tuple with the DepartureAt field value if set, nil otherwise
+// GetDepartureAtOk returns a tuple with the DepartureAt field value
 // and a boolean to check if the value has been set.
 func (o *BookedSegment) GetDepartureAtOk() (*time.Time, bool) {
-	if o == nil || IsNil(o.DepartureAt) {
+	if o == nil {
 		return nil, false
 	}
-	return o.DepartureAt, true
+	return &o.DepartureAt, true
 }
 
-// HasDepartureAt returns a boolean if a field has been set.
-func (o *BookedSegment) HasDepartureAt() bool {
-	if o != nil && !IsNil(o.DepartureAt) {
-		return true
-	}
-
-	return false
-}
-
-// SetDepartureAt gets a reference to the given time.Time and assigns it to the DepartureAt field.
+// SetDepartureAt sets field value
 func (o *BookedSegment) SetDepartureAt(v time.Time) {
-	o.DepartureAt = &v
+	o.DepartureAt = v
 }
 
-// GetArrivalAt returns the ArrivalAt field value if set, zero value otherwise.
-func (o *BookedSegment) GetArrivalAt() time.Time {
-	if o == nil || IsNil(o.ArrivalAt) {
-		var ret time.Time
-		return ret
-	}
-	return *o.ArrivalAt
-}
-
-// GetArrivalAtOk returns a tuple with the ArrivalAt field value if set, nil otherwise
-// and a boolean to check if the value has been set.
-func (o *BookedSegment) GetArrivalAtOk() (*time.Time, bool) {
-	if o == nil || IsNil(o.ArrivalAt) {
-		return nil, false
-	}
-	return o.ArrivalAt, true
-}
-
-// HasArrivalAt returns a boolean if a field has been set.
-func (o *BookedSegment) HasArrivalAt() bool {
-	if o != nil && !IsNil(o.ArrivalAt) {
-		return true
-	}
-
-	return false
-}
-
-// SetArrivalAt gets a reference to the given time.Time and assigns it to the ArrivalAt field.
-func (o *BookedSegment) SetArrivalAt(v time.Time) {
-	o.ArrivalAt = &v
-}
-
-// GetDurationMinutes returns the DurationMinutes field value if set, zero value otherwise.
-func (o *BookedSegment) GetDurationMinutes() int32 {
-	if o == nil || IsNil(o.DurationMinutes) {
-		var ret int32
-		return ret
-	}
-	return *o.DurationMinutes
-}
-
-// GetDurationMinutesOk returns a tuple with the DurationMinutes field value if set, nil otherwise
-// and a boolean to check if the value has been set.
-func (o *BookedSegment) GetDurationMinutesOk() (*int32, bool) {
-	if o == nil || IsNil(o.DurationMinutes) {
-		return nil, false
-	}
-	return o.DurationMinutes, true
-}
-
-// HasDurationMinutes returns a boolean if a field has been set.
-func (o *BookedSegment) HasDurationMinutes() bool {
-	if o != nil && !IsNil(o.DurationMinutes) {
-		return true
-	}
-
-	return false
-}
-
-// SetDurationMinutes gets a reference to the given int32 and assigns it to the DurationMinutes field.
-func (o *BookedSegment) SetDurationMinutes(v int32) {
-	o.DurationMinutes = &v
-}
-
-// GetMarketingCarrier returns the MarketingCarrier field value if set, zero value otherwise.
-func (o *BookedSegment) GetMarketingCarrier() BookedAirline {
-	if o == nil || IsNil(o.MarketingCarrier) {
-		var ret BookedAirline
-		return ret
-	}
-	return *o.MarketingCarrier
-}
-
-// GetMarketingCarrierOk returns a tuple with the MarketingCarrier field value if set, nil otherwise
-// and a boolean to check if the value has been set.
-func (o *BookedSegment) GetMarketingCarrierOk() (*BookedAirline, bool) {
-	if o == nil || IsNil(o.MarketingCarrier) {
-		return nil, false
-	}
-	return o.MarketingCarrier, true
-}
-
-// HasMarketingCarrier returns a boolean if a field has been set.
-func (o *BookedSegment) HasMarketingCarrier() bool {
-	if o != nil && !IsNil(o.MarketingCarrier) {
-		return true
-	}
-
-	return false
-}
-
-// SetMarketingCarrier gets a reference to the given BookedAirline and assigns it to the MarketingCarrier field.
-func (o *BookedSegment) SetMarketingCarrier(v BookedAirline) {
-	o.MarketingCarrier = &v
-}
-
-// GetMarketingFlightNumber returns the MarketingFlightNumber field value if set, zero value otherwise.
-func (o *BookedSegment) GetMarketingFlightNumber() string {
-	if o == nil || IsNil(o.MarketingFlightNumber) {
+// GetDepartureLocalTime returns the DepartureLocalTime field value if set, zero value otherwise (both if not set or set to explicit null).
+func (o *BookedSegment) GetDepartureLocalTime() string {
+	if o == nil || IsNil(o.DepartureLocalTime.Get()) {
 		var ret string
 		return ret
 	}
-	return *o.MarketingFlightNumber
+	return *o.DepartureLocalTime.Get()
 }
 
-// GetMarketingFlightNumberOk returns a tuple with the MarketingFlightNumber field value if set, nil otherwise
+// GetDepartureLocalTimeOk returns a tuple with the DepartureLocalTime field value if set, nil otherwise
 // and a boolean to check if the value has been set.
-func (o *BookedSegment) GetMarketingFlightNumberOk() (*string, bool) {
-	if o == nil || IsNil(o.MarketingFlightNumber) {
+// NOTE: If the value is an explicit nil, `nil, true` will be returned
+func (o *BookedSegment) GetDepartureLocalTimeOk() (*string, bool) {
+	if o == nil {
 		return nil, false
 	}
-	return o.MarketingFlightNumber, true
+	return o.DepartureLocalTime.Get(), o.DepartureLocalTime.IsSet()
 }
 
-// HasMarketingFlightNumber returns a boolean if a field has been set.
-func (o *BookedSegment) HasMarketingFlightNumber() bool {
-	if o != nil && !IsNil(o.MarketingFlightNumber) {
+// HasDepartureLocalTime returns a boolean if a field has been set.
+func (o *BookedSegment) HasDepartureLocalTime() bool {
+	if o != nil && o.DepartureLocalTime.IsSet() {
 		return true
 	}
 
 	return false
 }
 
-// SetMarketingFlightNumber gets a reference to the given string and assigns it to the MarketingFlightNumber field.
+// SetDepartureLocalTime gets a reference to the given NullableString and assigns it to the DepartureLocalTime field.
+func (o *BookedSegment) SetDepartureLocalTime(v string) {
+	o.DepartureLocalTime.Set(&v)
+}
+// SetDepartureLocalTimeNil sets the value for DepartureLocalTime to be an explicit nil
+func (o *BookedSegment) SetDepartureLocalTimeNil() {
+	o.DepartureLocalTime.Set(nil)
+}
+
+// UnsetDepartureLocalTime ensures that no value is present for DepartureLocalTime, not even an explicit nil
+func (o *BookedSegment) UnsetDepartureLocalTime() {
+	o.DepartureLocalTime.Unset()
+}
+
+// GetArrivalAt returns the ArrivalAt field value
+func (o *BookedSegment) GetArrivalAt() time.Time {
+	if o == nil {
+		var ret time.Time
+		return ret
+	}
+
+	return o.ArrivalAt
+}
+
+// GetArrivalAtOk returns a tuple with the ArrivalAt field value
+// and a boolean to check if the value has been set.
+func (o *BookedSegment) GetArrivalAtOk() (*time.Time, bool) {
+	if o == nil {
+		return nil, false
+	}
+	return &o.ArrivalAt, true
+}
+
+// SetArrivalAt sets field value
+func (o *BookedSegment) SetArrivalAt(v time.Time) {
+	o.ArrivalAt = v
+}
+
+// GetArrivalLocalTime returns the ArrivalLocalTime field value if set, zero value otherwise (both if not set or set to explicit null).
+func (o *BookedSegment) GetArrivalLocalTime() string {
+	if o == nil || IsNil(o.ArrivalLocalTime.Get()) {
+		var ret string
+		return ret
+	}
+	return *o.ArrivalLocalTime.Get()
+}
+
+// GetArrivalLocalTimeOk returns a tuple with the ArrivalLocalTime field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+// NOTE: If the value is an explicit nil, `nil, true` will be returned
+func (o *BookedSegment) GetArrivalLocalTimeOk() (*string, bool) {
+	if o == nil {
+		return nil, false
+	}
+	return o.ArrivalLocalTime.Get(), o.ArrivalLocalTime.IsSet()
+}
+
+// HasArrivalLocalTime returns a boolean if a field has been set.
+func (o *BookedSegment) HasArrivalLocalTime() bool {
+	if o != nil && o.ArrivalLocalTime.IsSet() {
+		return true
+	}
+
+	return false
+}
+
+// SetArrivalLocalTime gets a reference to the given NullableString and assigns it to the ArrivalLocalTime field.
+func (o *BookedSegment) SetArrivalLocalTime(v string) {
+	o.ArrivalLocalTime.Set(&v)
+}
+// SetArrivalLocalTimeNil sets the value for ArrivalLocalTime to be an explicit nil
+func (o *BookedSegment) SetArrivalLocalTimeNil() {
+	o.ArrivalLocalTime.Set(nil)
+}
+
+// UnsetArrivalLocalTime ensures that no value is present for ArrivalLocalTime, not even an explicit nil
+func (o *BookedSegment) UnsetArrivalLocalTime() {
+	o.ArrivalLocalTime.Unset()
+}
+
+// GetDurationMinutes returns the DurationMinutes field value
+func (o *BookedSegment) GetDurationMinutes() int32 {
+	if o == nil {
+		var ret int32
+		return ret
+	}
+
+	return o.DurationMinutes
+}
+
+// GetDurationMinutesOk returns a tuple with the DurationMinutes field value
+// and a boolean to check if the value has been set.
+func (o *BookedSegment) GetDurationMinutesOk() (*int32, bool) {
+	if o == nil {
+		return nil, false
+	}
+	return &o.DurationMinutes, true
+}
+
+// SetDurationMinutes sets field value
+func (o *BookedSegment) SetDurationMinutes(v int32) {
+	o.DurationMinutes = v
+}
+
+// GetMarketingCarrier returns the MarketingCarrier field value
+func (o *BookedSegment) GetMarketingCarrier() BookedAirline {
+	if o == nil {
+		var ret BookedAirline
+		return ret
+	}
+
+	return o.MarketingCarrier
+}
+
+// GetMarketingCarrierOk returns a tuple with the MarketingCarrier field value
+// and a boolean to check if the value has been set.
+func (o *BookedSegment) GetMarketingCarrierOk() (*BookedAirline, bool) {
+	if o == nil {
+		return nil, false
+	}
+	return &o.MarketingCarrier, true
+}
+
+// SetMarketingCarrier sets field value
+func (o *BookedSegment) SetMarketingCarrier(v BookedAirline) {
+	o.MarketingCarrier = v
+}
+
+// GetMarketingFlightNumber returns the MarketingFlightNumber field value
+func (o *BookedSegment) GetMarketingFlightNumber() string {
+	if o == nil {
+		var ret string
+		return ret
+	}
+
+	return o.MarketingFlightNumber
+}
+
+// GetMarketingFlightNumberOk returns a tuple with the MarketingFlightNumber field value
+// and a boolean to check if the value has been set.
+func (o *BookedSegment) GetMarketingFlightNumberOk() (*string, bool) {
+	if o == nil {
+		return nil, false
+	}
+	return &o.MarketingFlightNumber, true
+}
+
+// SetMarketingFlightNumber sets field value
 func (o *BookedSegment) SetMarketingFlightNumber(v string) {
-	o.MarketingFlightNumber = &v
+	o.MarketingFlightNumber = v
 }
 
 // GetOperatingCarrier returns the OperatingCarrier field value if set, zero value otherwise (both if not set or set to explicit null).
@@ -446,100 +506,76 @@ func (o *BookedSegment) UnsetCabinClass() {
 	o.CabinClass.Unset()
 }
 
-// GetStops returns the Stops field value if set, zero value otherwise.
+// GetStops returns the Stops field value
 func (o *BookedSegment) GetStops() []BookedStop {
-	if o == nil || IsNil(o.Stops) {
+	if o == nil {
 		var ret []BookedStop
 		return ret
 	}
+
 	return o.Stops
 }
 
-// GetStopsOk returns a tuple with the Stops field value if set, nil otherwise
+// GetStopsOk returns a tuple with the Stops field value
 // and a boolean to check if the value has been set.
 func (o *BookedSegment) GetStopsOk() ([]BookedStop, bool) {
-	if o == nil || IsNil(o.Stops) {
+	if o == nil {
 		return nil, false
 	}
 	return o.Stops, true
 }
 
-// HasStops returns a boolean if a field has been set.
-func (o *BookedSegment) HasStops() bool {
-	if o != nil && !IsNil(o.Stops) {
-		return true
-	}
-
-	return false
-}
-
-// SetStops gets a reference to the given []BookedStop and assigns it to the Stops field.
+// SetStops sets field value
 func (o *BookedSegment) SetStops(v []BookedStop) {
 	o.Stops = v
 }
 
-// GetBaggage returns the Baggage field value if set, zero value otherwise.
+// GetBaggage returns the Baggage field value
 func (o *BookedSegment) GetBaggage() []BookedBaggage {
-	if o == nil || IsNil(o.Baggage) {
+	if o == nil {
 		var ret []BookedBaggage
 		return ret
 	}
+
 	return o.Baggage
 }
 
-// GetBaggageOk returns a tuple with the Baggage field value if set, nil otherwise
+// GetBaggageOk returns a tuple with the Baggage field value
 // and a boolean to check if the value has been set.
 func (o *BookedSegment) GetBaggageOk() ([]BookedBaggage, bool) {
-	if o == nil || IsNil(o.Baggage) {
+	if o == nil {
 		return nil, false
 	}
 	return o.Baggage, true
 }
 
-// HasBaggage returns a boolean if a field has been set.
-func (o *BookedSegment) HasBaggage() bool {
-	if o != nil && !IsNil(o.Baggage) {
-		return true
-	}
-
-	return false
-}
-
-// SetBaggage gets a reference to the given []BookedBaggage and assigns it to the Baggage field.
+// SetBaggage sets field value
 func (o *BookedSegment) SetBaggage(v []BookedBaggage) {
 	o.Baggage = v
 }
 
-// GetIsCodeshare returns the IsCodeshare field value if set, zero value otherwise.
+// GetIsCodeshare returns the IsCodeshare field value
 func (o *BookedSegment) GetIsCodeshare() bool {
-	if o == nil || IsNil(o.IsCodeshare) {
+	if o == nil {
 		var ret bool
 		return ret
 	}
-	return *o.IsCodeshare
+
+	return o.IsCodeshare
 }
 
-// GetIsCodeshareOk returns a tuple with the IsCodeshare field value if set, nil otherwise
+// GetIsCodeshareOk returns a tuple with the IsCodeshare field value
 // and a boolean to check if the value has been set.
 func (o *BookedSegment) GetIsCodeshareOk() (*bool, bool) {
-	if o == nil || IsNil(o.IsCodeshare) {
+	if o == nil {
 		return nil, false
 	}
-	return o.IsCodeshare, true
+	return &o.IsCodeshare, true
 }
 
-// HasIsCodeshare returns a boolean if a field has been set.
-func (o *BookedSegment) HasIsCodeshare() bool {
-	if o != nil && !IsNil(o.IsCodeshare) {
-		return true
-	}
-
-	return false
-}
-
-// SetIsCodeshare gets a reference to the given bool and assigns it to the IsCodeshare field.
+// SetIsCodeshare sets field value
 func (o *BookedSegment) SetIsCodeshare(v bool) {
-	o.IsCodeshare = &v
+	o.IsCodeshare = v
 }
 
 func (o BookedSegment) MarshalJSON() ([]byte, error) {
@@ -552,27 +588,19 @@ func (o BookedSegment) MarshalJSON() ([]byte, error) {
 
 func (o BookedSegment) ToMap() (map[string]interface{}, error) {
 	toSerialize := map[string]interface{}{}
-	if !IsNil(o.Origin) {
-		toSerialize["origin"] = o.Origin
+	toSerialize["origin"] = o.Origin
+	toSerialize["destination"] = o.Destination
+	toSerialize["departureAt"] = o.DepartureAt
+	if o.DepartureLocalTime.IsSet() {
+		toSerialize["departureLocalTime"] = o.DepartureLocalTime.Get()
 	}
-	if !IsNil(o.Destination) {
-		toSerialize["destination"] = o.Destination
+	toSerialize["arrivalAt"] = o.ArrivalAt
+	if o.ArrivalLocalTime.IsSet() {
+		toSerialize["arrivalLocalTime"] = o.ArrivalLocalTime.Get()
 	}
-	if !IsNil(o.DepartureAt) {
-		toSerialize["departureAt"] = o.DepartureAt
-	}
-	if !IsNil(o.ArrivalAt) {
-		toSerialize["arrivalAt"] = o.ArrivalAt
-	}
-	if !IsNil(o.DurationMinutes) {
-		toSerialize["durationMinutes"] = o.DurationMinutes
-	}
-	if !IsNil(o.MarketingCarrier) {
-		toSerialize["marketingCarrier"] = o.MarketingCarrier
-	}
-	if !IsNil(o.MarketingFlightNumber) {
-		toSerialize["marketingFlightNumber"] = o.MarketingFlightNumber
-	}
+	toSerialize["durationMinutes"] = o.DurationMinutes
+	toSerialize["marketingCarrier"] = o.MarketingCarrier
+	toSerialize["marketingFlightNumber"] = o.MarketingFlightNumber
 	if o.OperatingCarrier.IsSet() {
 		toSerialize["operatingCarrier"] = o.OperatingCarrier.Get()
 	}
@@ -585,16 +613,55 @@ func (o BookedSegment) ToMap() (map[string]interface{}, error) {
 	if o.CabinClass.IsSet() {
 		toSerialize["cabinClass"] = o.CabinClass.Get()
 	}
-	if !IsNil(o.Stops) {
-		toSerialize["stops"] = o.Stops
-	}
-	if !IsNil(o.Baggage) {
-		toSerialize["baggage"] = o.Baggage
-	}
-	if !IsNil(o.IsCodeshare) {
-		toSerialize["isCodeshare"] = o.IsCodeshare
-	}
+	toSerialize["stops"] = o.Stops
+	toSerialize["baggage"] = o.Baggage
+	toSerialize["isCodeshare"] = o.IsCodeshare
 	return toSerialize, nil
+}
+
+func (o *BookedSegment) UnmarshalJSON(data []byte) (err error) {
+	// This validates that all required properties are included in the JSON object
+	// by unmarshalling the object into a generic map with string keys and checking
+	// that every required field exists as a key in the generic map.
+	requiredProperties := []string{
+		"origin",
+		"destination",
+		"departureAt",
+		"arrivalAt",
+		"durationMinutes",
+		"marketingCarrier",
+		"marketingFlightNumber",
+		"stops",
+		"baggage",
+		"isCodeshare",
+	}
+
+	allProperties := make(map[string]interface{})
+
+	err = json.Unmarshal(data, &allProperties)
+
+	if err != nil {
+		return err;
+	}
+
+	for _, requiredProperty := range(requiredProperties) {
+		if _, exists := allProperties[requiredProperty]; !exists {
+			return fmt.Errorf("no value given for required property %v", requiredProperty)
+		}
+	}
+
+	varBookedSegment := _BookedSegment{}
+
+	decoder := json.NewDecoder(bytes.NewReader(data))
+	err = decoder.Decode(&varBookedSegment)
+
+	if err != nil {
+		return err
+	}
+
+	*o = BookedSegment(varBookedSegment)
+
+	return err
 }
 
 type NullableBookedSegment struct {

@@ -27,6 +27,8 @@ func TestARefusedRequest(t *testing.T) {
 	cases := map[string]error{
 		"changed body": VerifyWebhook(vSecret, vTS, vID, vSig, []byte(vBody+" "), 0, vNow),
 		"wrong secret": VerifyWebhook("other", vTS, vID, vSig, []byte(vBody), 0, vNow),
+		"empty secret": VerifyWebhook("", vTS, vID, vSig, []byte(vBody), 0, vNow),
+		"blank secret": VerifyWebhook("   ", vTS, vID, vSig, []byte(vBody), 0, vNow),
 		"too old":      VerifyWebhook(vSecret, vTS, vID, vSig, []byte(vBody), 0, time.Unix(1770001000, 0)),
 		"bad time":     VerifyWebhook(vSecret, "x", vID, vSig, []byte(vBody), 0, vNow),
 	}

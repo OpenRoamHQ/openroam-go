@@ -13,6 +13,8 @@ package openroam
 
 import (
 	"encoding/json"
+	"bytes"
+	"fmt"
 )
 
 // checks if the FlightFulfillmentDetails type satisfies the MappedNullable interface at compile time
@@ -21,19 +23,24 @@ var _ MappedNullable = &FlightFulfillmentDetails{}
 // FlightFulfillmentDetails The booking as it stands now.
 type FlightFulfillmentDetails struct {
 	// The booking's status: `confirmed`, `pending`, `cancelled` or `failed`.
-	BookingStatus *string `json:"bookingStatus,omitempty"`
+	BookingStatus string `json:"bookingStatus"`
 	// The documents the airline issued, such as e-tickets.
-	TicketDocuments []TicketDocument `json:"ticketDocuments,omitempty"`
+	TicketDocuments []TicketDocument `json:"ticketDocuments"`
 	// What is booked now; the purchased product keeps what was bought.
-	Booking *FlightBooking `json:"booking,omitempty"`
+	Booking FlightBooking `json:"booking"`
 }
+
+type _FlightFulfillmentDetails FlightFulfillmentDetails
 
 // NewFlightFulfillmentDetails instantiates a new FlightFulfillmentDetails object
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewFlightFulfillmentDetails() *FlightFulfillmentDetails {
+func NewFlightFulfillmentDetails(bookingStatus string, ticketDocuments []TicketDocument, booking FlightBooking) *FlightFulfillmentDetails {
 	this := FlightFulfillmentDetails{}
+	this.BookingStatus = bookingStatus
+	this.TicketDocuments = ticketDocuments
+	this.Booking = booking
 	return &this
 }
 
@@ -45,100 +52,76 @@ func NewFlightFulfillmentDetailsWithDefaults() *FlightFulfillmentDetails {
 	return &this
 }
 
-// GetBookingStatus returns the BookingStatus field value if set, zero value otherwise.
+// GetBookingStatus returns the BookingStatus field value
 func (o *FlightFulfillmentDetails) GetBookingStatus() string {
-	if o == nil || IsNil(o.BookingStatus) {
+	if o == nil {
 		var ret string
 		return ret
 	}
-	return *o.BookingStatus
+
+	return o.BookingStatus
 }
 
-// GetBookingStatusOk returns a tuple with the BookingStatus field value if set, nil otherwise
+// GetBookingStatusOk returns a tuple with the BookingStatus field value
 // and a boolean to check if the value has been set.
 func (o *FlightFulfillmentDetails) GetBookingStatusOk() (*string, bool) {
-	if o == nil || IsNil(o.BookingStatus) {
+	if o == nil {
 		return nil, false
 	}
-	return o.BookingStatus, true
+	return &o.BookingStatus, true
 }
 
-// HasBookingStatus returns a boolean if a field has been set.
-func (o *FlightFulfillmentDetails) HasBookingStatus() bool {
-	if o != nil && !IsNil(o.BookingStatus) {
-		return true
-	}
-
-	return false
-}
-
-// SetBookingStatus gets a reference to the given string and assigns it to the BookingStatus field.
+// SetBookingStatus sets field value
 func (o *FlightFulfillmentDetails) SetBookingStatus(v string) {
-	o.BookingStatus = &v
+	o.BookingStatus = v
 }
 
-// GetTicketDocuments returns the TicketDocuments field value if set, zero value otherwise.
+// GetTicketDocuments returns the TicketDocuments field value
 func (o *FlightFulfillmentDetails) GetTicketDocuments() []TicketDocument {
-	if o == nil || IsNil(o.TicketDocuments) {
+	if o == nil {
 		var ret []TicketDocument
 		return ret
 	}
+
 	return o.TicketDocuments
 }
 
-// GetTicketDocumentsOk returns a tuple with the TicketDocuments field value if set, nil otherwise
+// GetTicketDocumentsOk returns a tuple with the TicketDocuments field value
 // and a boolean to check if the value has been set.
 func (o *FlightFulfillmentDetails) GetTicketDocumentsOk() ([]TicketDocument, bool) {
-	if o == nil || IsNil(o.TicketDocuments) {
+	if o == nil {
 		return nil, false
 	}
 	return o.TicketDocuments, true
 }
 
-// HasTicketDocuments returns a boolean if a field has been set.
-func (o *FlightFulfillmentDetails) HasTicketDocuments() bool {
-	if o != nil && !IsNil(o.TicketDocuments) {
-		return true
-	}
-
-	return false
-}
-
-// SetTicketDocuments gets a reference to the given []TicketDocument and assigns it to the TicketDocuments field.
+// SetTicketDocuments sets field value
 func (o *FlightFulfillmentDetails) SetTicketDocuments(v []TicketDocument) {
 	o.TicketDocuments = v
 }
 
-// GetBooking returns the Booking field value if set, zero value otherwise.
+// GetBooking returns the Booking field value
 func (o *FlightFulfillmentDetails) GetBooking() FlightBooking {
-	if o == nil || IsNil(o.Booking) {
+	if o == nil {
 		var ret FlightBooking
 		return ret
 	}
-	return *o.Booking
+
+	return o.Booking
 }
 
-// GetBookingOk returns a tuple with the Booking field value if set, nil otherwise
+// GetBookingOk returns a tuple with the Booking field value
 // and a boolean to check if the value has been set.
 func (o *FlightFulfillmentDetails) GetBookingOk() (*FlightBooking, bool) {
-	if o == nil || IsNil(o.Booking) {
+	if o == nil {
 		return nil, false
 	}
-	return o.Booking, true
+	return &o.Booking, true
 }
 
-// HasBooking returns a boolean if a field has been set.
-func (o *FlightFulfillmentDetails) HasBooking() bool {
-	if o != nil && !IsNil(o.Booking) {
-		return true
-	}
-
-	return false
-}
-
-// SetBooking gets a reference to the given FlightBooking and assigns it to the Booking field.
+// SetBooking sets field value
 func (o *FlightFulfillmentDetails) SetBooking(v FlightBooking) {
-	o.Booking = &v
+	o.Booking = v
 }
 
 func (o FlightFulfillmentDetails) MarshalJSON() ([]byte, error) {
@@ -151,16 +134,48 @@ func (o FlightFulfillmentDetails) MarshalJSON() ([]byte, error) {
 
 func (o FlightFulfillmentDetails) ToMap() (map[string]interface{}, error) {
 	toSerialize := map[string]interface{}{}
-	if !IsNil(o.BookingStatus) {
-		toSerialize["bookingStatus"] = o.BookingStatus
-	}
-	if !IsNil(o.TicketDocuments) {
-		toSerialize["ticketDocuments"] = o.TicketDocuments
-	}
-	if !IsNil(o.Booking) {
-		toSerialize["booking"] = o.Booking
-	}
+	toSerialize["bookingStatus"] = o.BookingStatus
+	toSerialize["ticketDocuments"] = o.TicketDocuments
+	toSerialize["booking"] = o.Booking
 	return toSerialize, nil
+}
+
+func (o *FlightFulfillmentDetails) UnmarshalJSON(data []byte) (err error) {
+	// This validates that all required properties are included in the JSON object
+	// by unmarshalling the object into a generic map with string keys and checking
+	// that every required field exists as a key in the generic map.
+	requiredProperties := []string{
+		"bookingStatus",
+		"ticketDocuments",
+		"booking",
+	}
+
+	allProperties := make(map[string]interface{})
+
+	err = json.Unmarshal(data, &allProperties)
+
+	if err != nil {
+		return err;
+	}
+
+	for _, requiredProperty := range(requiredProperties) {
+		if _, exists := allProperties[requiredProperty]; !exists {
+			return fmt.Errorf("no value given for required property %v", requiredProperty)
+		}
+	}
+
+	varFlightFulfillmentDetails := _FlightFulfillmentDetails{}
+
+	decoder := json.NewDecoder(bytes.NewReader(data))
+	err = decoder.Decode(&varFlightFulfillmentDetails)
+
+	if err != nil {
+		return err
+	}
+
+	*o = FlightFulfillmentDetails(varFlightFulfillmentDetails)
+
+	return err
 }
 
 type NullableFlightFulfillmentDetails struct {

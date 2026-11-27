@@ -13,6 +13,8 @@ package openroam
 
 import (
 	"encoding/json"
+	"bytes"
+	"fmt"
 )
 
 // checks if the GiftCardPurchasedDetails type satisfies the MappedNullable interface at compile time
@@ -20,17 +22,21 @@ var _ MappedNullable = &GiftCardPurchasedDetails{}
 
 // GiftCardPurchasedDetails Gift card facts outside the purchased-product keys every partner service shares, as captured when the card was added. `redemptionInstructions` is the detailed text, or the summary when the card has only that.
 type GiftCardPurchasedDetails struct {
-	BrandName *string `json:"brandName,omitempty"`
-	IsRedeemableGlobally *bool `json:"isRedeemableGlobally,omitempty"`
+	BrandName string `json:"brandName"`
+	IsRedeemableGlobally bool `json:"isRedeemableGlobally"`
 	RedemptionInstructions NullableString `json:"redemptionInstructions,omitempty"`
 }
+
+type _GiftCardPurchasedDetails GiftCardPurchasedDetails
 
 // NewGiftCardPurchasedDetails instantiates a new GiftCardPurchasedDetails object
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewGiftCardPurchasedDetails() *GiftCardPurchasedDetails {
+func NewGiftCardPurchasedDetails(brandName string, isRedeemableGlobally bool) *GiftCardPurchasedDetails {
 	this := GiftCardPurchasedDetails{}
+	this.BrandName = brandName
+	this.IsRedeemableGlobally = isRedeemableGlobally
 	return &this
 }
 
@@ -42,68 +48,52 @@ func NewGiftCardPurchasedDetailsWithDefaults() *GiftCardPurchasedDetails {
 	return &this
 }
 
-// GetBrandName returns the BrandName field value if set, zero value otherwise.
+// GetBrandName returns the BrandName field value
 func (o *GiftCardPurchasedDetails) GetBrandName() string {
-	if o == nil || IsNil(o.BrandName) {
+	if o == nil {
 		var ret string
 		return ret
 	}
-	return *o.BrandName
+
+	return o.BrandName
 }
 
-// GetBrandNameOk returns a tuple with the BrandName field value if set, nil otherwise
+// GetBrandNameOk returns a tuple with the BrandName field value
 // and a boolean to check if the value has been set.
 func (o *GiftCardPurchasedDetails) GetBrandNameOk() (*string, bool) {
-	if o == nil || IsNil(o.BrandName) {
+	if o == nil {
 		return nil, false
 	}
-	return o.BrandName, true
+	return &o.BrandName, true
 }
 
-// HasBrandName returns a boolean if a field has been set.
-func (o *GiftCardPurchasedDetails) HasBrandName() bool {
-	if o != nil && !IsNil(o.BrandName) {
-		return true
-	}
-
-	return false
-}
-
-// SetBrandName gets a reference to the given string and assigns it to the BrandName field.
+// SetBrandName sets field value
 func (o *GiftCardPurchasedDetails) SetBrandName(v string) {
-	o.BrandName = &v
+	o.BrandName = v
 }
 
-// GetIsRedeemableGlobally returns the IsRedeemableGlobally field value if set, zero value otherwise.
+// GetIsRedeemableGlobally returns the IsRedeemableGlobally field value
 func (o *GiftCardPurchasedDetails) GetIsRedeemableGlobally() bool {
-	if o == nil || IsNil(o.IsRedeemableGlobally) {
+	if o == nil {
 		var ret bool
 		return ret
 	}
-	return *o.IsRedeemableGlobally
+
+	return o.IsRedeemableGlobally
 }
 
-// GetIsRedeemableGloballyOk returns a tuple with the IsRedeemableGlobally field value if set, nil otherwise
+// GetIsRedeemableGloballyOk returns a tuple with the IsRedeemableGlobally field value
 // and a boolean to check if the value has been set.
 func (o *GiftCardPurchasedDetails) GetIsRedeemableGloballyOk() (*bool, bool) {
-	if o == nil || IsNil(o.IsRedeemableGlobally) {
+	if o == nil {
 		return nil, false
 	}
-	return o.IsRedeemableGlobally, true
+	return &o.IsRedeemableGlobally, true
 }
 
-// HasIsRedeemableGlobally returns a boolean if a field has been set.
-func (o *GiftCardPurchasedDetails) HasIsRedeemableGlobally() bool {
-	if o != nil && !IsNil(o.IsRedeemableGlobally) {
-		return true
-	}
-
-	return false
-}
-
-// SetIsRedeemableGlobally gets a reference to the given bool and assigns it to the IsRedeemableGlobally field.
+// SetIsRedeemableGlobally sets field value
 func (o *GiftCardPurchasedDetails) SetIsRedeemableGlobally(v bool) {
-	o.IsRedeemableGlobally = &v
+	o.IsRedeemableGlobally = v
 }
 
 // GetRedemptionInstructions returns the RedemptionInstructions field value if set, zero value otherwise (both if not set or set to explicit null).
@@ -158,16 +148,49 @@ func (o GiftCardPurchasedDetails) MarshalJSON() ([]byte, error) {
 
 func (o GiftCardPurchasedDetails) ToMap() (map[string]interface{}, error) {
 	toSerialize := map[string]interface{}{}
-	if !IsNil(o.BrandName) {
-		toSerialize["brandName"] = o.BrandName
-	}
-	if !IsNil(o.IsRedeemableGlobally) {
-		toSerialize["isRedeemableGlobally"] = o.IsRedeemableGlobally
-	}
+	toSerialize["brandName"] = o.BrandName
+	toSerialize["isRedeemableGlobally"] = o.IsRedeemableGlobally
 	if o.RedemptionInstructions.IsSet() {
 		toSerialize["redemptionInstructions"] = o.RedemptionInstructions.Get()
 	}
 	return toSerialize, nil
+}
+
+func (o *GiftCardPurchasedDetails) UnmarshalJSON(data []byte) (err error) {
+	// This validates that all required properties are included in the JSON object
+	// by unmarshalling the object into a generic map with string keys and checking
+	// that every required field exists as a key in the generic map.
+	requiredProperties := []string{
+		"brandName",
+		"isRedeemableGlobally",
+	}
+
+	allProperties := make(map[string]interface{})
+
+	err = json.Unmarshal(data, &allProperties)
+
+	if err != nil {
+		return err;
+	}
+
+	for _, requiredProperty := range(requiredProperties) {
+		if _, exists := allProperties[requiredProperty]; !exists {
+			return fmt.Errorf("no value given for required property %v", requiredProperty)
+		}
+	}
+
+	varGiftCardPurchasedDetails := _GiftCardPurchasedDetails{}
+
+	decoder := json.NewDecoder(bytes.NewReader(data))
+	err = decoder.Decode(&varGiftCardPurchasedDetails)
+
+	if err != nil {
+		return err
+	}
+
+	*o = GiftCardPurchasedDetails(varGiftCardPurchasedDetails)
+
+	return err
 }
 
 type NullableGiftCardPurchasedDetails struct {

@@ -24,7 +24,7 @@ var _ MappedNullable = &MealPlan{}
 type MealPlan struct {
 	Code string `json:"code"`
 	Name string `json:"name"`
-	BoardType *string `json:"boardType,omitempty"`
+	BoardType string `json:"boardType"`
 }
 
 type _MealPlan MealPlan
@@ -33,10 +33,11 @@ type _MealPlan MealPlan
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewMealPlan(code string, name string) *MealPlan {
+func NewMealPlan(code string, name string, boardType string) *MealPlan {
 	this := MealPlan{}
 	this.Code = code
 	this.Name = name
+	this.BoardType = boardType
 	return &this
 }
 
@@ -96,36 +97,28 @@ func (o *MealPlan) SetName(v string) {
 	o.Name = v
 }
 
-// GetBoardType returns the BoardType field value if set, zero value otherwise.
+// GetBoardType returns the BoardType field value
 func (o *MealPlan) GetBoardType() string {
-	if o == nil || IsNil(o.BoardType) {
+	if o == nil {
 		var ret string
 		return ret
 	}
-	return *o.BoardType
+
+	return o.BoardType
 }
 
-// GetBoardTypeOk returns a tuple with the BoardType field value if set, nil otherwise
+// GetBoardTypeOk returns a tuple with the BoardType field value
 // and a boolean to check if the value has been set.
 func (o *MealPlan) GetBoardTypeOk() (*string, bool) {
-	if o == nil || IsNil(o.BoardType) {
+	if o == nil {
 		return nil, false
 	}
-	return o.BoardType, true
+	return &o.BoardType, true
 }
 
-// HasBoardType returns a boolean if a field has been set.
-func (o *MealPlan) HasBoardType() bool {
-	if o != nil && !IsNil(o.BoardType) {
-		return true
-	}
-
-	return false
-}
-
-// SetBoardType gets a reference to the given string and assigns it to the BoardType field.
+// SetBoardType sets field value
 func (o *MealPlan) SetBoardType(v string) {
-	o.BoardType = &v
+	o.BoardType = v
 }
 
 func (o MealPlan) MarshalJSON() ([]byte, error) {
@@ -140,9 +133,7 @@ func (o MealPlan) ToMap() (map[string]interface{}, error) {
 	toSerialize := map[string]interface{}{}
 	toSerialize["code"] = o.Code
 	toSerialize["name"] = o.Name
-	if !IsNil(o.BoardType) {
-		toSerialize["boardType"] = o.BoardType
-	}
+	toSerialize["boardType"] = o.BoardType
 	return toSerialize, nil
 }
 
@@ -153,6 +144,7 @@ func (o *MealPlan) UnmarshalJSON(data []byte) (err error) {
 	requiredProperties := []string{
 		"code",
 		"name",
+		"boardType",
 	}
 
 	allProperties := make(map[string]interface{})
@@ -172,7 +164,6 @@ func (o *MealPlan) UnmarshalJSON(data []byte) (err error) {
 	varMealPlan := _MealPlan{}
 
 	decoder := json.NewDecoder(bytes.NewReader(data))
-	decoder.DisallowUnknownFields()
 	err = decoder.Decode(&varMealPlan)
 
 	if err != nil {

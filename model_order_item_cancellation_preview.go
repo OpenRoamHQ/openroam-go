@@ -34,9 +34,7 @@ type OrderItemCancellationPreview struct {
 	// The cancellation band in effect now, priced at `penaltyAmount`: at most one entry. Empty when the item's bands have not started yet; `null` when it states none.
 	AppliedPenalties []CancellationPenalty `json:"appliedPenalties,omitempty"`
 	// The cancellation time the preview is calculated for (UTC).
-	EffectiveCancellationDate *time.Time `json:"effectiveCancellationDate,omitempty"`
-	// The check-in date of the booked stay.
-	CheckInDate *time.Time `json:"checkInDate,omitempty"`
+	EffectiveCancellationDate time.Time `json:"effectiveCancellationDate"`
 }
 
 type _OrderItemCancellationPreview OrderItemCancellationPreview
@@ -45,11 +43,12 @@ type _OrderItemCancellationPreview OrderItemCancellationPreview
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewOrderItemCancellationPreview(penaltyAmount Money, refundAmount Money, isRefundable bool) *OrderItemCancellationPreview {
+func NewOrderItemCancellationPreview(penaltyAmount Money, refundAmount Money, isRefundable bool, effectiveCancellationDate time.Time) *OrderItemCancellationPreview {
 	this := OrderItemCancellationPreview{}
 	this.PenaltyAmount = penaltyAmount
 	this.RefundAmount = refundAmount
 	this.IsRefundable = isRefundable
+	this.EffectiveCancellationDate = effectiveCancellationDate
 	return &this
 }
 
@@ -208,68 +207,28 @@ func (o *OrderItemCancellationPreview) SetAppliedPenalties(v []CancellationPenal
 	o.AppliedPenalties = v
 }
 
-// GetEffectiveCancellationDate returns the EffectiveCancellationDate field value if set, zero value otherwise.
+// GetEffectiveCancellationDate returns the EffectiveCancellationDate field value
 func (o *OrderItemCancellationPreview) GetEffectiveCancellationDate() time.Time {
-	if o == nil || IsNil(o.EffectiveCancellationDate) {
+	if o == nil {
 		var ret time.Time
 		return ret
 	}
-	return *o.EffectiveCancellationDate
+
+	return o.EffectiveCancellationDate
 }
 
-// GetEffectiveCancellationDateOk returns a tuple with the EffectiveCancellationDate field value if set, nil otherwise
+// GetEffectiveCancellationDateOk returns a tuple with the EffectiveCancellationDate field value
 // and a boolean to check if the value has been set.
 func (o *OrderItemCancellationPreview) GetEffectiveCancellationDateOk() (*time.Time, bool) {
-	if o == nil || IsNil(o.EffectiveCancellationDate) {
+	if o == nil {
 		return nil, false
 	}
-	return o.EffectiveCancellationDate, true
+	return &o.EffectiveCancellationDate, true
 }
 
-// HasEffectiveCancellationDate returns a boolean if a field has been set.
-func (o *OrderItemCancellationPreview) HasEffectiveCancellationDate() bool {
-	if o != nil && !IsNil(o.EffectiveCancellationDate) {
-		return true
-	}
-
-	return false
-}
-
-// SetEffectiveCancellationDate gets a reference to the given time.Time and assigns it to the EffectiveCancellationDate field.
+// SetEffectiveCancellationDate sets field value
 func (o *OrderItemCancellationPreview) SetEffectiveCancellationDate(v time.Time) {
-	o.EffectiveCancellationDate = &v
-}
-
-// GetCheckInDate returns the CheckInDate field value if set, zero value otherwise.
-func (o *OrderItemCancellationPreview) GetCheckInDate() time.Time {
-	if o == nil || IsNil(o.CheckInDate) {
-		var ret time.Time
-		return ret
-	}
-	return *o.CheckInDate
-}
-
-// GetCheckInDateOk returns a tuple with the CheckInDate field value if set, nil otherwise
-// and a boolean to check if the value has been set.
-func (o *OrderItemCancellationPreview) GetCheckInDateOk() (*time.Time, bool) {
-	if o == nil || IsNil(o.CheckInDate) {
-		return nil, false
-	}
-	return o.CheckInDate, true
-}
-
-// HasCheckInDate returns a boolean if a field has been set.
-func (o *OrderItemCancellationPreview) HasCheckInDate() bool {
-	if o != nil && !IsNil(o.CheckInDate) {
-		return true
-	}
-
-	return false
-}
-
-// SetCheckInDate gets a reference to the given time.Time and assigns it to the CheckInDate field.
-func (o *OrderItemCancellationPreview) SetCheckInDate(v time.Time) {
-	o.CheckInDate = &v
+	o.EffectiveCancellationDate = v
 }
 
 func (o OrderItemCancellationPreview) MarshalJSON() ([]byte, error) {
@@ -291,12 +250,7 @@ func (o OrderItemCancellationPreview) ToMap() (map[string]interface{}, error) {
 	if o.AppliedPenalties != nil {
 		toSerialize["appliedPenalties"] = o.AppliedPenalties
 	}
-	if !IsNil(o.EffectiveCancellationDate) {
-		toSerialize["effectiveCancellationDate"] = o.EffectiveCancellationDate
-	}
-	if !IsNil(o.CheckInDate) {
-		toSerialize["checkInDate"] = o.CheckInDate
-	}
+	toSerialize["effectiveCancellationDate"] = o.EffectiveCancellationDate
 	return toSerialize, nil
 }
 
@@ -308,6 +262,7 @@ func (o *OrderItemCancellationPreview) UnmarshalJSON(data []byte) (err error) {
 		"penaltyAmount",
 		"refundAmount",
 		"isRefundable",
+		"effectiveCancellationDate",
 	}
 
 	allProperties := make(map[string]interface{})
@@ -327,7 +282,6 @@ func (o *OrderItemCancellationPreview) UnmarshalJSON(data []byte) (err error) {
 	varOrderItemCancellationPreview := _OrderItemCancellationPreview{}
 
 	decoder := json.NewDecoder(bytes.NewReader(data))
-	decoder.DisallowUnknownFields()
 	err = decoder.Decode(&varOrderItemCancellationPreview)
 
 	if err != nil {

@@ -14,6 +14,8 @@ package openroam
 import (
 	"encoding/json"
 	"time"
+	"bytes"
+	"fmt"
 )
 
 // checks if the Order type satisfies the MappedNullable interface at compile time
@@ -22,37 +24,53 @@ var _ MappedNullable = &Order{}
 // Order The current state of an order.
 type Order struct {
 	// Order id.
-	Id *string `json:"id,omitempty"`
+	Id string `json:"id"`
 	// Where the order was created.
-	Origin *OrderOrigin `json:"origin,omitempty"`
-	// Current order status.
-	Status *string `json:"status,omitempty"`
-	// What the order costs, in the order's currency: the item prices plus completed amendment charges,             less completed amendment credits.
-	Total *Money `json:"total,omitempty"`
+	Origin OrderOrigin `json:"origin"`
+	// Current order status: `paymentPending`, `processing`, `completed`,             `partiallyFulfilled`, `fulfillmentFailed`, `partiallyRefunded`, `refunded` or `cancelled`.
+	Status string `json:"status"`
+	// What was charged for the order, in the order's currency, before refunds: the item prices plus             completed amendment charges, less completed amendment credits.
+	Total Money `json:"total"`
+	// What completed item refunds returned, in the order's currency; zero when nothing was             returned. You paid `total` minus `refunded`, the sum of the items' `effectivePaidAmount`.
+	Refunded Money `json:"refunded"`
 	// The latest payment attempt; `null` when none was made.
 	Payment NullableOrderPayment `json:"payment,omitempty"`
-	// Whether payment retry and fulfillment retry are available now.
-	Actions *OrderActions `json:"actions,omitempty"`
 	// The order items, one per unit bought.
-	Items []OrderItem `json:"items,omitempty"`
-	// Every status the order has had, oldest first.
-	Timeline []OrderTimelineEntry `json:"timeline,omitempty"`
+	Items []OrderItem `json:"items"`
+	// Every status the order has had, oldest first, each once per stretch.
+	Timeline []OrderTimelineEntry `json:"timeline"`
 	// When the order was created (UTC).
-	CreatedAt *time.Time `json:"createdAt,omitempty"`
-	// When the order last changed (UTC).
-	UpdatedAt *time.Time `json:"updatedAt,omitempty"`
+	CreatedAt time.Time `json:"createdAt"`
+	// When anything in the order last changed (UTC): its status, an item's fulfillment, a refund             or an amendment.
+	UpdatedAt time.Time `json:"updatedAt"`
 	// Increases with every fulfillment change; matches the             `order.fulfillment.updated` webhook.
-	FulfillmentVersion *int64 `json:"fulfillmentVersion,omitempty"`
+	FulfillmentVersion int64 `json:"fulfillmentVersion"`
 	// Your own order reference, when one was sent.
 	ReferenceId NullableString `json:"referenceId,omitempty"`
+	// The traveller who paid on your hosted site, masked; `null` unless the origin is `site`, and             once the traveller's details are deleted at the end of their retention period.
+	Customer NullableOrderCustomer `json:"customer,omitempty"`
+	// The checkout the order was placed from, with your payment reference; `null` unless a traveller             paid for it on your own page, on one of your sites that takes payment itself.
+	Checkout NullableOrderCheckout `json:"checkout,omitempty"`
 }
+
+type _Order Order
 
 // NewOrder instantiates a new Order object
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewOrder() *Order {
+func NewOrder(id string, origin OrderOrigin, status string, total Money, refunded Money, items []OrderItem, timeline []OrderTimelineEntry, createdAt time.Time, updatedAt time.Time, fulfillmentVersion int64) *Order {
 	this := Order{}
+	this.Id = id
+	this.Origin = origin
+	this.Status = status
+	this.Total = total
+	this.Refunded = refunded
+	this.Items = items
+	this.Timeline = timeline
+	this.CreatedAt = createdAt
+	this.UpdatedAt = updatedAt
+	this.FulfillmentVersion = fulfillmentVersion
 	return &this
 }
 
@@ -64,132 +82,124 @@ func NewOrderWithDefaults() *Order {
 	return &this
 }
 
-// GetId returns the Id field value if set, zero value otherwise.
+// GetId returns the Id field value
 func (o *Order) GetId() string {
-	if o == nil || IsNil(o.Id) {
+	if o == nil {
 		var ret string
 		return ret
 	}
-	return *o.Id
+
+	return o.Id
 }
 
-// GetIdOk returns a tuple with the Id field value if set, nil otherwise
+// GetIdOk returns a tuple with the Id field value
 // and a boolean to check if the value has been set.
 func (o *Order) GetIdOk() (*string, bool) {
-	if o == nil || IsNil(o.Id) {
+	if o == nil {
 		return nil, false
 	}
-	return o.Id, true
+	return &o.Id, true
 }
 
-// HasId returns a boolean if a field has been set.
-func (o *Order) HasId() bool {
-	if o != nil && !IsNil(o.Id) {
-		return true
-	}
-
-	return false
-}
-
-// SetId gets a reference to the given string and assigns it to the Id field.
+// SetId sets field value
 func (o *Order) SetId(v string) {
-	o.Id = &v
+	o.Id = v
 }
 
-// GetOrigin returns the Origin field value if set, zero value otherwise.
+// GetOrigin returns the Origin field value
 func (o *Order) GetOrigin() OrderOrigin {
-	if o == nil || IsNil(o.Origin) {
+	if o == nil {
 		var ret OrderOrigin
 		return ret
 	}
-	return *o.Origin
+
+	return o.Origin
 }
 
-// GetOriginOk returns a tuple with the Origin field value if set, nil otherwise
+// GetOriginOk returns a tuple with the Origin field value
 // and a boolean to check if the value has been set.
 func (o *Order) GetOriginOk() (*OrderOrigin, bool) {
-	if o == nil || IsNil(o.Origin) {
+	if o == nil {
 		return nil, false
 	}
-	return o.Origin, true
+	return &o.Origin, true
 }
 
-// HasOrigin returns a boolean if a field has been set.
-func (o *Order) HasOrigin() bool {
-	if o != nil && !IsNil(o.Origin) {
-		return true
-	}
-
-	return false
-}
-
-// SetOrigin gets a reference to the given OrderOrigin and assigns it to the Origin field.
+// SetOrigin sets field value
 func (o *Order) SetOrigin(v OrderOrigin) {
-	o.Origin = &v
+	o.Origin = v
 }
 
-// GetStatus returns the Status field value if set, zero value otherwise.
+// GetStatus returns the Status field value
 func (o *Order) GetStatus() string {
-	if o == nil || IsNil(o.Status) {
+	if o == nil {
 		var ret string
 		return ret
 	}
-	return *o.Status
+
+	return o.Status
 }
 
-// GetStatusOk returns a tuple with the Status field value if set, nil otherwise
+// GetStatusOk returns a tuple with the Status field value
 // and a boolean to check if the value has been set.
 func (o *Order) GetStatusOk() (*string, bool) {
-	if o == nil || IsNil(o.Status) {
+	if o == nil {
 		return nil, false
 	}
-	return o.Status, true
+	return &o.Status, true
 }
 
-// HasStatus returns a boolean if a field has been set.
-func (o *Order) HasStatus() bool {
-	if o != nil && !IsNil(o.Status) {
-		return true
-	}
-
-	return false
-}
-
-// SetStatus gets a reference to the given string and assigns it to the Status field.
+// SetStatus sets field value
 func (o *Order) SetStatus(v string) {
-	o.Status = &v
+	o.Status = v
 }
 
-// GetTotal returns the Total field value if set, zero value otherwise.
+// GetTotal returns the Total field value
 func (o *Order) GetTotal() Money {
-	if o == nil || IsNil(o.Total) {
+	if o == nil {
 		var ret Money
 		return ret
 	}
-	return *o.Total
+
+	return o.Total
 }
 
-// GetTotalOk returns a tuple with the Total field value if set, nil otherwise
+// GetTotalOk returns a tuple with the Total field value
 // and a boolean to check if the value has been set.
 func (o *Order) GetTotalOk() (*Money, bool) {
-	if o == nil || IsNil(o.Total) {
+	if o == nil {
 		return nil, false
 	}
-	return o.Total, true
+	return &o.Total, true
 }
 
-// HasTotal returns a boolean if a field has been set.
-func (o *Order) HasTotal() bool {
-	if o != nil && !IsNil(o.Total) {
-		return true
+// SetTotal sets field value
+func (o *Order) SetTotal(v Money) {
+	o.Total = v
+}
+
+// GetRefunded returns the Refunded field value
+func (o *Order) GetRefunded() Money {
+	if o == nil {
+		var ret Money
+		return ret
 	}
 
-	return false
+	return o.Refunded
 }
 
-// SetTotal gets a reference to the given Money and assigns it to the Total field.
-func (o *Order) SetTotal(v Money) {
-	o.Total = &v
+// GetRefundedOk returns a tuple with the Refunded field value
+// and a boolean to check if the value has been set.
+func (o *Order) GetRefundedOk() (*Money, bool) {
+	if o == nil {
+		return nil, false
+	}
+	return &o.Refunded, true
+}
+
+// SetRefunded sets field value
+func (o *Order) SetRefunded(v Money) {
+	o.Refunded = v
 }
 
 // GetPayment returns the Payment field value if set, zero value otherwise (both if not set or set to explicit null).
@@ -234,196 +244,124 @@ func (o *Order) UnsetPayment() {
 	o.Payment.Unset()
 }
 
-// GetActions returns the Actions field value if set, zero value otherwise.
-func (o *Order) GetActions() OrderActions {
-	if o == nil || IsNil(o.Actions) {
-		var ret OrderActions
-		return ret
-	}
-	return *o.Actions
-}
-
-// GetActionsOk returns a tuple with the Actions field value if set, nil otherwise
-// and a boolean to check if the value has been set.
-func (o *Order) GetActionsOk() (*OrderActions, bool) {
-	if o == nil || IsNil(o.Actions) {
-		return nil, false
-	}
-	return o.Actions, true
-}
-
-// HasActions returns a boolean if a field has been set.
-func (o *Order) HasActions() bool {
-	if o != nil && !IsNil(o.Actions) {
-		return true
-	}
-
-	return false
-}
-
-// SetActions gets a reference to the given OrderActions and assigns it to the Actions field.
-func (o *Order) SetActions(v OrderActions) {
-	o.Actions = &v
-}
-
-// GetItems returns the Items field value if set, zero value otherwise.
+// GetItems returns the Items field value
 func (o *Order) GetItems() []OrderItem {
-	if o == nil || IsNil(o.Items) {
+	if o == nil {
 		var ret []OrderItem
 		return ret
 	}
+
 	return o.Items
 }
 
-// GetItemsOk returns a tuple with the Items field value if set, nil otherwise
+// GetItemsOk returns a tuple with the Items field value
 // and a boolean to check if the value has been set.
 func (o *Order) GetItemsOk() ([]OrderItem, bool) {
-	if o == nil || IsNil(o.Items) {
+	if o == nil {
 		return nil, false
 	}
 	return o.Items, true
 }
 
-// HasItems returns a boolean if a field has been set.
-func (o *Order) HasItems() bool {
-	if o != nil && !IsNil(o.Items) {
-		return true
-	}
-
-	return false
-}
-
-// SetItems gets a reference to the given []OrderItem and assigns it to the Items field.
+// SetItems sets field value
 func (o *Order) SetItems(v []OrderItem) {
 	o.Items = v
 }
 
-// GetTimeline returns the Timeline field value if set, zero value otherwise.
+// GetTimeline returns the Timeline field value
 func (o *Order) GetTimeline() []OrderTimelineEntry {
-	if o == nil || IsNil(o.Timeline) {
+	if o == nil {
 		var ret []OrderTimelineEntry
 		return ret
 	}
+
 	return o.Timeline
 }
 
-// GetTimelineOk returns a tuple with the Timeline field value if set, nil otherwise
+// GetTimelineOk returns a tuple with the Timeline field value
 // and a boolean to check if the value has been set.
 func (o *Order) GetTimelineOk() ([]OrderTimelineEntry, bool) {
-	if o == nil || IsNil(o.Timeline) {
+	if o == nil {
 		return nil, false
 	}
 	return o.Timeline, true
 }
 
-// HasTimeline returns a boolean if a field has been set.
-func (o *Order) HasTimeline() bool {
-	if o != nil && !IsNil(o.Timeline) {
-		return true
-	}
-
-	return false
-}
-
-// SetTimeline gets a reference to the given []OrderTimelineEntry and assigns it to the Timeline field.
+// SetTimeline sets field value
 func (o *Order) SetTimeline(v []OrderTimelineEntry) {
 	o.Timeline = v
 }
 
-// GetCreatedAt returns the CreatedAt field value if set, zero value otherwise.
+// GetCreatedAt returns the CreatedAt field value
 func (o *Order) GetCreatedAt() time.Time {
-	if o == nil || IsNil(o.CreatedAt) {
+	if o == nil {
 		var ret time.Time
 		return ret
 	}
-	return *o.CreatedAt
+
+	return o.CreatedAt
 }
 
-// GetCreatedAtOk returns a tuple with the CreatedAt field value if set, nil otherwise
+// GetCreatedAtOk returns a tuple with the CreatedAt field value
 // and a boolean to check if the value has been set.
 func (o *Order) GetCreatedAtOk() (*time.Time, bool) {
-	if o == nil || IsNil(o.CreatedAt) {
+	if o == nil {
 		return nil, false
 	}
-	return o.CreatedAt, true
+	return &o.CreatedAt, true
 }
 
-// HasCreatedAt returns a boolean if a field has been set.
-func (o *Order) HasCreatedAt() bool {
-	if o != nil && !IsNil(o.CreatedAt) {
-		return true
-	}
-
-	return false
-}
-
-// SetCreatedAt gets a reference to the given time.Time and assigns it to the CreatedAt field.
+// SetCreatedAt sets field value
 func (o *Order) SetCreatedAt(v time.Time) {
-	o.CreatedAt = &v
+	o.CreatedAt = v
 }
 
-// GetUpdatedAt returns the UpdatedAt field value if set, zero value otherwise.
+// GetUpdatedAt returns the UpdatedAt field value
 func (o *Order) GetUpdatedAt() time.Time {
-	if o == nil || IsNil(o.UpdatedAt) {
+	if o == nil {
 		var ret time.Time
 		return ret
 	}
-	return *o.UpdatedAt
+
+	return o.UpdatedAt
 }
 
-// GetUpdatedAtOk returns a tuple with the UpdatedAt field value if set, nil otherwise
+// GetUpdatedAtOk returns a tuple with the UpdatedAt field value
 // and a boolean to check if the value has been set.
 func (o *Order) GetUpdatedAtOk() (*time.Time, bool) {
-	if o == nil || IsNil(o.UpdatedAt) {
+	if o == nil {
 		return nil, false
 	}
-	return o.UpdatedAt, true
+	return &o.UpdatedAt, true
 }
 
-// HasUpdatedAt returns a boolean if a field has been set.
-func (o *Order) HasUpdatedAt() bool {
-	if o != nil && !IsNil(o.UpdatedAt) {
-		return true
-	}
-
-	return false
-}
-
-// SetUpdatedAt gets a reference to the given time.Time and assigns it to the UpdatedAt field.
+// SetUpdatedAt sets field value
 func (o *Order) SetUpdatedAt(v time.Time) {
-	o.UpdatedAt = &v
+	o.UpdatedAt = v
 }
 
-// GetFulfillmentVersion returns the FulfillmentVersion field value if set, zero value otherwise.
+// GetFulfillmentVersion returns the FulfillmentVersion field value
 func (o *Order) GetFulfillmentVersion() int64 {
-	if o == nil || IsNil(o.FulfillmentVersion) {
+	if o == nil {
 		var ret int64
 		return ret
 	}
-	return *o.FulfillmentVersion
+
+	return o.FulfillmentVersion
 }
 
-// GetFulfillmentVersionOk returns a tuple with the FulfillmentVersion field value if set, nil otherwise
+// GetFulfillmentVersionOk returns a tuple with the FulfillmentVersion field value
 // and a boolean to check if the value has been set.
 func (o *Order) GetFulfillmentVersionOk() (*int64, bool) {
-	if o == nil || IsNil(o.FulfillmentVersion) {
+	if o == nil {
 		return nil, false
 	}
-	return o.FulfillmentVersion, true
+	return &o.FulfillmentVersion, true
 }
 
-// HasFulfillmentVersion returns a boolean if a field has been set.
-func (o *Order) HasFulfillmentVersion() bool {
-	if o != nil && !IsNil(o.FulfillmentVersion) {
-		return true
-	}
-
-	return false
-}
-
-// SetFulfillmentVersion gets a reference to the given int64 and assigns it to the FulfillmentVersion field.
+// SetFulfillmentVersion sets field value
 func (o *Order) SetFulfillmentVersion(v int64) {
-	o.FulfillmentVersion = &v
+	o.FulfillmentVersion = v
 }
 
 // GetReferenceId returns the ReferenceId field value if set, zero value otherwise (both if not set or set to explicit null).
@@ -468,6 +406,90 @@ func (o *Order) UnsetReferenceId() {
 	o.ReferenceId.Unset()
 }
 
+// GetCustomer returns the Customer field value if set, zero value otherwise (both if not set or set to explicit null).
+func (o *Order) GetCustomer() OrderCustomer {
+	if o == nil || IsNil(o.Customer.Get()) {
+		var ret OrderCustomer
+		return ret
+	}
+	return *o.Customer.Get()
+}
+
+// GetCustomerOk returns a tuple with the Customer field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+// NOTE: If the value is an explicit nil, `nil, true` will be returned
+func (o *Order) GetCustomerOk() (*OrderCustomer, bool) {
+	if o == nil {
+		return nil, false
+	}
+	return o.Customer.Get(), o.Customer.IsSet()
+}
+
+// HasCustomer returns a boolean if a field has been set.
+func (o *Order) HasCustomer() bool {
+	if o != nil && o.Customer.IsSet() {
+		return true
+	}
+
+	return false
+}
+
+// SetCustomer gets a reference to the given NullableOrderCustomer and assigns it to the Customer field.
+func (o *Order) SetCustomer(v OrderCustomer) {
+	o.Customer.Set(&v)
+}
+// SetCustomerNil sets the value for Customer to be an explicit nil
+func (o *Order) SetCustomerNil() {
+	o.Customer.Set(nil)
+}
+
+// UnsetCustomer ensures that no value is present for Customer, not even an explicit nil
+func (o *Order) UnsetCustomer() {
+	o.Customer.Unset()
+}
+
+// GetCheckout returns the Checkout field value if set, zero value otherwise (both if not set or set to explicit null).
+func (o *Order) GetCheckout() OrderCheckout {
+	if o == nil || IsNil(o.Checkout.Get()) {
+		var ret OrderCheckout
+		return ret
+	}
+	return *o.Checkout.Get()
+}
+
+// GetCheckoutOk returns a tuple with the Checkout field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+// NOTE: If the value is an explicit nil, `nil, true` will be returned
+func (o *Order) GetCheckoutOk() (*OrderCheckout, bool) {
+	if o == nil {
+		return nil, false
+	}
+	return o.Checkout.Get(), o.Checkout.IsSet()
+}
+
+// HasCheckout returns a boolean if a field has been set.
+func (o *Order) HasCheckout() bool {
+	if o != nil && o.Checkout.IsSet() {
+		return true
+	}
+
+	return false
+}
+
+// SetCheckout gets a reference to the given NullableOrderCheckout and assigns it to the Checkout field.
+func (o *Order) SetCheckout(v OrderCheckout) {
+	o.Checkout.Set(&v)
+}
+// SetCheckoutNil sets the value for Checkout to be an explicit nil
+func (o *Order) SetCheckoutNil() {
+	o.Checkout.Set(nil)
+}
+
+// UnsetCheckout ensures that no value is present for Checkout, not even an explicit nil
+func (o *Order) UnsetCheckout() {
+	o.Checkout.Unset()
+}
+
 func (o Order) MarshalJSON() ([]byte, error) {
 	toSerialize,err := o.ToMap()
 	if err != nil {
@@ -478,43 +500,74 @@ func (o Order) MarshalJSON() ([]byte, error) {
 
 func (o Order) ToMap() (map[string]interface{}, error) {
 	toSerialize := map[string]interface{}{}
-	if !IsNil(o.Id) {
-		toSerialize["id"] = o.Id
-	}
-	if !IsNil(o.Origin) {
-		toSerialize["origin"] = o.Origin
-	}
-	if !IsNil(o.Status) {
-		toSerialize["status"] = o.Status
-	}
-	if !IsNil(o.Total) {
-		toSerialize["total"] = o.Total
-	}
+	toSerialize["id"] = o.Id
+	toSerialize["origin"] = o.Origin
+	toSerialize["status"] = o.Status
+	toSerialize["total"] = o.Total
+	toSerialize["refunded"] = o.Refunded
 	if o.Payment.IsSet() {
 		toSerialize["payment"] = o.Payment.Get()
 	}
-	if !IsNil(o.Actions) {
-		toSerialize["actions"] = o.Actions
-	}
-	if !IsNil(o.Items) {
-		toSerialize["items"] = o.Items
-	}
-	if !IsNil(o.Timeline) {
-		toSerialize["timeline"] = o.Timeline
-	}
-	if !IsNil(o.CreatedAt) {
-		toSerialize["createdAt"] = o.CreatedAt
-	}
-	if !IsNil(o.UpdatedAt) {
-		toSerialize["updatedAt"] = o.UpdatedAt
-	}
-	if !IsNil(o.FulfillmentVersion) {
-		toSerialize["fulfillmentVersion"] = o.FulfillmentVersion
-	}
+	toSerialize["items"] = o.Items
+	toSerialize["timeline"] = o.Timeline
+	toSerialize["createdAt"] = o.CreatedAt
+	toSerialize["updatedAt"] = o.UpdatedAt
+	toSerialize["fulfillmentVersion"] = o.FulfillmentVersion
 	if o.ReferenceId.IsSet() {
 		toSerialize["referenceId"] = o.ReferenceId.Get()
 	}
+	if o.Customer.IsSet() {
+		toSerialize["customer"] = o.Customer.Get()
+	}
+	if o.Checkout.IsSet() {
+		toSerialize["checkout"] = o.Checkout.Get()
+	}
 	return toSerialize, nil
+}
+
+func (o *Order) UnmarshalJSON(data []byte) (err error) {
+	// This validates that all required properties are included in the JSON object
+	// by unmarshalling the object into a generic map with string keys and checking
+	// that every required field exists as a key in the generic map.
+	requiredProperties := []string{
+		"id",
+		"origin",
+		"status",
+		"total",
+		"refunded",
+		"items",
+		"timeline",
+		"createdAt",
+		"updatedAt",
+		"fulfillmentVersion",
+	}
+
+	allProperties := make(map[string]interface{})
+
+	err = json.Unmarshal(data, &allProperties)
+
+	if err != nil {
+		return err;
+	}
+
+	for _, requiredProperty := range(requiredProperties) {
+		if _, exists := allProperties[requiredProperty]; !exists {
+			return fmt.Errorf("no value given for required property %v", requiredProperty)
+		}
+	}
+
+	varOrder := _Order{}
+
+	decoder := json.NewDecoder(bytes.NewReader(data))
+	err = decoder.Decode(&varOrder)
+
+	if err != nil {
+		return err
+	}
+
+	*o = Order(varOrder)
+
+	return err
 }
 
 type NullableOrder struct {

@@ -13,6 +13,8 @@ package openroam
 
 import (
 	"encoding/json"
+	"bytes"
+	"fmt"
 )
 
 // checks if the HotelCatalogReplacementFile type satisfies the MappedNullable interface at compile time
@@ -20,17 +22,23 @@ var _ MappedNullable = &HotelCatalogReplacementFile{}
 
 // HotelCatalogReplacementFile The complete map of confirmed replacements for this catalog build.
 type HotelCatalogReplacementFile struct {
-	Url *string `json:"url,omitempty"`
-	SizeBytes *int64 `json:"sizeBytes,omitempty"`
-	Count *int32 `json:"count,omitempty"`
+	// A download link for this file, sure to work until `linksExpireAt`; not to be stored.
+	Url string `json:"url"`
+	SizeBytes int64 `json:"sizeBytes"`
+	Count int32 `json:"count"`
 }
+
+type _HotelCatalogReplacementFile HotelCatalogReplacementFile
 
 // NewHotelCatalogReplacementFile instantiates a new HotelCatalogReplacementFile object
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewHotelCatalogReplacementFile() *HotelCatalogReplacementFile {
+func NewHotelCatalogReplacementFile(url string, sizeBytes int64, count int32) *HotelCatalogReplacementFile {
 	this := HotelCatalogReplacementFile{}
+	this.Url = url
+	this.SizeBytes = sizeBytes
+	this.Count = count
 	return &this
 }
 
@@ -42,100 +50,76 @@ func NewHotelCatalogReplacementFileWithDefaults() *HotelCatalogReplacementFile {
 	return &this
 }
 
-// GetUrl returns the Url field value if set, zero value otherwise.
+// GetUrl returns the Url field value
 func (o *HotelCatalogReplacementFile) GetUrl() string {
-	if o == nil || IsNil(o.Url) {
+	if o == nil {
 		var ret string
 		return ret
 	}
-	return *o.Url
+
+	return o.Url
 }
 
-// GetUrlOk returns a tuple with the Url field value if set, nil otherwise
+// GetUrlOk returns a tuple with the Url field value
 // and a boolean to check if the value has been set.
 func (o *HotelCatalogReplacementFile) GetUrlOk() (*string, bool) {
-	if o == nil || IsNil(o.Url) {
+	if o == nil {
 		return nil, false
 	}
-	return o.Url, true
+	return &o.Url, true
 }
 
-// HasUrl returns a boolean if a field has been set.
-func (o *HotelCatalogReplacementFile) HasUrl() bool {
-	if o != nil && !IsNil(o.Url) {
-		return true
-	}
-
-	return false
-}
-
-// SetUrl gets a reference to the given string and assigns it to the Url field.
+// SetUrl sets field value
 func (o *HotelCatalogReplacementFile) SetUrl(v string) {
-	o.Url = &v
+	o.Url = v
 }
 
-// GetSizeBytes returns the SizeBytes field value if set, zero value otherwise.
+// GetSizeBytes returns the SizeBytes field value
 func (o *HotelCatalogReplacementFile) GetSizeBytes() int64 {
-	if o == nil || IsNil(o.SizeBytes) {
+	if o == nil {
 		var ret int64
 		return ret
 	}
-	return *o.SizeBytes
+
+	return o.SizeBytes
 }
 
-// GetSizeBytesOk returns a tuple with the SizeBytes field value if set, nil otherwise
+// GetSizeBytesOk returns a tuple with the SizeBytes field value
 // and a boolean to check if the value has been set.
 func (o *HotelCatalogReplacementFile) GetSizeBytesOk() (*int64, bool) {
-	if o == nil || IsNil(o.SizeBytes) {
+	if o == nil {
 		return nil, false
 	}
-	return o.SizeBytes, true
+	return &o.SizeBytes, true
 }
 
-// HasSizeBytes returns a boolean if a field has been set.
-func (o *HotelCatalogReplacementFile) HasSizeBytes() bool {
-	if o != nil && !IsNil(o.SizeBytes) {
-		return true
-	}
-
-	return false
-}
-
-// SetSizeBytes gets a reference to the given int64 and assigns it to the SizeBytes field.
+// SetSizeBytes sets field value
 func (o *HotelCatalogReplacementFile) SetSizeBytes(v int64) {
-	o.SizeBytes = &v
+	o.SizeBytes = v
 }
 
-// GetCount returns the Count field value if set, zero value otherwise.
+// GetCount returns the Count field value
 func (o *HotelCatalogReplacementFile) GetCount() int32 {
-	if o == nil || IsNil(o.Count) {
+	if o == nil {
 		var ret int32
 		return ret
 	}
-	return *o.Count
+
+	return o.Count
 }
 
-// GetCountOk returns a tuple with the Count field value if set, nil otherwise
+// GetCountOk returns a tuple with the Count field value
 // and a boolean to check if the value has been set.
 func (o *HotelCatalogReplacementFile) GetCountOk() (*int32, bool) {
-	if o == nil || IsNil(o.Count) {
+	if o == nil {
 		return nil, false
 	}
-	return o.Count, true
+	return &o.Count, true
 }
 
-// HasCount returns a boolean if a field has been set.
-func (o *HotelCatalogReplacementFile) HasCount() bool {
-	if o != nil && !IsNil(o.Count) {
-		return true
-	}
-
-	return false
-}
-
-// SetCount gets a reference to the given int32 and assigns it to the Count field.
+// SetCount sets field value
 func (o *HotelCatalogReplacementFile) SetCount(v int32) {
-	o.Count = &v
+	o.Count = v
 }
 
 func (o HotelCatalogReplacementFile) MarshalJSON() ([]byte, error) {
@@ -148,16 +132,48 @@ func (o HotelCatalogReplacementFile) MarshalJSON() ([]byte, error) {
 
 func (o HotelCatalogReplacementFile) ToMap() (map[string]interface{}, error) {
 	toSerialize := map[string]interface{}{}
-	if !IsNil(o.Url) {
-		toSerialize["url"] = o.Url
-	}
-	if !IsNil(o.SizeBytes) {
-		toSerialize["sizeBytes"] = o.SizeBytes
-	}
-	if !IsNil(o.Count) {
-		toSerialize["count"] = o.Count
-	}
+	toSerialize["url"] = o.Url
+	toSerialize["sizeBytes"] = o.SizeBytes
+	toSerialize["count"] = o.Count
 	return toSerialize, nil
+}
+
+func (o *HotelCatalogReplacementFile) UnmarshalJSON(data []byte) (err error) {
+	// This validates that all required properties are included in the JSON object
+	// by unmarshalling the object into a generic map with string keys and checking
+	// that every required field exists as a key in the generic map.
+	requiredProperties := []string{
+		"url",
+		"sizeBytes",
+		"count",
+	}
+
+	allProperties := make(map[string]interface{})
+
+	err = json.Unmarshal(data, &allProperties)
+
+	if err != nil {
+		return err;
+	}
+
+	for _, requiredProperty := range(requiredProperties) {
+		if _, exists := allProperties[requiredProperty]; !exists {
+			return fmt.Errorf("no value given for required property %v", requiredProperty)
+		}
+	}
+
+	varHotelCatalogReplacementFile := _HotelCatalogReplacementFile{}
+
+	decoder := json.NewDecoder(bytes.NewReader(data))
+	err = decoder.Decode(&varHotelCatalogReplacementFile)
+
+	if err != nil {
+		return err
+	}
+
+	*o = HotelCatalogReplacementFile(varHotelCatalogReplacementFile)
+
+	return err
 }
 
 type NullableHotelCatalogReplacementFile struct {

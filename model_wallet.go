@@ -14,6 +14,8 @@ package openroam
 import (
 	"encoding/json"
 	"time"
+	"bytes"
+	"fmt"
 )
 
 // checks if the Wallet type satisfies the MappedNullable interface at compile time
@@ -22,35 +24,47 @@ var _ MappedNullable = &Wallet{}
 // Wallet A partner wallet with totals of its completed transactions.
 type Wallet struct {
 	// Wallet id.
-	Id *string `json:"id,omitempty"`
+	Id string `json:"id"`
 	// Display name.
-	Label *string `json:"label,omitempty"`
+	Label string `json:"label"`
 	// Available balance, in the wallet's currency.
-	Balance *float32 `json:"balance,omitempty"`
+	Balance float32 `json:"balance"`
 	// Low-balance threshold for the `partner.balance.low` webhook; `null`             when not set.
 	LowBalanceThreshold NullableFloat32 `json:"lowBalanceThreshold,omitempty"`
 	// Whether this is the selected wallet that pays for orders.
-	IsSelected *bool `json:"isSelected,omitempty"`
+	IsSelected bool `json:"isSelected"`
 	// The wallet's currency.
-	Currency *Currency `json:"currency,omitempty"`
+	Currency Currency `json:"currency"`
 	// When the wallet was created (UTC).
-	CreatedAt *time.Time `json:"createdAt,omitempty"`
+	CreatedAt time.Time `json:"createdAt"`
 	// When the wallet last changed (UTC).
-	UpdatedAt *time.Time `json:"updatedAt,omitempty"`
-	// Total of completed `debit` transactions: funds added to the wallet.
-	TotalDebits *float32 `json:"totalDebits,omitempty"`
-	// Total of completed `credit` transactions: funds taken from the wallet.
-	TotalCredits *float32 `json:"totalCredits,omitempty"`
-	// `totalCredits` as a percentage of `totalDebits`, or 0 when nothing             was added.
-	PercentageDifference *float32 `json:"percentageDifference,omitempty"`
+	UpdatedAt time.Time `json:"updatedAt"`
+	// Total of completed `debit` transactions: funds taken from the wallet.
+	TotalDebits float32 `json:"totalDebits"`
+	// Total of completed `credit` transactions: funds added to the wallet.
+	TotalCredits float32 `json:"totalCredits"`
+	// `totalDebits` as a percentage of `totalCredits`, or 0 when nothing             was added.
+	PercentageDifference float32 `json:"percentageDifference"`
 }
+
+type _Wallet Wallet
 
 // NewWallet instantiates a new Wallet object
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewWallet() *Wallet {
+func NewWallet(id string, label string, balance float32, isSelected bool, currency Currency, createdAt time.Time, updatedAt time.Time, totalDebits float32, totalCredits float32, percentageDifference float32) *Wallet {
 	this := Wallet{}
+	this.Id = id
+	this.Label = label
+	this.Balance = balance
+	this.IsSelected = isSelected
+	this.Currency = currency
+	this.CreatedAt = createdAt
+	this.UpdatedAt = updatedAt
+	this.TotalDebits = totalDebits
+	this.TotalCredits = totalCredits
+	this.PercentageDifference = percentageDifference
 	return &this
 }
 
@@ -62,100 +76,76 @@ func NewWalletWithDefaults() *Wallet {
 	return &this
 }
 
-// GetId returns the Id field value if set, zero value otherwise.
+// GetId returns the Id field value
 func (o *Wallet) GetId() string {
-	if o == nil || IsNil(o.Id) {
+	if o == nil {
 		var ret string
 		return ret
 	}
-	return *o.Id
+
+	return o.Id
 }
 
-// GetIdOk returns a tuple with the Id field value if set, nil otherwise
+// GetIdOk returns a tuple with the Id field value
 // and a boolean to check if the value has been set.
 func (o *Wallet) GetIdOk() (*string, bool) {
-	if o == nil || IsNil(o.Id) {
+	if o == nil {
 		return nil, false
 	}
-	return o.Id, true
+	return &o.Id, true
 }
 
-// HasId returns a boolean if a field has been set.
-func (o *Wallet) HasId() bool {
-	if o != nil && !IsNil(o.Id) {
-		return true
-	}
-
-	return false
-}
-
-// SetId gets a reference to the given string and assigns it to the Id field.
+// SetId sets field value
 func (o *Wallet) SetId(v string) {
-	o.Id = &v
+	o.Id = v
 }
 
-// GetLabel returns the Label field value if set, zero value otherwise.
+// GetLabel returns the Label field value
 func (o *Wallet) GetLabel() string {
-	if o == nil || IsNil(o.Label) {
+	if o == nil {
 		var ret string
 		return ret
 	}
-	return *o.Label
+
+	return o.Label
 }
 
-// GetLabelOk returns a tuple with the Label field value if set, nil otherwise
+// GetLabelOk returns a tuple with the Label field value
 // and a boolean to check if the value has been set.
 func (o *Wallet) GetLabelOk() (*string, bool) {
-	if o == nil || IsNil(o.Label) {
+	if o == nil {
 		return nil, false
 	}
-	return o.Label, true
+	return &o.Label, true
 }
 
-// HasLabel returns a boolean if a field has been set.
-func (o *Wallet) HasLabel() bool {
-	if o != nil && !IsNil(o.Label) {
-		return true
-	}
-
-	return false
-}
-
-// SetLabel gets a reference to the given string and assigns it to the Label field.
+// SetLabel sets field value
 func (o *Wallet) SetLabel(v string) {
-	o.Label = &v
+	o.Label = v
 }
 
-// GetBalance returns the Balance field value if set, zero value otherwise.
+// GetBalance returns the Balance field value
 func (o *Wallet) GetBalance() float32 {
-	if o == nil || IsNil(o.Balance) {
+	if o == nil {
 		var ret float32
 		return ret
 	}
-	return *o.Balance
+
+	return o.Balance
 }
 
-// GetBalanceOk returns a tuple with the Balance field value if set, nil otherwise
+// GetBalanceOk returns a tuple with the Balance field value
 // and a boolean to check if the value has been set.
 func (o *Wallet) GetBalanceOk() (*float32, bool) {
-	if o == nil || IsNil(o.Balance) {
+	if o == nil {
 		return nil, false
 	}
-	return o.Balance, true
+	return &o.Balance, true
 }
 
-// HasBalance returns a boolean if a field has been set.
-func (o *Wallet) HasBalance() bool {
-	if o != nil && !IsNil(o.Balance) {
-		return true
-	}
-
-	return false
-}
-
-// SetBalance gets a reference to the given float32 and assigns it to the Balance field.
+// SetBalance sets field value
 func (o *Wallet) SetBalance(v float32) {
-	o.Balance = &v
+	o.Balance = v
 }
 
 // GetLowBalanceThreshold returns the LowBalanceThreshold field value if set, zero value otherwise (both if not set or set to explicit null).
@@ -200,228 +190,172 @@ func (o *Wallet) UnsetLowBalanceThreshold() {
 	o.LowBalanceThreshold.Unset()
 }
 
-// GetIsSelected returns the IsSelected field value if set, zero value otherwise.
+// GetIsSelected returns the IsSelected field value
 func (o *Wallet) GetIsSelected() bool {
-	if o == nil || IsNil(o.IsSelected) {
+	if o == nil {
 		var ret bool
 		return ret
 	}
-	return *o.IsSelected
+
+	return o.IsSelected
 }
 
-// GetIsSelectedOk returns a tuple with the IsSelected field value if set, nil otherwise
+// GetIsSelectedOk returns a tuple with the IsSelected field value
 // and a boolean to check if the value has been set.
 func (o *Wallet) GetIsSelectedOk() (*bool, bool) {
-	if o == nil || IsNil(o.IsSelected) {
+	if o == nil {
 		return nil, false
 	}
-	return o.IsSelected, true
+	return &o.IsSelected, true
 }
 
-// HasIsSelected returns a boolean if a field has been set.
-func (o *Wallet) HasIsSelected() bool {
-	if o != nil && !IsNil(o.IsSelected) {
-		return true
-	}
-
-	return false
-}
-
-// SetIsSelected gets a reference to the given bool and assigns it to the IsSelected field.
+// SetIsSelected sets field value
 func (o *Wallet) SetIsSelected(v bool) {
-	o.IsSelected = &v
+	o.IsSelected = v
 }
 
-// GetCurrency returns the Currency field value if set, zero value otherwise.
+// GetCurrency returns the Currency field value
 func (o *Wallet) GetCurrency() Currency {
-	if o == nil || IsNil(o.Currency) {
+	if o == nil {
 		var ret Currency
 		return ret
 	}
-	return *o.Currency
+
+	return o.Currency
 }
 
-// GetCurrencyOk returns a tuple with the Currency field value if set, nil otherwise
+// GetCurrencyOk returns a tuple with the Currency field value
 // and a boolean to check if the value has been set.
 func (o *Wallet) GetCurrencyOk() (*Currency, bool) {
-	if o == nil || IsNil(o.Currency) {
+	if o == nil {
 		return nil, false
 	}
-	return o.Currency, true
+	return &o.Currency, true
 }
 
-// HasCurrency returns a boolean if a field has been set.
-func (o *Wallet) HasCurrency() bool {
-	if o != nil && !IsNil(o.Currency) {
-		return true
-	}
-
-	return false
-}
-
-// SetCurrency gets a reference to the given Currency and assigns it to the Currency field.
+// SetCurrency sets field value
 func (o *Wallet) SetCurrency(v Currency) {
-	o.Currency = &v
+	o.Currency = v
 }
 
-// GetCreatedAt returns the CreatedAt field value if set, zero value otherwise.
+// GetCreatedAt returns the CreatedAt field value
 func (o *Wallet) GetCreatedAt() time.Time {
-	if o == nil || IsNil(o.CreatedAt) {
+	if o == nil {
 		var ret time.Time
 		return ret
 	}
-	return *o.CreatedAt
+
+	return o.CreatedAt
 }
 
-// GetCreatedAtOk returns a tuple with the CreatedAt field value if set, nil otherwise
+// GetCreatedAtOk returns a tuple with the CreatedAt field value
 // and a boolean to check if the value has been set.
 func (o *Wallet) GetCreatedAtOk() (*time.Time, bool) {
-	if o == nil || IsNil(o.CreatedAt) {
+	if o == nil {
 		return nil, false
 	}
-	return o.CreatedAt, true
+	return &o.CreatedAt, true
 }
 
-// HasCreatedAt returns a boolean if a field has been set.
-func (o *Wallet) HasCreatedAt() bool {
-	if o != nil && !IsNil(o.CreatedAt) {
-		return true
-	}
-
-	return false
-}
-
-// SetCreatedAt gets a reference to the given time.Time and assigns it to the CreatedAt field.
+// SetCreatedAt sets field value
 func (o *Wallet) SetCreatedAt(v time.Time) {
-	o.CreatedAt = &v
+	o.CreatedAt = v
 }
 
-// GetUpdatedAt returns the UpdatedAt field value if set, zero value otherwise.
+// GetUpdatedAt returns the UpdatedAt field value
 func (o *Wallet) GetUpdatedAt() time.Time {
-	if o == nil || IsNil(o.UpdatedAt) {
+	if o == nil {
 		var ret time.Time
 		return ret
 	}
-	return *o.UpdatedAt
+
+	return o.UpdatedAt
 }
 
-// GetUpdatedAtOk returns a tuple with the UpdatedAt field value if set, nil otherwise
+// GetUpdatedAtOk returns a tuple with the UpdatedAt field value
 // and a boolean to check if the value has been set.
 func (o *Wallet) GetUpdatedAtOk() (*time.Time, bool) {
-	if o == nil || IsNil(o.UpdatedAt) {
+	if o == nil {
 		return nil, false
 	}
-	return o.UpdatedAt, true
+	return &o.UpdatedAt, true
 }
 
-// HasUpdatedAt returns a boolean if a field has been set.
-func (o *Wallet) HasUpdatedAt() bool {
-	if o != nil && !IsNil(o.UpdatedAt) {
-		return true
-	}
-
-	return false
-}
-
-// SetUpdatedAt gets a reference to the given time.Time and assigns it to the UpdatedAt field.
+// SetUpdatedAt sets field value
 func (o *Wallet) SetUpdatedAt(v time.Time) {
-	o.UpdatedAt = &v
+	o.UpdatedAt = v
 }
 
-// GetTotalDebits returns the TotalDebits field value if set, zero value otherwise.
+// GetTotalDebits returns the TotalDebits field value
 func (o *Wallet) GetTotalDebits() float32 {
-	if o == nil || IsNil(o.TotalDebits) {
+	if o == nil {
 		var ret float32
 		return ret
 	}
-	return *o.TotalDebits
+
+	return o.TotalDebits
 }
 
-// GetTotalDebitsOk returns a tuple with the TotalDebits field value if set, nil otherwise
+// GetTotalDebitsOk returns a tuple with the TotalDebits field value
 // and a boolean to check if the value has been set.
 func (o *Wallet) GetTotalDebitsOk() (*float32, bool) {
-	if o == nil || IsNil(o.TotalDebits) {
+	if o == nil {
 		return nil, false
 	}
-	return o.TotalDebits, true
+	return &o.TotalDebits, true
 }
 
-// HasTotalDebits returns a boolean if a field has been set.
-func (o *Wallet) HasTotalDebits() bool {
-	if o != nil && !IsNil(o.TotalDebits) {
-		return true
-	}
-
-	return false
-}
-
-// SetTotalDebits gets a reference to the given float32 and assigns it to the TotalDebits field.
+// SetTotalDebits sets field value
 func (o *Wallet) SetTotalDebits(v float32) {
-	o.TotalDebits = &v
+	o.TotalDebits = v
 }
 
-// GetTotalCredits returns the TotalCredits field value if set, zero value otherwise.
+// GetTotalCredits returns the TotalCredits field value
 func (o *Wallet) GetTotalCredits() float32 {
-	if o == nil || IsNil(o.TotalCredits) {
+	if o == nil {
 		var ret float32
 		return ret
 	}
-	return *o.TotalCredits
+
+	return o.TotalCredits
 }
 
-// GetTotalCreditsOk returns a tuple with the TotalCredits field value if set, nil otherwise
+// GetTotalCreditsOk returns a tuple with the TotalCredits field value
 // and a boolean to check if the value has been set.
 func (o *Wallet) GetTotalCreditsOk() (*float32, bool) {
-	if o == nil || IsNil(o.TotalCredits) {
+	if o == nil {
 		return nil, false
 	}
-	return o.TotalCredits, true
+	return &o.TotalCredits, true
 }
 
-// HasTotalCredits returns a boolean if a field has been set.
-func (o *Wallet) HasTotalCredits() bool {
-	if o != nil && !IsNil(o.TotalCredits) {
-		return true
-	}
-
-	return false
-}
-
-// SetTotalCredits gets a reference to the given float32 and assigns it to the TotalCredits field.
+// SetTotalCredits sets field value
 func (o *Wallet) SetTotalCredits(v float32) {
-	o.TotalCredits = &v
+	o.TotalCredits = v
 }
 
-// GetPercentageDifference returns the PercentageDifference field value if set, zero value otherwise.
+// GetPercentageDifference returns the PercentageDifference field value
 func (o *Wallet) GetPercentageDifference() float32 {
-	if o == nil || IsNil(o.PercentageDifference) {
+	if o == nil {
 		var ret float32
 		return ret
 	}
-	return *o.PercentageDifference
+
+	return o.PercentageDifference
 }
 
-// GetPercentageDifferenceOk returns a tuple with the PercentageDifference field value if set, nil otherwise
+// GetPercentageDifferenceOk returns a tuple with the PercentageDifference field value
 // and a boolean to check if the value has been set.
 func (o *Wallet) GetPercentageDifferenceOk() (*float32, bool) {
-	if o == nil || IsNil(o.PercentageDifference) {
+	if o == nil {
 		return nil, false
 	}
-	return o.PercentageDifference, true
+	return &o.PercentageDifference, true
 }
 
-// HasPercentageDifference returns a boolean if a field has been set.
-func (o *Wallet) HasPercentageDifference() bool {
-	if o != nil && !IsNil(o.PercentageDifference) {
-		return true
-	}
-
-	return false
-}
-
-// SetPercentageDifference gets a reference to the given float32 and assigns it to the PercentageDifference field.
+// SetPercentageDifference sets field value
 func (o *Wallet) SetPercentageDifference(v float32) {
-	o.PercentageDifference = &v
+	o.PercentageDifference = v
 }
 
 func (o Wallet) MarshalJSON() ([]byte, error) {
@@ -434,40 +368,65 @@ func (o Wallet) MarshalJSON() ([]byte, error) {
 
 func (o Wallet) ToMap() (map[string]interface{}, error) {
 	toSerialize := map[string]interface{}{}
-	if !IsNil(o.Id) {
-		toSerialize["id"] = o.Id
-	}
-	if !IsNil(o.Label) {
-		toSerialize["label"] = o.Label
-	}
-	if !IsNil(o.Balance) {
-		toSerialize["balance"] = o.Balance
-	}
+	toSerialize["id"] = o.Id
+	toSerialize["label"] = o.Label
+	toSerialize["balance"] = o.Balance
 	if o.LowBalanceThreshold.IsSet() {
 		toSerialize["lowBalanceThreshold"] = o.LowBalanceThreshold.Get()
 	}
-	if !IsNil(o.IsSelected) {
-		toSerialize["isSelected"] = o.IsSelected
-	}
-	if !IsNil(o.Currency) {
-		toSerialize["currency"] = o.Currency
-	}
-	if !IsNil(o.CreatedAt) {
-		toSerialize["createdAt"] = o.CreatedAt
-	}
-	if !IsNil(o.UpdatedAt) {
-		toSerialize["updatedAt"] = o.UpdatedAt
-	}
-	if !IsNil(o.TotalDebits) {
-		toSerialize["totalDebits"] = o.TotalDebits
-	}
-	if !IsNil(o.TotalCredits) {
-		toSerialize["totalCredits"] = o.TotalCredits
-	}
-	if !IsNil(o.PercentageDifference) {
-		toSerialize["percentageDifference"] = o.PercentageDifference
-	}
+	toSerialize["isSelected"] = o.IsSelected
+	toSerialize["currency"] = o.Currency
+	toSerialize["createdAt"] = o.CreatedAt
+	toSerialize["updatedAt"] = o.UpdatedAt
+	toSerialize["totalDebits"] = o.TotalDebits
+	toSerialize["totalCredits"] = o.TotalCredits
+	toSerialize["percentageDifference"] = o.PercentageDifference
 	return toSerialize, nil
+}
+
+func (o *Wallet) UnmarshalJSON(data []byte) (err error) {
+	// This validates that all required properties are included in the JSON object
+	// by unmarshalling the object into a generic map with string keys and checking
+	// that every required field exists as a key in the generic map.
+	requiredProperties := []string{
+		"id",
+		"label",
+		"balance",
+		"isSelected",
+		"currency",
+		"createdAt",
+		"updatedAt",
+		"totalDebits",
+		"totalCredits",
+		"percentageDifference",
+	}
+
+	allProperties := make(map[string]interface{})
+
+	err = json.Unmarshal(data, &allProperties)
+
+	if err != nil {
+		return err;
+	}
+
+	for _, requiredProperty := range(requiredProperties) {
+		if _, exists := allProperties[requiredProperty]; !exists {
+			return fmt.Errorf("no value given for required property %v", requiredProperty)
+		}
+	}
+
+	varWallet := _Wallet{}
+
+	decoder := json.NewDecoder(bytes.NewReader(data))
+	err = decoder.Decode(&varWallet)
+
+	if err != nil {
+		return err
+	}
+
+	*o = Wallet(varWallet)
+
+	return err
 }
 
 type NullableWallet struct {

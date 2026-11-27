@@ -166,7 +166,6 @@ func (o *PriceRange) UnmarshalJSON(data []byte) (err error) {
 	varPriceRange := _PriceRange{}
 
 	decoder := json.NewDecoder(bytes.NewReader(data))
-	decoder.DisallowUnknownFields()
 	err = decoder.Decode(&varPriceRange)
 
 	if err != nil {

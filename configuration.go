@@ -29,6 +29,9 @@ func (c contextKey) String() string {
 }
 
 var (
+	// ContextAccessToken takes a string oauth2 access token as authentication for the request.
+	ContextAccessToken = contextKey("accesstoken")
+
 	// ContextAPIKeys takes a string apikey as authentication for the request
 	ContextAPIKeys = contextKey("apiKeys")
 
@@ -94,7 +97,7 @@ func NewConfiguration() *Configuration {
 		Debug:            false,
 		Servers:          ServerConfigurations{
 			{
-				URL: "https://b2b-api.openroam.com",
+				URL: "https://api.openroam.com",
 				Description: "Production",
 			},
 		},

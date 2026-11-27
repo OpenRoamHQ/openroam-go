@@ -13,6 +13,8 @@ package openroam
 
 import (
 	"encoding/json"
+	"bytes"
+	"fmt"
 )
 
 // checks if the OrderItemCancelResult type satisfies the MappedNullable interface at compile time
@@ -21,21 +23,29 @@ var _ MappedNullable = &OrderItemCancelResult{}
 // OrderItemCancelResult The refund of an order item.
 type OrderItemCancelResult struct {
 	// The refunded order item.
-	OrderItemId *string `json:"orderItemId,omitempty"`
+	OrderItemId string `json:"orderItemId"`
 	// The amount refunded, in the order's currency.
-	Amount *Money `json:"amount,omitempty"`
+	Amount Money `json:"amount"`
 	// How the amount is returned; `balance` returns it to the wallet that paid.
-	Method *string `json:"method,omitempty"`
+	Method string `json:"method"`
 	// Refund status: `refunded` when complete; `pending` or `processing` while it             settles; `failed` when it did not complete.
-	Status *string `json:"status,omitempty"`
+	Status string `json:"status"`
+	// The wallet the refund was returned to and the amount it received, in the wallet's currency;             `null` until money is back in a wallet, and for a refund to a card.
+	Wallet NullableOrderRefundWallet `json:"wallet,omitempty"`
 }
+
+type _OrderItemCancelResult OrderItemCancelResult
 
 // NewOrderItemCancelResult instantiates a new OrderItemCancelResult object
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewOrderItemCancelResult() *OrderItemCancelResult {
+func NewOrderItemCancelResult(orderItemId string, amount Money, method string, status string) *OrderItemCancelResult {
 	this := OrderItemCancelResult{}
+	this.OrderItemId = orderItemId
+	this.Amount = amount
+	this.Method = method
+	this.Status = status
 	return &this
 }
 
@@ -47,132 +57,142 @@ func NewOrderItemCancelResultWithDefaults() *OrderItemCancelResult {
 	return &this
 }
 
-// GetOrderItemId returns the OrderItemId field value if set, zero value otherwise.
+// GetOrderItemId returns the OrderItemId field value
 func (o *OrderItemCancelResult) GetOrderItemId() string {
-	if o == nil || IsNil(o.OrderItemId) {
+	if o == nil {
 		var ret string
 		return ret
 	}
-	return *o.OrderItemId
+
+	return o.OrderItemId
 }
 
-// GetOrderItemIdOk returns a tuple with the OrderItemId field value if set, nil otherwise
+// GetOrderItemIdOk returns a tuple with the OrderItemId field value
 // and a boolean to check if the value has been set.
 func (o *OrderItemCancelResult) GetOrderItemIdOk() (*string, bool) {
-	if o == nil || IsNil(o.OrderItemId) {
+	if o == nil {
 		return nil, false
 	}
-	return o.OrderItemId, true
+	return &o.OrderItemId, true
 }
 
-// HasOrderItemId returns a boolean if a field has been set.
-func (o *OrderItemCancelResult) HasOrderItemId() bool {
-	if o != nil && !IsNil(o.OrderItemId) {
-		return true
-	}
-
-	return false
-}
-
-// SetOrderItemId gets a reference to the given string and assigns it to the OrderItemId field.
+// SetOrderItemId sets field value
 func (o *OrderItemCancelResult) SetOrderItemId(v string) {
-	o.OrderItemId = &v
+	o.OrderItemId = v
 }
 
-// GetAmount returns the Amount field value if set, zero value otherwise.
+// GetAmount returns the Amount field value
 func (o *OrderItemCancelResult) GetAmount() Money {
-	if o == nil || IsNil(o.Amount) {
+	if o == nil {
 		var ret Money
 		return ret
 	}
-	return *o.Amount
+
+	return o.Amount
 }
 
-// GetAmountOk returns a tuple with the Amount field value if set, nil otherwise
+// GetAmountOk returns a tuple with the Amount field value
 // and a boolean to check if the value has been set.
 func (o *OrderItemCancelResult) GetAmountOk() (*Money, bool) {
-	if o == nil || IsNil(o.Amount) {
+	if o == nil {
 		return nil, false
 	}
-	return o.Amount, true
+	return &o.Amount, true
 }
 
-// HasAmount returns a boolean if a field has been set.
-func (o *OrderItemCancelResult) HasAmount() bool {
-	if o != nil && !IsNil(o.Amount) {
-		return true
-	}
-
-	return false
-}
-
-// SetAmount gets a reference to the given Money and assigns it to the Amount field.
+// SetAmount sets field value
 func (o *OrderItemCancelResult) SetAmount(v Money) {
-	o.Amount = &v
+	o.Amount = v
 }
 
-// GetMethod returns the Method field value if set, zero value otherwise.
+// GetMethod returns the Method field value
 func (o *OrderItemCancelResult) GetMethod() string {
-	if o == nil || IsNil(o.Method) {
+	if o == nil {
 		var ret string
 		return ret
 	}
-	return *o.Method
+
+	return o.Method
 }
 
-// GetMethodOk returns a tuple with the Method field value if set, nil otherwise
+// GetMethodOk returns a tuple with the Method field value
 // and a boolean to check if the value has been set.
 func (o *OrderItemCancelResult) GetMethodOk() (*string, bool) {
-	if o == nil || IsNil(o.Method) {
+	if o == nil {
 		return nil, false
 	}
-	return o.Method, true
+	return &o.Method, true
 }
 
-// HasMethod returns a boolean if a field has been set.
-func (o *OrderItemCancelResult) HasMethod() bool {
-	if o != nil && !IsNil(o.Method) {
-		return true
-	}
-
-	return false
-}
-
-// SetMethod gets a reference to the given string and assigns it to the Method field.
+// SetMethod sets field value
 func (o *OrderItemCancelResult) SetMethod(v string) {
-	o.Method = &v
+	o.Method = v
 }
 
-// GetStatus returns the Status field value if set, zero value otherwise.
+// GetStatus returns the Status field value
 func (o *OrderItemCancelResult) GetStatus() string {
-	if o == nil || IsNil(o.Status) {
+	if o == nil {
 		var ret string
 		return ret
 	}
-	return *o.Status
+
+	return o.Status
 }
 
-// GetStatusOk returns a tuple with the Status field value if set, nil otherwise
+// GetStatusOk returns a tuple with the Status field value
 // and a boolean to check if the value has been set.
 func (o *OrderItemCancelResult) GetStatusOk() (*string, bool) {
-	if o == nil || IsNil(o.Status) {
+	if o == nil {
 		return nil, false
 	}
-	return o.Status, true
+	return &o.Status, true
 }
 
-// HasStatus returns a boolean if a field has been set.
-func (o *OrderItemCancelResult) HasStatus() bool {
-	if o != nil && !IsNil(o.Status) {
+// SetStatus sets field value
+func (o *OrderItemCancelResult) SetStatus(v string) {
+	o.Status = v
+}
+
+// GetWallet returns the Wallet field value if set, zero value otherwise (both if not set or set to explicit null).
+func (o *OrderItemCancelResult) GetWallet() OrderRefundWallet {
+	if o == nil || IsNil(o.Wallet.Get()) {
+		var ret OrderRefundWallet
+		return ret
+	}
+	return *o.Wallet.Get()
+}
+
+// GetWalletOk returns a tuple with the Wallet field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+// NOTE: If the value is an explicit nil, `nil, true` will be returned
+func (o *OrderItemCancelResult) GetWalletOk() (*OrderRefundWallet, bool) {
+	if o == nil {
+		return nil, false
+	}
+	return o.Wallet.Get(), o.Wallet.IsSet()
+}
+
+// HasWallet returns a boolean if a field has been set.
+func (o *OrderItemCancelResult) HasWallet() bool {
+	if o != nil && o.Wallet.IsSet() {
 		return true
 	}
 
 	return false
 }
 
-// SetStatus gets a reference to the given string and assigns it to the Status field.
-func (o *OrderItemCancelResult) SetStatus(v string) {
-	o.Status = &v
+// SetWallet gets a reference to the given NullableOrderRefundWallet and assigns it to the Wallet field.
+func (o *OrderItemCancelResult) SetWallet(v OrderRefundWallet) {
+	o.Wallet.Set(&v)
+}
+// SetWalletNil sets the value for Wallet to be an explicit nil
+func (o *OrderItemCancelResult) SetWalletNil() {
+	o.Wallet.Set(nil)
+}
+
+// UnsetWallet ensures that no value is present for Wallet, not even an explicit nil
+func (o *OrderItemCancelResult) UnsetWallet() {
+	o.Wallet.Unset()
 }
 
 func (o OrderItemCancelResult) MarshalJSON() ([]byte, error) {
@@ -185,19 +205,53 @@ func (o OrderItemCancelResult) MarshalJSON() ([]byte, error) {
 
 func (o OrderItemCancelResult) ToMap() (map[string]interface{}, error) {
 	toSerialize := map[string]interface{}{}
-	if !IsNil(o.OrderItemId) {
-		toSerialize["orderItemId"] = o.OrderItemId
-	}
-	if !IsNil(o.Amount) {
-		toSerialize["amount"] = o.Amount
-	}
-	if !IsNil(o.Method) {
-		toSerialize["method"] = o.Method
-	}
-	if !IsNil(o.Status) {
-		toSerialize["status"] = o.Status
+	toSerialize["orderItemId"] = o.OrderItemId
+	toSerialize["amount"] = o.Amount
+	toSerialize["method"] = o.Method
+	toSerialize["status"] = o.Status
+	if o.Wallet.IsSet() {
+		toSerialize["wallet"] = o.Wallet.Get()
 	}
 	return toSerialize, nil
+}
+
+func (o *OrderItemCancelResult) UnmarshalJSON(data []byte) (err error) {
+	// This validates that all required properties are included in the JSON object
+	// by unmarshalling the object into a generic map with string keys and checking
+	// that every required field exists as a key in the generic map.
+	requiredProperties := []string{
+		"orderItemId",
+		"amount",
+		"method",
+		"status",
+	}
+
+	allProperties := make(map[string]interface{})
+
+	err = json.Unmarshal(data, &allProperties)
+
+	if err != nil {
+		return err;
+	}
+
+	for _, requiredProperty := range(requiredProperties) {
+		if _, exists := allProperties[requiredProperty]; !exists {
+			return fmt.Errorf("no value given for required property %v", requiredProperty)
+		}
+	}
+
+	varOrderItemCancelResult := _OrderItemCancelResult{}
+
+	decoder := json.NewDecoder(bytes.NewReader(data))
+	err = decoder.Decode(&varOrderItemCancelResult)
+
+	if err != nil {
+		return err
+	}
+
+	*o = OrderItemCancelResult(varOrderItemCancelResult)
+
+	return err
 }
 
 type NullableOrderItemCancelResult struct {

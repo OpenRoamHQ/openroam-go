@@ -13,6 +13,8 @@ package openroam
 
 import (
 	"encoding/json"
+	"bytes"
+	"fmt"
 )
 
 // checks if the OrderItemRefundedWebhookData type satisfies the MappedNullable interface at compile time
@@ -20,24 +22,39 @@ var _ MappedNullable = &OrderItemRefundedWebhookData{}
 
 // OrderItemRefundedWebhookData struct for OrderItemRefundedWebhookData
 type OrderItemRefundedWebhookData struct {
-	OrderId *string `json:"orderId,omitempty"`
-	OrderItemId *string `json:"orderItemId,omitempty"`
-	PublicId *string `json:"publicId,omitempty"`
-	RefundId *string `json:"refundId,omitempty"`
-	RefundAmount *float32 `json:"refundAmount,omitempty"`
-	CurrencyCode *string `json:"currencyCode,omitempty"`
-	// How a payment was made, in the words of the partner API: `balance` from a wallet, or `card`. It is the wire name of `PaymentMethodEnum` for partners. That enum names the card processor, which a partner must not see, so the B2B API and the partner dashboard both expose this one.
-	PaymentMethod *string `json:"paymentMethod,omitempty"`
-	Status *string `json:"status,omitempty"`
-	Reason NullableString `json:"reason,omitempty"`
+	OrderId string `json:"orderId"`
+	OrderItemId string `json:"orderItemId"`
+	PublicId string `json:"publicId"`
+	RefundId string `json:"refundId"`
+	RefundAmount float32 `json:"refundAmount"`
+	CurrencyCode string `json:"currencyCode"`
+	// How a payment was made: `balance` from a wallet, or `card`.
+	PaymentMethod string `json:"paymentMethod"`
+	Status string `json:"status"`
+	Reason string `json:"reason"`
+	// The checkout the order was placed from, with your payment reference; `null` unless a traveller             paid for the order on your own page, on one of your sites that takes payment itself.
+	Checkout NullableOrderCheckout `json:"checkout,omitempty"`
+	// What the traveller paid you for the refunded unit, in the checkout's currency: the part of their payment             to refund them. `null` unless `checkout` is set.
+	SellingPrice NullableMoney `json:"sellingPrice,omitempty"`
 }
+
+type _OrderItemRefundedWebhookData OrderItemRefundedWebhookData
 
 // NewOrderItemRefundedWebhookData instantiates a new OrderItemRefundedWebhookData object
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewOrderItemRefundedWebhookData() *OrderItemRefundedWebhookData {
+func NewOrderItemRefundedWebhookData(orderId string, orderItemId string, publicId string, refundId string, refundAmount float32, currencyCode string, paymentMethod string, status string, reason string) *OrderItemRefundedWebhookData {
 	this := OrderItemRefundedWebhookData{}
+	this.OrderId = orderId
+	this.OrderItemId = orderItemId
+	this.PublicId = publicId
+	this.RefundId = refundId
+	this.RefundAmount = refundAmount
+	this.CurrencyCode = currencyCode
+	this.PaymentMethod = paymentMethod
+	this.Status = status
+	this.Reason = reason
 	return &this
 }
 
@@ -49,302 +66,304 @@ func NewOrderItemRefundedWebhookDataWithDefaults() *OrderItemRefundedWebhookData
 	return &this
 }
 
-// GetOrderId returns the OrderId field value if set, zero value otherwise.
+// GetOrderId returns the OrderId field value
 func (o *OrderItemRefundedWebhookData) GetOrderId() string {
-	if o == nil || IsNil(o.OrderId) {
+	if o == nil {
 		var ret string
 		return ret
 	}
-	return *o.OrderId
+
+	return o.OrderId
 }
 
-// GetOrderIdOk returns a tuple with the OrderId field value if set, nil otherwise
+// GetOrderIdOk returns a tuple with the OrderId field value
 // and a boolean to check if the value has been set.
 func (o *OrderItemRefundedWebhookData) GetOrderIdOk() (*string, bool) {
-	if o == nil || IsNil(o.OrderId) {
+	if o == nil {
 		return nil, false
 	}
-	return o.OrderId, true
+	return &o.OrderId, true
 }
 
-// HasOrderId returns a boolean if a field has been set.
-func (o *OrderItemRefundedWebhookData) HasOrderId() bool {
-	if o != nil && !IsNil(o.OrderId) {
-		return true
-	}
-
-	return false
-}
-
-// SetOrderId gets a reference to the given string and assigns it to the OrderId field.
+// SetOrderId sets field value
 func (o *OrderItemRefundedWebhookData) SetOrderId(v string) {
-	o.OrderId = &v
+	o.OrderId = v
 }
 
-// GetOrderItemId returns the OrderItemId field value if set, zero value otherwise.
+// GetOrderItemId returns the OrderItemId field value
 func (o *OrderItemRefundedWebhookData) GetOrderItemId() string {
-	if o == nil || IsNil(o.OrderItemId) {
+	if o == nil {
 		var ret string
 		return ret
 	}
-	return *o.OrderItemId
+
+	return o.OrderItemId
 }
 
-// GetOrderItemIdOk returns a tuple with the OrderItemId field value if set, nil otherwise
+// GetOrderItemIdOk returns a tuple with the OrderItemId field value
 // and a boolean to check if the value has been set.
 func (o *OrderItemRefundedWebhookData) GetOrderItemIdOk() (*string, bool) {
-	if o == nil || IsNil(o.OrderItemId) {
+	if o == nil {
 		return nil, false
 	}
-	return o.OrderItemId, true
+	return &o.OrderItemId, true
 }
 
-// HasOrderItemId returns a boolean if a field has been set.
-func (o *OrderItemRefundedWebhookData) HasOrderItemId() bool {
-	if o != nil && !IsNil(o.OrderItemId) {
-		return true
-	}
-
-	return false
-}
-
-// SetOrderItemId gets a reference to the given string and assigns it to the OrderItemId field.
+// SetOrderItemId sets field value
 func (o *OrderItemRefundedWebhookData) SetOrderItemId(v string) {
-	o.OrderItemId = &v
+	o.OrderItemId = v
 }
 
-// GetPublicId returns the PublicId field value if set, zero value otherwise.
+// GetPublicId returns the PublicId field value
 func (o *OrderItemRefundedWebhookData) GetPublicId() string {
-	if o == nil || IsNil(o.PublicId) {
+	if o == nil {
 		var ret string
 		return ret
 	}
-	return *o.PublicId
+
+	return o.PublicId
 }
 
-// GetPublicIdOk returns a tuple with the PublicId field value if set, nil otherwise
+// GetPublicIdOk returns a tuple with the PublicId field value
 // and a boolean to check if the value has been set.
 func (o *OrderItemRefundedWebhookData) GetPublicIdOk() (*string, bool) {
-	if o == nil || IsNil(o.PublicId) {
+	if o == nil {
 		return nil, false
 	}
-	return o.PublicId, true
+	return &o.PublicId, true
 }
 
-// HasPublicId returns a boolean if a field has been set.
-func (o *OrderItemRefundedWebhookData) HasPublicId() bool {
-	if o != nil && !IsNil(o.PublicId) {
-		return true
-	}
-
-	return false
-}
-
-// SetPublicId gets a reference to the given string and assigns it to the PublicId field.
+// SetPublicId sets field value
 func (o *OrderItemRefundedWebhookData) SetPublicId(v string) {
-	o.PublicId = &v
+	o.PublicId = v
 }
 
-// GetRefundId returns the RefundId field value if set, zero value otherwise.
+// GetRefundId returns the RefundId field value
 func (o *OrderItemRefundedWebhookData) GetRefundId() string {
-	if o == nil || IsNil(o.RefundId) {
+	if o == nil {
 		var ret string
 		return ret
 	}
-	return *o.RefundId
+
+	return o.RefundId
 }
 
-// GetRefundIdOk returns a tuple with the RefundId field value if set, nil otherwise
+// GetRefundIdOk returns a tuple with the RefundId field value
 // and a boolean to check if the value has been set.
 func (o *OrderItemRefundedWebhookData) GetRefundIdOk() (*string, bool) {
-	if o == nil || IsNil(o.RefundId) {
+	if o == nil {
 		return nil, false
 	}
-	return o.RefundId, true
+	return &o.RefundId, true
 }
 
-// HasRefundId returns a boolean if a field has been set.
-func (o *OrderItemRefundedWebhookData) HasRefundId() bool {
-	if o != nil && !IsNil(o.RefundId) {
-		return true
-	}
-
-	return false
-}
-
-// SetRefundId gets a reference to the given string and assigns it to the RefundId field.
+// SetRefundId sets field value
 func (o *OrderItemRefundedWebhookData) SetRefundId(v string) {
-	o.RefundId = &v
+	o.RefundId = v
 }
 
-// GetRefundAmount returns the RefundAmount field value if set, zero value otherwise.
+// GetRefundAmount returns the RefundAmount field value
 func (o *OrderItemRefundedWebhookData) GetRefundAmount() float32 {
-	if o == nil || IsNil(o.RefundAmount) {
+	if o == nil {
 		var ret float32
 		return ret
 	}
-	return *o.RefundAmount
+
+	return o.RefundAmount
 }
 
-// GetRefundAmountOk returns a tuple with the RefundAmount field value if set, nil otherwise
+// GetRefundAmountOk returns a tuple with the RefundAmount field value
 // and a boolean to check if the value has been set.
 func (o *OrderItemRefundedWebhookData) GetRefundAmountOk() (*float32, bool) {
-	if o == nil || IsNil(o.RefundAmount) {
+	if o == nil {
 		return nil, false
 	}
-	return o.RefundAmount, true
+	return &o.RefundAmount, true
 }
 
-// HasRefundAmount returns a boolean if a field has been set.
-func (o *OrderItemRefundedWebhookData) HasRefundAmount() bool {
-	if o != nil && !IsNil(o.RefundAmount) {
-		return true
-	}
-
-	return false
-}
-
-// SetRefundAmount gets a reference to the given float32 and assigns it to the RefundAmount field.
+// SetRefundAmount sets field value
 func (o *OrderItemRefundedWebhookData) SetRefundAmount(v float32) {
-	o.RefundAmount = &v
+	o.RefundAmount = v
 }
 
-// GetCurrencyCode returns the CurrencyCode field value if set, zero value otherwise.
+// GetCurrencyCode returns the CurrencyCode field value
 func (o *OrderItemRefundedWebhookData) GetCurrencyCode() string {
-	if o == nil || IsNil(o.CurrencyCode) {
+	if o == nil {
 		var ret string
 		return ret
 	}
-	return *o.CurrencyCode
+
+	return o.CurrencyCode
 }
 
-// GetCurrencyCodeOk returns a tuple with the CurrencyCode field value if set, nil otherwise
+// GetCurrencyCodeOk returns a tuple with the CurrencyCode field value
 // and a boolean to check if the value has been set.
 func (o *OrderItemRefundedWebhookData) GetCurrencyCodeOk() (*string, bool) {
-	if o == nil || IsNil(o.CurrencyCode) {
+	if o == nil {
 		return nil, false
 	}
-	return o.CurrencyCode, true
+	return &o.CurrencyCode, true
 }
 
-// HasCurrencyCode returns a boolean if a field has been set.
-func (o *OrderItemRefundedWebhookData) HasCurrencyCode() bool {
-	if o != nil && !IsNil(o.CurrencyCode) {
-		return true
-	}
-
-	return false
-}
-
-// SetCurrencyCode gets a reference to the given string and assigns it to the CurrencyCode field.
+// SetCurrencyCode sets field value
 func (o *OrderItemRefundedWebhookData) SetCurrencyCode(v string) {
-	o.CurrencyCode = &v
+	o.CurrencyCode = v
 }
 
-// GetPaymentMethod returns the PaymentMethod field value if set, zero value otherwise.
+// GetPaymentMethod returns the PaymentMethod field value
 func (o *OrderItemRefundedWebhookData) GetPaymentMethod() string {
-	if o == nil || IsNil(o.PaymentMethod) {
+	if o == nil {
 		var ret string
 		return ret
 	}
-	return *o.PaymentMethod
+
+	return o.PaymentMethod
 }
 
-// GetPaymentMethodOk returns a tuple with the PaymentMethod field value if set, nil otherwise
+// GetPaymentMethodOk returns a tuple with the PaymentMethod field value
 // and a boolean to check if the value has been set.
 func (o *OrderItemRefundedWebhookData) GetPaymentMethodOk() (*string, bool) {
-	if o == nil || IsNil(o.PaymentMethod) {
+	if o == nil {
 		return nil, false
 	}
-	return o.PaymentMethod, true
+	return &o.PaymentMethod, true
 }
 
-// HasPaymentMethod returns a boolean if a field has been set.
-func (o *OrderItemRefundedWebhookData) HasPaymentMethod() bool {
-	if o != nil && !IsNil(o.PaymentMethod) {
-		return true
-	}
-
-	return false
-}
-
-// SetPaymentMethod gets a reference to the given string and assigns it to the PaymentMethod field.
+// SetPaymentMethod sets field value
 func (o *OrderItemRefundedWebhookData) SetPaymentMethod(v string) {
-	o.PaymentMethod = &v
+	o.PaymentMethod = v
 }
 
-// GetStatus returns the Status field value if set, zero value otherwise.
+// GetStatus returns the Status field value
 func (o *OrderItemRefundedWebhookData) GetStatus() string {
-	if o == nil || IsNil(o.Status) {
+	if o == nil {
 		var ret string
 		return ret
 	}
-	return *o.Status
+
+	return o.Status
 }
 
-// GetStatusOk returns a tuple with the Status field value if set, nil otherwise
+// GetStatusOk returns a tuple with the Status field value
 // and a boolean to check if the value has been set.
 func (o *OrderItemRefundedWebhookData) GetStatusOk() (*string, bool) {
-	if o == nil || IsNil(o.Status) {
+	if o == nil {
 		return nil, false
 	}
-	return o.Status, true
+	return &o.Status, true
 }
 
-// HasStatus returns a boolean if a field has been set.
-func (o *OrderItemRefundedWebhookData) HasStatus() bool {
-	if o != nil && !IsNil(o.Status) {
-		return true
-	}
-
-	return false
-}
-
-// SetStatus gets a reference to the given string and assigns it to the Status field.
+// SetStatus sets field value
 func (o *OrderItemRefundedWebhookData) SetStatus(v string) {
-	o.Status = &v
+	o.Status = v
 }
 
-// GetReason returns the Reason field value if set, zero value otherwise (both if not set or set to explicit null).
+// GetReason returns the Reason field value
 func (o *OrderItemRefundedWebhookData) GetReason() string {
-	if o == nil || IsNil(o.Reason.Get()) {
+	if o == nil {
 		var ret string
 		return ret
 	}
-	return *o.Reason.Get()
+
+	return o.Reason
 }
 
-// GetReasonOk returns a tuple with the Reason field value if set, nil otherwise
+// GetReasonOk returns a tuple with the Reason field value
 // and a boolean to check if the value has been set.
-// NOTE: If the value is an explicit nil, `nil, true` will be returned
 func (o *OrderItemRefundedWebhookData) GetReasonOk() (*string, bool) {
 	if o == nil {
 		return nil, false
 	}
-	return o.Reason.Get(), o.Reason.IsSet()
+	return &o.Reason, true
 }
 
-// HasReason returns a boolean if a field has been set.
-func (o *OrderItemRefundedWebhookData) HasReason() bool {
-	if o != nil && o.Reason.IsSet() {
+// SetReason sets field value
+func (o *OrderItemRefundedWebhookData) SetReason(v string) {
+	o.Reason = v
+}
+
+// GetCheckout returns the Checkout field value if set, zero value otherwise (both if not set or set to explicit null).
+func (o *OrderItemRefundedWebhookData) GetCheckout() OrderCheckout {
+	if o == nil || IsNil(o.Checkout.Get()) {
+		var ret OrderCheckout
+		return ret
+	}
+	return *o.Checkout.Get()
+}
+
+// GetCheckoutOk returns a tuple with the Checkout field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+// NOTE: If the value is an explicit nil, `nil, true` will be returned
+func (o *OrderItemRefundedWebhookData) GetCheckoutOk() (*OrderCheckout, bool) {
+	if o == nil {
+		return nil, false
+	}
+	return o.Checkout.Get(), o.Checkout.IsSet()
+}
+
+// HasCheckout returns a boolean if a field has been set.
+func (o *OrderItemRefundedWebhookData) HasCheckout() bool {
+	if o != nil && o.Checkout.IsSet() {
 		return true
 	}
 
 	return false
 }
 
-// SetReason gets a reference to the given NullableString and assigns it to the Reason field.
-func (o *OrderItemRefundedWebhookData) SetReason(v string) {
-	o.Reason.Set(&v)
+// SetCheckout gets a reference to the given NullableOrderCheckout and assigns it to the Checkout field.
+func (o *OrderItemRefundedWebhookData) SetCheckout(v OrderCheckout) {
+	o.Checkout.Set(&v)
 }
-// SetReasonNil sets the value for Reason to be an explicit nil
-func (o *OrderItemRefundedWebhookData) SetReasonNil() {
-	o.Reason.Set(nil)
+// SetCheckoutNil sets the value for Checkout to be an explicit nil
+func (o *OrderItemRefundedWebhookData) SetCheckoutNil() {
+	o.Checkout.Set(nil)
 }
 
-// UnsetReason ensures that no value is present for Reason, not even an explicit nil
-func (o *OrderItemRefundedWebhookData) UnsetReason() {
-	o.Reason.Unset()
+// UnsetCheckout ensures that no value is present for Checkout, not even an explicit nil
+func (o *OrderItemRefundedWebhookData) UnsetCheckout() {
+	o.Checkout.Unset()
+}
+
+// GetSellingPrice returns the SellingPrice field value if set, zero value otherwise (both if not set or set to explicit null).
+func (o *OrderItemRefundedWebhookData) GetSellingPrice() Money {
+	if o == nil || IsNil(o.SellingPrice.Get()) {
+		var ret Money
+		return ret
+	}
+	return *o.SellingPrice.Get()
+}
+
+// GetSellingPriceOk returns a tuple with the SellingPrice field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+// NOTE: If the value is an explicit nil, `nil, true` will be returned
+func (o *OrderItemRefundedWebhookData) GetSellingPriceOk() (*Money, bool) {
+	if o == nil {
+		return nil, false
+	}
+	return o.SellingPrice.Get(), o.SellingPrice.IsSet()
+}
+
+// HasSellingPrice returns a boolean if a field has been set.
+func (o *OrderItemRefundedWebhookData) HasSellingPrice() bool {
+	if o != nil && o.SellingPrice.IsSet() {
+		return true
+	}
+
+	return false
+}
+
+// SetSellingPrice gets a reference to the given NullableMoney and assigns it to the SellingPrice field.
+func (o *OrderItemRefundedWebhookData) SetSellingPrice(v Money) {
+	o.SellingPrice.Set(&v)
+}
+// SetSellingPriceNil sets the value for SellingPrice to be an explicit nil
+func (o *OrderItemRefundedWebhookData) SetSellingPriceNil() {
+	o.SellingPrice.Set(nil)
+}
+
+// UnsetSellingPrice ensures that no value is present for SellingPrice, not even an explicit nil
+func (o *OrderItemRefundedWebhookData) UnsetSellingPrice() {
+	o.SellingPrice.Unset()
 }
 
 func (o OrderItemRefundedWebhookData) MarshalJSON() ([]byte, error) {
@@ -357,34 +376,66 @@ func (o OrderItemRefundedWebhookData) MarshalJSON() ([]byte, error) {
 
 func (o OrderItemRefundedWebhookData) ToMap() (map[string]interface{}, error) {
 	toSerialize := map[string]interface{}{}
-	if !IsNil(o.OrderId) {
-		toSerialize["orderId"] = o.OrderId
+	toSerialize["orderId"] = o.OrderId
+	toSerialize["orderItemId"] = o.OrderItemId
+	toSerialize["publicId"] = o.PublicId
+	toSerialize["refundId"] = o.RefundId
+	toSerialize["refundAmount"] = o.RefundAmount
+	toSerialize["currencyCode"] = o.CurrencyCode
+	toSerialize["paymentMethod"] = o.PaymentMethod
+	toSerialize["status"] = o.Status
+	toSerialize["reason"] = o.Reason
+	if o.Checkout.IsSet() {
+		toSerialize["checkout"] = o.Checkout.Get()
 	}
-	if !IsNil(o.OrderItemId) {
-		toSerialize["orderItemId"] = o.OrderItemId
-	}
-	if !IsNil(o.PublicId) {
-		toSerialize["publicId"] = o.PublicId
-	}
-	if !IsNil(o.RefundId) {
-		toSerialize["refundId"] = o.RefundId
-	}
-	if !IsNil(o.RefundAmount) {
-		toSerialize["refundAmount"] = o.RefundAmount
-	}
-	if !IsNil(o.CurrencyCode) {
-		toSerialize["currencyCode"] = o.CurrencyCode
-	}
-	if !IsNil(o.PaymentMethod) {
-		toSerialize["paymentMethod"] = o.PaymentMethod
-	}
-	if !IsNil(o.Status) {
-		toSerialize["status"] = o.Status
-	}
-	if o.Reason.IsSet() {
-		toSerialize["reason"] = o.Reason.Get()
+	if o.SellingPrice.IsSet() {
+		toSerialize["sellingPrice"] = o.SellingPrice.Get()
 	}
 	return toSerialize, nil
+}
+
+func (o *OrderItemRefundedWebhookData) UnmarshalJSON(data []byte) (err error) {
+	// This validates that all required properties are included in the JSON object
+	// by unmarshalling the object into a generic map with string keys and checking
+	// that every required field exists as a key in the generic map.
+	requiredProperties := []string{
+		"orderId",
+		"orderItemId",
+		"publicId",
+		"refundId",
+		"refundAmount",
+		"currencyCode",
+		"paymentMethod",
+		"status",
+		"reason",
+	}
+
+	allProperties := make(map[string]interface{})
+
+	err = json.Unmarshal(data, &allProperties)
+
+	if err != nil {
+		return err;
+	}
+
+	for _, requiredProperty := range(requiredProperties) {
+		if _, exists := allProperties[requiredProperty]; !exists {
+			return fmt.Errorf("no value given for required property %v", requiredProperty)
+		}
+	}
+
+	varOrderItemRefundedWebhookData := _OrderItemRefundedWebhookData{}
+
+	decoder := json.NewDecoder(bytes.NewReader(data))
+	err = decoder.Decode(&varOrderItemRefundedWebhookData)
+
+	if err != nil {
+		return err
+	}
+
+	*o = OrderItemRefundedWebhookData(varOrderItemRefundedWebhookData)
+
+	return err
 }
 
 type NullableOrderItemRefundedWebhookData struct {

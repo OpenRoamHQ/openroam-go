@@ -13,6 +13,8 @@ package openroam
 
 import (
 	"encoding/json"
+	"bytes"
+	"fmt"
 )
 
 // checks if the UtilityFulfillment type satisfies the MappedNullable interface at compile time
@@ -21,19 +23,22 @@ var _ MappedNullable = &UtilityFulfillment{}
 // UtilityFulfillment struct for UtilityFulfillment
 type UtilityFulfillment struct {
 	// `pending`, `fulfilled` or `rejected`.
-	Status *string `json:"status,omitempty"`
+	Status string `json:"status"`
 	Result NullableUtilityFulfillmentResult `json:"result,omitempty"`
 	// Why delivery was rejected (`11001`, `FULFILLMENT_REJECTED`); set only when             `rejected`.
 	Failure NullableFulfillmentFailure `json:"failure,omitempty"`
 	Progress NullableFulfillmentProgress `json:"progress,omitempty"`
 }
 
+type _UtilityFulfillment UtilityFulfillment
+
 // NewUtilityFulfillment instantiates a new UtilityFulfillment object
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewUtilityFulfillment() *UtilityFulfillment {
+func NewUtilityFulfillment(status string) *UtilityFulfillment {
 	this := UtilityFulfillment{}
+	this.Status = status
 	return &this
 }
 
@@ -45,36 +50,28 @@ func NewUtilityFulfillmentWithDefaults() *UtilityFulfillment {
 	return &this
 }
 
-// GetStatus returns the Status field value if set, zero value otherwise.
+// GetStatus returns the Status field value
 func (o *UtilityFulfillment) GetStatus() string {
-	if o == nil || IsNil(o.Status) {
+	if o == nil {
 		var ret string
 		return ret
 	}
-	return *o.Status
+
+	return o.Status
 }
 
-// GetStatusOk returns a tuple with the Status field value if set, nil otherwise
+// GetStatusOk returns a tuple with the Status field value
 // and a boolean to check if the value has been set.
 func (o *UtilityFulfillment) GetStatusOk() (*string, bool) {
-	if o == nil || IsNil(o.Status) {
+	if o == nil {
 		return nil, false
 	}
-	return o.Status, true
+	return &o.Status, true
 }
 
-// HasStatus returns a boolean if a field has been set.
-func (o *UtilityFulfillment) HasStatus() bool {
-	if o != nil && !IsNil(o.Status) {
-		return true
-	}
-
-	return false
-}
-
-// SetStatus gets a reference to the given string and assigns it to the Status field.
+// SetStatus sets field value
 func (o *UtilityFulfillment) SetStatus(v string) {
-	o.Status = &v
+	o.Status = v
 }
 
 // GetResult returns the Result field value if set, zero value otherwise (both if not set or set to explicit null).
@@ -213,9 +210,7 @@ func (o UtilityFulfillment) MarshalJSON() ([]byte, error) {
 
 func (o UtilityFulfillment) ToMap() (map[string]interface{}, error) {
 	toSerialize := map[string]interface{}{}
-	if !IsNil(o.Status) {
-		toSerialize["status"] = o.Status
-	}
+	toSerialize["status"] = o.Status
 	if o.Result.IsSet() {
 		toSerialize["result"] = o.Result.Get()
 	}
@@ -226,6 +221,42 @@ func (o UtilityFulfillment) ToMap() (map[string]interface{}, error) {
 		toSerialize["progress"] = o.Progress.Get()
 	}
 	return toSerialize, nil
+}
+
+func (o *UtilityFulfillment) UnmarshalJSON(data []byte) (err error) {
+	// This validates that all required properties are included in the JSON object
+	// by unmarshalling the object into a generic map with string keys and checking
+	// that every required field exists as a key in the generic map.
+	requiredProperties := []string{
+		"status",
+	}
+
+	allProperties := make(map[string]interface{})
+
+	err = json.Unmarshal(data, &allProperties)
+
+	if err != nil {
+		return err;
+	}
+
+	for _, requiredProperty := range(requiredProperties) {
+		if _, exists := allProperties[requiredProperty]; !exists {
+			return fmt.Errorf("no value given for required property %v", requiredProperty)
+		}
+	}
+
+	varUtilityFulfillment := _UtilityFulfillment{}
+
+	decoder := json.NewDecoder(bytes.NewReader(data))
+	err = decoder.Decode(&varUtilityFulfillment)
+
+	if err != nil {
+		return err
+	}
+
+	*o = UtilityFulfillment(varUtilityFulfillment)
+
+	return err
 }
 
 type NullableUtilityFulfillment struct {

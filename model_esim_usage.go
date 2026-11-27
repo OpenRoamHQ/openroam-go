@@ -14,29 +14,50 @@ package openroam
 import (
 	"encoding/json"
 	"time"
+	"bytes"
+	"fmt"
 )
 
 // checks if the EsimUsage type satisfies the MappedNullable interface at compile time
 var _ MappedNullable = &EsimUsage{}
 
-// EsimUsage struct for EsimUsage
+// EsimUsage Allowances and remaining amounts as last read: data in MB (1 MB = 1024 KB), SMS in messages, voice in minutes. An amount is null when it is unlimited (its `is...Unlimited` flag is then true), not reported or not included.
 type EsimUsage struct {
+	// When the plan started, in UTC; null until it is activated.
 	Start NullableTime `json:"start,omitempty"`
+	// When the plan ends, in UTC, as last reported; null while no end is reported.
 	End NullableTime `json:"end,omitempty"`
-	AllowedData *int64 `json:"allowedData,omitempty"`
-	RemainingData *int64 `json:"remainingData,omitempty"`
-	AllowedSms *int64 `json:"allowedSms,omitempty"`
-	RemainingSms *int64 `json:"remainingSms,omitempty"`
-	AllowedVoice *int64 `json:"allowedVoice,omitempty"`
-	RemainingVoice *int64 `json:"remainingVoice,omitempty"`
+	// Total data in MB; null when unlimited or not reported.
+	AllowedData NullableInt64 `json:"allowedData,omitempty"`
+	// Remaining data in MB; null when unlimited or not reported.
+	RemainingData NullableInt64 `json:"remainingData,omitempty"`
+	// Whether the data is unlimited.
+	IsDataUnlimited bool `json:"isDataUnlimited"`
+	// Total SMS, in messages; null when unlimited, not reported or not included.
+	AllowedSms NullableInt64 `json:"allowedSms,omitempty"`
+	// Remaining SMS, in messages; null when unlimited, not reported or not included.
+	RemainingSms NullableInt64 `json:"remainingSms,omitempty"`
+	// Whether SMS are unlimited.
+	IsSmsUnlimited bool `json:"isSmsUnlimited"`
+	// Total voice, in minutes; null when unlimited, not reported or not included.
+	AllowedVoice NullableInt64 `json:"allowedVoice,omitempty"`
+	// Remaining voice, in whole minutes; null when unlimited, not reported or not included.
+	RemainingVoice NullableInt64 `json:"remainingVoice,omitempty"`
+	// Whether voice is unlimited.
+	IsVoiceUnlimited bool `json:"isVoiceUnlimited"`
 }
+
+type _EsimUsage EsimUsage
 
 // NewEsimUsage instantiates a new EsimUsage object
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewEsimUsage() *EsimUsage {
+func NewEsimUsage(isDataUnlimited bool, isSmsUnlimited bool, isVoiceUnlimited bool) *EsimUsage {
 	this := EsimUsage{}
+	this.IsDataUnlimited = isDataUnlimited
+	this.IsSmsUnlimited = isSmsUnlimited
+	this.IsVoiceUnlimited = isVoiceUnlimited
 	return &this
 }
 
@@ -132,196 +153,328 @@ func (o *EsimUsage) UnsetEnd() {
 	o.End.Unset()
 }
 
-// GetAllowedData returns the AllowedData field value if set, zero value otherwise.
+// GetAllowedData returns the AllowedData field value if set, zero value otherwise (both if not set or set to explicit null).
 func (o *EsimUsage) GetAllowedData() int64 {
-	if o == nil || IsNil(o.AllowedData) {
+	if o == nil || IsNil(o.AllowedData.Get()) {
 		var ret int64
 		return ret
 	}
-	return *o.AllowedData
+	return *o.AllowedData.Get()
 }
 
 // GetAllowedDataOk returns a tuple with the AllowedData field value if set, nil otherwise
 // and a boolean to check if the value has been set.
+// NOTE: If the value is an explicit nil, `nil, true` will be returned
 func (o *EsimUsage) GetAllowedDataOk() (*int64, bool) {
-	if o == nil || IsNil(o.AllowedData) {
+	if o == nil {
 		return nil, false
 	}
-	return o.AllowedData, true
+	return o.AllowedData.Get(), o.AllowedData.IsSet()
 }
 
 // HasAllowedData returns a boolean if a field has been set.
 func (o *EsimUsage) HasAllowedData() bool {
-	if o != nil && !IsNil(o.AllowedData) {
+	if o != nil && o.AllowedData.IsSet() {
 		return true
 	}
 
 	return false
 }
 
-// SetAllowedData gets a reference to the given int64 and assigns it to the AllowedData field.
+// SetAllowedData gets a reference to the given NullableInt64 and assigns it to the AllowedData field.
 func (o *EsimUsage) SetAllowedData(v int64) {
-	o.AllowedData = &v
+	o.AllowedData.Set(&v)
+}
+// SetAllowedDataNil sets the value for AllowedData to be an explicit nil
+func (o *EsimUsage) SetAllowedDataNil() {
+	o.AllowedData.Set(nil)
 }
 
-// GetRemainingData returns the RemainingData field value if set, zero value otherwise.
+// UnsetAllowedData ensures that no value is present for AllowedData, not even an explicit nil
+func (o *EsimUsage) UnsetAllowedData() {
+	o.AllowedData.Unset()
+}
+
+// GetRemainingData returns the RemainingData field value if set, zero value otherwise (both if not set or set to explicit null).
 func (o *EsimUsage) GetRemainingData() int64 {
-	if o == nil || IsNil(o.RemainingData) {
+	if o == nil || IsNil(o.RemainingData.Get()) {
 		var ret int64
 		return ret
 	}
-	return *o.RemainingData
+	return *o.RemainingData.Get()
 }
 
 // GetRemainingDataOk returns a tuple with the RemainingData field value if set, nil otherwise
 // and a boolean to check if the value has been set.
+// NOTE: If the value is an explicit nil, `nil, true` will be returned
 func (o *EsimUsage) GetRemainingDataOk() (*int64, bool) {
-	if o == nil || IsNil(o.RemainingData) {
+	if o == nil {
 		return nil, false
 	}
-	return o.RemainingData, true
+	return o.RemainingData.Get(), o.RemainingData.IsSet()
 }
 
 // HasRemainingData returns a boolean if a field has been set.
 func (o *EsimUsage) HasRemainingData() bool {
-	if o != nil && !IsNil(o.RemainingData) {
+	if o != nil && o.RemainingData.IsSet() {
 		return true
 	}
 
 	return false
 }
 
-// SetRemainingData gets a reference to the given int64 and assigns it to the RemainingData field.
+// SetRemainingData gets a reference to the given NullableInt64 and assigns it to the RemainingData field.
 func (o *EsimUsage) SetRemainingData(v int64) {
-	o.RemainingData = &v
+	o.RemainingData.Set(&v)
+}
+// SetRemainingDataNil sets the value for RemainingData to be an explicit nil
+func (o *EsimUsage) SetRemainingDataNil() {
+	o.RemainingData.Set(nil)
 }
 
-// GetAllowedSms returns the AllowedSms field value if set, zero value otherwise.
+// UnsetRemainingData ensures that no value is present for RemainingData, not even an explicit nil
+func (o *EsimUsage) UnsetRemainingData() {
+	o.RemainingData.Unset()
+}
+
+// GetIsDataUnlimited returns the IsDataUnlimited field value
+func (o *EsimUsage) GetIsDataUnlimited() bool {
+	if o == nil {
+		var ret bool
+		return ret
+	}
+
+	return o.IsDataUnlimited
+}
+
+// GetIsDataUnlimitedOk returns a tuple with the IsDataUnlimited field value
+// and a boolean to check if the value has been set.
+func (o *EsimUsage) GetIsDataUnlimitedOk() (*bool, bool) {
+	if o == nil {
+		return nil, false
+	}
+	return &o.IsDataUnlimited, true
+}
+
+// SetIsDataUnlimited sets field value
+func (o *EsimUsage) SetIsDataUnlimited(v bool) {
+	o.IsDataUnlimited = v
+}
+
+// GetAllowedSms returns the AllowedSms field value if set, zero value otherwise (both if not set or set to explicit null).
 func (o *EsimUsage) GetAllowedSms() int64 {
-	if o == nil || IsNil(o.AllowedSms) {
+	if o == nil || IsNil(o.AllowedSms.Get()) {
 		var ret int64
 		return ret
 	}
-	return *o.AllowedSms
+	return *o.AllowedSms.Get()
 }
 
 // GetAllowedSmsOk returns a tuple with the AllowedSms field value if set, nil otherwise
 // and a boolean to check if the value has been set.
+// NOTE: If the value is an explicit nil, `nil, true` will be returned
 func (o *EsimUsage) GetAllowedSmsOk() (*int64, bool) {
-	if o == nil || IsNil(o.AllowedSms) {
+	if o == nil {
 		return nil, false
 	}
-	return o.AllowedSms, true
+	return o.AllowedSms.Get(), o.AllowedSms.IsSet()
 }
 
 // HasAllowedSms returns a boolean if a field has been set.
 func (o *EsimUsage) HasAllowedSms() bool {
-	if o != nil && !IsNil(o.AllowedSms) {
+	if o != nil && o.AllowedSms.IsSet() {
 		return true
 	}
 
 	return false
 }
 
-// SetAllowedSms gets a reference to the given int64 and assigns it to the AllowedSms field.
+// SetAllowedSms gets a reference to the given NullableInt64 and assigns it to the AllowedSms field.
 func (o *EsimUsage) SetAllowedSms(v int64) {
-	o.AllowedSms = &v
+	o.AllowedSms.Set(&v)
+}
+// SetAllowedSmsNil sets the value for AllowedSms to be an explicit nil
+func (o *EsimUsage) SetAllowedSmsNil() {
+	o.AllowedSms.Set(nil)
 }
 
-// GetRemainingSms returns the RemainingSms field value if set, zero value otherwise.
+// UnsetAllowedSms ensures that no value is present for AllowedSms, not even an explicit nil
+func (o *EsimUsage) UnsetAllowedSms() {
+	o.AllowedSms.Unset()
+}
+
+// GetRemainingSms returns the RemainingSms field value if set, zero value otherwise (both if not set or set to explicit null).
 func (o *EsimUsage) GetRemainingSms() int64 {
-	if o == nil || IsNil(o.RemainingSms) {
+	if o == nil || IsNil(o.RemainingSms.Get()) {
 		var ret int64
 		return ret
 	}
-	return *o.RemainingSms
+	return *o.RemainingSms.Get()
 }
 
 // GetRemainingSmsOk returns a tuple with the RemainingSms field value if set, nil otherwise
 // and a boolean to check if the value has been set.
+// NOTE: If the value is an explicit nil, `nil, true` will be returned
 func (o *EsimUsage) GetRemainingSmsOk() (*int64, bool) {
-	if o == nil || IsNil(o.RemainingSms) {
+	if o == nil {
 		return nil, false
 	}
-	return o.RemainingSms, true
+	return o.RemainingSms.Get(), o.RemainingSms.IsSet()
 }
 
 // HasRemainingSms returns a boolean if a field has been set.
 func (o *EsimUsage) HasRemainingSms() bool {
-	if o != nil && !IsNil(o.RemainingSms) {
+	if o != nil && o.RemainingSms.IsSet() {
 		return true
 	}
 
 	return false
 }
 
-// SetRemainingSms gets a reference to the given int64 and assigns it to the RemainingSms field.
+// SetRemainingSms gets a reference to the given NullableInt64 and assigns it to the RemainingSms field.
 func (o *EsimUsage) SetRemainingSms(v int64) {
-	o.RemainingSms = &v
+	o.RemainingSms.Set(&v)
+}
+// SetRemainingSmsNil sets the value for RemainingSms to be an explicit nil
+func (o *EsimUsage) SetRemainingSmsNil() {
+	o.RemainingSms.Set(nil)
 }
 
-// GetAllowedVoice returns the AllowedVoice field value if set, zero value otherwise.
+// UnsetRemainingSms ensures that no value is present for RemainingSms, not even an explicit nil
+func (o *EsimUsage) UnsetRemainingSms() {
+	o.RemainingSms.Unset()
+}
+
+// GetIsSmsUnlimited returns the IsSmsUnlimited field value
+func (o *EsimUsage) GetIsSmsUnlimited() bool {
+	if o == nil {
+		var ret bool
+		return ret
+	}
+
+	return o.IsSmsUnlimited
+}
+
+// GetIsSmsUnlimitedOk returns a tuple with the IsSmsUnlimited field value
+// and a boolean to check if the value has been set.
+func (o *EsimUsage) GetIsSmsUnlimitedOk() (*bool, bool) {
+	if o == nil {
+		return nil, false
+	}
+	return &o.IsSmsUnlimited, true
+}
+
+// SetIsSmsUnlimited sets field value
+func (o *EsimUsage) SetIsSmsUnlimited(v bool) {
+	o.IsSmsUnlimited = v
+}
+
+// GetAllowedVoice returns the AllowedVoice field value if set, zero value otherwise (both if not set or set to explicit null).
 func (o *EsimUsage) GetAllowedVoice() int64 {
-	if o == nil || IsNil(o.AllowedVoice) {
+	if o == nil || IsNil(o.AllowedVoice.Get()) {
 		var ret int64
 		return ret
 	}
-	return *o.AllowedVoice
+	return *o.AllowedVoice.Get()
 }
 
 // GetAllowedVoiceOk returns a tuple with the AllowedVoice field value if set, nil otherwise
 // and a boolean to check if the value has been set.
+// NOTE: If the value is an explicit nil, `nil, true` will be returned
 func (o *EsimUsage) GetAllowedVoiceOk() (*int64, bool) {
-	if o == nil || IsNil(o.AllowedVoice) {
+	if o == nil {
 		return nil, false
 	}
-	return o.AllowedVoice, true
+	return o.AllowedVoice.Get(), o.AllowedVoice.IsSet()
 }
 
 // HasAllowedVoice returns a boolean if a field has been set.
 func (o *EsimUsage) HasAllowedVoice() bool {
-	if o != nil && !IsNil(o.AllowedVoice) {
+	if o != nil && o.AllowedVoice.IsSet() {
 		return true
 	}
 
 	return false
 }
 
-// SetAllowedVoice gets a reference to the given int64 and assigns it to the AllowedVoice field.
+// SetAllowedVoice gets a reference to the given NullableInt64 and assigns it to the AllowedVoice field.
 func (o *EsimUsage) SetAllowedVoice(v int64) {
-	o.AllowedVoice = &v
+	o.AllowedVoice.Set(&v)
+}
+// SetAllowedVoiceNil sets the value for AllowedVoice to be an explicit nil
+func (o *EsimUsage) SetAllowedVoiceNil() {
+	o.AllowedVoice.Set(nil)
 }
 
-// GetRemainingVoice returns the RemainingVoice field value if set, zero value otherwise.
+// UnsetAllowedVoice ensures that no value is present for AllowedVoice, not even an explicit nil
+func (o *EsimUsage) UnsetAllowedVoice() {
+	o.AllowedVoice.Unset()
+}
+
+// GetRemainingVoice returns the RemainingVoice field value if set, zero value otherwise (both if not set or set to explicit null).
 func (o *EsimUsage) GetRemainingVoice() int64 {
-	if o == nil || IsNil(o.RemainingVoice) {
+	if o == nil || IsNil(o.RemainingVoice.Get()) {
 		var ret int64
 		return ret
 	}
-	return *o.RemainingVoice
+	return *o.RemainingVoice.Get()
 }
 
 // GetRemainingVoiceOk returns a tuple with the RemainingVoice field value if set, nil otherwise
 // and a boolean to check if the value has been set.
+// NOTE: If the value is an explicit nil, `nil, true` will be returned
 func (o *EsimUsage) GetRemainingVoiceOk() (*int64, bool) {
-	if o == nil || IsNil(o.RemainingVoice) {
+	if o == nil {
 		return nil, false
 	}
-	return o.RemainingVoice, true
+	return o.RemainingVoice.Get(), o.RemainingVoice.IsSet()
 }
 
 // HasRemainingVoice returns a boolean if a field has been set.
 func (o *EsimUsage) HasRemainingVoice() bool {
-	if o != nil && !IsNil(o.RemainingVoice) {
+	if o != nil && o.RemainingVoice.IsSet() {
 		return true
 	}
 
 	return false
 }
 
-// SetRemainingVoice gets a reference to the given int64 and assigns it to the RemainingVoice field.
+// SetRemainingVoice gets a reference to the given NullableInt64 and assigns it to the RemainingVoice field.
 func (o *EsimUsage) SetRemainingVoice(v int64) {
-	o.RemainingVoice = &v
+	o.RemainingVoice.Set(&v)
+}
+// SetRemainingVoiceNil sets the value for RemainingVoice to be an explicit nil
+func (o *EsimUsage) SetRemainingVoiceNil() {
+	o.RemainingVoice.Set(nil)
+}
+
+// UnsetRemainingVoice ensures that no value is present for RemainingVoice, not even an explicit nil
+func (o *EsimUsage) UnsetRemainingVoice() {
+	o.RemainingVoice.Unset()
+}
+
+// GetIsVoiceUnlimited returns the IsVoiceUnlimited field value
+func (o *EsimUsage) GetIsVoiceUnlimited() bool {
+	if o == nil {
+		var ret bool
+		return ret
+	}
+
+	return o.IsVoiceUnlimited
+}
+
+// GetIsVoiceUnlimitedOk returns a tuple with the IsVoiceUnlimited field value
+// and a boolean to check if the value has been set.
+func (o *EsimUsage) GetIsVoiceUnlimitedOk() (*bool, bool) {
+	if o == nil {
+		return nil, false
+	}
+	return &o.IsVoiceUnlimited, true
+}
+
+// SetIsVoiceUnlimited sets field value
+func (o *EsimUsage) SetIsVoiceUnlimited(v bool) {
+	o.IsVoiceUnlimited = v
 }
 
 func (o EsimUsage) MarshalJSON() ([]byte, error) {
@@ -340,25 +493,66 @@ func (o EsimUsage) ToMap() (map[string]interface{}, error) {
 	if o.End.IsSet() {
 		toSerialize["end"] = o.End.Get()
 	}
-	if !IsNil(o.AllowedData) {
-		toSerialize["allowedData"] = o.AllowedData
+	if o.AllowedData.IsSet() {
+		toSerialize["allowedData"] = o.AllowedData.Get()
 	}
-	if !IsNil(o.RemainingData) {
-		toSerialize["remainingData"] = o.RemainingData
+	if o.RemainingData.IsSet() {
+		toSerialize["remainingData"] = o.RemainingData.Get()
 	}
-	if !IsNil(o.AllowedSms) {
-		toSerialize["allowedSms"] = o.AllowedSms
+	toSerialize["isDataUnlimited"] = o.IsDataUnlimited
+	if o.AllowedSms.IsSet() {
+		toSerialize["allowedSms"] = o.AllowedSms.Get()
 	}
-	if !IsNil(o.RemainingSms) {
-		toSerialize["remainingSms"] = o.RemainingSms
+	if o.RemainingSms.IsSet() {
+		toSerialize["remainingSms"] = o.RemainingSms.Get()
 	}
-	if !IsNil(o.AllowedVoice) {
-		toSerialize["allowedVoice"] = o.AllowedVoice
+	toSerialize["isSmsUnlimited"] = o.IsSmsUnlimited
+	if o.AllowedVoice.IsSet() {
+		toSerialize["allowedVoice"] = o.AllowedVoice.Get()
 	}
-	if !IsNil(o.RemainingVoice) {
-		toSerialize["remainingVoice"] = o.RemainingVoice
+	if o.RemainingVoice.IsSet() {
+		toSerialize["remainingVoice"] = o.RemainingVoice.Get()
 	}
+	toSerialize["isVoiceUnlimited"] = o.IsVoiceUnlimited
 	return toSerialize, nil
+}
+
+func (o *EsimUsage) UnmarshalJSON(data []byte) (err error) {
+	// This validates that all required properties are included in the JSON object
+	// by unmarshalling the object into a generic map with string keys and checking
+	// that every required field exists as a key in the generic map.
+	requiredProperties := []string{
+		"isDataUnlimited",
+		"isSmsUnlimited",
+		"isVoiceUnlimited",
+	}
+
+	allProperties := make(map[string]interface{})
+
+	err = json.Unmarshal(data, &allProperties)
+
+	if err != nil {
+		return err;
+	}
+
+	for _, requiredProperty := range(requiredProperties) {
+		if _, exists := allProperties[requiredProperty]; !exists {
+			return fmt.Errorf("no value given for required property %v", requiredProperty)
+		}
+	}
+
+	varEsimUsage := _EsimUsage{}
+
+	decoder := json.NewDecoder(bytes.NewReader(data))
+	err = decoder.Decode(&varEsimUsage)
+
+	if err != nil {
+		return err
+	}
+
+	*o = EsimUsage(varEsimUsage)
+
+	return err
 }
 
 type NullableEsimUsage struct {

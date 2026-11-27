@@ -13,6 +13,8 @@ package openroam
 
 import (
 	"encoding/json"
+	"bytes"
+	"fmt"
 )
 
 // checks if the HotelCatalogFile type satisfies the MappedNullable interface at compile time
@@ -20,17 +22,23 @@ var _ MappedNullable = &HotelCatalogFile{}
 
 // HotelCatalogFile A downloadable partner hotel catalog zip.
 type HotelCatalogFile struct {
-	Variant *string `json:"variant,omitempty"`
-	Url *string `json:"url,omitempty"`
-	SizeBytes *int64 `json:"sizeBytes,omitempty"`
+	Variant string `json:"variant"`
+	// A download link for this file, sure to work until `linksExpireAt`; not to be stored.
+	Url string `json:"url"`
+	SizeBytes int64 `json:"sizeBytes"`
 }
+
+type _HotelCatalogFile HotelCatalogFile
 
 // NewHotelCatalogFile instantiates a new HotelCatalogFile object
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewHotelCatalogFile() *HotelCatalogFile {
+func NewHotelCatalogFile(variant string, url string, sizeBytes int64) *HotelCatalogFile {
 	this := HotelCatalogFile{}
+	this.Variant = variant
+	this.Url = url
+	this.SizeBytes = sizeBytes
 	return &this
 }
 
@@ -42,100 +50,76 @@ func NewHotelCatalogFileWithDefaults() *HotelCatalogFile {
 	return &this
 }
 
-// GetVariant returns the Variant field value if set, zero value otherwise.
+// GetVariant returns the Variant field value
 func (o *HotelCatalogFile) GetVariant() string {
-	if o == nil || IsNil(o.Variant) {
+	if o == nil {
 		var ret string
 		return ret
 	}
-	return *o.Variant
+
+	return o.Variant
 }
 
-// GetVariantOk returns a tuple with the Variant field value if set, nil otherwise
+// GetVariantOk returns a tuple with the Variant field value
 // and a boolean to check if the value has been set.
 func (o *HotelCatalogFile) GetVariantOk() (*string, bool) {
-	if o == nil || IsNil(o.Variant) {
+	if o == nil {
 		return nil, false
 	}
-	return o.Variant, true
+	return &o.Variant, true
 }
 
-// HasVariant returns a boolean if a field has been set.
-func (o *HotelCatalogFile) HasVariant() bool {
-	if o != nil && !IsNil(o.Variant) {
-		return true
-	}
-
-	return false
-}
-
-// SetVariant gets a reference to the given string and assigns it to the Variant field.
+// SetVariant sets field value
 func (o *HotelCatalogFile) SetVariant(v string) {
-	o.Variant = &v
+	o.Variant = v
 }
 
-// GetUrl returns the Url field value if set, zero value otherwise.
+// GetUrl returns the Url field value
 func (o *HotelCatalogFile) GetUrl() string {
-	if o == nil || IsNil(o.Url) {
+	if o == nil {
 		var ret string
 		return ret
 	}
-	return *o.Url
+
+	return o.Url
 }
 
-// GetUrlOk returns a tuple with the Url field value if set, nil otherwise
+// GetUrlOk returns a tuple with the Url field value
 // and a boolean to check if the value has been set.
 func (o *HotelCatalogFile) GetUrlOk() (*string, bool) {
-	if o == nil || IsNil(o.Url) {
+	if o == nil {
 		return nil, false
 	}
-	return o.Url, true
+	return &o.Url, true
 }
 
-// HasUrl returns a boolean if a field has been set.
-func (o *HotelCatalogFile) HasUrl() bool {
-	if o != nil && !IsNil(o.Url) {
-		return true
-	}
-
-	return false
-}
-
-// SetUrl gets a reference to the given string and assigns it to the Url field.
+// SetUrl sets field value
 func (o *HotelCatalogFile) SetUrl(v string) {
-	o.Url = &v
+	o.Url = v
 }
 
-// GetSizeBytes returns the SizeBytes field value if set, zero value otherwise.
+// GetSizeBytes returns the SizeBytes field value
 func (o *HotelCatalogFile) GetSizeBytes() int64 {
-	if o == nil || IsNil(o.SizeBytes) {
+	if o == nil {
 		var ret int64
 		return ret
 	}
-	return *o.SizeBytes
+
+	return o.SizeBytes
 }
 
-// GetSizeBytesOk returns a tuple with the SizeBytes field value if set, nil otherwise
+// GetSizeBytesOk returns a tuple with the SizeBytes field value
 // and a boolean to check if the value has been set.
 func (o *HotelCatalogFile) GetSizeBytesOk() (*int64, bool) {
-	if o == nil || IsNil(o.SizeBytes) {
+	if o == nil {
 		return nil, false
 	}
-	return o.SizeBytes, true
+	return &o.SizeBytes, true
 }
 
-// HasSizeBytes returns a boolean if a field has been set.
-func (o *HotelCatalogFile) HasSizeBytes() bool {
-	if o != nil && !IsNil(o.SizeBytes) {
-		return true
-	}
-
-	return false
-}
-
-// SetSizeBytes gets a reference to the given int64 and assigns it to the SizeBytes field.
+// SetSizeBytes sets field value
 func (o *HotelCatalogFile) SetSizeBytes(v int64) {
-	o.SizeBytes = &v
+	o.SizeBytes = v
 }
 
 func (o HotelCatalogFile) MarshalJSON() ([]byte, error) {
@@ -148,16 +132,48 @@ func (o HotelCatalogFile) MarshalJSON() ([]byte, error) {
 
 func (o HotelCatalogFile) ToMap() (map[string]interface{}, error) {
 	toSerialize := map[string]interface{}{}
-	if !IsNil(o.Variant) {
-		toSerialize["variant"] = o.Variant
-	}
-	if !IsNil(o.Url) {
-		toSerialize["url"] = o.Url
-	}
-	if !IsNil(o.SizeBytes) {
-		toSerialize["sizeBytes"] = o.SizeBytes
-	}
+	toSerialize["variant"] = o.Variant
+	toSerialize["url"] = o.Url
+	toSerialize["sizeBytes"] = o.SizeBytes
 	return toSerialize, nil
+}
+
+func (o *HotelCatalogFile) UnmarshalJSON(data []byte) (err error) {
+	// This validates that all required properties are included in the JSON object
+	// by unmarshalling the object into a generic map with string keys and checking
+	// that every required field exists as a key in the generic map.
+	requiredProperties := []string{
+		"variant",
+		"url",
+		"sizeBytes",
+	}
+
+	allProperties := make(map[string]interface{})
+
+	err = json.Unmarshal(data, &allProperties)
+
+	if err != nil {
+		return err;
+	}
+
+	for _, requiredProperty := range(requiredProperties) {
+		if _, exists := allProperties[requiredProperty]; !exists {
+			return fmt.Errorf("no value given for required property %v", requiredProperty)
+		}
+	}
+
+	varHotelCatalogFile := _HotelCatalogFile{}
+
+	decoder := json.NewDecoder(bytes.NewReader(data))
+	err = decoder.Decode(&varHotelCatalogFile)
+
+	if err != nil {
+		return err
+	}
+
+	*o = HotelCatalogFile(varHotelCatalogFile)
+
+	return err
 }
 
 type NullableHotelCatalogFile struct {

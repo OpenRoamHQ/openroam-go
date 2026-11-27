@@ -24,6 +24,7 @@ var _ MappedNullable = &ValueRange{}
 type ValueRange struct {
 	Min float32 `json:"min"`
 	Max NullableFloat32 `json:"max"`
+	// The product's own increment, or, when it sets none, the smallest unit of `Currency` (`CurrencyMinorUnitHelper.SmallestUnit`): 0.01 in most currencies, 1 in yen, 0.001 in dinars.
 	Step float32 `json:"step"`
 	Currency string `json:"currency"`
 	Type string `json:"type"`
@@ -222,7 +223,6 @@ func (o *ValueRange) UnmarshalJSON(data []byte) (err error) {
 	varValueRange := _ValueRange{}
 
 	decoder := json.NewDecoder(bytes.NewReader(data))
-	decoder.DisallowUnknownFields()
 	err = decoder.Decode(&varValueRange)
 
 	if err != nil {

@@ -20,12 +20,26 @@ import (
 // checks if the InputField type satisfies the MappedNullable interface at compile time
 var _ MappedNullable = &InputField{}
 
-// InputField One field an order item supplies in `inputs`. `name` is its key: for a top-level input its path inside `inputs`, for example `phoneNumber` or `settings.pin`; for a nested field its key inside its parent, for example `email` inside `holder`. An `object` input lists its members in `fields`, and an `array` input lists the members of each element; build both with M:ObjectOf(System.String,System.Boolean,System.String,System.Collections.Generic.IReadOnlyList{InputField}) and M:ArrayOf(System.String,System.Boolean,System.String,System.Collections.Generic.IReadOnlyList{InputField}). Every other type has no fields, and the key is left out.
+// InputField One field an order item supplies in `inputs`. `name` is its key: for a top-level input its path inside `inputs`, for example `phoneNumber` or `settings.pin`; for a nested field its key inside its parent, for example `email` inside `holder`. An `object` input lists its members in `fields`, and an `array` input lists the members of each element; build both with M:ObjectOf(System.String,System.Boolean,System.String,System.Collections.Generic.IReadOnlyList{InputField}) and M:ArrayOf(System.String,System.Boolean,System.String,System.Collections.Generic.IReadOnlyList{InputField}). Every other type has no fields, and the key is left out. The optional rules (`options`, `pattern`, the lengths and the bounds) are published only where the product enforces them, with `INVALID_VALUE` at the input's path; a rule left out adds nothing.
 type InputField struct {
 	Name string `json:"name"`
 	Type string `json:"type"`
 	Required bool `json:"required"`
 	Description NullableString `json:"description"`
+	// A stable key to translate the input's label with, such as `inputs.accountNumber`, documented by the service. Left out when the input is defined by catalogue data and has no fixed key; `description` then names it.
+	LabelKey NullableString `json:"labelKey,omitempty"`
+	// The only values a `text` input accepts; left out when any value is allowed.
+	Options []InputOption `json:"options,omitempty"`
+	// An anchored regular expression the whole `text` value matches, after surrounding spaces are removed. It uses only constructs that run alike in .NET, JavaScript and Dart: no look-around and no back-references.
+	Pattern NullableString `json:"pattern,omitempty"`
+	// The fewest characters a `text`, `email` or `phone` value has, after surrounding spaces are removed.
+	MinLength NullableInt32 `json:"minLength,omitempty"`
+	// The most characters a `text`, `email` or `phone` value has, after surrounding spaces are removed.
+	MaxLength NullableInt32 `json:"maxLength,omitempty"`
+	// The smallest value an `integer` input accepts.
+	Min NullableInt32 `json:"min,omitempty"`
+	// The largest value an `integer` input accepts.
+	Max NullableInt32 `json:"max,omitempty"`
 	// The members of an object input, or of each element of an array input; null for any other type.
 	Fields []InputField `json:"fields,omitempty"`
 }
@@ -151,6 +165,291 @@ func (o *InputField) SetDescription(v string) {
 	o.Description.Set(&v)
 }
 
+// GetLabelKey returns the LabelKey field value if set, zero value otherwise (both if not set or set to explicit null).
+func (o *InputField) GetLabelKey() string {
+	if o == nil || IsNil(o.LabelKey.Get()) {
+		var ret string
+		return ret
+	}
+	return *o.LabelKey.Get()
+}
+
+// GetLabelKeyOk returns a tuple with the LabelKey field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+// NOTE: If the value is an explicit nil, `nil, true` will be returned
+func (o *InputField) GetLabelKeyOk() (*string, bool) {
+	if o == nil {
+		return nil, false
+	}
+	return o.LabelKey.Get(), o.LabelKey.IsSet()
+}
+
+// HasLabelKey returns a boolean if a field has been set.
+func (o *InputField) HasLabelKey() bool {
+	if o != nil && o.LabelKey.IsSet() {
+		return true
+	}
+
+	return false
+}
+
+// SetLabelKey gets a reference to the given NullableString and assigns it to the LabelKey field.
+func (o *InputField) SetLabelKey(v string) {
+	o.LabelKey.Set(&v)
+}
+// SetLabelKeyNil sets the value for LabelKey to be an explicit nil
+func (o *InputField) SetLabelKeyNil() {
+	o.LabelKey.Set(nil)
+}
+
+// UnsetLabelKey ensures that no value is present for LabelKey, not even an explicit nil
+func (o *InputField) UnsetLabelKey() {
+	o.LabelKey.Unset()
+}
+
+// GetOptions returns the Options field value if set, zero value otherwise (both if not set or set to explicit null).
+func (o *InputField) GetOptions() []InputOption {
+	if o == nil {
+		var ret []InputOption
+		return ret
+	}
+	return o.Options
+}
+
+// GetOptionsOk returns a tuple with the Options field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+// NOTE: If the value is an explicit nil, `nil, true` will be returned
+func (o *InputField) GetOptionsOk() ([]InputOption, bool) {
+	if o == nil || IsNil(o.Options) {
+		return nil, false
+	}
+	return o.Options, true
+}
+
+// HasOptions returns a boolean if a field has been set.
+func (o *InputField) HasOptions() bool {
+	if o != nil && !IsNil(o.Options) {
+		return true
+	}
+
+	return false
+}
+
+// SetOptions gets a reference to the given []InputOption and assigns it to the Options field.
+func (o *InputField) SetOptions(v []InputOption) {
+	o.Options = v
+}
+
+// GetPattern returns the Pattern field value if set, zero value otherwise (both if not set or set to explicit null).
+func (o *InputField) GetPattern() string {
+	if o == nil || IsNil(o.Pattern.Get()) {
+		var ret string
+		return ret
+	}
+	return *o.Pattern.Get()
+}
+
+// GetPatternOk returns a tuple with the Pattern field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+// NOTE: If the value is an explicit nil, `nil, true` will be returned
+func (o *InputField) GetPatternOk() (*string, bool) {
+	if o == nil {
+		return nil, false
+	}
+	return o.Pattern.Get(), o.Pattern.IsSet()
+}
+
+// HasPattern returns a boolean if a field has been set.
+func (o *InputField) HasPattern() bool {
+	if o != nil && o.Pattern.IsSet() {
+		return true
+	}
+
+	return false
+}
+
+// SetPattern gets a reference to the given NullableString and assigns it to the Pattern field.
+func (o *InputField) SetPattern(v string) {
+	o.Pattern.Set(&v)
+}
+// SetPatternNil sets the value for Pattern to be an explicit nil
+func (o *InputField) SetPatternNil() {
+	o.Pattern.Set(nil)
+}
+
+// UnsetPattern ensures that no value is present for Pattern, not even an explicit nil
+func (o *InputField) UnsetPattern() {
+	o.Pattern.Unset()
+}
+
+// GetMinLength returns the MinLength field value if set, zero value otherwise (both if not set or set to explicit null).
+func (o *InputField) GetMinLength() int32 {
+	if o == nil || IsNil(o.MinLength.Get()) {
+		var ret int32
+		return ret
+	}
+	return *o.MinLength.Get()
+}
+
+// GetMinLengthOk returns a tuple with the MinLength field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+// NOTE: If the value is an explicit nil, `nil, true` will be returned
+func (o *InputField) GetMinLengthOk() (*int32, bool) {
+	if o == nil {
+		return nil, false
+	}
+	return o.MinLength.Get(), o.MinLength.IsSet()
+}
+
+// HasMinLength returns a boolean if a field has been set.
+func (o *InputField) HasMinLength() bool {
+	if o != nil && o.MinLength.IsSet() {
+		return true
+	}
+
+	return false
+}
+
+// SetMinLength gets a reference to the given NullableInt32 and assigns it to the MinLength field.
+func (o *InputField) SetMinLength(v int32) {
+	o.MinLength.Set(&v)
+}
+// SetMinLengthNil sets the value for MinLength to be an explicit nil
+func (o *InputField) SetMinLengthNil() {
+	o.MinLength.Set(nil)
+}
+
+// UnsetMinLength ensures that no value is present for MinLength, not even an explicit nil
+func (o *InputField) UnsetMinLength() {
+	o.MinLength.Unset()
+}
+
+// GetMaxLength returns the MaxLength field value if set, zero value otherwise (both if not set or set to explicit null).
+func (o *InputField) GetMaxLength() int32 {
+	if o == nil || IsNil(o.MaxLength.Get()) {
+		var ret int32
+		return ret
+	}
+	return *o.MaxLength.Get()
+}
+
+// GetMaxLengthOk returns a tuple with the MaxLength field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+// NOTE: If the value is an explicit nil, `nil, true` will be returned
+func (o *InputField) GetMaxLengthOk() (*int32, bool) {
+	if o == nil {
+		return nil, false
+	}
+	return o.MaxLength.Get(), o.MaxLength.IsSet()
+}
+
+// HasMaxLength returns a boolean if a field has been set.
+func (o *InputField) HasMaxLength() bool {
+	if o != nil && o.MaxLength.IsSet() {
+		return true
+	}
+
+	return false
+}
+
+// SetMaxLength gets a reference to the given NullableInt32 and assigns it to the MaxLength field.
+func (o *InputField) SetMaxLength(v int32) {
+	o.MaxLength.Set(&v)
+}
+// SetMaxLengthNil sets the value for MaxLength to be an explicit nil
+func (o *InputField) SetMaxLengthNil() {
+	o.MaxLength.Set(nil)
+}
+
+// UnsetMaxLength ensures that no value is present for MaxLength, not even an explicit nil
+func (o *InputField) UnsetMaxLength() {
+	o.MaxLength.Unset()
+}
+
+// GetMin returns the Min field value if set, zero value otherwise (both if not set or set to explicit null).
+func (o *InputField) GetMin() int32 {
+	if o == nil || IsNil(o.Min.Get()) {
+		var ret int32
+		return ret
+	}
+	return *o.Min.Get()
+}
+
+// GetMinOk returns a tuple with the Min field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+// NOTE: If the value is an explicit nil, `nil, true` will be returned
+func (o *InputField) GetMinOk() (*int32, bool) {
+	if o == nil {
+		return nil, false
+	}
+	return o.Min.Get(), o.Min.IsSet()
+}
+
+// HasMin returns a boolean if a field has been set.
+func (o *InputField) HasMin() bool {
+	if o != nil && o.Min.IsSet() {
+		return true
+	}
+
+	return false
+}
+
+// SetMin gets a reference to the given NullableInt32 and assigns it to the Min field.
+func (o *InputField) SetMin(v int32) {
+	o.Min.Set(&v)
+}
+// SetMinNil sets the value for Min to be an explicit nil
+func (o *InputField) SetMinNil() {
+	o.Min.Set(nil)
+}
+
+// UnsetMin ensures that no value is present for Min, not even an explicit nil
+func (o *InputField) UnsetMin() {
+	o.Min.Unset()
+}
+
+// GetMax returns the Max field value if set, zero value otherwise (both if not set or set to explicit null).
+func (o *InputField) GetMax() int32 {
+	if o == nil || IsNil(o.Max.Get()) {
+		var ret int32
+		return ret
+	}
+	return *o.Max.Get()
+}
+
+// GetMaxOk returns a tuple with the Max field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+// NOTE: If the value is an explicit nil, `nil, true` will be returned
+func (o *InputField) GetMaxOk() (*int32, bool) {
+	if o == nil {
+		return nil, false
+	}
+	return o.Max.Get(), o.Max.IsSet()
+}
+
+// HasMax returns a boolean if a field has been set.
+func (o *InputField) HasMax() bool {
+	if o != nil && o.Max.IsSet() {
+		return true
+	}
+
+	return false
+}
+
+// SetMax gets a reference to the given NullableInt32 and assigns it to the Max field.
+func (o *InputField) SetMax(v int32) {
+	o.Max.Set(&v)
+}
+// SetMaxNil sets the value for Max to be an explicit nil
+func (o *InputField) SetMaxNil() {
+	o.Max.Set(nil)
+}
+
+// UnsetMax ensures that no value is present for Max, not even an explicit nil
+func (o *InputField) UnsetMax() {
+	o.Max.Unset()
+}
+
 // GetFields returns the Fields field value if set, zero value otherwise (both if not set or set to explicit null).
 func (o *InputField) GetFields() []InputField {
 	if o == nil {
@@ -198,6 +497,27 @@ func (o InputField) ToMap() (map[string]interface{}, error) {
 	toSerialize["type"] = o.Type
 	toSerialize["required"] = o.Required
 	toSerialize["description"] = o.Description.Get()
+	if o.LabelKey.IsSet() {
+		toSerialize["labelKey"] = o.LabelKey.Get()
+	}
+	if o.Options != nil {
+		toSerialize["options"] = o.Options
+	}
+	if o.Pattern.IsSet() {
+		toSerialize["pattern"] = o.Pattern.Get()
+	}
+	if o.MinLength.IsSet() {
+		toSerialize["minLength"] = o.MinLength.Get()
+	}
+	if o.MaxLength.IsSet() {
+		toSerialize["maxLength"] = o.MaxLength.Get()
+	}
+	if o.Min.IsSet() {
+		toSerialize["min"] = o.Min.Get()
+	}
+	if o.Max.IsSet() {
+		toSerialize["max"] = o.Max.Get()
+	}
 	if o.Fields != nil {
 		toSerialize["fields"] = o.Fields
 	}
@@ -232,7 +552,6 @@ func (o *InputField) UnmarshalJSON(data []byte) (err error) {
 	varInputField := _InputField{}
 
 	decoder := json.NewDecoder(bytes.NewReader(data))
-	decoder.DisallowUnknownFields()
 	err = decoder.Decode(&varInputField)
 
 	if err != nil {

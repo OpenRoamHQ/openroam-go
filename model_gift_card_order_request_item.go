@@ -193,7 +193,6 @@ func (o *GiftCardOrderRequestItem) UnmarshalJSON(data []byte) (err error) {
 	varGiftCardOrderRequestItem := _GiftCardOrderRequestItem{}
 
 	decoder := json.NewDecoder(bytes.NewReader(data))
-	decoder.DisallowUnknownFields()
 	err = decoder.Decode(&varGiftCardOrderRequestItem)
 
 	if err != nil {
